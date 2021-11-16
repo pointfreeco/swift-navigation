@@ -1,10 +1,8 @@
 # SwiftUI Navigation
 
 [![CI](https://github.com/pointfreeco/swiftui-navigation/actions/workflows/ci.yml/badge.svg)](https://github.com/pointfreeco/swiftui-navigation/actions/workflows/ci.yml)
-<!--
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fpointfreeco%2Fswiftui-navigation%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/pointfreeco/swiftui-navigation)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fpointfreeco%2Fswiftui-navigation%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/pointfreeco/swiftui-navigation)
--->
 
 Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
 
