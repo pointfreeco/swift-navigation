@@ -216,7 +216,7 @@ If you want to conditionally show a stepper view for the quantity when in-stock 
 
 ```swift
 struct InventoryItemView {
-  @State var status: ItemStatus?
+  @State var status: ItemStatus
 
   var body: some View {
     Switch(self.$status) {
@@ -318,7 +318,7 @@ SwiftUI Navigation's tools were motivated and designed over the course of many e
 You can watch all of the episodes [here](https://www.pointfree.co/collections/swiftui/navigation).
 
 <a href="https://www.pointfree.co/collections/swiftui/navigation">
-  <img alt="video poster image" src="https://d3rccdn33rt8ze.cloudfront.net/episodes/0160.jpeg" width="600">
+  <img alt="video poster image" src="https://d3rccdn33rt8ze.cloudfront.net/episodes/0166.jpeg" width="600">
 </a>
 
 ## Installation
