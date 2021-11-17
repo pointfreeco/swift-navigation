@@ -128,7 +128,7 @@ struct ContentView {
 }
 ```
 
-The forward-slash syntax you see above represents a [case path](https://github.com/pointfreeco/swift-case-path) to a particular case of an enum. Case paths are our imagining of what key paths could look like for enums, and every concept for key paths has an analogous concept for case paths:
+The forward-slash syntax you see above represents a [case path](https://github.com/pointfreeco/swift-case-paths) to a particular case of an enum. Case paths are our imagining of what key paths could look like for enums, and every concept for key paths has an analogous concept for case paths:
 
   * Each property of an struct is naturally endowed with a key path, and so each case of an enum is endowed with a case path.
   * Key paths are constructed using a back slash, name of the type and name of the property (_e.g._, `\User.name`), and case paths are constructed similarly, but with a forward slash (_e.g._, `/Route.draft`).
