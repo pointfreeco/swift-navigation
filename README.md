@@ -58,9 +58,9 @@ Another problem arises when trying to model multiple navigation destinations as 
 
 ```swift
 struct ContentView: View {
-  var draft: Post?
-  var settings: Settings?
-  var userProfile: UserProfile?
+  @State var draft: Post?
+  @State var settings: Settings?
+  @State var userProfile: UserProfile?
 
   var body: some View {
     /* Main view omitted */
