@@ -8,7 +8,7 @@ Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
 
   * [Motivation](#motivation)
   * [Tools](#tools)
-      * [Navigation overloads](#navigation-overloads)
+      * [Navigation overloads](#navigation-api-overloads)
       * [Navigation views](#navigation-views)
       * [Binding transformations](#binding-transformations)
   * [Examples](#examples)
