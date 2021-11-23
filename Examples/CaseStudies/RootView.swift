@@ -35,6 +35,9 @@ struct RootView: View {
           NavigationLink("Optional navigation links") {
             OptionalNavigationLinks()
           }
+          NavigationLink("List of navigation links") {
+            ListOfNavigationLinks(viewModel: .init())
+          }
         } header: {
           Text("Navigation links")
         }

@@ -13,7 +13,6 @@ struct OptionalNavigationLinks: View {
           NavigationLink(
             unwrapping: self.$viewModel.fact,
             destination: { $fact in
-              let _ = print(fact)
               FactEditor(fact: $fact.description)
                 .disabled(self.viewModel.isLoading)
                 .foregroundColor(self.viewModel.isLoading ? .gray : nil)
