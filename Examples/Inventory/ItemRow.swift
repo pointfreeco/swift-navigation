@@ -115,8 +115,9 @@ struct ItemRowView: View {
       .buttonStyle(.plain)
       .foregroundColor(self.viewModel.item.status.isInStock ? nil : Color.gray)
       .alert(
-        self.viewModel.item.name,
-        isPresented: self.$viewModel.route.isPresent(/ItemRowViewModel.Route.deleteAlert),
+        title: { Text(self.viewModel.item.name) },
+        unwrapping: self.$viewModel.route,
+        case: /ItemRowViewModel.Route.deleteAlert,
         actions: {
           Button("Delete", role: .destructive) {
             self.viewModel.deleteConfirmationButtonTapped()
