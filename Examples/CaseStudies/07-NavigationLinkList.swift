@@ -2,10 +2,12 @@ import SwiftUI
 import SwiftUINavigation
 
 private let readMe = """
-This case study demonstrates how to model a list of navigation links. Tap a row to drill down and edit a counter. Edit screen allows cancelling or saving the edits.
+  This case study demonstrates how to model a list of navigation links. Tap a row to drill down \
+  and edit a counter. Edit screen allows cancelling or saving the edits.
 
-The domain for a row in the list has its own ObservableObject and Route enum, and it uses the library's NavigationLink initializer to drive navigation from the route enum.
-"""
+  The domain for a row in the list has its own ObservableObject and Route enum, and it uses the \
+  library's NavigationLink initializer to drive navigation from the route enum.
+  """
 
 struct ListOfNavigationLinks: View {
   @ObservedObject var viewModel: ListOfNavigationLinksViewModel
@@ -56,7 +58,10 @@ fileprivate struct RowView: View {
   @ObservedObject var viewModel: ListOfNavigationLinksRowViewModel
 
   var body: some View {
-    NavigationLink(unwrapping: self.$viewModel.route, case: /ListOfNavigationLinksRowViewModel.Route.edit) { $counter in
+    NavigationLink(
+      unwrapping: self.$viewModel.route,
+      case: /ListOfNavigationLinksRowViewModel.Route.edit
+    ) { $counter in
       EditView(counter: $counter)
         .navigationBarBackButtonHidden(true)
         .toolbar {
