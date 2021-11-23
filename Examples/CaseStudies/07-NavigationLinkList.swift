@@ -54,7 +54,7 @@ class ListOfNavigationLinksViewModel: ObservableObject {
   }
 }
 
-fileprivate struct RowView: View {
+private struct RowView: View {
   @ObservedObject var viewModel: ListOfNavigationLinksRowViewModel
 
   var body: some View {
@@ -111,7 +111,7 @@ class ListOfNavigationLinksRowViewModel: Identifiable, ObservableObject {
   }
 }
 
-fileprivate struct EditView: View {
+private struct EditView: View {
   @Binding var counter: Int
 
   var body: some View {
