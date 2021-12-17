@@ -49,8 +49,10 @@ extension NavigationLink {
     @ViewBuilder label: @escaping () -> Label
   ) where Destination == WrappedDestination? {
     self.init(
-      destination: Binding(unwrapping: value).map(destination),
       isActive: value.isPresent().didSet(onNavigate),
+      destination: {
+        Binding(unwrapping: value).map(destination)
+      },
       label: label
     )
   }
