@@ -50,7 +50,7 @@ extension NavigationLink {
   ) where Destination == WrappedDestination? {
     self.init(
       destination: Binding(unwrapping: value).map(destination),
-      isActive: value.isPresent().didSet(onNavigate),
+      isActive: value.isPresent().didSet(onNavigate).removeDuplicates(),
       label: label
     )
   }
