@@ -28,6 +28,7 @@
 		DCD4E685273B300F00CDF3BD /* 05-FullScreenCovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */; };
 		DCD4E687273B30DA00CDF3BD /* 04-Popovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E686273B30DA00CDF3BD /* 04-Popovers.swift */; };
 		DCD4E68B274180F500CDF3BD /* 06-NavigationLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E68A274180F500CDF3BD /* 06-NavigationLinks.swift */; };
+		F88630DA28488AC4004D6252 /* 10-FullProgrammaticNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88630D928488AC4004D6252 /* 10-FullProgrammaticNavigation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-FullScreenCovers.swift"; sourceTree = "<group>"; };
 		DCD4E686273B30DA00CDF3BD /* 04-Popovers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Popovers.swift"; sourceTree = "<group>"; };
 		DCD4E68A274180F500CDF3BD /* 06-NavigationLinks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "06-NavigationLinks.swift"; sourceTree = "<group>"; };
+		F88630D928488AC4004D6252 /* 10-FullProgrammaticNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "10-FullProgrammaticNavigation.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 				CA70FED6274B1907005A0D53 /* 07-NavigationLinkList.swift */,
 				CABE9FC0272F2C0000AFC150 /* 08-Routing.swift */,
 				CA47383D272F0F9B0012CAC3 /* 09-CustomComponents.swift */,
+				F88630D928488AC4004D6252 /* 10-FullProgrammaticNavigation.swift */,
 				CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */,
 				CA473831272F0D860012CAC3 /* FactClient.swift */,
 				CA47382E272F0D860012CAC3 /* RootView.swift */,
@@ -266,6 +269,7 @@
 				DCD4E687273B30DA00CDF3BD /* 04-Popovers.swift in Sources */,
 				DCD4E685273B300F00CDF3BD /* 05-FullScreenCovers.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
+				F88630DA28488AC4004D6252 /* 10-FullProgrammaticNavigation.swift in Sources */,
 				CA473839272F0D860012CAC3 /* 01-Alerts.swift in Sources */,
 				DCD4E68B274180F500CDF3BD /* 06-NavigationLinks.swift in Sources */,
 				CA473838272F0D860012CAC3 /* 03-Sheets.swift in Sources */,

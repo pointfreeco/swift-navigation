@@ -61,6 +61,28 @@ extension Binding {
     )
   }
 
+  /// Creates a binding by projecting the current enum value to the value at a particular
+  /// case.
+  ///
+  /// > Note: This method is constrained to optionals so that the projected value can write `nil`
+  /// > back to the parent, which is useful for navigation, particularly dismissal.
+  ///
+  /// - Parameter casePath: A case path that identifies a particular case to unwrap.
+  /// - Returns: A binding to an enum case.
+  public func `case`<Case>(in casePath: CasePath<Value, Case?>) -> Binding<Case?> {
+    .init(
+      get: {
+        guard let value = casePath.extract(from: wrappedValue) else {
+          return .none
+        }
+        return value
+      },
+      set: { newValue in
+        wrappedValue = casePath.embed(newValue)
+      }
+    )
+  }
+
   /// Creates a binding by projecting the current optional value to a boolean describing if it's
   /// non-`nil`.
   ///

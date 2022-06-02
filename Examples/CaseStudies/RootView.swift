@@ -38,6 +38,9 @@ struct RootView: View {
           NavigationLink("List of navigation links") {
             ListOfNavigationLinks(viewModel: .init())
           }
+          NavigationLink("Full programmatic navigation") {
+            FullProgrammaticNavigation()
+          }
         } header: {
           Text("Navigation links")
         }
