@@ -69,7 +69,11 @@ public struct IfCaseLet<Enum, Case, IfContent, ElseContent>: View where IfConten
   }
 
   public var body: some View {
-    Binding(unwrapping: self.enum, case: self.casePath).map(self.ifContent)
+    if let caseBinding = Binding(unwrapping: self.enum, case: self.casePath) {
+      ifContent(caseBinding)
+    } else {
+      elseContent()
+    }
   }
 }
 
