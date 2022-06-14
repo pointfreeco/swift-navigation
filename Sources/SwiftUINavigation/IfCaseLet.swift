@@ -36,7 +36,7 @@ import SwiftUI
 ///
 /// To exhaustively handle every case of a binding to an enum, see ``Switch``. Or, to unwrap a
 /// binding to an optional, see ``IfLet``.
-public struct IfCaseLet<Enum, Case, IfContent, ElseContent>: View where IfContent: View {
+public struct IfCaseLet<Enum, Case, IfContent, ElseContent>: View where IfContent: View, ElseContent: View {
   public let `enum`: Binding<Enum>
   public let casePath: CasePath<Enum, Case>
   public let ifContent: (Binding<Case>) -> IfContent
