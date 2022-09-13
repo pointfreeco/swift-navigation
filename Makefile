@@ -7,16 +7,16 @@ default: test
 
 test:
 	xcodebuild test \
-		-scheme SwiftUINavigation \
+		-scheme swiftui-navigation \
 		-destination platform="$(PLATFORM_IOS)"
 	xcodebuild test \
-		-scheme SwiftUINavigation \
+		-scheme swiftui-navigation \
 		-destination platform="$(PLATFORM_MACOS)"
 	xcodebuild test \
-		-scheme SwiftUINavigation \
+		-scheme swiftui-navigation \
 		-destination platform="$(PLATFORM_TVOS)"
 	xcodebuild \
-		-scheme SwiftUINavigation_watchOS \
+		-scheme swiftui-navigation \
 		-destination platform="$(PLATFORM_WATCHOS)"
 
 DOC_WARNINGS := $(shell xcodebuild clean docbuild \
