@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "swift-case-paths",
+        "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
+        "state": {
+          "branch": null,
+          "revision": "7346701ea29da0a85d4403cf3d7a589a58ae3dee",
+          "version": "0.9.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

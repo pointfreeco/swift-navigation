@@ -7,16 +7,20 @@ default: test
 
 test:
 	xcodebuild test \
-		-scheme swiftui-navigation \
+		-workspace SwiftUINavigation.xcworkspace \
+		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_IOS)"
 	xcodebuild test \
-		-scheme swiftui-navigation \
+		-workspace SwiftUINavigation.xcworkspace \
+		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_MACOS)"
 	xcodebuild test \
-		-scheme swiftui-navigation \
+		-workspace SwiftUINavigation.xcworkspace \
+		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_TVOS)"
 	xcodebuild \
-		-scheme swiftui-navigation \
+		-workspace SwiftUINavigation.xcworkspace \
+		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_WATCHOS)"
 
 DOC_WARNINGS := $(shell xcodebuild clean docbuild \
