@@ -42,10 +42,24 @@ extension NavigationLink {
   ///     source of truth when it is passed a value of `true`. When passed `false`, the system will
   ///     automatically write `nil` to `value`.
   ///   - label: A view builder to produce a label describing the `destination` to present.
+  @available(*, unavailable, renamed: "init(unwrapping:onNavigate:destination:label:)")
   public init<Value, WrappedDestination>(
     unwrapping value: Binding<Value?>,
     @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
     onNavigate: @escaping (_ isActive: Bool) -> Void,
+    @ViewBuilder label: @escaping () -> Label
+  ) where Destination == WrappedDestination? {
+    self.init(
+      destination: Binding(unwrapping: value).map(destination),
+      isActive: value.isPresent().didSet(onNavigate),
+      label: label
+    )
+  }
+
+  public init<Value, WrappedDestination>(
+    unwrapping value: Binding<Value?>,
+    onNavigate: @escaping (_ isActive: Bool) -> Void,
+    @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: @escaping () -> Label
   ) where Destination == WrappedDestination? {
     self.init(
@@ -108,6 +122,7 @@ extension NavigationLink {
   ///     source of truth when it is passed a value of `true`. When passed `false`, the system will
   ///     automatically write `nil` to `enum`.
   ///   - label: A view builder to produce a label describing the `destination` to present.
+  @available(*, unavailable, renamed: "init(unwrapping:case:onNavigate:destination:label:)")
   public init<Enum, Case, WrappedDestination>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
@@ -117,8 +132,23 @@ extension NavigationLink {
   ) where Destination == WrappedDestination? {
     self.init(
       unwrapping: `enum`.case(casePath),
-      destination: destination,
       onNavigate: onNavigate,
+      destination: destination,
+      label: label
+    )
+  }
+
+  public init<Enum, Case, WrappedDestination>(
+    unwrapping enum: Binding<Enum?>,
+    case casePath: CasePath<Enum, Case>,
+    onNavigate: @escaping (Bool) -> Void,
+    @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
+    @ViewBuilder label: @escaping () -> Label
+  ) where Destination == WrappedDestination? {
+    self.init(
+      unwrapping: `enum`.case(casePath),
+      onNavigate: onNavigate,
+      destination: destination,
       label: label
     )
   }
