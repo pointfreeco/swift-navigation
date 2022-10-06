@@ -152,4 +152,19 @@ extension NavigationLink {
       label: label
     )
   }
+
+  public init<Enum, WrappedDestination>(
+    unwrapping enum: Binding<Enum?>,
+    case casePath: CasePath<Enum, Void>,
+    onNavigate: @escaping (Bool) -> Void,
+    @ViewBuilder destination: @escaping () -> WrappedDestination,
+    @ViewBuilder label: @escaping () -> Label
+  ) where Destination == WrappedDestination? {
+    self.init(
+      unwrapping: `enum`.case(casePath),
+      onNavigate: onNavigate,
+      destination: { _ in destination() },
+      label: label
+    )
+  }
 }
