@@ -1066,12 +1066,13 @@ public struct _ExhaustivityCheckView<Enum>: View {
       .padding()
       .background(Color.red.edgesIgnoringSafeArea(.all))
       .onAppear {
-        breakpoint(
+        runtimeWarning(
           """
           ---
-          \(message)
+          %@
           ---
-          """
+          """,
+          [message]
         )
       }
     #else
