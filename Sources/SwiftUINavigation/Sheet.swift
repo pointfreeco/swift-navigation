@@ -76,4 +76,14 @@ extension View {
   where Content: View {
     self.sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
   }
+
+  public func sheet<Enum, Content>(
+    unwrapping enum: Binding<Enum?>,
+    case casePath: CasePath<Enum, Void>,
+    onDismiss: (() -> Void)? = nil,
+    @ViewBuilder content: @escaping () -> Content
+  ) -> some View
+  where Content: View {
+    self.sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: { _ in content() })
+  }
 }
