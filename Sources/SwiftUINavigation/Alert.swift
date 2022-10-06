@@ -98,5 +98,22 @@
         message: message
       )
     }
+
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert<Enum, A: View, M: View>(
+      title: Text,
+      unwrapping enum: Binding<Enum?>,
+      case casePath: CasePath<Enum, Void>,
+      @ViewBuilder actions: @escaping () -> A,
+      @ViewBuilder message: @escaping () -> M
+    ) -> some View {
+      self.alert(
+        title: { title },
+        unwrapping: `enum`,
+        case: casePath,
+        actions: actions,
+        message: message
+      )
+    }
   }
 #endif
