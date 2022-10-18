@@ -61,7 +61,9 @@ private struct RowView: View {
     NavigationLink(
       unwrapping: self.$viewModel.route,
       case: /ListOfNavigationLinksRowViewModel.Route.edit
-    ) { $counter in
+    ) {
+      self.viewModel.setEditNavigation(isActive: $0)
+    } destination: { $counter in
       EditView(counter: $counter)
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -72,8 +74,6 @@ private struct RowView: View {
             Button("Cancel") { self.viewModel.cancelButtonTapped() }
           }
         }
-    } onNavigate: {
-      self.viewModel.setEditNavigation(isActive: $0)
     } label: {
       Text("\(self.viewModel.counter)")
     }

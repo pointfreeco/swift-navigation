@@ -41,7 +41,7 @@ where IfContent: View, ElseContent: View {
   public let `enum`: Binding<Enum>
   public let casePath: CasePath<Enum, Case>
   public let ifContent: (Binding<Case>) -> IfContent
-  public let elseContent: () -> ElseContent
+  public let elseContent: ElseContent
 
   /// Computes content by extracting a case from a binding to an enum and passing a non-optional
   /// binding to the case's associated value to its content closure.
@@ -61,19 +61,19 @@ where IfContent: View, ElseContent: View {
     _ `enum`: Binding<Enum>,
     pattern casePath: CasePath<Enum, Case>,
     @ViewBuilder ifContent: @escaping (Binding<Case>) -> IfContent,
-    @ViewBuilder elseContent: @escaping () -> ElseContent
+    @ViewBuilder elseContent: () -> ElseContent
   ) {
     self.casePath = casePath
-    self.elseContent = elseContent
+    self.elseContent = elseContent()
     self.enum = `enum`
     self.ifContent = ifContent
   }
 
   public var body: some View {
-    if let caseBinding = Binding(unwrapping: self.enum, case: self.casePath) {
-      ifContent(caseBinding)
+    if let $case = Binding(unwrapping: self.enum, case: self.casePath) {
+      self.ifContent($case)
     } else {
-      elseContent()
+      self.elseContent
     }
   }
 }
@@ -85,7 +85,7 @@ extension IfCaseLet where ElseContent == EmptyView {
     @ViewBuilder ifContent: @escaping (Binding<Case>) -> IfContent
   ) {
     self.casePath = casePath
-    self.elseContent = { EmptyView() }
+    self.elseContent = EmptyView()
     self.enum = `enum`
     self.ifContent = ifContent
   }

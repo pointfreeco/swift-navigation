@@ -62,7 +62,9 @@ struct ItemRowView: View {
   @ObservedObject var viewModel: ItemRowViewModel
 
   var body: some View {
-    NavigationLink(unwrapping: self.$viewModel.route, case: /ItemRowViewModel.Route.edit) { $item in
+    NavigationLink(unwrapping: self.$viewModel.route, case: /ItemRowViewModel.Route.edit) {
+      self.viewModel.setEditNavigation(isActive: $0)
+    } destination: { $item in
       ItemView(item: $item)
         .navigationBarTitle("Edit")
         .navigationBarBackButtonHidden(true)
@@ -78,8 +80,6 @@ struct ItemRowView: View {
             }
           }
         }
-    } onNavigate: {
-      self.viewModel.setEditNavigation(isActive: $0)
     } label: {
       HStack {
         VStack(alignment: .leading) {

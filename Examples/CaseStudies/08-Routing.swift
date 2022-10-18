@@ -47,12 +47,12 @@ struct Routing: View {
         }
       )
 
-      NavigationLink(unwrapping: self.$route, case: /Route.link) { $count in
+      NavigationLink(unwrapping: self.$route, case: /Route.link) {
+        self.route = $0 ? .link(0) : nil
+      } destination: { $count in
         Form {
           Stepper("Number: \(count)", value: $count)
         }
-      } onNavigate: {
-        self.route = $0 ? .link(0) : nil
       } label: {
         Text("Link")
       }
