@@ -1065,15 +1065,7 @@ public struct _ExhaustivityCheckView<Enum>: View {
       .foregroundColor(.white)
       .padding()
       .background(Color.red.edgesIgnoringSafeArea(.all))
-      .onAppear {
-        breakpoint(
-          """
-          ---
-          \(message)
-          ---
-          """
-        )
-      }
+      .onAppear { runtimeWarn(message, file: self.file, line: self.line) }
     #else
       EmptyView()
     #endif

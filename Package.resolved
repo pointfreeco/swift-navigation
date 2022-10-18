@@ -6,8 +6,17 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "d226d167bd4a68b51e352af5655c92bce8ee0463",
-          "version": "0.7.0"
+          "revision": "15bba50ebf3a2065388c8d12210debe4f6ada202",
+          "version": "0.10.0"
+        }
+      },
+      {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "16e6409ee82e1b81390bdffbf217b9c08ab32784",
+          "version": "0.5.0"
         }
       }
     ]
