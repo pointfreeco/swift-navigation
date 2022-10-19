@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 
 import PackageDescription
 
@@ -17,13 +17,15 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.7.0")
+    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.10.0"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "0.5.0"),
   ],
   targets: [
     .target(
       name: "SwiftUINavigation",
       dependencies: [
-        .product(name: "CasePaths", package: "swift-case-paths")
+        .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
