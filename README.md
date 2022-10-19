@@ -166,10 +166,10 @@ struct ContentView {
 
   var body: some View {
     ForEach(self.posts) { post in
-      NavigationLink(unwrapping: self.$route, case: /Route.edit) { $post in 
-        EditPostView(post: $post)
-      } onNavigate: { isActive in 
+      NavigationLink(unwrapping: self.$route, case: /Route.edit) { isActive in 
         self.route = isActive ? .edit(post) : nil 
+      } destination: { $post in 
+        EditPostView(post: $post)
       } label: {
         Text(post.title)
       }
