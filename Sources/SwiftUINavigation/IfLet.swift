@@ -31,7 +31,7 @@
 public struct IfLet<Value, IfContent, ElseContent>: View where IfContent: View, ElseContent: View {
   public let value: Binding<Value?>
   public let ifContent: (Binding<Value>) -> IfContent
-  public let elseContent: () -> ElseContent
+  public let elseContent: ElseContent
 
   /// Computes content by unwrapping a binding to an optional and passing a non-optional binding to
   /// its content closure.
@@ -48,18 +48,18 @@ public struct IfLet<Value, IfContent, ElseContent>: View where IfContent: View, 
   public init(
     _ value: Binding<Value?>,
     @ViewBuilder then ifContent: @escaping (Binding<Value>) -> IfContent,
-    @ViewBuilder else elseContent: @escaping () -> ElseContent
+    @ViewBuilder else elseContent: () -> ElseContent
   ) {
     self.value = value
     self.ifContent = ifContent
-    self.elseContent = elseContent
+    self.elseContent = elseContent()
   }
 
   public var body: some View {
     if let $value = Binding(unwrapping: self.value) {
       self.ifContent($value)
     } else {
-      self.elseContent()
+      self.elseContent
     }
   }
 }

@@ -10,28 +10,26 @@ struct OptionalNavigationLinks: View {
         Stepper("Number: \(self.viewModel.count)", value: self.$viewModel.count)
 
         HStack {
-          NavigationLink(
-            unwrapping: self.$viewModel.fact,
-            destination: { $fact in
-              FactEditor(fact: $fact.description)
-                .disabled(self.viewModel.isLoading)
-                .foregroundColor(self.viewModel.isLoading ? .gray : nil)
-                .navigationBarBackButtonHidden(true)
-                .toolbar {
-                  ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                      self.viewModel.cancelButtonTapped()
-                    }
-                  }
-                  ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                      self.viewModel.saveButtonTapped(fact: fact)
-                    }
+          NavigationLink(unwrapping: self.$viewModel.fact) {
+            self.viewModel.setFactNavigation(isActive: $0)
+          } destination: { $fact in
+            FactEditor(fact: $fact.description)
+              .disabled(self.viewModel.isLoading)
+              .foregroundColor(self.viewModel.isLoading ? .gray : nil)
+              .navigationBarBackButtonHidden(true)
+              .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                  Button("Cancel") {
+                    self.viewModel.cancelButtonTapped()
                   }
                 }
-            },
-            onNavigate: { self.viewModel.setFactNavigation(isActive: $0) }
-          ) {
+                ToolbarItem(placement: .confirmationAction) {
+                  Button("Save") {
+                    self.viewModel.saveButtonTapped(fact: fact)
+                  }
+                }
+              }
+          } label: {
             Text("Get number fact")
           }
 

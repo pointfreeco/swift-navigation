@@ -13,11 +13,11 @@ extension NavigationLink {
   ///
   ///   var body: some View {
   ///     ForEach(self.posts) { post in
-  ///       NavigationLink(unwrapping: self.$postToEdit) { $draft in
-  ///         EditPostView(post: $draft)
-  ///       } onNavigate: { isActive in
+  ///       NavigationLink(unwrapping: self.$postToEdit) { isActive in
   ///         self.postToEdit = isActive ? post : nil
-  ///       } label: {
+  ///       } destination: { $draft in
+  ///         EditPostView(post: $draft)
+  ///       } onNavigate:  label: {
   ///         Text(post.title)
   ///       }
   ///     }
@@ -36,17 +36,21 @@ extension NavigationLink {
   ///     destination can use this binding to produce its content and write changes back to the
   ///     source of truth. Upstream changes to `value` will also be instantly reflected in the
   ///     destination. If `value` becomes `nil`, the destination is dismissed.
-  ///   - destination: A view for the navigation link to present.
   ///   - onNavigate: A closure that executes when the link becomes active or inactive with a
   ///     boolean that describes if the link was activated or not. Use this closure to populate the
   ///     source of truth when it is passed a value of `true`. When passed `false`, the system will
   ///     automatically write `nil` to `value`.
+  ///   - destination: A view for the navigation link to present.
   ///   - label: A view builder to produce a label describing the `destination` to present.
+  @available(iOS, introduced: 13, deprecated: 16)
+  @available(macOS, introduced: 10.15, deprecated: 13)
+  @available(tvOS, introduced: 13, deprecated: 16)
+  @available(watchOS, introduced: 6, deprecated: 9)
   public init<Value, WrappedDestination>(
     unwrapping value: Binding<Value?>,
-    @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
     onNavigate: @escaping (_ isActive: Bool) -> Void,
-    @ViewBuilder label: @escaping () -> Label
+    @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
+    @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
     self.init(
       destination: Binding(unwrapping: value).map(destination),
@@ -75,10 +79,10 @@ extension NavigationLink {
   ///
   ///   var body: some View {
   ///     ForEach(self.posts) { post in
-  ///       NavigationLink(unwrapping: self.$route, case: /Route.edit) { $draft in
-  ///         EditPostView(post: $draft)
-  ///       } onNavigate: { isActive in
+  ///       NavigationLink(unwrapping: self.$route, case: /Route.edit) { isActive in
   ///         self.route = isActive ? .edit(post) : nil
+  ///       } destination: { $draft in
+  ///         EditPostView(post: $draft)
   ///       } label: {
   ///         Text(post.title)
   ///       }
@@ -102,23 +106,27 @@ extension NavigationLink {
   ///     produce its content and write changes back to the source of truth. Upstream changes to
   ///     `enum` will also be instantly reflected in the destination. If `enum` becomes `nil`, the
   ///     destination is dismissed.
-  ///   - destination: A view for the navigation link to present.
   ///   - onNavigate: A closure that executes when the link becomes active or inactive with a
   ///     boolean that describes if the link was activated or not. Use this closure to populate the
   ///     source of truth when it is passed a value of `true`. When passed `false`, the system will
   ///     automatically write `nil` to `enum`.
+  ///   - destination: A view for the navigation link to present.
   ///   - label: A view builder to produce a label describing the `destination` to present.
+  @available(iOS, introduced: 13, deprecated: 16)
+  @available(macOS, introduced: 10.15, deprecated: 13)
+  @available(tvOS, introduced: 13, deprecated: 16)
+  @available(watchOS, introduced: 6, deprecated: 9)
   public init<Enum, Case, WrappedDestination>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
-    @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
     onNavigate: @escaping (Bool) -> Void,
-    @ViewBuilder label: @escaping () -> Label
+    @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
+    @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
     self.init(
       unwrapping: `enum`.case(casePath),
-      destination: destination,
       onNavigate: onNavigate,
+      destination: destination,
       label: label
     )
   }

@@ -36,6 +36,24 @@
           "revision": "16e6409ee82e1b81390bdffbf217b9c08ab32784",
           "version": "0.5.0"
         }
+      },
+      {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections",
+        "state": {
+          "branch": null,
+          "revision": "f504716c27d2e5d4144fa4794b12129301d17729",
+          "version": "1.0.3"
+        }
+      },
+      {
+        "package": "swift-identified-collections",
+        "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections.git",
+        "state": {
+          "branch": null,
+          "revision": "bfb0d43e75a15b6dfac770bf33479e8393884a36",
+          "version": "0.4.1"
+        }
       }
     ]
   },
