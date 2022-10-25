@@ -40,20 +40,20 @@
 /// > Note: In debug builds, exhaustivity is handled at runtime: if the `Switch` encounters an
 /// > unhandled case, and no ``Default`` view is present, a runtime warning is issued and a warning
 /// > view is presented.
-public struct Switch<Enum, Content>: View where Content: View {
+public struct Switch<Enum, Content: View>: View {
   public let `enum`: Binding<Enum>
-  public let content: () -> Content
+  public let content: Content
 
   private init(
     enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> Content
+    @ViewBuilder content: () -> Content
   ) {
     self.enum = `enum`
-    self.content = content
+    self.content = content()
   }
 
   public var body: some View {
-    self.content()
+    self.content
       .environmentObject(BindingObject(binding: self.enum))
   }
 }
@@ -89,27 +89,27 @@ where Content: View {
 /// If you wish to use ``Switch`` in a non-exhaustive manner (_i.e._, you do not want to provide a
 /// ``CaseLet`` for every case of the enum), then you must insert a ``Default`` view at the end of
 /// the ``Switch``'s body, or use ``IfCaseLet`` instead.
-public struct Default<Content>: View where Content: View {
-  private let content: () -> Content
+public struct Default<Content: View>: View {
+  private let content: Content
 
   /// Initializes a ``Default`` view that computes content depending on if a binding to enum state
   /// does not match a particular case.
   ///
   /// - Parameter content: A function that returns a view that is visible only when the switch
   ///   view's state does not match a preceding ``CaseLet`` view.
-  public init(@ViewBuilder content: @escaping () -> Content) {
-    self.content = content
+  public init(@ViewBuilder content: () -> Content) {
+    self.content = content()
   }
 
   public var body: some View {
-    self.content()
+    self.content
   }
 }
 
 extension Switch {
   public init<Case1, Content1, DefaultContent>(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         Default<DefaultContent>
@@ -136,7 +136,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> CaseLet<Enum, Case1, Content1>
+    @ViewBuilder content: () -> CaseLet<Enum, Case1, Content1>
   )
   where
     Content == _ConditionalContent<
@@ -152,7 +152,7 @@ extension Switch {
 
   public init<Case1, Content1, Case2, Content2, DefaultContent>(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -186,7 +186,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>
@@ -217,7 +217,7 @@ extension Switch {
     DefaultContent
   >(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -257,7 +257,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -294,7 +294,7 @@ extension Switch {
     DefaultContent
   >(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -345,7 +345,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -388,7 +388,7 @@ extension Switch {
     DefaultContent
   >(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -446,7 +446,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -495,7 +495,7 @@ extension Switch {
     DefaultContent
   >(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -560,7 +560,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -615,7 +615,7 @@ extension Switch {
     DefaultContent
   >(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -687,7 +687,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -748,7 +748,7 @@ extension Switch {
     DefaultContent
   >(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -827,7 +827,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -894,7 +894,7 @@ extension Switch {
     DefaultContent
   >(
     _ enum: Binding<Enum>,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -980,7 +980,7 @@ extension Switch {
     _ enum: Binding<Enum>,
     file: StaticString = #fileID,
     line: UInt = #line,
-    @ViewBuilder content: @escaping () -> TupleView<
+    @ViewBuilder content: () -> TupleView<
       (
         CaseLet<Enum, Case1, Content1>,
         CaseLet<Enum, Case2, Content2>,
@@ -1065,16 +1065,7 @@ public struct _ExhaustivityCheckView<Enum>: View {
       .foregroundColor(.white)
       .padding()
       .background(Color.red.edgesIgnoringSafeArea(.all))
-      .onAppear {
-        runtimeWarning(
-          """
-          ---
-          %@
-          ---
-          """,
-          [message]
-        )
-      }
+      .onAppear { runtimeWarn(message, file: self.file, line: self.line) }
     #else
       EmptyView()
     #endif

@@ -1,22 +1,26 @@
-PLATFORM_IOS = iOS Simulator,name=iPhone 11 Pro Max
+PLATFORM_IOS = iOS Simulator,name=iPhone 13 Pro Max
 PLATFORM_MACOS = macOS
-PLATFORM_TVOS = tvOS Simulator,name=Apple TV 4K (at 1080p)
-PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 4 - 44mm
+PLATFORM_TVOS = tvOS Simulator,name=Apple TV
+PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
 
 default: test
 
 test:
 	xcodebuild test \
+		-workspace SwiftUINavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_IOS)"
 	xcodebuild test \
+		-workspace SwiftUINavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_MACOS)"
 	xcodebuild test \
+		-workspace SwiftUINavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_TVOS)"
 	xcodebuild \
-		-scheme SwiftUINavigation_watchOS \
+		-workspace SwiftUINavigation.xcworkspace \
+		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_WATCHOS)"
 
 DOC_WARNINGS := $(shell xcodebuild clean docbuild \

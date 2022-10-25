@@ -55,8 +55,8 @@
     public func alert<Value, A: View, M: View>(
       title: (Value) -> Text,
       unwrapping value: Binding<Value?>,
-      @ViewBuilder actions: @escaping (Value) -> A,
-      @ViewBuilder message: @escaping (Value) -> M
+      @ViewBuilder actions: (Value) -> A,
+      @ViewBuilder message: (Value) -> M
     ) -> some View {
       self.alert(
         value.wrappedValue.map(title) ?? Text(""),
@@ -88,8 +88,8 @@
       title: (Case) -> Text,
       unwrapping enum: Binding<Enum?>,
       case casePath: CasePath<Enum, Case>,
-      @ViewBuilder actions: @escaping (Case) -> A,
-      @ViewBuilder message: @escaping (Case) -> M
+      @ViewBuilder actions: (Case) -> A,
+      @ViewBuilder message: (Case) -> M
     ) -> some View {
       self.alert(
         title: title,
