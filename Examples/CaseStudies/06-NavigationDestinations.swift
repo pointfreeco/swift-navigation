@@ -14,6 +14,7 @@ struct NavigationDestinations: View {
           Button("Get number fact") {
             self.viewModel.numberFactButtonTapped()
           }
+          // TODO: .buttonStyle(.navigation)
 
           if self.viewModel.isLoading {
             Spacer()
