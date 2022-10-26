@@ -32,6 +32,14 @@ struct RootView: View {
         }
 
         Section {
+          if #available(iOS 16, *) {
+            NavigationLink("Navigation destinations") {
+              NavigationStack {
+                NavigationDestinations()
+              }
+              .navigationTitle("Navigation stack")
+            }
+          }
           NavigationLink("Optional navigation links") {
             OptionalNavigationLinks()
           }
@@ -39,7 +47,7 @@ struct RootView: View {
             ListOfNavigationLinks(viewModel: .init())
           }
         } header: {
-          Text("Navigation links")
+          Text("Navigation")
         }
 
         Section {
