@@ -49,7 +49,7 @@ extension NavigationLink {
   public init<Value, WrappedDestination>(
     unwrapping value: Binding<Value?>,
     onNavigate: @escaping (_ isActive: Bool) -> Void,
-    @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
+    @ViewBuilder destination: (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
     self.init(
@@ -120,7 +120,7 @@ extension NavigationLink {
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
     onNavigate: @escaping (Bool) -> Void,
-    @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
+    @ViewBuilder destination: (Binding<Case>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
     self.init(

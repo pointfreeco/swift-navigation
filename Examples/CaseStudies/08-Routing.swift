@@ -28,24 +28,24 @@ struct Routing: View {
       Button("Alert") {
         self.route = .alert("Hello world!")
       }
-      .alert(
-        title: { Text($0) },
-        unwrapping: self.$route,
-        case: /Route.alert,
-        actions: { _ in
-          Button("Activate link") {
-            self.route = .link(0)
-          }
-          Button("Activate sheet") {
-            self.route = .sheet(0)
-          }
-          Button("Cancel", role: .cancel) {
-          }
-        },
-        message: { _ in
-
-        }
-      )
+//      .alert(
+//        title: { Text($0) },
+//        unwrapping: self.$route,
+//        case: /Route.alert,
+//        actions: { _ in
+//          Button("Activate link") {
+//            self.route = .link(0)
+//          }
+//          Button("Activate sheet") {
+//            self.route = .sheet(0)
+//          }
+//          Button("Cancel", role: .cancel) {
+//          }
+//        },
+//        message: { _ in
+//
+//        }
+//      )
 
       NavigationLink(unwrapping: self.$route, case: /Route.link) {
         self.route = $0 ? .link(0) : nil
