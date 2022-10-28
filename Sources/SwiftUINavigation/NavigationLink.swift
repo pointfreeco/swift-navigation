@@ -1,3 +1,55 @@
+public struct NavigationLink<Label: View, Destination: View>: View {
+  private let navigationLink: SwiftUI.NavigationLink<Label, Destination>
+  @Binding var valueIsPresented: Bool
+  #if os(iOS)
+    private var _isDetailLink = true
+  #endif
+  @State var isPresented = false
+
+  #if os(iOS)
+    public var body: some View {
+      if #available(iOS 14, *) {
+        self.navigationLink
+          .isDetailLink(self._isDetailLink)
+          .onAppear { self.isPresented = self.valueIsPresented }
+          .onChange(of: self.valueIsPresented) { self.isPresented = $0 }
+          .onChange(of: self.isPresented) { self.valueIsPresented = $0 }
+      } else {
+        self.navigationLink
+          .isDetailLink(self._isDetailLink)
+          .onAppear { self.isPresented = self.valueIsPresented }
+      }
+    }
+  #else
+    public var body: some View {
+      self.navigationLink
+    }
+  #endif
+}
+
+extension NavigationLink {
+  init(
+    navigationLink: SwiftUI.NavigationLink<Label, Destination>,
+    _isDetailLink: Bool = false
+  ) {
+    let isPresented = State(wrappedValue: false)
+    self.navigationLink = navigationLink
+    self._valueIsPresented = isPresented.projectedValue
+    self._isDetailLink = _isDetailLink
+    self._isPresented = isPresented
+  }
+}
+
+fileprivate extension Binding {
+  init(initialValue: Value) {
+    var value = initialValue
+    self.init(
+      get: { value },
+      set: { value = $0 }
+    )
+  }
+}
+
 extension NavigationLink {
   /// Creates a navigation link that presents the destination view when a bound value is non-`nil`.
   ///
@@ -128,6 +180,518 @@ extension NavigationLink {
       onNavigate: onNavigate,
       destination: destination,
       label: label
+    )
+  }
+}
+
+// MARK: - SwiftUI Overlays
+
+extension NavigationLink {
+  @_alwaysEmitIntoClient
+  public init(
+    @ViewBuilder destination: () -> Destination,
+    @ViewBuilder label: () -> Label
+  ) {
+    self.init(destination: destination(), label: label)
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(value:label:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message: "use NavigationLink(value:label:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(value:label:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message: "use NavigationLink(value:label:) inside a NavigationStack or NavigationSplitView"
+  )
+  @_alwaysEmitIntoClient
+  public init(
+    isActive: Binding<Bool>,
+    @ViewBuilder destination: () -> Destination,
+    @ViewBuilder label: () -> Label
+  ) {
+    self.init(destination: destination(), isActive: isActive, label: label)
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(value:label:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message:
+      "use NavigationLink(value:label:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(value:label:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message:
+      "use NavigationLink(value:label:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @_alwaysEmitIntoClient
+  public init<V: Hashable>(
+    tag: V,
+    selection: Binding<V?>,
+    @ViewBuilder destination: () -> Destination,
+    @ViewBuilder label: () -> Label
+  ) {
+    self.init(
+      destination: destination(),
+      tag: tag,
+      selection: selection,
+      label: label
+    )
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  public init(
+    destination: Destination,
+    @ViewBuilder label: () -> Label
+  ) {
+    self.init(navigationLink: .init(destination: destination, label: label))
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(value:label:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message: "use NavigationLink(value:label:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(value:label:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message: "use NavigationLink(value:label:) inside a NavigationStack or NavigationSplitView"
+  )
+  public init(
+    destination: Destination,
+    isActive: Binding<Bool>,
+    @ViewBuilder label: () -> Label
+  ) {
+    let isPresented = State(wrappedValue: false)
+    self.navigationLink = .init(
+      destination: destination,
+      isActive: isPresented.projectedValue,
+      label: label
+    )
+    self._valueIsPresented = isActive
+    self._isPresented = isPresented
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(value:label:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message:
+      "use NavigationLink(value:label:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(value:label:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message:
+      "use NavigationLink(value:label:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  public init<V: Hashable>(
+    destination: Destination,
+    tag: V,
+    selection: Binding<V?>,
+    @ViewBuilder label: () -> Label
+  ) {
+    let isPresented = State(wrappedValue: false)
+    self.navigationLink = .init(
+      destination: destination,
+      tag: tag,
+      selection: isPresented.projectedValue.tag(tag),
+      label: label
+    )
+    self._valueIsPresented = selection.isPresent()
+    self._isPresented = isPresented
+  }
+}
+
+@available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+extension NavigationLink where Destination == Never {
+  public init<P: Hashable>(
+    value: P?,
+    @ViewBuilder label: () -> Label
+  ) {
+    self.init(navigationLink: .init(value: value, label: label))
+  }
+
+  public init<P: Hashable>(
+    _ titleKey: LocalizedStringKey,
+    value: P?
+  ) where Label == Text {
+    self.init(value: value) { Text(titleKey) }
+  }
+
+  @_disfavoredOverload
+  public init<S: StringProtocol, P: Hashable>(
+    _ title: S,
+    value: P?
+  ) where Label == Text {
+    self.init(value: value) { Text(title) }
+  }
+
+  public init<P: Codable & Hashable>(
+    value: P?,
+    @ViewBuilder label: () -> Label
+  ) {
+    self.init(navigationLink: .init(value: value, label: label))
+  }
+
+  public init<P: Codable & Hashable>(
+    _ titleKey: LocalizedStringKey,
+    value: P?
+  ) where Label == Text {
+    self.init(value: value) { Text(titleKey) }
+  }
+
+  @_disfavoredOverload
+  public init<S: StringProtocol, P: Codable & Hashable>(
+    _ title: S,
+    value: P?
+  ) where Label == Text {
+    self.init(value: value) { Text(title) }
+  }
+}
+
+@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
+extension NavigationLink where Label == Text {
+  @_alwaysEmitIntoClient
+  public init(
+    _ titleKey: LocalizedStringKey,
+    @ViewBuilder destination: () -> Destination
+  ) {
+    self.init(titleKey, destination: destination())
+  }
+
+  @_alwaysEmitIntoClient
+  @_disfavoredOverload
+  public init<S: StringProtocol>(
+    _ title: S,
+    @ViewBuilder destination: () -> Destination
+  ) {
+    self.init(title, destination: destination())
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @_alwaysEmitIntoClient
+  public init(
+    _ titleKey: LocalizedStringKey,
+    isActive: Binding<Bool>,
+    @ViewBuilder destination: () -> Destination
+  ) {
+    self.init(titleKey, destination: destination(), isActive: isActive)
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @_alwaysEmitIntoClient
+  @_disfavoredOverload
+  public init<S: StringProtocol>(
+    _ title: S,
+    isActive: Binding<Bool>,
+    @ViewBuilder destination: () -> Destination
+  ) {
+    self.init(title, destination: destination(), isActive: isActive)
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @_alwaysEmitIntoClient
+  public init<V: Hashable>(
+    _ titleKey: LocalizedStringKey,
+    tag: V,
+    selection: Binding<V?>,
+    @ViewBuilder destination: () -> Destination
+  ) {
+    self.init(titleKey, destination: destination(), tag: tag, selection: selection)
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @_alwaysEmitIntoClient
+  @_disfavoredOverload
+  public init<S: StringProtocol, V: Hashable>(
+    _ title: S,
+    tag: V,
+    selection: Binding<V?>,
+    @ViewBuilder destination: () -> Destination
+  ) {
+    self.init(title, destination: destination(), tag: tag, selection: selection)
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  public init(
+    _ titleKey: LocalizedStringKey,
+    destination: Destination
+  ) {
+    self.init(destination: destination) { Text(titleKey) }
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 100000, message: "Pass a closure as the destination"
+  )
+  @_disfavoredOverload
+  public init<S: StringProtocol>(
+    _ title: S,
+    destination: Destination
+  ) {
+    self.init(destination: destination) { Text(title) }
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  public init(
+    _ titleKey: LocalizedStringKey,
+    destination: Destination,
+    isActive: Binding<Bool>
+  ) {
+    self.init(destination: destination, isActive: isActive) { Text(titleKey) }
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message: "use NavigationLink(_:value:) inside a NavigationStack or NavigationSplitView"
+  )
+  @_disfavoredOverload
+  public init<S: StringProtocol>(
+    _ title: S,
+    destination: Destination,
+    isActive: Binding<Bool>
+  ) {
+    self.init(destination: destination, isActive: isActive) { Text(title) }
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  public init<V: Hashable>(
+    _ titleKey: LocalizedStringKey,
+    destination: Destination,
+    tag: V,
+    selection: Binding<V?>
+  ) {
+    self.init(destination: destination, tag: tag, selection: selection) { Text(titleKey) }
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message:
+      "use NavigationLink(_:value:) inside a List within a NavigationStack or NavigationSplitView"
+  )
+  @_disfavoredOverload
+  public init<S: StringProtocol, V: Hashable>(
+    _ title: S, destination: Destination, tag: V, selection: Binding<V?>
+  ) {
+    self.init(destination: destination, tag: tag, selection: selection) { Text(title) }
+  }
+}
+
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+extension NavigationLink {
+  @available(macOS, unavailable)
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
+  public func isDetailLink(_ isDetailLink: Bool) -> some View {
+    #if os(iOS)
+      Self(
+        navigationLink: self.navigationLink,
+        _isDetailLink: isDetailLink
+      )
+    #else
+      Self(
+        navigationLink: self.navigationLink
+      )
+    #endif
+  }
+}
+
+fileprivate extension Binding where Value == Bool {
+  func tag<V: Hashable>(_ tag: V) -> Binding<V?> {
+    .init(
+      get: { self.wrappedValue ? tag : nil },
+      set: { self.transaction($1).wrappedValue = $0 == tag }
     )
   }
 }
