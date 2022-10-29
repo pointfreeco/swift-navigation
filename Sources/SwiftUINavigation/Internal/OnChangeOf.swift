@@ -4,7 +4,11 @@ import Combine
 extension View {
   @_disfavoredOverload
   func _onChange<V: Equatable>(of value: V, perform action: @escaping (V) -> Void) -> some View {
-    self.modifier(ChangeObserver(value: value, action: action))
+    if #available(iOS 14, *) {
+      return self.onChange(of: value, perform: action)
+    } else {
+      return self.modifier(ChangeObserver(value: value, action: action))
+    }
   }
 }
 
