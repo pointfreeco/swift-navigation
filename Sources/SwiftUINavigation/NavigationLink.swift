@@ -55,7 +55,7 @@ extension NavigationLink {
   ///         self.postToEdit = isActive ? post : nil
   ///       } destination: { $draft in
   ///         EditPostView(post: $draft)
-  ///       } onNavigate:  label: {
+  ///       } label: {
   ///         Text(post.title)
   ///       }
   ///     }
@@ -90,12 +90,14 @@ extension NavigationLink {
     @ViewBuilder destination: (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
-    let createdAt = Date()
+    var willDeepLink = value.isPresent().wrappedValue
     self.init(
       destination: Binding(unwrapping: value).map(destination),
       isActive: value.isPresent().didSet {
-        if Date().timeIntervalSince(createdAt) > 0.3 {
+        if !willDeepLink {
           onNavigate($0)
+        } else {
+          willDeepLink = false
         }
       },
       label: label

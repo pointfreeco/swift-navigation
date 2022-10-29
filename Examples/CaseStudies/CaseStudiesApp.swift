@@ -28,22 +28,30 @@ struct NestedView: View {
   @ObservedObject var model: NestedModel
 
   var body: some View {
-    NavigationLink(
-      unwrapping: self.$model.child
-    ) { isActive in
-      self.model.child = isActive ? NestedModel() : nil
-    } destination: { $child in
-      NestedView(model: child)
-    } label: {
-      Text("Go to child feature")
+    VStack {
+      Text("\(self.model.date)")
+      NavigationLink(
+        unwrapping: self.$model.child
+      ) { isActive in
+        self.model.child = isActive ? NestedModel() : nil
+      } destination: { $child in
+        NestedView(model: child)
+      } label: {
+        Text("Go to child feature")
+      }
     }
   }
 }
 
 class NestedModel: ObservableObject, Equatable {
   @Published var child: NestedModel?
+  @Published var date = Date()
+
   init(child: NestedModel? = nil) {
     self.child = child
+    Timer.publish(every: 1, on: .main, in: .default)
+      .autoconnect()
+      .assign(to: &self.$date)
   }
 
   static func == (lhs: NestedModel, rhs: NestedModel) -> Bool {
