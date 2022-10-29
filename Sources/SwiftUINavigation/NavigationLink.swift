@@ -32,6 +32,13 @@ extension NavigationLink {
   }
 }
 
+// TODO: Now that we shim all the permutations of `NavigationLink`, should we support them for ours?
+// E.g.,
+//   .init(_ string:unwrapping value:onNavigate:destination:)
+//   .init(_ stringKey:unwrapping value:onNavigate:destination:)
+//   .init(_ string:unwrapping enum:case:onNavigate:destination:)
+//   .init(_ stringKey:unwrapping enum:case:onNavigate:destination:)
+
 extension NavigationLink {
   /// Creates a navigation link that presents the destination view when a bound value is non-`nil`.
   ///
@@ -167,6 +174,8 @@ extension NavigationLink {
 }
 
 // MARK: - SwiftUI Overlays
+
+// TODO: How do we want to document these? Link to online SwiftUI documentation?
 
 extension NavigationLink {
   @_alwaysEmitIntoClient
