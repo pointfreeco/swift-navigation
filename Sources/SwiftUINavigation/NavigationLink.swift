@@ -16,15 +16,15 @@ public struct NavigationLink<Label: View, Destination: View>: View {
       self.navigationLink(self.$isPresented)
         .isDetailLink(self._isDetailLink)
         .onAppear { self.isPresented = valueIsPresented }
-        ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
         ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
+        ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
     }
   #else
     public var body: some View {
       self.navigationLink
         .onAppear { self.isPresented = valueIsPresented }
-        ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
         ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
+        ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
     }
   #endif
 }
@@ -87,12 +87,17 @@ extension NavigationLink {
   public init<Value, WrappedDestination>(
     unwrapping value: Binding<Value?>,
     onNavigate: @escaping (_ isActive: Bool) -> Void,
-    @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
+    @ViewBuilder destination: (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
+    let createdAt = Date()
     self.init(
       destination: Binding(unwrapping: value).map(destination),
-      isActive: value.isPresent().didSet(onNavigate),
+      isActive: value.isPresent().didSet {
+        if Date().timeIntervalSince(createdAt) > 0.3 {
+          onNavigate($0)
+        }
+      },
       label: label
     )
   }
@@ -110,7 +115,7 @@ extension NavigationLink {
     _ title: S,
     unwrapping value: Binding<Value?>,
     onNavigate: @escaping (_ isActive: Bool) -> Void,
-    @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
+    @ViewBuilder destination: (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination?, Label == Text {
     self.init(
@@ -134,7 +139,7 @@ extension NavigationLink {
     _ titleKey: LocalizedStringKey,
     unwrapping value: Binding<Value?>,
     onNavigate: @escaping (_ isActive: Bool) -> Void,
-    @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
+    @ViewBuilder destination: (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination?, Label == Text {
     self.init(
@@ -206,8 +211,8 @@ extension NavigationLink {
   public init<Enum, Case, WrappedDestination>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
-    onNavigate: @escaping (Bool) -> Void,
-    @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
+    onNavigate: @escaping (_ isActive: Bool) -> Void,
+    @ViewBuilder destination: (Binding<Case>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
     self.init(
@@ -231,8 +236,8 @@ extension NavigationLink {
     _ title: S,
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
-    onNavigate: @escaping (Bool) -> Void,
-    @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination
+    onNavigate: @escaping (_ isActive: Bool) -> Void,
+    @ViewBuilder destination: (Binding<Case>) -> WrappedDestination
   ) where Destination == WrappedDestination?, Label == Text {
     self.init(
       unwrapping: `enum`.case(casePath),
@@ -256,8 +261,8 @@ extension NavigationLink {
     _ titleKey: LocalizedStringKey,
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
-    onNavigate: @escaping (Bool) -> Void,
-    @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination
+    onNavigate: @escaping (_ isActive: Bool) -> Void,
+    @ViewBuilder destination: (Binding<Case>) -> WrappedDestination
   ) where Destination == WrappedDestination?, Label == Text {
     self.init(
       unwrapping: `enum`.case(casePath),
