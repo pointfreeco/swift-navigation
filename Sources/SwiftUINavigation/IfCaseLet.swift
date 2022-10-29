@@ -1,5 +1,8 @@
 import SwiftUI
 
+// TODO: Can we avoid `@escaping` and eagerly calculate a single `Content` on initialization?
+// TODO: Can we roll `IfCaseLet` into this view?
+
 /// A view that computes content by extracting a case from a binding to an enum and passing a
 /// non-optional binding to the case's associated value to its content closure.
 ///

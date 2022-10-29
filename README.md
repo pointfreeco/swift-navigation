@@ -250,7 +250,7 @@ For example, suppose you have built a `BottomSheet` view for presenting a modal-
 ```swift
 struct BottomSheet<Content>: View where Content: View {
   @Binding var isActive: Bool
-  let content: () -> Content
+  @ViewBuilder let content: Content
 
   var body: some View {
     ...
@@ -266,7 +266,7 @@ For example, an initializer that allows the bottom sheet to be presented and dis
 extension BottomSheet {
   init<Value, WrappedContent>(
     unwrapping value: Binding<Value?>,
-    @ViewBuilder content: @escaping (Binding<Value>) -> WrappedContent
+    @ViewBuilder content: (Binding<Value>) -> WrappedContent
   )
   where Content == WrappedContent?
   {
@@ -285,7 +285,7 @@ extension BottomSheet {
   init<Enum, Case, WrappedContent>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
-    @ViewBuilder content: @escaping (Binding<Case>) -> WrappedContent
+    @ViewBuilder content: (Binding<Case>) -> WrappedContent
   )
   where Content == WrappedContent?
   {
