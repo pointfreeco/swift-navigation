@@ -1,52 +1,34 @@
 public struct NavigationLink<Label: View, Destination: View>: View {
   private let navigationLink: SwiftUI.NavigationLink<Label, Destination>
-  @Binding var valueIsPresented: Bool
   #if os(iOS)
     private var _isDetailLink = true
   #endif
-  @State var isPresented = false
+  @Binding var isPresented: Bool
+  @Binding var valueIsPresented: Bool
 
   #if os(iOS)
     public var body: some View {
-      if #available(iOS 14, *) {
-        self.navigationLink
-          .isDetailLink(self._isDetailLink)
-          .onAppear { self.isPresented = self.valueIsPresented }
-          .onChange(of: self.valueIsPresented) { self.isPresented = $0 }
-          .onChange(of: self.isPresented) { self.valueIsPresented = $0 }
-      } else {
-        self.navigationLink
-          .isDetailLink(self._isDetailLink)
-          .onAppear { self.isPresented = self.valueIsPresented }
-      }
+      self.navigationLink
+        .isDetailLink(self._isDetailLink)
+        .onAppear { self.isPresented = valueIsPresented }
+        ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
+        ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
     }
   #else
     public var body: some View {
       self.navigationLink
+        .onAppear { self.isPresented = valueIsPresented }
+        ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
+        ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
     }
   #endif
 }
 
 extension NavigationLink {
-  init(
-    navigationLink: SwiftUI.NavigationLink<Label, Destination>,
-    _isDetailLink: Bool = false
-  ) {
-    let isPresented = State(wrappedValue: false)
+  fileprivate init(navigationLink: SwiftUI.NavigationLink<Label, Destination>) {
     self.navigationLink = navigationLink
-    self._valueIsPresented = isPresented.projectedValue
-    self._isDetailLink = _isDetailLink
-    self._isPresented = isPresented
-  }
-}
-
-fileprivate extension Binding {
-  init(initialValue: Value) {
-    var value = initialValue
-    self.init(
-      get: { value },
-      set: { value = $0 }
-    )
+    self._isPresented = Binding(initialValue: false)
+    self._valueIsPresented = Binding(initialValue: false)
   }
 }
 
@@ -295,14 +277,12 @@ extension NavigationLink {
     isActive: Binding<Bool>,
     @ViewBuilder label: () -> Label
   ) {
-    let isPresented = State(wrappedValue: false)
-    self.navigationLink = .init(
-      destination: destination,
-      isActive: isPresented.projectedValue,
-      label: label
+    let isPresented = Binding(initialValue: false)
+    self.init(
+      navigationLink: .init(destination: destination, isActive: isPresented, label: label),
+      isPresented: isPresented,
+      valueIsPresented: isActive
     )
-    self._valueIsPresented = isActive
-    self._isPresented = isPresented
   }
 
   @available(
@@ -331,15 +311,17 @@ extension NavigationLink {
     selection: Binding<V?>,
     @ViewBuilder label: () -> Label
   ) {
-    let isPresented = State(wrappedValue: false)
-    self.navigationLink = .init(
-      destination: destination,
-      tag: tag,
-      selection: isPresented.projectedValue.tag(tag),
-      label: label
+    let isPresented = Binding(initialValue: false)
+    self.init(
+      navigationLink: .init(
+        destination: destination,
+        tag: tag,
+        selection: isPresented.tag(tag),
+        label: label
+      ),
+      isPresented: isPresented,
+      valueIsPresented: selection.isPresent()
     )
-    self._valueIsPresented = selection.isPresent()
-    self._isPresented = isPresented
   }
 }
 
@@ -677,18 +659,33 @@ extension NavigationLink {
     #if os(iOS)
       Self(
         navigationLink: self.navigationLink,
-        _isDetailLink: isDetailLink
+        _isDetailLink: isDetailLink,
+        isPresented: self.$isPresented,
+        valueIsPresented: self.$valueIsPresented
       )
     #else
       Self(
-        navigationLink: self.navigationLink
+        navigationLink: self.navigationLink,
+        isPresented: self.$isPresented,
+        valueIsPresented: self.$valueIsPresented
       )
     #endif
   }
 }
 
-fileprivate extension Binding where Value == Bool {
-  func tag<V: Hashable>(_ tag: V) -> Binding<V?> {
+extension Binding {
+  // TODO: Move this to `Binding.swift` helpers and make `public`?
+  fileprivate init(initialValue: Value) {
+    var value = initialValue
+    self.init(
+      get: { value },
+      set: { value = $0 }
+    )
+  }
+}
+
+extension Binding where Value == Bool {
+  fileprivate func tag<V: Hashable>(_ tag: V) -> Binding<V?> {
     .init(
       get: { self.wrappedValue ? tag : nil },
       set: { self.transaction($1).wrappedValue = $0 == tag }
