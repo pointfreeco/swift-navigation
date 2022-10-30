@@ -15,14 +15,14 @@ public struct NavigationLink<Label: View, Destination: View>: View {
     public var body: some View {
       self.navigationLink(self.$isPresented)
         .isDetailLink(self._isDetailLink)
-        .onAppear { self.isPresented = valueIsPresented }
+        .onAppear { self.isPresented = self.valueIsPresented }
         ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
         ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
     }
   #else
     public var body: some View {
       self.navigationLink
-        .onAppear { self.isPresented = valueIsPresented }
+        .onAppear { self.isPresented = self.valueIsPresented }
         ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
         ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
     }
