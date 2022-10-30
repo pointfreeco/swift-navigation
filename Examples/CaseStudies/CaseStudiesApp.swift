@@ -29,7 +29,7 @@ struct NestedView: View {
 
   var body: some View {
     VStack {
-      Text("\(self.model.date)")
+      Text("\(self.model.secondsElapsed)")
       NavigationLink(
         unwrapping: self.$model.child
       ) { isActive in
@@ -40,12 +40,18 @@ struct NestedView: View {
         Text("Go to child feature")
       }
     }
+    .navigationTitle(Text("\(self.model.secondsElapsed)"))
   }
 }
 
-class NestedModel: ObservableObject, Equatable {
+final class NestedModel: ObservableObject, Equatable {
   @Published var child: NestedModel?
   @Published var date = Date()
+  @Published var start = Date()
+
+  var secondsElapsed: Int {
+    Int(self.date.timeIntervalSince1970 - self.start.timeIntervalSince1970)
+  }
 
   init(child: NestedModel? = nil) {
     self.child = child

@@ -10,6 +10,7 @@ Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
   * [Tools](#tools)
       * [Navigation overloads](#navigation-api-overloads)
       * [Navigation views](#navigation-views)
+      * [NavigationLink polyfill](#navigationlink-polyfill)
       * [Binding transformations](#binding-transformations)
   * [Examples](#examples)
   * [Learn more](#learn-more)
@@ -236,6 +237,60 @@ struct InventoryItemView {
   }
 }
 ```
+
+### `NavigationLink` polyfill
+
+The `NavigationLink` type has been around in SwiftUI from the very beginning, but has also had a 
+serious bug from the very beginning: it was not possible to deep link into a state of the 
+application where more than 2 screens were pushed onto the stack.
+
+The easiest way to reproduce this problem is to construct an `ObservableObject` conformance that
+recursively holds onto an optional field of itself:
+
+```swift
+final class NestedModel: ObservableObject, Equatable {
+  @Published var child: NestedModel?
+  init(child: NestedModel? = nil) {
+    self.child = child
+  }
+}
+```
+
+This allows you to build up a model that is nested any number of layers deep:
+
+```swift
+NestedModel(
+  child: NestedModel(
+    child: NestedModel(
+      child: NestedModel(child: nil)
+    )
+  )
+)
+```
+
+This model can power a view that has a navigation link so that 
+
+```swift
+struct NestedView: View {
+  @ObservedObject var model: NestedModel
+
+  var body: some View {
+    VStack {
+      NavigationLink(
+        unwrapping: self.$model.child
+      ) { isActive in
+        self.model.child = isActive ? NestedModel() : nil
+      } destination: { $child in
+        NestedView(model: child)
+      } label: {
+        Text("Go to child feature")
+      }
+    }
+  }
+}
+```
+
+ 
 
 ### Binding transformations
 
