@@ -242,10 +242,11 @@ struct InventoryItemView {
 
 The `NavigationLink` type has been around in SwiftUI from the very beginning, but has also had a 
 serious bug from the very beginning: it was not possible to deep link into a state of the 
-application where more than 2 screens were pushed onto the stack.
+application where more than 2 screens were pushed onto the stack. This library comes with a 
+"[polyfill][polyfill-wiki]" that behaves exactly like `NavigationLink` but fixes this critical bug.
 
-The easiest way to reproduce this problem is to construct an `ObservableObject` conformance that
-recursively holds onto an optional field of itself:
+To see the problem, simple implement an `ObservableObject` conformance that recursively holds onto 
+an optional field of itself:
 
 ```swift
 final class NestedModel: ObservableObject, Equatable {
@@ -262,13 +263,18 @@ This allows you to build up a model that is nested any number of layers deep:
 NestedModel(
   child: NestedModel(
     child: NestedModel(
-      child: NestedModel(child: nil)
+      child: NestedModel(
+        child: NestedModel(
+          child: NestedModel(child: /* ... */)
+        )
+      )
     )
   )
 )
 ```
 
-This model can power a view that has a navigation link so that 
+This model can power a view with a navigation link that is driven by the optionality of the `child`
+state: 
 
 ```swift
 struct NestedView: View {
@@ -290,7 +296,42 @@ struct NestedView: View {
 }
 ```
 
- 
+When this view is run in the simulator or on a device, you can repeatedly tap the "Go to child 
+feature" button to drill down any number of levels you want.
+
+But, if you _launch_ the application in a state with many `child` states populated: 
+
+```swift
+@main
+struct CaseStudiesApp: App {
+  var body: some Scene {
+    WindowGroup {
+      NavigationView {
+        NestedView(
+          model: NestedModel(
+            child: NestedModel(
+              child: NestedModel(
+                child: NestedModel(
+                  child: NestedModel(child: nil)
+                )
+              )
+            )
+          )
+        )
+      }
+      .navigationViewStyle(.stack)
+    }
+  }
+}
+```
+
+…you will see a strange pop animation immediately, and you will see that the navigation view is
+only drilled down 2 levels. This severly limits the usefulness of `NavigationLink` for restoring
+applications to any state.
+
+This is what motivates this library to ship a new type with the same name and functionality, but 
+with that critical bug fixed. You can continue using `NavigationLink` just as you normally would,
+but if you further import `SwiftUINavigation` instead of `SwiftUI` you will get our polyfill type with the bug fixed.  
 
 ### Binding transformations
 
@@ -397,3 +438,5 @@ The latest documentation for the SwiftUI Navigation APIs is available [here](htt
 ## License
 
 This library is released under the MIT license. See [LICENSE](LICENSE) for details.
+
+[polyfill-wiki]: https://en.wikipedia.org/wiki/Polyfill_(programming)

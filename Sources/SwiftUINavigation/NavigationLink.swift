@@ -18,7 +18,7 @@ public struct NavigationLink<Label: View, Destination: View>: View {
         .onAppear { self.isPresented = self.valueIsPresented }
         ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
         ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
-    }
+    } 
   #else
     public var body: some View {
       self.navigationLink
@@ -90,16 +90,19 @@ extension NavigationLink {
     @ViewBuilder destination: (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
-    var willDeepLink = value.isPresent().wrappedValue
     self.init(
       destination: Binding(unwrapping: value).map(destination),
-      isActive: value.isPresent().didSet {
-        if !willDeepLink {
-          onNavigate($0)
-        } else {
-          willDeepLink = false
+      isActive: Binding(
+        get: { value.wrappedValue != nil },
+        set: { isActive in
+          if
+            value.wrappedValue == nil && isActive
+              || value.wrappedValue != nil && !isActive
+          {
+            onNavigate(isActive)
+          }
         }
-      },
+      ),
       label: label
     )
   }

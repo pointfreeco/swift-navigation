@@ -1,4 +1,5 @@
 import SwiftUINavigation
+import SwiftUI
 
 @main
 struct CaseStudiesApp: App {
@@ -39,6 +40,8 @@ struct NestedView: View {
       } label: {
         Text("Go to child feature")
       }
+
+      // TODO: document that shouldn't import both SwiftUI and SwiftUINavigation
     }
     .navigationTitle(Text("\(self.model.secondsElapsed)"))
   }
