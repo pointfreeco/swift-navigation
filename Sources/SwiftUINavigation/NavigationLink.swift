@@ -1,7 +1,31 @@
-/// A view that controls a navigation presentation.
+/// A drop-in replacement for SwiftUI's `NavigationView` that works around longstanding bugs in the
+/// framework.
+///
+/// > Important: Avoid importing both `SwiftUI` and `SwiftUINavigation` from the same file, as it
+/// > introduces ambiguity between SwiftUI's `NavigationView` and this layover.
+/// >
+/// > ```swift
+/// > import SwiftUI
+/// > import SwiftUINavigation
+/// >
+/// > // ...
+/// >
+/// > NavigationView(/* ... */) 🛑
+/// > ```
+/// >
+/// > Instead, simply import `SwiftUINavigation`, which re-exports SwiftUI automatically and will
+/// > favor its overlay over the original implementation:
+/// >
+/// > ```swift
+/// > import SwiftUINavigation
+/// >
+/// > // ...
+/// >
+/// > NavigationView(/* ... */) ✅
+/// > ```
 ///
 /// See
-/// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink)
+/// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink)
 /// for more information.
 public struct NavigationLink<Label: View, Destination: View>: View {
   private let navigationLink: (Binding<Bool>) -> SwiftUI.NavigationLink<Label, Destination>
@@ -283,7 +307,7 @@ extension NavigationLink {
   /// Creates a navigation link that presents the destination view.
   ///
   /// See
-  /// [the official documentation(https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-27n7s)
+  /// [the framework documentation(https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-27n7s)
   /// for more information.
   @_alwaysEmitIntoClient
   public init(
@@ -296,7 +320,7 @@ extension NavigationLink {
   /// Creates a navigation link that presents the destination view when active.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(isactive:destination:label:))
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(isactive:destination:label:))
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -327,7 +351,7 @@ extension NavigationLink {
   /// equals a given tag value.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(tag:selection:destination:label:))
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(tag:selection:destination:label:))
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -367,7 +391,7 @@ extension NavigationLink {
   /// Creates a navigation link that presents the destination view.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-9dxix)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-9dxix)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
@@ -391,7 +415,7 @@ extension NavigationLink {
   /// Creates a navigation link that presents the destination view when active.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:isactive:label:))
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:isactive:label:))
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -425,7 +449,7 @@ extension NavigationLink {
   /// equals a given tag value.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:tag:selection:label:))
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:tag:selection:label:))
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -474,7 +498,7 @@ extension NavigationLink where Destination == Never {
   /// Creates a navigation link that presents the view corresponding to a value.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(value:label:)-4jswo)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(value:label:)-4jswo)
   /// for more information.
   public init<P: Hashable>(
     value: P?,
@@ -487,7 +511,7 @@ extension NavigationLink where Destination == Never {
   /// that the link generates from a localized string key.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:value:)-kj9v)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:value:)-kj9v)
   /// for more information.
   public init<P: Hashable>(
     _ titleKey: LocalizedStringKey,
@@ -500,7 +524,7 @@ extension NavigationLink where Destination == Never {
   /// that the link generates from a title string.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:value:)-91u0d)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:value:)-91u0d)
   /// for more information.
   @_disfavoredOverload
   public init<S: StringProtocol, P: Hashable>(
@@ -513,7 +537,7 @@ extension NavigationLink where Destination == Never {
   /// Creates a navigation link that presents the view corresponding to a codable value.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(value:label:)-3qb8y)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(value:label:)-3qb8y)
   /// for more information.
   public init<P: Codable & Hashable>(
     value: P?,
@@ -526,7 +550,7 @@ extension NavigationLink where Destination == Never {
   /// label that the link generates from a localized string key.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:value:)-810b2)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:value:)-810b2)
   /// for more information.
   public init<P: Codable & Hashable>(
     _ titleKey: LocalizedStringKey,
@@ -539,7 +563,7 @@ extension NavigationLink where Destination == Never {
   /// label that the link generates from a title string.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:value:)-9ziux)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:value:)-9ziux)
   /// for more information.
   @_disfavoredOverload
   public init<S: StringProtocol, P: Codable & Hashable>(
@@ -556,7 +580,7 @@ extension NavigationLink where Label == Text {
   /// generates from a localized string key.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:)-7d6im)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:)-7d6im)
   /// for more information.
   @_alwaysEmitIntoClient
   public init(
@@ -570,7 +594,7 @@ extension NavigationLink where Label == Text {
   /// generates from a title string.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:)-6z03e)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:)-6z03e)
   /// for more information.
   @_alwaysEmitIntoClient
   @_disfavoredOverload
@@ -585,7 +609,7 @@ extension NavigationLink where Label == Text {
   /// the link generates from a localized string key.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:isactive:destination:)-gn8q)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:isactive:destination:)-gn8q)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -616,7 +640,7 @@ extension NavigationLink where Label == Text {
   /// the link generates from a title string.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:isactive:destination:)-6xw7h)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:isactive:destination:)-6xw7h)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -649,7 +673,7 @@ extension NavigationLink where Label == Text {
   /// string key.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:tag:selection:destination:)-510fq)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:tag:selection:destination:)-510fq)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -685,7 +709,7 @@ extension NavigationLink where Label == Text {
   /// matches a value you provide, using a text label that the link generates from a title string.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:tag:selection:destination:)-4oa09)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:tag:selection:destination:)-4oa09)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -722,7 +746,7 @@ extension NavigationLink where Label == Text {
   /// generates from a localized string key.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:)-3xblz)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:)-3xblz)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
@@ -747,7 +771,7 @@ extension NavigationLink where Label == Text {
   /// generates from a title string.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:)-6hslu)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:)-6hslu)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 100000, message: "Pass a closure as the destination"
@@ -773,7 +797,7 @@ extension NavigationLink where Label == Text {
   /// the link generates from a localized string key.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:isactive:)-4whx5)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:isactive:)-4whx5)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -803,7 +827,7 @@ extension NavigationLink where Label == Text {
   /// the link generates from a title string.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:isactive:)-3v44)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:isactive:)-3v44)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -835,7 +859,7 @@ extension NavigationLink where Label == Text {
   /// string key.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:tag:selection:)-1rm3u)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:tag:selection:)-1rm3u)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -870,7 +894,7 @@ extension NavigationLink where Label == Text {
   /// matches a value you provide, using a text label that the link generates from a title string.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:tag:selection:)-6unyq)
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/init(_:destination:tag:selection:)-6unyq)
   /// for more information.
   @available(
     iOS, introduced: 13, deprecated: 16,
@@ -911,7 +935,7 @@ extension NavigationLink {
   /// navigation view.
   ///
   /// See
-  /// [the official documentation](https://developer.apple.com/documentation/swiftui/navigationlink/isdetaillink(_:))
+  /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink/isdetaillink(_:))
   /// for more information.
   @available(macOS, unavailable)
   @available(tvOS, unavailable)
