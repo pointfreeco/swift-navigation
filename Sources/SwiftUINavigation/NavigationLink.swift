@@ -95,10 +95,8 @@ extension NavigationLink {
       isActive: Binding(
         get: { value.wrappedValue != nil },
         set: { isActive in
-          if
-            value.wrappedValue == nil && isActive
-              || value.wrappedValue != nil && !isActive
-          {
+          let wasActive = value.wrappedValue != nil
+          if !wasActive && isActive || wasActive && !isActive {
             onNavigate(isActive)
           }
         }

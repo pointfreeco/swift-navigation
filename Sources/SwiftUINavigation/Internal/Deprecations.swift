@@ -9,8 +9,9 @@ extension NavigationLink {
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
     self.init(
-      destination: Binding(unwrapping: value).map(destination),
-      isActive: value.isPresent().didSet(onNavigate),
+      unwrapping: value,
+      onNavigate: onNavigate,
+      destination: destination,
       label: label
     )
   }
@@ -24,7 +25,8 @@ extension NavigationLink {
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
     self.init(
-      unwrapping: `enum`.case(casePath),
+      unwrapping: `enum`,
+      case: casePath,
       onNavigate: onNavigate,
       destination: destination,
       label: label
