@@ -24,9 +24,13 @@ let package = Package(
     .target(
       name: "SwiftUINavigation",
       dependencies: [
+        "_SwiftUIExports",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
+    ),
+    .target(
+      name: "_SwiftUIExports"
     ),
     .testTarget(
       name: "SwiftUINavigationTests",

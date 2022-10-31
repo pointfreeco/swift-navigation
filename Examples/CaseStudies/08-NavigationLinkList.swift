@@ -1,4 +1,3 @@
-import SwiftUI
 import SwiftUINavigation
 
 private let readMe = """

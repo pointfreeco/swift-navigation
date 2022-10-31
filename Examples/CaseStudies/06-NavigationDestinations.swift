@@ -1,4 +1,3 @@
-import SwiftUI
 import SwiftUINavigation
 
 @available(iOS 16, *)
