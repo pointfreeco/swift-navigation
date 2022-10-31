@@ -65,7 +65,7 @@ extension View {
       message: message
     )
   }
-  
+
   /// Presents an alert from a binding to an optional enum, and a case path to a specific case.
   ///
   /// A version of `alert(unwrapping:)` that works with enum state.
