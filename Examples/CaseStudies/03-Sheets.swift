@@ -73,6 +73,10 @@ private class ViewModel: ObservableObject {
   @Published var savedFacts: [Fact] = []
   private var task: Task<Void, Error>?
 
+  deinit {
+    self.task?.cancel()
+  }
+
   func numberFactButtonTapped() {
     self.isLoading = true
     self.fact = Fact(description: "\(self.count) is still loading...", number: self.count)

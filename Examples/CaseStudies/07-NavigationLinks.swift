@@ -73,6 +73,10 @@ private class ViewModel: ObservableObject {
   @Published var savedFacts: [Fact] = []
   private var task: Task<Void, Error>?
 
+  deinit {
+    self.task?.cancel()
+  }
+
   func setFactNavigation(isActive: Bool) {
     if isActive {
       self.isLoading = true
