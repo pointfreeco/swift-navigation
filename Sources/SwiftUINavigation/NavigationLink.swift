@@ -32,23 +32,23 @@ public struct NavigationLink<Label: View, Destination: View>: View {
   #if os(iOS)
     private var _isDetailLink = true
   #endif
-  @State var isPresented = false
-  @Binding var valueIsPresented: Bool
+  @Binding private var isPresented: Bool
+  @State private var isPresentedState = false
 
   #if os(iOS)
     public var body: some View {
-      self.navigationLink(self.$isPresented)
+      self.navigationLink(self.$isPresentedState)
         .isDetailLink(self._isDetailLink)
-        .onAppear { self.isPresented = self.valueIsPresented }
-        ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
-        ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
+        .onAppear { self.isPresentedState = self.isPresented }
+        ._onChange(of: self.isPresentedState) { self.isPresented = $0 }
+        ._onChange(of: self.isPresented) { self.isPresentedState = $0 }
     } 
   #else
     public var body: some View {
-      self.navigationLink
-        .onAppear { self.isPresented = self.valueIsPresented }
-        ._onChange(of: self.isPresented) { self.valueIsPresented = $0 }
-        ._onChange(of: self.valueIsPresented) { self.isPresented = $0 }
+      self.navigationLink(self.$isPresentedState)
+        .onAppear { self.isPresentedState = self.isPresented }
+        ._onChange(of: self.isPresentedState) { self.isPresented = $0 }
+        ._onChange(of: self.isPresented) { self.isPresentedState = $0 }
     }
   #endif
 }
@@ -56,7 +56,7 @@ public struct NavigationLink<Label: View, Destination: View>: View {
 extension NavigationLink {
   fileprivate init(navigationLink: SwiftUI.NavigationLink<Label, Destination>) {
     self.navigationLink = { _ in navigationLink }
-    self._valueIsPresented = Binding(initialValue: false)
+    self._isPresented = Binding(initialValue: false)
   }
 }
 
@@ -441,7 +441,7 @@ extension NavigationLink {
     let label = label()
     self.init(
       navigationLink: { .init(destination: destination, isActive: $0) { label } },
-      valueIsPresented: isActive
+      isPresented: isActive
     )
   }
 
@@ -488,7 +488,7 @@ extension NavigationLink {
           label
         }
       },
-      valueIsPresented: selection.isPresent()
+      isPresented: selection.isPresent()
     )
   }
 }
@@ -945,12 +945,12 @@ extension NavigationLink {
       Self(
         navigationLink: self.navigationLink,
         _isDetailLink: isDetailLink,
-        valueIsPresented: self.$valueIsPresented
+        isPresented: self.$isPresented
       )
     #else
       Self(
         navigationLink: self.navigationLink,
-        valueIsPresented: self.$valueIsPresented
+        isPresented: self.$isPresented
       )
     #endif
   }

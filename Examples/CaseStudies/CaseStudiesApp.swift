@@ -1,5 +1,4 @@
 import SwiftUINavigation
-import SwiftUI
 
 @main
 struct CaseStudiesApp: App {
