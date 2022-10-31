@@ -43,7 +43,7 @@ struct CustomComponents: View {
 private struct BottomMenuModifier<BottomMenuContent>: ViewModifier
 where BottomMenuContent: View {
   @Binding var isActive: Bool
-  let content: () -> BottomMenuContent
+  @ViewBuilder let content: BottomMenuContent
 
   func body(content: Content) -> some View {
     content.overlay(
@@ -60,7 +60,7 @@ where BottomMenuContent: View {
             .zIndex(1)
             .transition(.opacity)
 
-          self.content()
+          self.content
             .padding()
             .background(Color.white)
             .cornerRadius(10)
@@ -79,7 +79,7 @@ where BottomMenuContent: View {
 extension View {
   fileprivate func bottomMenu<Content>(
     isActive: Binding<Bool>,
-    @ViewBuilder content: @escaping () -> Content
+    @ViewBuilder content: () -> Content
   ) -> some View
   where Content: View {
     self.modifier(
@@ -92,7 +92,7 @@ extension View {
 
   fileprivate func bottomMenu<Value, Content>(
     unwrapping value: Binding<Value?>,
-    @ViewBuilder content: @escaping (Binding<Value>) -> Content
+    @ViewBuilder content: (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
     self.modifier(
@@ -106,7 +106,7 @@ extension View {
   fileprivate func bottomMenu<Enum, Case, Content>(
     unwrapping value: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
-    @ViewBuilder content: @escaping (Binding<Case>) -> Content
+    @ViewBuilder content: (Binding<Case>) -> Content
   ) -> some View
   where Content: View {
     self.bottomMenu(

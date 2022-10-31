@@ -10,6 +10,7 @@ Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
   * [Tools](#tools)
       * [Navigation overloads](#navigation-api-overloads)
       * [Navigation views](#navigation-views)
+      * [NavigationLink polyfill](#navigationlink-polyfill)
       * [Binding transformations](#binding-transformations)
   * [Examples](#examples)
   * [Learn more](#learn-more)
@@ -237,6 +238,101 @@ struct InventoryItemView {
 }
 ```
 
+### `NavigationLink` polyfill
+
+The `NavigationLink` type has been around in SwiftUI from the very beginning, but has also had a 
+serious bug from the very beginning: it was not possible to deep link into a state of the 
+application where more than 2 screens were pushed onto the stack. This library comes with a 
+"[polyfill][polyfill-wiki]" that behaves exactly like `NavigationLink` but fixes this critical bug.
+
+To see the problem, simple implement an `ObservableObject` conformance that recursively holds onto 
+an optional field of itself:
+
+```swift
+final class NestedModel: ObservableObject, Equatable {
+  @Published var child: NestedModel?
+  init(child: NestedModel? = nil) {
+    self.child = child
+  }
+}
+```
+
+This allows you to build up a model that is nested any number of layers deep:
+
+```swift
+NestedModel(
+  child: NestedModel(
+    child: NestedModel(
+      child: NestedModel(
+        child: NestedModel(
+          child: NestedModel(child: /* ... */)
+        )
+      )
+    )
+  )
+)
+```
+
+This model can power a view with a navigation link that is driven by the optionality of the `child`
+state: 
+
+```swift
+struct NestedView: View {
+  @ObservedObject var model: NestedModel
+
+  var body: some View {
+    VStack {
+      NavigationLink(
+        unwrapping: self.$model.child
+      ) { isActive in
+        self.model.child = isActive ? NestedModel() : nil
+      } destination: { $child in
+        NestedView(model: child)
+      } label: {
+        Text("Go to child feature")
+      }
+    }
+  }
+}
+```
+
+When this view is run in the simulator or on a device, you can repeatedly tap the "Go to child 
+feature" button to drill down any number of levels you want.
+
+But, if you _launch_ the application in a state with many `child` states populated: 
+
+```swift
+@main
+struct CaseStudiesApp: App {
+  var body: some Scene {
+    WindowGroup {
+      NavigationView {
+        NestedView(
+          model: NestedModel(
+            child: NestedModel(
+              child: NestedModel(
+                child: NestedModel(
+                  child: NestedModel(child: nil)
+                )
+              )
+            )
+          )
+        )
+      }
+      .navigationViewStyle(.stack)
+    }
+  }
+}
+```
+
+…you will see a strange pop animation immediately, and you will see that the navigation view is
+only drilled down 2 levels. This severly limits the usefulness of `NavigationLink` for restoring
+applications to any state.
+
+This is what motivates this library to ship a new type with the same name and functionality, but 
+with that critical bug fixed. You can continue using `NavigationLink` just as you normally would,
+but if you further import `SwiftUINavigation` instead of `SwiftUI` you will get our polyfill type with the bug fixed.  
+
 ### Binding transformations
 
 This library comes with tools that transform and destructure bindings of optional and enum state, which allows you to build your own navigation views similar to the ones that ship in this library.
@@ -250,7 +346,7 @@ For example, suppose you have built a `BottomSheet` view for presenting a modal-
 ```swift
 struct BottomSheet<Content>: View where Content: View {
   @Binding var isActive: Bool
-  let content: () -> Content
+  @ViewBuilder let content: Content
 
   var body: some View {
     ...
@@ -266,7 +362,7 @@ For example, an initializer that allows the bottom sheet to be presented and dis
 extension BottomSheet {
   init<Value, WrappedContent>(
     unwrapping value: Binding<Value?>,
-    @ViewBuilder content: @escaping (Binding<Value>) -> WrappedContent
+    @ViewBuilder content: (Binding<Value>) -> WrappedContent
   )
   where Content == WrappedContent?
   {
@@ -285,7 +381,7 @@ extension BottomSheet {
   init<Enum, Case, WrappedContent>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
-    @ViewBuilder content: @escaping (Binding<Case>) -> WrappedContent
+    @ViewBuilder content: (Binding<Case>) -> WrappedContent
   )
   where Content == WrappedContent?
   {
@@ -342,3 +438,5 @@ The latest documentation for the SwiftUI Navigation APIs is available [here](htt
 ## License
 
 This library is released under the MIT license. See [LICENSE](LICENSE) for details.
+
+[polyfill-wiki]: https://en.wikipedia.org/wiki/Polyfill_(programming)
