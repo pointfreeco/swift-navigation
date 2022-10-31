@@ -5,29 +5,6 @@ extension View {
   /// A drop-in replacement for SwiftUI's `navigationDestination(isPresented:destination:)` that
   /// works around longstanding bugs in the framework.
   ///
-  /// > Important: Avoid importing both `SwiftUI` and `SwiftUINavigation` from the same file, as it
-  /// > introduces ambiguity between SwiftUI's `navigationDestination` modifier and this layover.
-  /// >
-  /// > ```swift
-  /// > import SwiftUI
-  /// > import SwiftUINavigation
-  /// >
-  /// > // ...
-  /// >
-  /// > .navigationDestination(/* ... */) 🛑
-  /// > ```
-  /// >
-  /// > Instead, simply import `SwiftUINavigation`, which re-exports SwiftUI automatically and will
-  /// > favor its overlay over the original implementation:
-  /// >
-  /// > ```swift
-  /// > import SwiftUINavigation
-  /// >
-  /// > // ...
-  /// >
-  /// > .navigationDestination(/* ... */) ✅
-  /// > ```
-  ///
   /// See
   /// [the framework documentation](https://developer.apple.com/documentation/swiftui/view/navigationdestination(ispresented:destination:))
   /// for more information.
