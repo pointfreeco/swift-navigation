@@ -48,12 +48,13 @@ extension View {
     unwrapping value: Binding<Value?>,
     attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
     arrowEdge: Edge = .top,
-    @ViewBuilder content: @escaping (Binding<Value>) -> Content
+    @ViewBuilder content: (Binding<Value>) -> Content
   ) -> some View where Content: View {
-    self.popover(
+    let content = Binding(unwrapping: value).map(content)
+    return self.popover(
       isPresented: value.isPresent(), attachmentAnchor: attachmentAnchor, arrowEdge: arrowEdge
     ) {
-      Binding(unwrapping: value).map(content)
+      content
     }
   }
 
@@ -82,7 +83,7 @@ extension View {
     case casePath: CasePath<Enum, Case>,
     attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
     arrowEdge: Edge = .top,
-    @ViewBuilder content: @escaping (Binding<Case>) -> Content
+    @ViewBuilder content: (Binding<Case>) -> Content
   ) -> some View where Content: View {
     self.popover(
       unwrapping: `enum`.case(casePath),

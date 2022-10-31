@@ -12,6 +12,28 @@ struct OptionalPopovers: View {
           Button("Get number fact") {
             self.viewModel.numberFactButtonTapped()
           }
+          .popover(
+            unwrapping: self.$viewModel.fact,
+            arrowEdge: .bottom
+          ) { $fact in
+            NavigationView {
+              FactEditor(fact: $fact.description)
+                .disabled(self.viewModel.isLoading)
+                .foregroundColor(self.viewModel.isLoading ? .gray : nil)
+                .toolbar {
+                  ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                      self.viewModel.cancelButtonTapped()
+                    }
+                  }
+                  ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                      self.viewModel.saveButtonTapped(fact: fact)
+                    }
+                  }
+                }
+            }
+          }
 
           if self.viewModel.isLoading {
             Spacer()
@@ -29,25 +51,6 @@ struct OptionalPopovers: View {
         .onDelete { self.viewModel.removeSavedFacts(atOffsets: $0) }
       } header: {
         Text("Saved Facts")
-      }
-    }
-    .popover(unwrapping: self.$viewModel.fact) { $fact in
-      NavigationView {
-        FactEditor(fact: $fact.description)
-          .disabled(self.viewModel.isLoading)
-          .foregroundColor(self.viewModel.isLoading ? .gray : nil)
-          .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-              Button("Cancel") {
-                self.viewModel.cancelButtonTapped()
-              }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-              Button("Save") {
-                self.viewModel.saveButtonTapped(fact: fact)
-              }
-            }
-          }
       }
     }
     .navigationTitle("Sheets")

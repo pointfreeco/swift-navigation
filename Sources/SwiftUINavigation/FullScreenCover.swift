@@ -45,11 +45,12 @@ extension View {
   public func fullScreenCover<Value, Content>(
     unwrapping value: Binding<Value?>,
     onDismiss: (() -> Void)? = nil,
-    @ViewBuilder content: @escaping (Binding<Value>) -> Content
+    @ViewBuilder content: (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
-    self.fullScreenCover(isPresented: value.isPresent(), onDismiss: onDismiss) {
-      Binding(unwrapping: value).map(content)
+    let content = Binding(unwrapping: value).map(content)
+    return self.fullScreenCover(isPresented: value.isPresent(), onDismiss: onDismiss) {
+      content
     }
   }
 
@@ -76,7 +77,7 @@ extension View {
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
     onDismiss: (() -> Void)? = nil,
-    @ViewBuilder content: @escaping (Binding<Case>) -> Content
+    @ViewBuilder content: (Binding<Case>) -> Content
   ) -> some View
   where Content: View {
     self.fullScreenCover(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)

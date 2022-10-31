@@ -43,11 +43,12 @@ extension View {
   public func sheet<Value, Content>(
     unwrapping value: Binding<Value?>,
     onDismiss: (() -> Void)? = nil,
-    @ViewBuilder content: @escaping (Binding<Value>) -> Content
+    @ViewBuilder content: (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
-    self.sheet(isPresented: value.isPresent(), onDismiss: onDismiss) {
-      Binding(unwrapping: value).map(content)
+    let content = Binding(unwrapping: value).map(content)
+    return self.sheet(isPresented: value.isPresent(), onDismiss: onDismiss) {
+      content
     }
   }
 
@@ -71,19 +72,9 @@ extension View {
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
     onDismiss: (() -> Void)? = nil,
-    @ViewBuilder content: @escaping (Binding<Case>) -> Content
+    @ViewBuilder content: (Binding<Case>) -> Content
   ) -> some View
   where Content: View {
     self.sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
-  }
-
-  public func sheet<Enum, Content>(
-    unwrapping enum: Binding<Enum?>,
-    case casePath: CasePath<Enum, Void>,
-    onDismiss: (() -> Void)? = nil,
-    @ViewBuilder content: @escaping () -> Content
-  ) -> some View
-  where Content: View {
-    self.sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: { _ in content() })
   }
 }
