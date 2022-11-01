@@ -1,6 +1,4 @@
 import SwiftUINavigation
-
-import SwiftUI
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -12,7 +10,38 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     options connectionOptions: UIScene.ConnectionOptions
   ) {
     self.window = (scene as? UIWindowScene).map(UIWindow.init(windowScene:))
-    self.window?.rootViewController = UIHostingController(rootView: RootView())
+    if #available(iOS 14, *) {
+      let model = NestedModel(
+        child: .init(
+          child: .init(
+            child: .init(
+              child: .init(
+                child: .init(
+                  child: .init()
+                )
+              )
+            )
+          )
+        )
+      )
+//      if #available(iOS 16, *) {
+//        self.window?.rootViewController = UIHostingController(
+//          rootView: NavigationStack {
+//            NestedDestinationView(model: model)
+//          }
+//          .navigationViewStyle(.stack)
+//        )
+//      } else {
+        self.window?.rootViewController = UIHostingController(
+          rootView: NavigationView {
+            NestedLinkView(model: model)
+          }
+          .navigationViewStyle(.stack)
+        )
+//      }
+    } else {
+      self.window?.rootViewController = UIHostingController(rootView: RootView())
+    }
     self.window?.makeKeyAndVisible()
   }
 }
@@ -27,8 +56,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
 }
 
+@available(iOS 16, *)
+struct NestedDestinationView: View {
+  @ObservedObject var model: NestedModel
+
+  var body: some View {
+    VStack {
+      Text("\(self.model.secondsElapsed)")
+
+      Button {
+        self.model.child = .init()
+      } label: {
+        Text("Button to child feature")
+      }
+    }
+    .navigationBarTitle(Text("\(self.model.secondsElapsed)"))
+    .navigationDestination(unwrapping: self.$model.child) { $child in
+      Button("Dismiss") {
+        self.model.child = nil
+      }
+      NestedDestinationView(model: child)
+    }
+  }
+}
+
 @available(iOS 14, *)
-struct NestedView: View {
+struct NestedLinkView: View {
   @ObservedObject var model: NestedModel
 
   var body: some View {
@@ -39,12 +92,19 @@ struct NestedView: View {
       ) { isActive in
         self.model.child = isActive ? NestedModel() : nil
       } destination: { $child in
-        NestedView(model: child)
+        Button("Dismiss") {
+          self.model.child = nil
+        }
+        NestedLinkView(model: child)
       } label: {
-        Text("Go to child feature")
+        Text("Link to child feature")
       }
 
-      // TODO: document that shouldn't import both SwiftUI and SwiftUINavigation
+      Button {
+        self.model.child = .init()
+      } label: {
+        Text("Button to child feature")
+      }
     }
     .navigationBarTitle(Text("\(self.model.secondsElapsed)"))
   }

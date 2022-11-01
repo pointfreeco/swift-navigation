@@ -28,45 +28,54 @@
 /// [the framework documentation](https://developer.apple.com/documentation/swiftui/navigationlink)
 /// for more information.
 public struct NavigationLink<Label: View, Destination: View>: View {
-  private let navigationLink: (Binding<Bool>) -> SwiftUI.NavigationLink<Label, Destination>
-  #if os(iOS)
-    private var _isDetailLink = true
-  #endif
   @Binding private var isPresented: Bool
-  @State private var isPresentedState = false
+  private let navigationLink: (Binding<Bool>) -> SwiftUI.NavigationLink<Label, Destination>
+  private let _isDetailLink: Bool
+  @State var shouldDeepLink: Bool
+
+  private init(
+    isPresented: Binding<Bool> = .constant(false),
+    navigationLink: @escaping (Binding<Bool>) -> SwiftUI.NavigationLink<Label, Destination>,
+    _isDetailLink: Bool = true
+  ) {
+    self._isPresented = isPresented
+    self.navigationLink = navigationLink
+    self._isDetailLink = _isDetailLink
+    self._shouldDeepLink = State(wrappedValue: isPresented.wrappedValue)
+  }
 
   #if os(iOS)
     public var body: some View {
-      self.navigationLink(self.$isPresentedState)
-        .isDetailLink(self._isDetailLink)
-        .onAppear {
-          self.isPresentedState = self.isPresented
-
-        }
-        ._onChange(of: self.isPresentedState) {
-          self.isPresented = $0
-
-        }
-        ._onChange(of: self.isPresented) {
-          self.isPresentedState = $0
-
-        }
-    } 
+      self.navigationLink(
+        Binding(
+          get: { self.isPresented },
+          set: { newValue, transaction in
+            guard !self.shouldDeepLink else {
+              self.shouldDeepLink = false
+              return
+            }
+            self.$isPresented.transaction(transaction).wrappedValue = newValue
+          }
+        )
+      )
+      .isDetailLink(self._isDetailLink)
+    }
   #else
     public var body: some View {
-      self.navigationLink(self.$isPresentedState)
-        .onAppear { self.isPresentedState = self.isPresented }
-        ._onChange(of: self.isPresentedState) { self.isPresented = $0 }
-        ._onChange(of: self.isPresented) { self.isPresentedState = $0 }
+      self.navigationLink(
+        Binding(
+          get: { self.isPresented },
+          set: { newValue, transaction in
+            guard !self.shouldDeepLink else {
+              self.shouldDeepLink = false
+              return
+            }
+            self.$isPresented.transaction(transaction).wrappedValue = newValue
+          }
+        )
+      )
     }
   #endif
-}
-
-extension NavigationLink {
-  fileprivate init(navigationLink: SwiftUI.NavigationLink<Label, Destination>) {
-    self.navigationLink = { _ in navigationLink }
-    self._isPresented = Binding(initialValue: false)
-  }
 }
 
 extension NavigationLink {
@@ -123,26 +132,9 @@ extension NavigationLink {
     @ViewBuilder destination: (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
-    var willDeepLink = value.wrappedValue != nil
     self.init(
       destination: Binding(unwrapping: value).map(destination),
-//      isActive: Binding(
-//        get: { value.wrappedValue != nil },
-//        set: { isActive in
-//          let wasActive = value.wrappedValue != nil
-//          if !wasActive && isActive || wasActive && !isActive {
-//            onNavigate(isActive)
-//          }
-//        }
-//      ),
-      // value.isPresent().willSet(onNavigate),
-      isActive: value.isPresent().didSet {
-        if !willDeepLink {
-          onNavigate($0)
-        } else {
-          willDeepLink = false
-        }
-      },
+      isActive: value.isPresent().removeDuplicates().didSet(onNavigate),
       label: label
     )
   }
@@ -427,7 +419,8 @@ extension NavigationLink {
     destination: Destination,
     @ViewBuilder label: () -> Label
   ) {
-    self.init(navigationLink: .init(destination: destination, label: label))
+    let label = label()
+    self.init(navigationLink: { _ in .init(destination: destination) { label } })
   }
 
   /// Creates a navigation link that presents the destination view when active.
@@ -458,8 +451,8 @@ extension NavigationLink {
   ) {
     let label = label()
     self.init(
-      navigationLink: { .init(destination: destination, isActive: $0) { label } },
-      isPresented: isActive
+      isPresented: isActive,
+      navigationLink: { .init(destination: destination, isActive: $0) { label } }
     )
   }
 
@@ -497,6 +490,7 @@ extension NavigationLink {
   ) {
     let label = label()
     self.init(
+      isPresented: selection.isPresent(),
       navigationLink: {
         .init(
           destination: destination,
@@ -505,8 +499,7 @@ extension NavigationLink {
         ) {
           label
         }
-      },
-      isPresented: selection.isPresent()
+      }
     )
   }
 }
@@ -522,7 +515,8 @@ extension NavigationLink where Destination == Never {
     value: P?,
     @ViewBuilder label: () -> Label
   ) {
-    self.init(navigationLink: .init(value: value, label: label))
+    let label = label()
+    self.init(navigationLink: { _ in .init(value: value) { label } })
   }
 
   /// Creates a navigation link that presents the view corresponding to a value, with a text label
@@ -561,7 +555,8 @@ extension NavigationLink where Destination == Never {
     value: P?,
     @ViewBuilder label: () -> Label
   ) {
-    self.init(navigationLink: .init(value: value, label: label))
+    let label = label()
+    self.init(navigationLink: { _ in .init(value: value) { label } })
   }
 
   /// Creates a navigation link that presents the view corresponding to a codable value, with a text
@@ -959,18 +954,11 @@ extension NavigationLink {
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
   public func isDetailLink(_ isDetailLink: Bool) -> some View {
-    #if os(iOS)
-      Self(
-        navigationLink: self.navigationLink,
-        _isDetailLink: isDetailLink,
-        isPresented: self.$isPresented
-      )
-    #else
-      Self(
-        navigationLink: self.navigationLink,
-        isPresented: self.$isPresented
-      )
-    #endif
+    Self(
+      isPresented: self.$isPresented,
+      navigationLink: self.navigationLink,
+      _isDetailLink: isDetailLink
+    )
   }
 }
 
