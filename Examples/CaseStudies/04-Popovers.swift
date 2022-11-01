@@ -20,18 +20,14 @@ struct OptionalPopovers: View {
               FactEditor(fact: $fact.description)
                 .disabled(self.viewModel.isLoading)
                 .foregroundColor(self.viewModel.isLoading ? .gray : nil)
-                .toolbar {
-                  ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                      self.viewModel.cancelButtonTapped()
-                    }
+                .navigationBarItems(
+                  leading: Button("Cancel") {
+                    self.viewModel.cancelButtonTapped()
+                  },
+                  trailing: Button("Save") {
+                    self.viewModel.saveButtonTapped(fact: fact)
                   }
-                  ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                      self.viewModel.saveButtonTapped(fact: fact)
-                    }
-                  }
-                }
+                )
             }
           }
 
@@ -53,7 +49,7 @@ struct OptionalPopovers: View {
         Text("Saved Facts")
       }
     }
-    .navigationTitle("Sheets")
+    .navigationBarTitle("Sheets")
   }
 }
 
@@ -62,10 +58,14 @@ private struct FactEditor: View {
 
   var body: some View {
     VStack {
-      TextEditor(text: self.$fact)
+      if #available(iOS 14, *) {
+        TextEditor(text: self.$fact)
+      } else {
+        TextField("Untitled", text: self.$fact)
+      }
     }
     .padding()
-    .navigationTitle("Fact Editor")
+    .navigationBarTitle("Fact Editor")
   }
 }
 

@@ -36,7 +36,7 @@ struct CustomComponents: View {
     .bottomMenu(unwrapping: self.$count) { $count in
       Stepper("Number: \(count)", value: $count.animation())
     }
-    .navigationTitle("Custom components")
+    .navigationBarTitle("Custom components")
   }
 }
 
@@ -71,7 +71,7 @@ where BottomMenuContent: View {
             .transition(.move(edge: .bottom))
         }
       }
-      .ignoresSafeArea()
+      .edgesIgnoringSafeArea(.bottom)
     )
   }
 }

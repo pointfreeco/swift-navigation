@@ -16,6 +16,7 @@ enum Route {
   case sheet(Int)
 }
 
+@available(iOS 15, *)
 struct Routing: View {
   @State var route: Route?
 
@@ -73,6 +74,7 @@ struct Routing: View {
   }
 }
 
+@available(iOS 15, *)
 struct Routing_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {

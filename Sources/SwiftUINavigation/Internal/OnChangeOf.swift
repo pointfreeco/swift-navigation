@@ -25,6 +25,7 @@ private struct ChangeObserver<Value: Equatable>: ViewModifier {
     content.onReceive(Just(self.value)) { newValue in
       guard self.value != newValue else { return }
       self.value = newValue
+      self.action(newValue)
     }
   }
 }

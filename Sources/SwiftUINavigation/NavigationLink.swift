@@ -39,9 +39,18 @@ public struct NavigationLink<Label: View, Destination: View>: View {
     public var body: some View {
       self.navigationLink(self.$isPresentedState)
         .isDetailLink(self._isDetailLink)
-        .onAppear { self.isPresentedState = self.isPresented }
-        ._onChange(of: self.isPresentedState) { self.isPresented = $0 }
-        ._onChange(of: self.isPresented) { self.isPresentedState = $0 }
+        .onAppear {
+          self.isPresentedState = self.isPresented
+
+        }
+        ._onChange(of: self.isPresentedState) {
+          self.isPresented = $0
+
+        }
+        ._onChange(of: self.isPresented) {
+          self.isPresentedState = $0
+
+        }
     } 
   #else
     public var body: some View {
@@ -114,17 +123,26 @@ extension NavigationLink {
     @ViewBuilder destination: (Binding<Value>) -> WrappedDestination,
     @ViewBuilder label: () -> Label
   ) where Destination == WrappedDestination? {
+    var willDeepLink = value.wrappedValue != nil
     self.init(
       destination: Binding(unwrapping: value).map(destination),
-      isActive: Binding(
-        get: { value.wrappedValue != nil },
-        set: { isActive in
-          let wasActive = value.wrappedValue != nil
-          if !wasActive && isActive || wasActive && !isActive {
-            onNavigate(isActive)
-          }
+//      isActive: Binding(
+//        get: { value.wrappedValue != nil },
+//        set: { isActive in
+//          let wasActive = value.wrappedValue != nil
+//          if !wasActive && isActive || wasActive && !isActive {
+//            onNavigate(isActive)
+//          }
+//        }
+//      ),
+      // value.isPresent().willSet(onNavigate),
+      isActive: value.isPresent().didSet {
+        if !willDeepLink {
+          onNavigate($0)
+        } else {
+          willDeepLink = false
         }
-      ),
+      },
       label: label
     )
   }

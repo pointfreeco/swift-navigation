@@ -60,10 +60,14 @@ private struct FactEditor: View {
 
   var body: some View {
     VStack {
-      TextEditor(text: self.$fact)
+      if #available(iOS 14, *) {
+        TextEditor(text: self.$fact)
+      } else {
+        TextField("Untitled", text: self.$fact)
+      }
     }
     .padding()
-    .navigationTitle("Fact Editor")
+    .navigationBarTitle("Fact Editor")
   }
 }
 

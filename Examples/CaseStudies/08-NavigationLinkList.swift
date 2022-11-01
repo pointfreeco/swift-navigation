@@ -24,14 +24,12 @@ struct ListOfNavigationLinks: View {
         .onDelete(perform: self.viewModel.deleteButtonTapped(indexSet:))
       }
     }
-    .navigationTitle("List of Links")
-    .toolbar {
-      ToolbarItem {
-        Button("Add") {
-          self.viewModel.addButtonTapped()
-        }
+    .navigationBarTitle("List of Links")
+    .navigationBarItems(
+      trailing: Button("Add") {
+        self.viewModel.addButtonTapped()
       }
-    }
+    )
   }
 }
 
@@ -65,14 +63,10 @@ private struct RowView: View {
     } destination: { $counter in
       EditView(counter: $counter)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-          ToolbarItem(placement: .primaryAction) {
-            Button("Save") { self.viewModel.saveButtonTapped(counter: counter) }
-          }
-          ToolbarItem(placement: .cancellationAction) {
-            Button("Cancel") { self.viewModel.cancelButtonTapped() }
-          }
-        }
+        .navigationBarItems(
+          leading: Button("Cancel") { self.viewModel.cancelButtonTapped() },
+          trailing: Button("Save") { self.viewModel.saveButtonTapped(counter: counter) }
+        )
     } label: {
       Text("\(self.viewModel.counter)")
     }

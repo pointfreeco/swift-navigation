@@ -24,8 +24,10 @@ struct RootView: View {
           NavigationLink("Optional popovers") {
             OptionalPopovers()
           }
-          NavigationLink("Optional full-screen covers") {
-            OptionalFullScreenCovers()
+          if #available(iOS 14, *) {
+            NavigationLink("Optional full-screen covers") {
+              OptionalFullScreenCovers()
+            }
           }
         } header: {
           Text("Sheets and full-screen covers")
@@ -51,8 +53,10 @@ struct RootView: View {
         }
 
         Section {
-          NavigationLink("Routing") {
-            Routing()
+          if #available(iOS 15, *) {
+            NavigationLink("Routing") {
+              Routing()
+            }
           }
           NavigationLink("Custom components") {
             CustomComponents()
@@ -61,7 +65,7 @@ struct RootView: View {
           Text("Advanced")
         }
       }
-      .navigationTitle("Case studies")
+      .navigationBarTitle("Case studies")
     }
     .navigationViewStyle(.stack)
   }

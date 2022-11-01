@@ -1,29 +1,33 @@
 import SwiftUINavigation
 
-@main
-struct CaseStudiesApp: App {
-  var body: some Scene {
-    WindowGroup {
-//      RootView()
+import SwiftUI
+import UIKit
 
-      NavigationView {
-        NestedView(
-          model: NestedModel(
-            child: NestedModel(
-              child: NestedModel(
-                child: NestedModel(
-                  child: NestedModel(child: .init(child: .init(child: .init())))
-                )
-              )
-            )
-          )
-        )
-      }
-      .navigationViewStyle(.stack)
-    }
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+  var window: UIWindow?
+
+  func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
+    self.window = (scene as? UIWindowScene).map(UIWindow.init(windowScene:))
+    self.window?.rootViewController = UIHostingController(rootView: RootView())
+    self.window?.makeKeyAndVisible()
   }
 }
 
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+    true
+  }
+}
+
+@available(iOS 14, *)
 struct NestedView: View {
   @ObservedObject var model: NestedModel
 
@@ -42,10 +46,11 @@ struct NestedView: View {
 
       // TODO: document that shouldn't import both SwiftUI and SwiftUINavigation
     }
-    .navigationTitle(Text("\(self.model.secondsElapsed)"))
+    .navigationBarTitle(Text("\(self.model.secondsElapsed)"))
   }
 }
 
+@available(iOS 14, *)
 final class NestedModel: ObservableObject, Equatable {
   @Published var child: NestedModel?
   @Published var date = Date()
