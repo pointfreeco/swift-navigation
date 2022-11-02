@@ -44,38 +44,24 @@ public struct NavigationLink<Label: View, Destination: View>: View {
     self._shouldDeepLink = State(wrappedValue: isPresented.wrappedValue)
   }
 
-  #if os(iOS)
-    public var body: some View {
-      self.navigationLink(
-        Binding(
-          get: { self.isPresented },
-          set: { newValue, transaction in
-            guard !self.shouldDeepLink else {
-              self.shouldDeepLink = false
-              return
-            }
-            self.$isPresented.transaction(transaction).wrappedValue = newValue
-          }
-        )
-      )
-      .isDetailLink(self._isDetailLink)
-    }
-  #else
-    public var body: some View {
-      self.navigationLink(
-        Binding(
-          get: { self.isPresented },
-          set: { newValue, transaction in
-            guard !self.shouldDeepLink else {
-              self.shouldDeepLink = false
-              return
-            }
-            self.$isPresented.transaction(transaction).wrappedValue = newValue
-          }
-        )
-      )
-    }
-  #endif
+  public var body: some View {
+    let binding = Binding(
+      get: { self.isPresented },
+      set: { newValue, transaction in
+        guard !self.shouldDeepLink else {
+          self.shouldDeepLink = false
+          return
+        }
+        self.$isPresented.transaction(transaction).wrappedValue = newValue
+      }
+    )
+    #if os(iOS)
+      return self.navigationLink(binding)
+        .isDetailLink(self._isDetailLink)
+    #else
+      return self.navigationLink(binding)
+    #endif
+  }
 }
 
 extension NavigationLink {
