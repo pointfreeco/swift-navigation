@@ -501,8 +501,3 @@ extension TextState: CustomDumpRepresentable {
     return dumpHelp(self)
   }
 }
-
-
-
-
-

@@ -195,31 +195,6 @@ public struct AlertState<Action> {
   }
 }
 
-extension View {
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  public func alert<Value>(
-    unwrapping value: Binding<AlertState<Value>?>,
-    send: @escaping (Value) -> Void
-  ) -> some View {
-    self.alert(
-      (value.wrappedValue?.title).map(Text.init) ?? Text(""),
-      isPresented: value.isPresent(),
-      presenting: value.wrappedValue,
-      actions: { $0.toSwiftUIActions(send: { send($0) }) },
-      message: { $0.message.map { Text($0) } }
-    )
-  }
-
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  public func alert<Enum, Value>(
-    unwrapping `enum`: Binding<Enum?>,
-    case casePath: CasePath<Enum, AlertState<Value>>,
-    send: @escaping (Value) -> Void
-  ) -> some View {
-    self.alert(unwrapping: `enum`.case(casePath), send: send)
-  }
-}
-
 extension AlertState: CustomDumpReflectable {
   public var customDumpMirror: Mirror {
     Mirror(
@@ -353,7 +328,7 @@ extension AlertState.Button {
 extension AlertState {
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   @ViewBuilder
-  fileprivate func toSwiftUIActions(send: @escaping (Action) -> Void) -> some View {
+  func toSwiftUIActions(send: @escaping (Action) -> Void) -> some View {
     ForEach(self.buttons.indices, id: \.self) {
       self.buttons[$0].toSwiftUIButton(send: send)
     }

@@ -11,7 +11,8 @@ private let readMe = """
   """
 
 enum Route {
-  case alert(String)
+  case alert(AlertState<Never>)
+  case confirmationDialog(ConfirmationDialogState<Never>)
   case link(Int)
   case sheet(Int)
 }
@@ -26,25 +27,26 @@ struct Routing: View {
       }
 
       Button("Alert") {
-        self.route = .alert("Hello world!")
+        self.route = .alert(AlertState(title: TextState("Hello world!"), buttons: []))
       }
       .alert(
-        title: { Text($0) },
         unwrapping: self.$route,
-        case: /Route.alert,
-        actions: { _ in
-          Button("Activate link") {
-            self.route = .link(0)
-          }
-          Button("Activate sheet") {
-            self.route = .sheet(0)
-          }
-          Button("Cancel", role: .cancel) {
-          }
-        },
-        message: { _ in
+        case: /Route.alert
+      )
 
-        }
+      Button {
+        self.route = .confirmationDialog(
+          ConfirmationDialogState(
+            title: TextState("Hello world!"),
+            titleVisibility: .visible 
+          )
+        )
+      } label: {
+        Text("Confirmation dialog")
+      }
+      .confirmationDialog(
+        unwrapping: self.$route,
+        case: /Route.confirmationDialog
       )
 
       NavigationLink(unwrapping: self.$route, case: /Route.link) {
