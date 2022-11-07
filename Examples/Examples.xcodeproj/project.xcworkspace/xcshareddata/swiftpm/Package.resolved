@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "d226d167bd4a68b51e352af5655c92bce8ee0463",
-          "version": "0.7.0"
+          "revision": "bb436421f57269fbcfe7360735985321585a86e5",
+          "version": "0.10.1"
         }
       },
       {
@@ -20,12 +20,30 @@
         }
       },
       {
+        "package": "swift-custom-dump",
+        "repositoryURL": "https://github.com/pointfreeco/swift-custom-dump",
+        "state": {
+          "branch": null,
+          "revision": "819d9d370cd721c9d87671e29d947279292e4541",
+          "version": "0.6.0"
+        }
+      },
+      {
         "package": "swift-identified-collections",
         "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections.git",
         "state": {
           "branch": null,
           "revision": "680bf440178a78a627b1c2c64c0855f6523ad5b9",
           "version": "0.3.2"
+        }
+      },
+      {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "16e6409ee82e1b81390bdffbf217b9c08ab32784",
+          "version": "0.5.0"
         }
       }
     ]

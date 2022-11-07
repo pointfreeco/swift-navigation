@@ -5,13 +5,17 @@ class ItemRowViewModel: Identifiable, ObservableObject {
   @Published var route: Route?
 
   enum Route: Equatable {
-    case deleteAlert
+    case alert(AlertState<AlertAction>)
     case duplicate(Item)
     case edit(Item)
   }
 
   var onDelete: () -> Void = {}
   var onDuplicate: (Item) -> Void = { _ in }
+
+  enum AlertAction {
+    case deleteConfirmation
+  }
 
   var id: Item.ID { self.item.id }
 
@@ -22,11 +26,18 @@ class ItemRowViewModel: Identifiable, ObservableObject {
   }
 
   func deleteButtonTapped() {
-    self.route = .deleteAlert
-  }
-
-  func deleteConfirmationButtonTapped() {
-    self.onDelete()
+    self.route = .alert(
+      AlertState(
+        title: TextState(self.item.name),
+        message: TextState("Are you sure you want to delete this item?"),
+        buttons: [
+          .destructive(
+            TextState("Delete"),
+            action: .send(.deleteConfirmation, animation: .default)
+          )
+        ]
+      )
+    )
   }
 
   func setEditNavigation(isActive: Bool) {
@@ -49,6 +60,13 @@ class ItemRowViewModel: Identifiable, ObservableObject {
   func duplicate(item: Item) {
     self.onDuplicate(item)
     self.route = nil
+  }
+
+  func sendAlertAction(_ action: AlertAction) {
+    switch action {
+    case .deleteConfirmation:
+      self.onDelete()
+    }
   }
 }
 
@@ -115,17 +133,9 @@ struct ItemRowView: View {
       .buttonStyle(.plain)
       .foregroundColor(self.viewModel.item.status.isInStock ? nil : Color.gray)
       .alert(
-        title: { Text(self.viewModel.item.name) },
         unwrapping: self.$viewModel.route,
-        case: /ItemRowViewModel.Route.deleteAlert,
-        actions: {
-          Button("Delete", role: .destructive) {
-            self.viewModel.deleteConfirmationButtonTapped()
-          }
-        },
-        message: {
-          Text("Are you sure you want to delete this item?")
-        }
+        case: /ItemRowViewModel.Route.alert,
+        send: self.viewModel.sendAlertAction
       )
       .popover(
         unwrapping: self.$viewModel.route,

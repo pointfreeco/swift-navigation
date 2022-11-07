@@ -18,6 +18,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.10.0"),
+    .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.6.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "0.5.0"),
   ],
   targets: [
@@ -25,6 +26,7 @@ let package = Package(
       name: "SwiftUINavigation",
       dependencies: [
         .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(name: "CustomDump", package: "swift-custom-dump"),
         .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
