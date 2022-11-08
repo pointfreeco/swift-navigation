@@ -38,13 +38,19 @@ extension View {
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
 public struct _NavigationDestination<Destination: View>: ViewModifier {
   @State private var isPresentedState = false
+  @State private var hasAppeared = false
   @Binding var isPresented: Bool
   let destination: Destination
 
   public func body(content: Content) -> some View {
     content
       ._navigationDestination(isPresented: self.$isPresentedState) { destination }
-      .onAppear { self.isPresentedState = self.isPresented }
+      .onAppear {
+        guard !self.hasAppeared
+        else { return }
+        self.hasAppeared = true
+        self.isPresentedState = self.isPresented
+      }
       .onChange(of: self.isPresentedState) { self.isPresented = $0 }
       .onChange(of: self.isPresented) { self.isPresentedState = $0 }
   }
