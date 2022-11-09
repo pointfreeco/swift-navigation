@@ -307,7 +307,7 @@ SwiftUI's alert and dialog modifiers can be configured with a lot of state that 
 ```swift
 class ItemModel: ObservableObject {
   enum AlertAction {
-    case deleteConfirmation
+    case deleteButtonTapped
   }
 
   @Published var alert: AlertState<AlertAction>?
@@ -321,7 +321,7 @@ class ItemModel: ObservableObject {
       buttons: [
         .destructive(
           TextState("Delete"),
-          action: .deleteConfirmation
+          action: .send(.deleteButtonTapped)
         )
       ]
     )
@@ -329,7 +329,7 @@ class ItemModel: ObservableObject {
 
   func alertButtonTapped(_ action: AlertAction) {
     switch action {
-    case .deleteConfirmation:
+    case .deleteButtonTapped:
       // ...
     }
   }

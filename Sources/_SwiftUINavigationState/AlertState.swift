@@ -13,7 +13,7 @@ import SwiftUI
 /// ```swift
 /// class ItemModel: ObservableObject {
 ///   enum AlertAction {
-///     case deleteConfirmation
+///     case deleteButtonTapped
 ///   }
 ///   // ...
 /// }
@@ -36,7 +36,7 @@ import SwiftUI
 ///   // ...
 ///   func alertButtonTapped(_ action: AlertAction) {
 ///     switch action {
-///     case .deleteConfirmation:
+///     case .deleteButtonTapped:
 ///       // ...
 ///     }
 ///   }
@@ -58,7 +58,7 @@ import SwiftUI
 ///       buttons: [
 ///         .destructive(
 ///           TextState("Confirm"),
-///           action: .send(.deleteConfirmation)
+///           action: .send(.deleteButtonTapped)
 ///         )
 ///       ]
 ///     )
@@ -106,13 +106,13 @@ import SwiftUI
 ///     buttons: [
 ///       .destructive(
 ///         TextState("Confirm"),
-///         action: .send(.deleteConfirmation)
+///         action: .send(.deleteButtonTapped)
 ///       )
 ///     ]
 ///   )
 /// )
 ///
-/// model.alertButtonTapped(.deleteConfirmation) {
+/// model.alertButtonTapped(.deleteButtonTapped) {
 ///   // Also verify that delete logic executed correctly
 /// }
 /// model.alert = nil
