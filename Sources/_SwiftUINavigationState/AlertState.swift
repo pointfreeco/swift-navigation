@@ -8,22 +8,24 @@ import SwiftUI
 /// actions of alerts. This API can be used to push the logic of alert presentation and actions into
 /// your model, making it easier to test, and simplifying your view layer.
 ///
-/// To use this API, you describe all of an alert's actions as cases in an enum:
+/// To use this API, you first describe all of the actions that can take place in all of your
+/// alerts as an enum:
 ///
 /// ```swift
-/// class ItemModel: ObservableObject {
+/// class HomeScreenModel: ObservableObject {
 ///   enum AlertAction {
-///     case deleteButtonTapped
+///     case delete
+///     case removeFromHomeScreen
 ///   }
 ///   // ...
 /// }
 /// ```
 ///
-/// You model the state for showing the alert in as a published field, which can start off `nil`:
+/// Then you hold onto optional `AlertState` as a `@Published` field in your model, which can
+/// start off as `nil`:
 ///
 /// ```swift
-/// class ItemModel: ObservableObject {
-///   // ...
+/// class HomeScreenModel: ObservableObject {
 ///   @Published var alert: AlertState<AlertAction>?
 ///   // ...
 /// }
@@ -32,33 +34,39 @@ import SwiftUI
 /// And you define an endpoint for handling each alert action:
 ///
 /// ```swift
-/// class ItemModel: ObservableObject {
+/// class HomeScreenModel: ObservableObject {
 ///   // ...
 ///   func alertButtonTapped(_ action: AlertAction) {
 ///     switch action {
-///     case .deleteButtonTapped:
+///     case .delete:
+///       // ...
+///     case .removeFromHomeScreen:
 ///       // ...
 ///     }
 ///   }
 /// }
 /// ```
 ///
-/// Then, in an endpoint that should display an alert, you can construct an ``AlertState`` value to
-/// represent it:
+/// Then, whenever you need to show an alert you can simply construct an ``AlertState`` value to
+/// represent the alert:
 ///
 /// ```swift
-/// class ItemModel: ObservableObject {
+/// class HomeScreenModel: ObservableObject {
 ///   // ...
-///   func deleteButtonTapped() {
+///   func deleteAppButtonTapped() {
 ///     self.alert = AlertState(
-///       title: TextState("Delete"),
+///       title: TextState(#"Remove "Twitter"?"#),
 ///       message: TextState(
-///         "Are you sure you want to delete this? It cannot be undone."
+///         "Removing from Home Screen will keep the app in your App Library."
 ///       ),
 ///       buttons: [
 ///         .destructive(
-///           TextState("Confirm"),
-///           action: .send(.deleteButtonTapped)
+///           TextState("Delete App"),
+///           action: .send(.delete)
+///         ),
+///         .default(
+///           TextState("Remove from Home Screen"),
+///           action: .send(.removeFromHomeScreen)
 ///         )
 ///       ]
 ///     )
@@ -70,13 +78,13 @@ import SwiftUI
 /// alert:
 ///
 /// ```swift
-/// struct ItemView: View {
-///   @ObservedObject var model: ItemModel
+/// struct FeatureView: View {
+///   @ObservedObject var model: HomeScreenModel
 ///
 ///   var body: some View {
 ///     VStack {
 ///       Button("Delete") {
-///         self.model.deleteButtonTapped()
+///         self.model.deleteAppButtonTapped()
 ///       }
 ///     }
 ///     .alert(unwrapping: self.$model.alert) { action in
@@ -90,29 +98,34 @@ import SwiftUI
 /// so that any choice made in the alert is automatically fed back into the model so that you can
 /// handle its logic.
 ///
-/// Even better, you can instantly write tests that your alert behavior works as expected:
+/// Even better, because `AlertState` is equatable (when `Action` is equatable), you can instantly
+/// write tests that your alert behavior works as expected:
 ///
 /// ```swift
-/// let model = ItemModel()
+/// let model = HomeScreenModel()
 ///
-/// model.deleteButtonTapped()
+/// model.deleteAppButtonTapped()
 /// XCTAssertEqual(
 ///   model.alert,
 ///   AlertState(
-///     title: TextState("Delete"),
+///     title: TextState(#"Remove "Twitter"?"#),
 ///     message: TextState(
-///       "Are you sure you want to delete this? It cannot be undone."
+///       "Removing from Home Screen will keep the app in your App Library."
 ///     ),
 ///     buttons: [
 ///       .destructive(
-///         TextState("Confirm"),
+///         TextState("Delete App"),
 ///         action: .send(.deleteButtonTapped)
+///       ),
+///       .default(
+///         TextState("Remove from Home Screen"),
+///         action: .send(.removeFromHomeScreenButtonTapped)
 ///       )
 ///     ]
 ///   )
 /// )
 ///
-/// model.alertButtonTapped(.deleteButtonTapped) {
+/// model.alertButtonTapped(.delete) {
 ///   // Also verify that delete logic executed correctly
 /// }
 /// model.alert = nil

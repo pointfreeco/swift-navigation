@@ -305,23 +305,29 @@ Both of these more powerful initializers are just conveniences. If the user of `
 SwiftUI's alert and dialog modifiers can be configured with a lot of state that populates title, message, buttons, and even button actions. This is a lot of data that is calculated at the view layer, which makes it harder to test. This library provides data types and tools that allow you to move this logic into your model, instead.
 
 ```swift
-class ItemModel: ObservableObject {
+class HomeScreenModel: ObservableObject {
   enum AlertAction {
-    case deleteButtonTapped
+    case delete
   }
 
   @Published var alert: AlertState<AlertAction>?
 
   // ...
 
-  func deleteButtonTapped() {
+  func deleteAppButtonTapped() {
     self.alert = AlertState(
-      title: TextState(self.item.name),
-      message: TextState("Are you sure you want to delete this item?"),
+      title: TextState(#"Remove "Twitter"?"#),
+      message: TextState(
+        "Removing from Home Screen will keep the app in your App Library."
+      ),
       buttons: [
         .destructive(
-          TextState("Delete"),
-          action: .send(.deleteButtonTapped)
+          TextState("Delete App"),
+          action: .send(.delete)
+        ),
+        .default(
+          TextState("Remove from Home Screen"),
+          action: .send(.removeFromHomeScreen)
         )
       ]
     )
@@ -329,19 +335,19 @@ class ItemModel: ObservableObject {
 
   func alertButtonTapped(_ action: AlertAction) {
     switch action {
-    case .deleteButtonTapped:
+    case .delete:
       // ...
     }
   }
 }
 
-struct ItemView: View {
-  @ObservedObject var model: ItemModel
+struct FeatureView: View {
+  @ObservedObject var model: HomeScreenModel
 
   var body: some View {
     // ...
     Button("Delete") {
-      self.model.deleteButtonTapped()
+      self.model.deleteAppButtonTapped()
     }
     .alert(
       unwrapping: self.$model.alert,
