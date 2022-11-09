@@ -76,15 +76,17 @@ public struct TextState: Equatable, Hashable {
     case expanded
     case standard
 
-    @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-    var toSwiftUI: SwiftUI.Font.Width {
-      switch self {
-      case .compressed: return .compressed
-      case .condensed: return .condensed
-      case .expanded: return .expanded
-      case .standard: return .standard
+    #if swift(>=5.7) && !os(macOS) && !targetEnvironment(macCatalyst)
+      @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+      var toSwiftUI: SwiftUI.Font.Width {
+        switch self {
+        case .compressed: return .compressed
+        case .condensed: return .condensed
+        case .expanded: return .expanded
+        case .standard: return .standard
+        }
       }
-    }
+    #endif
   }
 
   public enum LineStylePattern: String, Equatable, Hashable {
@@ -476,11 +478,15 @@ extension Text {
       case let .fontWeight(weight):
         return text.fontWeight(weight)
       case let .fontWidth(width):
-        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-          return text.fontWidth(width?.toSwiftUI)
-        } else {
+        #if swift(>=5.7) && !os(macOS) && !targetEnvironment(macCatalyst)
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+            return text.fontWidth(width?.toSwiftUI)
+          } else {
+            return text
+          }
+        #else
           return text
-        }
+        #endif
       case let .foregroundColor(color):
         return text.foregroundColor(color)
       case let .italic(isActive):
