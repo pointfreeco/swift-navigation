@@ -76,7 +76,7 @@ public struct TextState: Equatable, Hashable {
     case expanded
     case standard
 
-    #if swift(>=5.7) && !os(macOS) && !targetEnvironment(macCatalyst)
+    #if swift(>=5.7.1)
       @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
       var toSwiftUI: SwiftUI.Font.Width {
         switch self {
@@ -462,39 +462,55 @@ extension Text {
       case let .baselineOffset(baselineOffset):
         return text.baselineOffset(baselineOffset)
       case let .bold(isActive):
-        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-          return text.bold(isActive)
-        } else {
+        #if swift(>=5.7.1)
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+            return text.bold(isActive)
+          } else {
+            return text.bold()
+          }
+        #else
+          _ = isActive
           return text.bold()
-        }
+        #endif
       case let .font(font):
         return text.font(font)
       case let .fontDesign(design):
-        if #available(iOS 16.1, macOS 13, tvOS 16.1, watchOS 9.1, *) {
-          return text.fontDesign(design)
-        } else {
+        #if swift(>=5.7.1)
+          if #available(iOS 16.1, macOS 13, tvOS 16.1, watchOS 9.1, *) {
+            return text.fontDesign(design)
+          } else {
+            return text
+          }
+        #else
+          _ = design
           return text
-        }
+        #endif
       case let .fontWeight(weight):
         return text.fontWeight(weight)
       case let .fontWidth(width):
-        #if swift(>=5.7) && !os(macOS) && !targetEnvironment(macCatalyst)
+        #if swift(>=5.7.1)
           if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
             return text.fontWidth(width?.toSwiftUI)
           } else {
             return text
           }
         #else
+          _ = width
           return text
         #endif
       case let .foregroundColor(color):
         return text.foregroundColor(color)
       case let .italic(isActive):
-        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-          return text.italic(isActive)
-        } else {
+        #if swift(>=5.7.1)
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+            return text.italic(isActive)
+          } else {
+            return text.italic()
+          }
+        #else
+          _ = isActive
           return text.italic()
-        }
+        #endif
       case let .kerning(kerning):
         return text.kerning(kerning)
       case .monospacedDigit:
@@ -528,19 +544,29 @@ extension Text {
           return text
         }
       case let .strikethrough(isActive, pattern, color):
-        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
-          return text.strikethrough(isActive, pattern: pattern.toSwiftUI, color: color)
-        } else {
+        #if swift(>=5.7.1)
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
+            return text.strikethrough(isActive, pattern: pattern.toSwiftUI, color: color)
+          } else {
+            return text.strikethrough(isActive, color: color)
+          }
+        #else
+          _ = pattern
           return text.strikethrough(isActive, color: color)
-        }
+        #endif
       case let .tracking(tracking):
         return text.tracking(tracking)
       case let .underline(isActive, pattern, color):
-        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
-          return text.underline(isActive, pattern: pattern.toSwiftUI, color: color)
-        } else {
-          return text.underline(isActive, color: color)
-        }
+        #if swift(>=5.7.1)
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
+            return text.underline(isActive, pattern: pattern.toSwiftUI, color: color)
+          } else {
+            return text.underline(isActive, color: color)
+          }
+        #else
+          _ = pattern
+          return text.strikethrough(isActive, color: color)
+        #endif
       }
     }
   }
