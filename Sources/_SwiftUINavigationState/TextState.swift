@@ -52,15 +52,58 @@ public struct TextState: Equatable, Hashable {
     case accessibilityLabel(TextState)
     case accessibilityTextContentType(AccessibilityTextContentType)
     case baselineOffset(CGFloat)
-    case bold
+    case bold(isActive: Bool)
     case font(Font?)
+    case fontDesign(Font.Design?)
     case fontWeight(Font.Weight?)
+    case fontWidth(FontWidth?)
     case foregroundColor(Color?)
-    case italic
+    case italic(isActive: Bool)
     case kerning(CGFloat)
-    case strikethrough(active: Bool, color: Color?)
+    case monospacedDigit
+    case speechAdjustedPitch(Double)
+    case speechAlwaysIncludesPunctuation(Bool)
+    case speechAnnouncementsQueued(Bool)
+    case speechSpellsOutCharacters(Bool)
+    case strikethrough(isActive: Bool, pattern: LineStylePattern?, color: Color?)
     case tracking(CGFloat)
-    case underline(active: Bool, color: Color?)
+    case underline(isActive: Bool, pattern: LineStylePattern?, color: Color?)
+  }
+
+  public enum FontWidth: String, Equatable, Hashable {
+    case compressed
+    case condensed
+    case expanded
+    case standard
+
+    @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+    var toSwiftUI: SwiftUI.Font.Width {
+      switch self {
+      case .compressed: return .compressed
+      case .condensed: return .condensed
+      case .expanded: return .expanded
+      case .standard: return .standard
+      }
+    }
+  }
+
+  public enum LineStylePattern: String, Equatable, Hashable {
+    case dash
+    case dashDot
+    case dashDotDot
+    case dot
+    case solid
+
+    @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+    var toSwiftUI: SwiftUI.Text.LineStyle.Pattern {
+      switch self {
+      case .dash: return .dash
+      case .dashDot: return .dashDot
+      case .dashDotDot: return .dashDotDot
+      case .dot: return .dot
+      case .solid: return .solid
+      }
+    }
   }
 
   fileprivate enum Storage: Equatable, Hashable {
@@ -148,7 +191,14 @@ extension TextState {
 
   public func bold() -> Self {
     var `self` = self
-    `self`.modifiers.append(.bold)
+    `self`.modifiers.append(.bold(isActive: true))
+    return `self`
+  }
+
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  public func bold(isActive: Bool) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.bold(isActive: isActive))
     return `self`
   }
 
@@ -158,9 +208,22 @@ extension TextState {
     return `self`
   }
 
+  public func fontDesign(_ design: Font.Design?) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.fontDesign(design))
+    return `self`
+  }
+
   public func fontWeight(_ weight: Font.Weight?) -> Self {
     var `self` = self
     `self`.modifiers.append(.fontWeight(weight))
+    return `self`
+  }
+
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  public func fontWidth(_ width: FontWidth?) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.fontWidth(width))
     return `self`
   }
 
@@ -172,7 +235,14 @@ extension TextState {
 
   public func italic() -> Self {
     var `self` = self
-    `self`.modifiers.append(.italic)
+    `self`.modifiers.append(.italic(isActive: true))
+    return `self`
+  }
+
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  public func italic(isActive: Bool) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.italic(isActive: isActive))
     return `self`
   }
 
@@ -182,9 +252,27 @@ extension TextState {
     return `self`
   }
 
-  public func strikethrough(_ active: Bool = true, color: Color? = nil) -> Self {
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+  public func monospacedDigit() -> Self {
     var `self` = self
-    `self`.modifiers.append(.strikethrough(active: active, color: color))
+    `self`.modifiers.append(.monospacedDigit)
+    return `self`
+  }
+
+  public func strikethrough(_ isActive: Bool = true, color: Color? = nil) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.strikethrough(isActive: isActive, pattern: .solid, color: color))
+    return `self`
+  }
+
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  public func strikethrough(
+    _ isActive: Bool = true,
+    pattern: LineStylePattern,
+    color: Color? = nil
+  ) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.strikethrough(isActive: isActive, pattern: pattern, color: color))
     return `self`
   }
 
@@ -194,9 +282,20 @@ extension TextState {
     return `self`
   }
 
-  public func underline(_ active: Bool = true, color: Color? = nil) -> Self {
+  public func underline(_ isActive: Bool = true, color: Color? = nil) -> Self {
     var `self` = self
-    `self`.modifiers.append(.underline(active: active, color: color))
+    `self`.modifiers.append(.underline(isActive: isActive, pattern: .solid, color: color))
+    return `self`
+  }
+
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  public func underline(
+    _ isActive: Bool = true,
+    pattern: LineStylePattern,
+    color: Color? = nil
+  ) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.underline(isActive: isActive, pattern: pattern, color: color))
     return `self`
   }
 }
@@ -208,7 +307,7 @@ extension TextState {
     case console, fileSystem, messaging, narrative, plain, sourceCode, spreadsheet, wordProcessing
 
     #if compiler(>=5.5.1)
-      @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
       var toSwiftUI: SwiftUI.AccessibilityTextContentType {
         switch self {
         case .console: return .console
@@ -228,7 +327,7 @@ extension TextState {
     case h1, h2, h3, h4, h5, h6, unspecified
 
     #if compiler(>=5.5.1)
-      @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
       var toSwiftUI: SwiftUI.AccessibilityHeadingLevel {
         switch self {
         case .h1: return .h1
@@ -244,11 +343,17 @@ extension TextState {
   }
 }
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension TextState {
   public func accessibilityHeading(_ headingLevel: AccessibilityHeadingLevel) -> Self {
     var `self` = self
     `self`.modifiers.append(.accessibilityHeading(headingLevel))
+    return `self`
+  }
+
+  public func accessibilityLabel(_ label: Self) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.accessibilityLabel(label))
     return `self`
   }
 
@@ -279,6 +384,30 @@ extension TextState {
     `self`.modifiers.append(.accessibilityTextContentType(type))
     return `self`
   }
+
+  public func speechAdjustedPitch(_ value: Double) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.speechAdjustedPitch(value))
+    return `self`
+  }
+
+  public func speechAlwaysIncludesPunctuation(_ value: Bool = true) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.speechAlwaysIncludesPunctuation(value))
+    return `self`
+  }
+
+  public func speechAnnouncementsQueued(_ value: Bool = true) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.speechAnnouncementsQueued(value))
+    return `self`
+  }
+
+  public func speechSpellsOutCharacters(_ value: Bool = true) -> Self {
+    var `self` = self
+    `self`.modifiers.append(.speechSpellsOutCharacters(value))
+    return `self`
+  }
 }
 
 extension Text {
@@ -296,13 +425,13 @@ extension Text {
       switch modifier {
       #if compiler(>=5.5.1)
         case let .accessibilityHeading(level):
-          if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return text.accessibilityHeading(level.toSwiftUI)
           } else {
             return text
           }
         case let .accessibilityLabel(value):
-          if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             switch value.storage {
             case let .verbatim(string):
               return text.accessibilityLabel(string)
@@ -317,7 +446,7 @@ extension Text {
             return text
           }
         case let .accessibilityTextContentType(type):
-          if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return text.accessibilityTextContentType(type.toSwiftUI)
           } else {
             return text
@@ -330,24 +459,82 @@ extension Text {
       #endif
       case let .baselineOffset(baselineOffset):
         return text.baselineOffset(baselineOffset)
-      case .bold:
-        return text.bold()
+      case let .bold(isActive):
+        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+          return text.bold(isActive)
+        } else {
+          return text.bold()
+        }
       case let .font(font):
         return text.font(font)
+      case let .fontDesign(design):
+        if #available(iOS 16.1, macOS 13, tvOS 16.1, watchOS 9.1, *) {
+          return text.fontDesign(design)
+        } else {
+          return text
+        }
       case let .fontWeight(weight):
         return text.fontWeight(weight)
+      case let .fontWidth(width):
+        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+          return text.fontWidth(width?.toSwiftUI)
+        } else {
+          return text
+        }
       case let .foregroundColor(color):
         return text.foregroundColor(color)
-      case .italic:
-        return text.italic()
+      case let .italic(isActive):
+        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+          return text.italic(isActive)
+        } else {
+          return text.italic()
+        }
       case let .kerning(kerning):
         return text.kerning(kerning)
-      case let .strikethrough(active, color):
-        return text.strikethrough(active, color: color)
+      case .monospacedDigit:
+        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+          return text.monospacedDigit()
+        } else {
+          return text
+        }
+      case let .speechAdjustedPitch(value):
+        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+          return text.speechAdjustedPitch(value)
+        } else {
+          return text
+        }
+      case let .speechAlwaysIncludesPunctuation(value):
+        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+          return text.speechAlwaysIncludesPunctuation(value)
+        } else {
+          return text
+        }
+      case let .speechAnnouncementsQueued(value):
+        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+          return text.speechAnnouncementsQueued(value)
+        } else {
+          return text
+        }
+      case let .speechSpellsOutCharacters(value):
+        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+          return text.speechSpellsOutCharacters(value)
+        } else {
+          return text
+        }
+      case let .strikethrough(isActive, pattern, color):
+        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
+          return text.strikethrough(isActive, pattern: pattern.toSwiftUI, color: color)
+        } else {
+          return text.strikethrough(isActive, color: color)
+        }
       case let .tracking(tracking):
         return text.tracking(tracking)
-      case let .underline(active, color):
-        return text.underline(active, color: color)
+      case let .underline(isActive, pattern, color):
+        if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
+          return text.underline(isActive, pattern: pattern.toSwiftUI, color: color)
+        } else {
+          return text.underline(isActive, color: color)
+        }
       }
     }
   }
@@ -438,10 +625,21 @@ extension TextState: CustomDumpRepresentable {
           output = "<\(tag)=\(type.rawValue)>\(output)</\(tag)>"
         case let .baselineOffset(baselineOffset):
           output = "<baseline-offset=\(baselineOffset)>\(output)</baseline-offset>"
-        case .bold, .fontWeight(.some(.bold)):
+        case .bold(isActive: true), .fontWeight(.some(.bold)):
           output = "**\(output)**"
         case .font(.some):
           break  // TODO: capture Font description using DSL similar to TextState and print here
+        case let .fontDesign(.some(design)):
+          func describe(design: Font.Design) -> String {
+            switch design {
+            case .default: return "default"
+            case .serif: return "serif"
+            case .rounded: return "rounded"
+            case .monospaced: return "monospaced"
+            @unknown default: return "\(design)"
+            }
+          }
+          output = "<font-design=\(describe(design: design))>\(output)</font-width>"
         case let .fontWeight(.some(weight)):
           func describe(weight: Font.Weight) -> String {
             switch weight {
@@ -457,25 +655,43 @@ extension TextState: CustomDumpRepresentable {
             }
           }
           output = "<font-weight=\(describe(weight: weight))>\(output)</font-weight>"
+        case let .fontWidth(.some(width)):
+          output = "<font-width=\(width.rawValue)>\(output)</font-width>"
         case let .foregroundColor(.some(color)):
           output = "<foreground-color=\(color)>\(output)</foreground-color>"
-        case .italic:
+        case .italic(isActive: true):
           output = "_\(output)_"
         case let .kerning(kerning):
           output = "<kerning=\(kerning)>\(output)</kerning>"
-        case let .strikethrough(active: true, color: .some(color)):
+        case let .speechAdjustedPitch(value):
+          output = "<speech-adjusted-pitch value=\(value)>\(output)</speech-adjusted-pitch>"
+        case .speechAlwaysIncludesPunctuation(true):
+          output = "<speech-always-includes-punctuation>\(output)</speech-always-includes-punctuation>"
+        case .speechAnnouncementsQueued(true):
+          output = "<speech-announcements-queued>\(output)</speech-announcements-queued>"
+        case .speechSpellsOutCharacters(true):
+          output = "<speech-spells-out-characters>\(output)</speech-spells-out-characters>"
+        case let .strikethrough(isActive: true, pattern: _, color: .some(color)):
           output = "<s color=\(color)>\(output)</s>"
-        case .strikethrough(active: true, color: .none):
+        case .strikethrough(isActive: true, pattern: _, color: .none):
           output = "~~\(output)~~"
         case let .tracking(tracking):
           output = "<tracking=\(tracking)>\(output)</tracking>"
-        case let .underline(active: true, color):
+        case let .underline(isActive: true, pattern: _, color):
           output = "<u\(color.map { " color=\($0)" } ?? "")>\(output)</u>"
-        case .font(.none),
+        case .bold(isActive: false),
+            .font(.none),
+            .fontDesign(.none),
             .fontWeight(.none),
+            .fontWidth(.none),
             .foregroundColor(.none),
-            .strikethrough(active: false, color: _),
-            .underline(active: false, color: _):
+            .italic(isActive: false),
+            .monospacedDigit,
+            .speechAlwaysIncludesPunctuation(false),
+            .speechAnnouncementsQueued(false),
+            .speechSpellsOutCharacters(false),
+            .strikethrough(isActive: false, pattern: _, color: _),
+            .underline(isActive: false, pattern: _, color: _):
           break
         }
       }
