@@ -74,9 +74,8 @@ extension View {
   ///   - title: A closure returning the alert's title given the current alert state.
   ///   - enum: A binding to an optional enum that holds alert state at a particular case. When
   ///     the binding is updated with a non-`nil` enum, the case path will attempt to extract this
-  ///     state
-  ///     and then pass it to the modifier's closures. You can use it to populate the fields of an
-  ///     alert that the system displays to the user. When the user presses or taps one of the
+  ///     state and then pass it to the modifier's closures. You can use it to populate the fields
+  ///     of an alert that the system displays to the user. When the user presses or taps one of the
   ///     alert's actions, the system sets this value to `nil` and dismisses the alert.
   ///   - casePath: A case path that identifies a particular case that holds alert state.
   ///   - actions: A view builder returning the alert's actions given the current alert state.
@@ -98,6 +97,16 @@ extension View {
     )
   }
 
+  /// Presents an alert from a binding to optional ``AlertState``.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to an optional value that determines whether an alert should be
+  ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
+  ///     populate the fields of an alert that the system displays to the user. When the user
+  ///     presses or taps one of the alert's actions, the system sets this value to `nil` and
+  ///     dismisses the alert, and the action is fed to the `action` closure.
+  ///   - action: A closure that is called with an action from a particular alert button when
+  ///     tapped.
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public func alert<Value>(
     unwrapping value: Binding<AlertState<Value>?>,
@@ -116,6 +125,20 @@ extension View {
     )
   }
 
+  /// Presents an alert from a binding to an optional enum, and a case path to a specific case of
+  /// ``AlertState``.
+  ///
+  /// A version of `alert(unwrapping:)` that works with enum state.
+  ///
+  /// - Parameters:
+  ///   - enum: A binding to an optional enum that holds alert state at a particular case. When
+  ///     the binding is updated with a non-`nil` enum, the case path will attempt to extract this
+  ///     state and use it to populate the fields of an alert that the system displays to the user.
+  ///     When the user presses or taps one of the alert's actions, the system sets this value to
+  ///     `nil` and dismisses the alert, and the action is fed to the `action` closure.
+  ///   - casePath: A case path that identifies a particular case that holds alert state.
+  ///   - action: A closure that is called with an action from a particular alert button when
+  ///     tapped.
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public func alert<Enum, Value>(
     unwrapping `enum`: Binding<Enum?>,
