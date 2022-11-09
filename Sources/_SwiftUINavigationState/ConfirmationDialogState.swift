@@ -13,8 +13,8 @@ import SwiftUI
 /// ```swift
 /// class ItemModel: ObservableObject {
 ///   enum ConfirmationDialogAction {
-///     case deleteButtonTapped
-///     case favoriteButtonTapped
+///     case delete
+///     case favorite
 ///   }
 ///   // ...
 /// }
@@ -37,9 +37,9 @@ import SwiftUI
 ///   // ...
 ///   func dialogButtonTapped(_ action: ConfirmationDialogAction) {
 ///     switch action {
-///     case .deleteButtonTapped:
+///     case .delete:
 ///       // ...
-///     case .favoriteButtonTapped:
+///     case .favorite:
 ///       // ...
 ///     }
 ///   }
@@ -56,8 +56,8 @@ import SwiftUI
 ///     self.dialog = ConfirmationDialogState(
 ///       title: "What would you like to do?",
 ///       buttons: [
-///         .default(TextState("Favorite"), action: .send(.favoriteButtonTapped)),
-///         .destructive(TextState("Delete"), action: .send(.deleteButtonTapped)),
+///         .default(TextState("Favorite"), action: .send(.favorite)),
+///         .destructive(TextState("Delete"), action: .send(.delete)),
 ///         .cancel(TextState("Cancel")),
 ///       ]
 ///     )
@@ -100,14 +100,14 @@ import SwiftUI
 ///   ConfirmationDialogState(
 ///     title: "What would you like to do?",
 ///     buttons: [
-///       .default(TextState("Favorite"), action: .send(.favoriteButtonTapped)),
-///       .destructive(TextState("Delete"), action: .send(.deleteButtonTapped)),
+///       .default(TextState("Favorite"), action: .send(.favorite)),
+///       .destructive(TextState("Delete"), action: .send(.delete)),
 ///       .cancel(TextState("Cancel")),
 ///     ]
 ///   )
 /// )
 ///
-/// model.dialogButtonTapped(.favoriteButtonTapped)
+/// model.dialogButtonTapped(.favorite)
 /// // Verify that favorite logic executed correctly
 /// model.dialog = nil
 /// ```
