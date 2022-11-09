@@ -1,3 +1,5 @@
+import SwiftUI
+
 /// A view that can switch over a binding of enum state and exhaustively handle each case.
 ///
 /// Useful for computing a view from enum state where every case should be handled (using a

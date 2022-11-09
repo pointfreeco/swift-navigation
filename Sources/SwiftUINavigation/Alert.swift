@@ -1,3 +1,5 @@
+import SwiftUI
+
 extension View {
   /// Presents an alert from a binding to optional alert state.
   ///

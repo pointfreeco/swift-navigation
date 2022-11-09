@@ -1,3 +1,5 @@
+import SwiftUI
+
 // NB: Deprecated after 0.2.0
 
 extension NavigationLink {

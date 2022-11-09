@@ -1,3 +1,5 @@
+import SwiftUI
+
 extension View {
   /// Presents a popover using a binding as a data source for the popover's content.
   ///

@@ -1,3 +1,5 @@
+import SwiftUI
+
 extension View {
   /// Presents a sheet using a binding as a data source for the sheet's content.
   ///

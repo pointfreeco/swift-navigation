@@ -1,3 +1,5 @@
+import SwiftUI
+
 extension View {
   /// Presents a confirmation dialog from a binding to optional dialog state.
   ///

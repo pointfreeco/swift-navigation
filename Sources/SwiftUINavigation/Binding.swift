@@ -1,3 +1,5 @@
+import SwiftUI
+
 extension Binding {
   /// Creates a binding by projecting the base value to an unwrapped value.
   ///
