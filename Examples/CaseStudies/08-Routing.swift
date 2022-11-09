@@ -29,10 +29,7 @@ struct Routing: View {
       Button("Alert") {
         self.route = .alert(AlertState(title: TextState("Hello world!")))
       }
-      .alert(
-        unwrapping: self.$route,
-        case: /Route.alert
-      )
+      .alert(unwrapping: self.$route, case: /Route.alert)
 
       Button {
         self.route = .confirmationDialog(
@@ -44,10 +41,7 @@ struct Routing: View {
       } label: {
         Text("Confirmation dialog")
       }
-      .confirmationDialog(
-        unwrapping: self.$route,
-        case: /Route.confirmationDialog
-      )
+      .confirmationDialog(unwrapping: self.$route, case: /Route.confirmationDialog)
 
       NavigationLink(unwrapping: self.$route, case: /Route.link) {
         self.route = $0 ? .link(0) : nil
@@ -62,10 +56,7 @@ struct Routing: View {
       Button("Sheet") {
         self.route = .sheet(0)
       }
-      .sheet(
-        unwrapping: self.$route,
-        case: /Route.sheet
-      ) { $count in
+      .sheet(unwrapping: self.$route, case: /Route.sheet) { $count in
         Form {
           Stepper("Number: \(count)", value: $count)
         }
