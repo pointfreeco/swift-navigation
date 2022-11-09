@@ -19,9 +19,7 @@ class ItemRowViewModel: Identifiable, ObservableObject {
 
   var id: Item.ID { self.item.id }
 
-  init(
-    item: Item
-  ) {
+  init(item: Item) {
     self.item = item
   }
 
@@ -38,6 +36,13 @@ class ItemRowViewModel: Identifiable, ObservableObject {
         ]
       )
     )
+  }
+
+  func alertButtonTapped(_ action: AlertAction) {
+    switch action {
+    case .deleteConfirmation:
+      self.onDelete()
+    }
   }
 
   func setEditNavigation(isActive: Bool) {
@@ -60,13 +65,6 @@ class ItemRowViewModel: Identifiable, ObservableObject {
   func duplicate(item: Item) {
     self.onDuplicate(item)
     self.route = nil
-  }
-
-  func sendAlertAction(_ action: AlertAction) {
-    switch action {
-    case .deleteConfirmation:
-      self.onDelete()
-    }
   }
 }
 
@@ -135,7 +133,7 @@ struct ItemRowView: View {
       .alert(
         unwrapping: self.$viewModel.route,
         case: /ItemRowViewModel.Route.alert,
-        send: self.viewModel.sendAlertAction
+        action: self.viewModel.alertButtonTapped
       )
       .popover(
         unwrapping: self.$viewModel.route,

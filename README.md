@@ -299,6 +299,57 @@ extension BottomSheet {
 
 Both of these more powerful initializers are just conveniences. If the user of `BottomSheet` does not want to worry about concise domain modeling they are free to continue using the `isActive` boolean binding. But the day they need the more powerful APIs they will be available.
 
+### State-driven alerts and dialogs
+
+SwiftUI's alert and dialog modifiers can be configured with a lot of state that populates title, message, buttons, and even button actions. This is a lot of data that is calculated at the view layer, which makes it harder to test. This library provides data types and tools that allow you to move this logic into your model, instead.
+
+```swift
+class ItemModel: ObservableObject {
+  enum AlertAction {
+    case deleteConfirmation
+  }
+
+  @Published var alert: AlertState<AlertAction>?
+
+  // ...
+
+  func deleteButtonTapped() {
+    self.alert = AlertState(
+      title: TextState(self.item.name),
+      message: TextState("Are you sure you want to delete this item?"),
+      buttons: [
+        .destructive(
+          TextState("Delete"),
+          action: .send(.deleteConfirmation, animation: .default)
+        )
+      ]
+    )
+  }
+
+  func alertButtonTapped(_ action: AlertAction) {
+    switch action {
+    case .deleteConfirmation:
+      // ...
+    }
+  }
+}
+
+struct ItemView: View {
+  @ObservedObject var model: ItemModel
+
+  var body: some View {
+    // ...
+    Button("Delete") {
+      self.model.deleteButtonTapped()
+    }
+    .alert(
+      unwrapping: self.model.$alert,
+      action: self.model.alertButtonTapped
+    )
+  }
+}
+```
+
 ## Examples
 
 This repo comes with lots of examples to demonstrate how to solve common and complex navigation problems with the library. Check out [this](./Examples) directory to see them all, including:

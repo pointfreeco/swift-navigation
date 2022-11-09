@@ -4,98 +4,118 @@ import SwiftUI
 /// A data type that describes the state of an alert that can be shown to the user. The `Action`
 /// generic is the type of actions that can be sent from tapping on a button in the alert.
 ///
-/// This type can be used in your application's state in order to control the presentation or
-/// dismissal of alerts. It is preferable to use this API instead of the default SwiftUI API
-/// for alerts because SwiftUI uses 2-way bindings in order to control the showing and dismissal
-/// of alerts, and that does not play nicely with the Composable Architecture. The library requires
-/// that all state mutations happen by sending an action so that a reducer can handle that logic,
-/// which greatly simplifies how data flows through your application, and gives you instant
-/// testability on all parts of your application.
+/// This type can be used in your application's state in order to control the presentation and
+/// actions of alerts. This API can be used to push the logic of alert presentation and actions into
+/// your model, making it easier to test, and simplifying your view layer.
 ///
-/// To use this API, you model all the alert actions in your domain's action enum:
+/// To use this API, you describe all of an alert's actions as cases in an enum:
 ///
 /// ```swift
-/// enum Action: Equatable {
-///   case cancelTapped
-///   case confirmTapped
-///   case deleteTapped
-///
-///   // Your other actions
+/// class ItemModel: ObservableObject {
+///   enum AlertAction {
+///     case deleteConfirmation
+///   }
+///   // ...
 /// }
 /// ```
 ///
-/// And you model the state for showing the alert in your domain's state, and it can start off
-/// `nil`:
+/// You model the state for showing the alert in as a published field, which can start off `nil`:
 ///
 /// ```swift
-/// struct State: Equatable {
-///   var alert: AlertState<Action>?
-///
-///   // Your other state
+/// class ItemModel: ObservableObject {
+///   // ...
+///   @Published var alert: AlertState<AlertAction>?
+///   // ...
 /// }
 /// ```
 ///
-/// Then, in the reducer you can construct an ``AlertState`` value to represent the alert you want
-/// to show to the user:
+/// And you define an endpoint for handling each alert action:
 ///
 /// ```swift
-/// func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
-///   switch action {
-///   case .cancelTapped:
-///     state.alert = nil
-///     return .none
-///
-///   case .confirmTapped:
-///     state.alert = nil
-///     // Do deletion logic...
-///
-///   case .deleteTapped:
-///     state.alert = AlertState(
-///       title: TextState("Delete"),
-///       message: TextState("Are you sure you want to delete this? It cannot be undone."),
-///       primaryButton: .default(TextState("Confirm"), action: .send(.confirmTapped)),
-///       secondaryButton: .cancel(TextState("Cancel"))
-///     )
-///     return .none
+/// class ItemModel: ObservableObject {
+///   // ...
+///   func alertButtonTapped(_ action: AlertAction) {
+///     switch action {
+///     case .deleteConfirmation:
+///       // ...
+///     }
 ///   }
 /// }
 /// ```
 ///
-/// And then, in your view you can use the `.alert(_:send:dismiss:)` method on `View` in order
-/// to present the alert in a way that works best with the Composable Architecture:
+/// Then, in an endpoint that should display an alert, you can construct an ``AlertState`` value to
+/// represent it:
 ///
 /// ```swift
-/// Button("Delete") { viewStore.send(.deleteTapped) }
-///   .alert(
-///     self.store.scope(state: \.alert),
-///     dismiss: .cancelTapped
-///   )
+/// class ItemModel: ObservableObject {
+///   // ...
+///   func deleteButtonTapped() {
+///     self.alert = AlertState(
+///       title: TextState("Delete"),
+///       message: TextState(
+///         "Are you sure you want to delete this? It cannot be undone."
+///       ),
+///       buttons: [
+///         .destructive(
+///           TextState("Confirm"),
+///           action: .send(.deleteConfirmation)
+///         )
+///       ]
+///     )
+///   }
+/// }
 /// ```
 ///
-/// This makes your reducer in complete control of when the alert is shown or dismissed, and makes
-/// it so that any choice made in the alert is automatically fed back into the reducer so that you
-/// can handle its logic.
+/// And in your view you can use the `.alert(unwrapping:action:)` view modifier to present the
+/// alert:
+///
+/// ```swift
+/// struct ItemView: View {
+///   @ObservedObject var model: ItemModel
+///
+///   var body: some View {
+///     VStack {
+///       Button("Delete") {
+///         self.model.deleteButtonTapped()
+///       }
+///     }
+///     .alert(unwrapping: self.$model.alert) { action in
+///       self.model.alertButtonTapped(action)
+///     }
+///   }
+/// }
+/// ```
+///
+/// This makes your model in complete control of when the alert is shown or dismissed, and makes it
+/// so that any choice made in the alert is automatically fed back into the model so that you can
+/// handle its logic.
 ///
 /// Even better, you can instantly write tests that your alert behavior works as expected:
 ///
 /// ```swift
-/// let store = TestStore(
-///   initialState: Feature.State(),
-///   reducer: Feature()
+/// let model = ItemModel()
+///
+/// model.deleteButtonTapped()
+/// XCTAssertEqual(
+///   model.alert,
+///   AlertState(
+///     title: TextState("Delete"),
+///     message: TextState(
+///       "Are you sure you want to delete this? It cannot be undone."
+///     ),
+///     buttons: [
+///       .destructive(
+///         TextState("Confirm"),
+///         action: .send(.deleteConfirmation)
+///       )
+///     ]
+///   )
 /// )
 ///
-/// store.send(.deleteTapped) {
-///   $0.alert = AlertState(
-///     title: TextState("Delete"),
-///     message: TextState("Are you sure you want to delete this? It cannot be undone."),
-///     primaryButton: .default(TextState("Confirm"), action: .send(.confirmTapped)),
-///     secondaryButton: .cancel(TextState("Cancel"))
-///   )
-/// }
-/// store.send(.confirmTapped) {
-///   $0.alert = nil
+/// model.alertButtonTapped(.deleteConfirmation) {
 ///   // Also verify that delete logic executed correctly
 /// }
+/// model.alert = nil
 /// ```
 public struct AlertState<Action> {
   public let id = UUID()

@@ -4,107 +4,112 @@ import SwiftUI
 /// A data type that describes the state of a confirmation dialog that can be shown to the user. The
 /// `Action` generic is the type of actions that can be sent from tapping on a button in the sheet.
 ///
-/// This type can be used in your application's state in order to control the presentation or
-/// dismissal of dialogs. It is preferable to use this API instead of the default SwiftUI API for
-/// dialogs because SwiftUI uses 2-way bindings in order to control the showing and dismissal of
-/// dialogs, and that does not play nicely with the Composable Architecture. The library requires
-/// that all state mutations happen by sending an action so that a reducer can handle that logic,
-/// which greatly simplifies how data flows through your application, and gives you instant
-/// testability on all parts of your application.
+/// This type can be used in your application's state in order to control the presentation and
+/// actions of dialogs. This API can be used to push the logic of alert presentation and action into
+/// your model, making it easier to test, and simplifying your view layer.
 ///
-/// To use this API, you model all the dialog actions in your domain's action enum:
+/// To use this API, you describe all of a dialog's actions as cases in an enum:
 ///
 /// ```swift
-/// enum Action: Equatable {
-///   case cancelTapped
-///   case deleteTapped
-///   case favoriteTapped
-///   case infoTapped
-///
-///   // Your other actions
+/// class ItemModel: ObservableObject {
+///   enum ConfirmationDialogAction {
+///     case deleteButtonTapped
+///     case favoriteButtonTapped
+///   }
+///   // ...
 /// }
 /// ```
 ///
-/// And you model the state for showing the dialog in your domain's state, and it can start off in a
-/// `nil` state:
+/// You model the state for showing the alert in as a published field, which can start off `nil`:
 ///
 /// ```swift
-/// struct State: Equatable {
-///   var confirmationDialog: ConfirmationDialogState<AppAction>?
-///
-///   // Your other state
+/// class ItemModel: ObservableObject {
+///   // ...
+///   @Published var dialog: ConfirmationDialogState<ConfirmationDialogAction>?
+///   // ...
 /// }
 /// ```
 ///
-/// Then, in the reducer you can construct a `ConfirmationDialogState` value to represent the dialog
-/// you want to show to the user:
+/// And you define an endpoint for handling each alert action:
 ///
 /// ```swift
-/// func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
-///   switch action {
-///   case .cancelTapped:
-///     state.confirmationDialog = nil
-///     return .none
-///
-///   case .deleteTapped:
-///     state.confirmationDialog = nil
-///     // Do deletion logic...
-///
-///   case .favoriteTapped:
-///     state.confirmationDialog = nil
-///     // Do favoriting logic
-///
-///   case .infoTapped:
-///     state.confirmationDialog = ConfirmationDialogState(
-///       title: "What would you like to do?",
-///       buttons: [
-///         .default(TextState("Favorite"), action: .send(.favoriteTapped)),
-///         .destructive(TextState("Delete"), action: .send(.deleteTapped)),
-///         .cancel(),
-///       ]
-///     )
-///     return .none
+/// class ItemModel: ObservableObject {
+///   // ...
+///   func dialogButtonTapped(_ action: ConfirmationDialogAction) {
+///     switch action {
+///     case .deleteButtonTapped:
+///       // ...
+///     case .favoriteButtonTapped:
+///       // ...
+///     }
 ///   }
 /// }
 /// ```
 ///
-/// And then, in your view you can use the `confirmationDialog(_:dismiss:)` method on `View` in
-/// order to present the dialog in a way that works best with the Composable Architecture:
+/// Then, in an endpoint that should display an alert, you can construct a
+/// ``ConfirmationDialogState`` value to represent it:
 ///
 /// ```swift
-/// Button("Info") { viewStore.send(.infoTapped) }
-///   .confirmationDialog(
-///     self.store.scope(state: \.confirmationDialog),
-///     dismiss: .cancelTapped
-///   )
+/// class ItemModel: ObservableObject {
+///   // ...
+///   func infoButtonTapped() {
+///     self.dialog = ConfirmationDialogState(
+///       title: "What would you like to do?",
+///       buttons: [
+///         .default(TextState("Favorite"), action: .send(.favoriteButtonTapped)),
+///         .destructive(TextState("Delete"), action: .send(.deleteButtonTapped)),
+///         .cancel(TextState("Cancel")),
+///       ]
+///     )
+///   }
+/// }
 /// ```
 ///
-/// This makes your reducer in complete control of when the dialog is shown or dismissed, and makes
-/// it so that any choice made in the dialog is automatically fed back into the reducer so that you
-/// can handle its logic.
-///
-/// Even better, you can instantly write tests that your dialog behavior works as expected:
+/// And in your view you can use the `.confirmationDialog(unwrapping:action:)` view modifier to
+/// present the dialog:
 ///
 /// ```swift
-/// let store = TestStore(
-///   initialState: Feature.State(),
-///   reducer: Feature()
-/// )
+/// struct ItemView: View {
+///   @ObservedObject var model: ItemModel
 ///
-/// store.send(.infoTapped) {
-///   $0.confirmationDialog = ConfirmationDialogState(
+///   var body: some View {
+///     VStack {
+///       Button("Info") {
+///         self.model.infoButtonTapped()
+///       }
+///     }
+///     .confirmationDialog(unwrapping: self.$model.dialog) { action in
+///       self.model.dialogButtonTapped(action)
+///     }
+///   }
+/// }
+/// ```
+///
+/// This makes your model in complete control of when the alert is shown or dismissed, and makes it
+/// so that any choice made in the alert is automatically fed back into the model so that you can
+/// handle its logic.
+///
+/// Even better, you can instantly write tests that your alert behavior works as expected:
+///
+/// ```swift
+/// let model = ItemModel()
+///
+/// model.infoButtonTapped()
+/// XCTAssertEqual(
+///   model.dialog,
+///   ConfirmationDialogState(
 ///     title: "What would you like to do?",
 ///     buttons: [
-///       .default(TextState("Favorite"), send: .favoriteTapped),
-///       .destructive(TextState("Delete"), send: .deleteTapped),
-///       .cancel(),
+///       .default(TextState("Favorite"), action: .send(.favoriteButtonTapped)),
+///       .destructive(TextState("Delete"), action: .send(.deleteButtonTapped)),
+///       .cancel(TextState("Cancel")),
 ///     ]
 ///   )
-/// }
-/// store.send(.favoriteTapped) {
-///   $0.confirmationDialog = nil
-///   // Also verify that favoriting logic executed correctly
-/// }
+/// )
+///
+/// model.dialogButtonTapped(.favoriteButtonTapped)
+/// // Verify that favorite logic executed correctly
+/// model.dialog = nil
 /// ```
 @available(iOS 13, *)
 @available(macOS 12, *)

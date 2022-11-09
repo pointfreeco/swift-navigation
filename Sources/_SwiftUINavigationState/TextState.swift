@@ -15,37 +15,27 @@ import SwiftUI
 /// ``TextState``:
 ///
 /// ```swift
-/// struct State: Equatable {
-///   var label: TextState
+/// class Model: Equatable {
+///   @Published var label = TextState("")
 /// }
 /// ```
 ///
-/// Your reducer can then assign a value to this state using an API similar to that of
-/// `SwiftUI.Text`.
+/// Your model can then assign a value to this state using an API similar to that of `SwiftUI.Text`.
 ///
 /// ```swift
-/// state.label = TextState("Hello, ") + TextState(name).bold() + TextState("!")
+/// self.label = TextState("Hello, ") + TextState(name).bold() + TextState("!")
 /// ```
 ///
-/// And your view store can render it directly:
+/// And your view can render it by passing it to a `SwiftUI.Text` initializer:
 ///
 /// ```swift
 /// var body: some View {
-///   WithViewStore(self.store, observe: { $0 }) { viewStore in
-///     viewStore.label
-///   }
+///   Text(self.model.label)
 /// }
 /// ```
 ///
-/// Certain SwiftUI APIs, like alerts and confirmation dialogs, take `Text` values and, not views.
-/// To convert ``TextState`` to `SwiftUI.Text` for this purpose, you can use the `Text` initializer:
-///
-/// ```swift
-/// Alert(title: Text(viewStore.label))
-/// ```
-///
-/// The Composable Architecture comes with a few convenience APIs for alerts and dialogs that wrap
-/// ``TextState`` under the hood. See ``AlertState`` and `ActionState` accordingly.
+/// SwiftUI Navigation comes with a few convenience APIs for alerts and dialogs that wrap
+/// ``TextState`` under the hood. See ``AlertState`` and ``ConfirmationDialogState`` accordingly.
 ///
 /// In the future, should `SwiftUI.Text` and `SwiftUI.LocalizedStringKey` reliably conform to
 /// `Equatable`, ``TextState`` may be deprecated.
@@ -217,40 +207,40 @@ extension TextState {
   public enum AccessibilityTextContentType: String, Equatable, Hashable {
     case console, fileSystem, messaging, narrative, plain, sourceCode, spreadsheet, wordProcessing
 
-#if compiler(>=5.5.1)
-    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    var toSwiftUI: SwiftUI.AccessibilityTextContentType {
-      switch self {
-      case .console: return .console
-      case .fileSystem: return .fileSystem
-      case .messaging: return .messaging
-      case .narrative: return .narrative
-      case .plain: return .plain
-      case .sourceCode: return .sourceCode
-      case .spreadsheet: return .spreadsheet
-      case .wordProcessing: return .wordProcessing
+    #if compiler(>=5.5.1)
+      @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+      var toSwiftUI: SwiftUI.AccessibilityTextContentType {
+        switch self {
+        case .console: return .console
+        case .fileSystem: return .fileSystem
+        case .messaging: return .messaging
+        case .narrative: return .narrative
+        case .plain: return .plain
+        case .sourceCode: return .sourceCode
+        case .spreadsheet: return .spreadsheet
+        case .wordProcessing: return .wordProcessing
+        }
       }
-    }
-#endif
+    #endif
   }
 
   public enum AccessibilityHeadingLevel: String, Equatable, Hashable {
     case h1, h2, h3, h4, h5, h6, unspecified
 
-#if compiler(>=5.5.1)
-    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    var toSwiftUI: SwiftUI.AccessibilityHeadingLevel {
-      switch self {
-      case .h1: return .h1
-      case .h2: return .h2
-      case .h3: return .h3
-      case .h4: return .h4
-      case .h5: return .h5
-      case .h6: return .h6
-      case .unspecified: return .unspecified
+    #if compiler(>=5.5.1)
+      @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+      var toSwiftUI: SwiftUI.AccessibilityHeadingLevel {
+        switch self {
+        case .h1: return .h1
+        case .h2: return .h2
+        case .h3: return .h3
+        case .h4: return .h4
+        case .h5: return .h5
+        case .h6: return .h6
+        case .unspecified: return .unspecified
+        }
       }
-    }
-#endif
+    #endif
   }
 }
 
@@ -304,40 +294,40 @@ extension Text {
     }
     self = state.modifiers.reduce(text) { text, modifier in
       switch modifier {
-#if compiler(>=5.5.1)
-      case let .accessibilityHeading(level):
-        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
-          return text.accessibilityHeading(level.toSwiftUI)
-        } else {
-          return text
-        }
-      case let .accessibilityLabel(value):
-        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
-          switch value.storage {
-          case let .verbatim(string):
-            return text.accessibilityLabel(string)
-          case let .localized(key, tableName, bundle, comment):
-            return text.accessibilityLabel(
-              Text(key, tableName: tableName, bundle: bundle, comment: comment))
-          case .concatenated(_, _):
-            assertionFailure("`.accessibilityLabel` does not support contcatenated `TextState`")
+      #if compiler(>=5.5.1)
+        case let .accessibilityHeading(level):
+          if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+            return text.accessibilityHeading(level.toSwiftUI)
+          } else {
             return text
           }
-        } else {
+        case let .accessibilityLabel(value):
+          if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+            switch value.storage {
+            case let .verbatim(string):
+              return text.accessibilityLabel(string)
+            case let .localized(key, tableName, bundle, comment):
+              return text.accessibilityLabel(
+                Text(key, tableName: tableName, bundle: bundle, comment: comment))
+            case .concatenated(_, _):
+              assertionFailure("`.accessibilityLabel` does not support contcatenated `TextState`")
+              return text
+            }
+          } else {
+            return text
+          }
+        case let .accessibilityTextContentType(type):
+          if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+            return text.accessibilityTextContentType(type.toSwiftUI)
+          } else {
+            return text
+          }
+      #else
+        case .accessibilityHeading,
+            .accessibilityLabel,
+            .accessibilityTextContentType:
           return text
-        }
-      case let .accessibilityTextContentType(type):
-        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
-          return text.accessibilityTextContentType(type.toSwiftUI)
-        } else {
-          return text
-        }
-#else
-      case .accessibilityHeading,
-          .accessibilityLabel,
-          .accessibilityTextContentType:
-        return text
-#endif
+      #endif
       case let .baselineOffset(baselineOffset):
         return text.baselineOffset(baselineOffset)
       case .bold:
@@ -360,12 +350,6 @@ extension Text {
         return text.underline(active, color: color)
       }
     }
-  }
-}
-
-extension TextState: View {
-  public var body: some View {
-    Text(self)
   }
 }
 
