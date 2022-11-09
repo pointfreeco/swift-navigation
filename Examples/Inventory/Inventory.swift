@@ -1,4 +1,5 @@
 import IdentifiedCollections
+import SwiftUI
 import SwiftUINavigation
 
 class InventoryViewModel: ObservableObject {

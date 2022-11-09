@@ -1,3 +1,4 @@
+import SwiftUI
 import SwiftUINavigation
 
 struct Item: Equatable, Identifiable {

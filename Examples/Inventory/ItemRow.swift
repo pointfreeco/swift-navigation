@@ -1,3 +1,4 @@
+import SwiftUI
 import SwiftUINavigation
 
 class ItemRowViewModel: Identifiable, ObservableObject {
