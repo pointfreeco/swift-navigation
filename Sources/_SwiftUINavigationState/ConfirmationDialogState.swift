@@ -150,18 +150,6 @@ public struct ConfirmationDialogState<Action> {
     case automatic
     case hidden
     case visible
-
-    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-    var toSwiftUI: SwiftUI.Visibility {
-      switch self {
-      case .automatic:
-        return .automatic
-      case .hidden:
-        return .hidden
-      case .visible:
-        return .visible
-      }
-    }
   }
 }
 
@@ -213,27 +201,33 @@ extension ConfirmationDialogState: Hashable where Action: Hashable {
 @available(watchOS 6, *)
 extension ConfirmationDialogState: Identifiable {}
 
-@available(iOS 13, *)
-@available(macOS 12, *)
-@available(tvOS 13, *)
-@available(watchOS 6, *)
-extension ConfirmationDialogState {
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  @ViewBuilder
-  func toSwiftUIActions(send: @escaping (Action) -> Void) -> some View {
-    ForEach(self.buttons.indices, id: \.self) {
-      self.buttons[$0].toSwiftUIButton(send: send)
-    }
-  }
-
-  @available(macOS, unavailable)
-  fileprivate func toSwiftUIActionSheet(send: @escaping (Action) -> Void) -> SwiftUI.ActionSheet {
-    SwiftUI.ActionSheet(
-      title: Text(self.title),
-      message: self.message.map { Text($0) },
-      buttons: self.buttons.map {
-        $0.toSwiftUIAlertButton(send: send)
-      }
+@available(iOS, introduced: 13, deprecated: 100000.0, message: "use `View.confirmationDialog(title:isPresented:titleVisibility:presenting::actions:)`instead.")
+@available(macOS, unavailable)
+@available(tvOS, introduced: 13, deprecated: 100000.0, message: "use `View.confirmationDialog(title:isPresented:titleVisibility:presenting:actions:)`instead.")
+@available(watchOS, introduced: 6, deprecated: 100000.0, message: "use `View.confirmationDialog(title:isPresented:titleVisibility:presenting:actions:)`instead.")
+extension ActionSheet {
+  public init<Action>(
+    _ state: ConfirmationDialogState<Action>,
+    action: @escaping (Action) -> Void
+  ) {
+    self.init(
+      title: Text(state.title),
+      message: state.message.map { Text($0) },
+      buttons: state.buttons.map { .init($0, action: action) }
     )
+  }
+}
+
+@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+extension Visibility {
+  public init<Action>(_ visibility: ConfirmationDialogState<Action>.Visibility) {
+    switch visibility {
+    case .automatic:
+      self = .automatic
+    case .hidden:
+      self = .hidden
+    case .visible:
+      self = .visible
+    }
   }
 }

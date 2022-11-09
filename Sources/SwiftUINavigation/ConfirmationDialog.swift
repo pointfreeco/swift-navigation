@@ -109,14 +109,18 @@ extension View {
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public func confirmationDialog<Value>(
     unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-    send: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+    action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
   ) -> some View {
     self.confirmationDialog(
       value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
       isPresented: value.isPresent(),
-      titleVisibility: value.wrappedValue?.titleVisibility.toSwiftUI ?? .automatic,
+      titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
       presenting: value.wrappedValue,
-      actions: { $0.toSwiftUIActions(send: { send($0) }) },
+      actions: {
+        ForEach($0.buttons) {
+          Button($0, action: action)
+        }
+      },
       message: { $0.message.map { Text($0) } }
     )
   }
@@ -125,11 +129,11 @@ extension View {
   public func confirmationDialog<Enum, Value>(
     unwrapping `enum`: Binding<Enum?>,
     case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-    send: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+    action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
   ) -> some View {
     self.confirmationDialog(
       unwrapping: `enum`.case(casePath),
-      send: send
+      action: action
     )
   }
 }

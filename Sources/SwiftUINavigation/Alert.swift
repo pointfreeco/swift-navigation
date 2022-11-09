@@ -101,13 +101,17 @@ extension View {
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public func alert<Value>(
     unwrapping value: Binding<AlertState<Value>?>,
-    send: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+    action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
   ) -> some View {
     self.alert(
       (value.wrappedValue?.title).map(Text.init) ?? Text(""),
       isPresented: value.isPresent(),
       presenting: value.wrappedValue,
-      actions: { $0.toSwiftUIActions(send: { send($0) }) },
+      actions: {
+        ForEach($0.buttons) {
+          Button($0, action: action)
+        }
+      },
       message: { $0.message.map { Text($0) } }
     )
   }
@@ -116,8 +120,8 @@ extension View {
   public func alert<Enum, Value>(
     unwrapping `enum`: Binding<Enum?>,
     case casePath: CasePath<Enum, AlertState<Value>>,
-    send: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+    action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
   ) -> some View {
-    self.alert(unwrapping: `enum`.case(casePath), send: send)
+    self.alert(unwrapping: `enum`.case(casePath), action: action)
   }
 }

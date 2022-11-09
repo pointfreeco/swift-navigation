@@ -136,6 +136,7 @@ public struct AlertState<Action> {
   }
 
   public struct Button {
+    public let id = UUID()
     public var action: ButtonAction?
     public var label: TextState
     public var role: ButtonRole?
@@ -160,6 +161,19 @@ public struct AlertState<Action> {
     ) -> Self {
       Self(action: action, label: label, role: .destructive)
     }
+
+    public func withAction(_ perform: (Action) -> Void) {
+      switch self.action?.type {
+      case let .send(action):
+        perform(action)
+      case let .animatedSend(action, animation: animation):
+        withAnimation(animation) {
+          perform(action)
+        }
+      case .none:
+        return
+      }
+    }
   }
 
   public struct ButtonAction {
@@ -182,16 +196,6 @@ public struct AlertState<Action> {
   public enum ButtonRole {
     case cancel
     case destructive
-
-    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-    var toSwiftUI: SwiftUI.ButtonRole {
-      switch self {
-      case .cancel:
-        return .cancel
-      case .destructive:
-        return .destructive
-      }
-    }
   }
 }
 
@@ -264,6 +268,7 @@ extension AlertState: Hashable where Action: Hashable {
 }
 
 extension AlertState: Identifiable {}
+extension AlertState.Button: Identifiable {}
 
 extension AlertState.ButtonAction: Equatable where Action: Equatable {}
 extension AlertState.ButtonAction.ActionType: Equatable where Action: Equatable {}
@@ -288,66 +293,59 @@ extension AlertState.Button: Hashable where Action: Hashable {
   }
 }
 
-extension AlertState.Button {
-  func toSwiftUIAction(send: @escaping (Action) -> Void) -> () -> Void {
-    return {
-      switch self.action?.type {
-      case .none:
-        return
-      case let .some(.send(action)):
-        send(action)
-      case let .some(.animatedSend(action, animation: animation)):
-        withAnimation(animation) { send(action) }
-      }
-    }
-  }
-
-  func toSwiftUIAlertButton(send: @escaping (Action) -> Void) -> SwiftUI.Alert.Button {
-    let action = self.toSwiftUIAction(send: send)
-    switch self.role {
-    case .cancel:
-      return .cancel(Text(label), action: action)
-    case .destructive:
-      return .destructive(Text(label), action: action)
-    case .none:
-      return .default(Text(label), action: action)
-    }
-  }
-
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  func toSwiftUIButton(send: @escaping (Action) -> Void) -> some View {
-    SwiftUI.Button(
-      role: self.role?.toSwiftUI,
-      action: self.toSwiftUIAction(send: send)
-    ) {
-      Text(self.label)
+extension Alert {
+  public init<Action>(_ state: AlertState<Action>, action: @escaping (Action) -> Void) {
+    if state.buttons.count == 2 {
+      self.init(
+        title: Text(state.title),
+        message: state.message.map { Text($0) },
+        primaryButton: .init(state.buttons[0], action: action),
+        secondaryButton: .init(state.buttons[1], action: action)
+      )
+    } else {
+      self.init(
+        title: Text(state.title),
+        message: state.message.map { Text($0) },
+        dismissButton: state.buttons.first.map { .init($0, action: action) }
+      )
     }
   }
 }
 
-extension AlertState {
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  @ViewBuilder
-  func toSwiftUIActions(send: @escaping (Action) -> Void) -> some View {
-    ForEach(self.buttons.indices, id: \.self) {
-      self.buttons[$0].toSwiftUIButton(send: send)
+extension Alert.Button {
+  public init<Action>(_ button: AlertState<Action>.Button, action: @escaping (Action) -> Void) {
+    let action = button.action.map { _ in { button.withAction(action) } }
+    switch button.role {
+    case .cancel:
+      self = .cancel(Text(button.label), action: action)
+    case .destructive:
+      self = .destructive(Text(button.label), action: action)
+    case .none:
+      self = .default(Text(button.label), action: action)
     }
   }
+}
 
-  fileprivate func toSwiftUIAlert(send: @escaping (Action) -> Void) -> SwiftUI.Alert {
-    if self.buttons.count == 2 {
-      return SwiftUI.Alert(
-        title: Text(self.title),
-        message: self.message.map { Text($0) },
-        primaryButton: self.buttons[0].toSwiftUIAlertButton(send: send),
-        secondaryButton: self.buttons[1].toSwiftUIAlertButton(send: send)
-      )
-    } else {
-      return SwiftUI.Alert(
-        title: Text(self.title),
-        message: self.message.map { Text($0) },
-        dismissButton: self.buttons.first?.toSwiftUIAlertButton(send: send)
-      )
+@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+extension ButtonRole {
+  public init<Action>(_ role: AlertState<Action>.ButtonRole) {
+    switch role {
+    case .cancel:
+      self = .cancel
+    case .destructive:
+      self = .destructive
+    }
+  }
+}
+
+extension Button where Label == Text {
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+  public init<Action>(_ button: AlertState<Action>.Button, action: @escaping (Action) -> Void) {
+    self.init(
+      role: button.role.map(ButtonRole.init),
+      action: { button.withAction(action) }
+    ) {
+      Text(button.label)
     }
   }
 }
