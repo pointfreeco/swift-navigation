@@ -27,7 +27,7 @@ struct Routing: View {
       }
 
       Button("Alert") {
-        self.route = .alert(AlertState(title: TextState("Hello world!"), buttons: []))
+        self.route = .alert(AlertState(title: TextState("Hello world!")))
       }
       .alert(
         unwrapping: self.$route,
