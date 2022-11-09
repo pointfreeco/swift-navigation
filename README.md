@@ -11,6 +11,7 @@ Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
       * [Navigation overloads](#navigation-api-overloads)
       * [Navigation views](#navigation-views)
       * [Binding transformations](#binding-transformations)
+      * [State-driven alerts and dialogs](#State-driven-alerts-and-dialogs)
   * [Examples](#examples)
   * [Learn more](#learn-more)
   * [Installation](#installation)
@@ -320,7 +321,7 @@ class ItemModel: ObservableObject {
       buttons: [
         .destructive(
           TextState("Delete"),
-          action: .send(.deleteConfirmation, animation: .default)
+          action: .deleteConfirmation
         )
       ]
     )
@@ -343,7 +344,7 @@ struct ItemView: View {
       self.model.deleteButtonTapped()
     }
     .alert(
-      unwrapping: self.model.$alert,
+      unwrapping: self.$model.alert,
       action: self.model.alertButtonTapped
     )
   }
