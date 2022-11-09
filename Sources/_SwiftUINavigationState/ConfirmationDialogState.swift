@@ -11,7 +11,7 @@ import SwiftUI
 /// To use this API, you describe all of a dialog's actions as cases in an enum:
 ///
 /// ```swift
-/// class ItemModel: ObservableObject {
+/// class FeatureModel: ObservableObject {
 ///   enum ConfirmationDialogAction {
 ///     case delete
 ///     case favorite
@@ -23,7 +23,7 @@ import SwiftUI
 /// You model the state for showing the alert in as a published field, which can start off `nil`:
 ///
 /// ```swift
-/// class ItemModel: ObservableObject {
+/// class FeatureModel: ObservableObject {
 ///   // ...
 ///   @Published var dialog: ConfirmationDialogState<ConfirmationDialogAction>?
 ///   // ...
@@ -33,7 +33,7 @@ import SwiftUI
 /// And you define an endpoint for handling each alert action:
 ///
 /// ```swift
-/// class ItemModel: ObservableObject {
+/// class FeatureModel: ObservableObject {
 ///   // ...
 ///   func dialogButtonTapped(_ action: ConfirmationDialogAction) {
 ///     switch action {
@@ -50,7 +50,7 @@ import SwiftUI
 /// ``ConfirmationDialogState`` value to represent it:
 ///
 /// ```swift
-/// class ItemModel: ObservableObject {
+/// class FeatureModel: ObservableObject {
 ///   // ...
 ///   func infoButtonTapped() {
 ///     self.dialog = ConfirmationDialogState(
@@ -70,7 +70,7 @@ import SwiftUI
 ///
 /// ```swift
 /// struct ItemView: View {
-///   @ObservedObject var model: ItemModel
+///   @ObservedObject var model: FeatureModel
 ///
 ///   var body: some View {
 ///     VStack {
@@ -92,7 +92,7 @@ import SwiftUI
 /// Even better, you can instantly write tests that your alert behavior works as expected:
 ///
 /// ```swift
-/// let model = ItemModel()
+/// let model = FeatureModel()
 ///
 /// model.infoButtonTapped()
 /// XCTAssertEqual(
