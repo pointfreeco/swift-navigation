@@ -1,3 +1,4 @@
+import SwiftUI
 import SwiftUINavigation
 
 struct RootView: View {
@@ -32,6 +33,14 @@ struct RootView: View {
         }
 
         Section {
+          if #available(iOS 16, *) {
+            NavigationLink("Navigation destinations") {
+              NavigationStack {
+                NavigationDestinations()
+              }
+              .navigationTitle("Navigation stack")
+            }
+          }
           NavigationLink("Optional navigation links") {
             OptionalNavigationLinks()
           }

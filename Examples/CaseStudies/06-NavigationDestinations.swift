@@ -1,7 +1,8 @@
 import SwiftUI
 import SwiftUINavigation
 
-struct OptionalNavigationLinks: View {
+@available(iOS 16, *)
+struct NavigationDestinations: View {
   @ObservedObject private var viewModel = ViewModel()
 
   var body: some View {
@@ -10,28 +11,10 @@ struct OptionalNavigationLinks: View {
         Stepper("Number: \(self.viewModel.count)", value: self.$viewModel.count)
 
         HStack {
-          NavigationLink(unwrapping: self.$viewModel.fact) {
-            self.viewModel.setFactNavigation(isActive: $0)
-          } destination: { $fact in
-            FactEditor(fact: $fact.description)
-              .disabled(self.viewModel.isLoading)
-              .foregroundColor(self.viewModel.isLoading ? .gray : nil)
-              .navigationBarBackButtonHidden(true)
-              .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                  Button("Cancel") {
-                    self.viewModel.cancelButtonTapped()
-                  }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                  Button("Save") {
-                    self.viewModel.saveButtonTapped(fact: fact)
-                  }
-                }
-              }
-          } label: {
-            Text("Get number fact")
+          Button("Get number fact") {
+            self.viewModel.numberFactButtonTapped()
           }
+          // TODO: .buttonStyle(.navigation)
 
           if self.viewModel.isLoading {
             Spacer()
@@ -51,7 +34,25 @@ struct OptionalNavigationLinks: View {
         Text("Saved Facts")
       }
     }
-    .navigationTitle("Links")
+    .navigationTitle("Destinations")
+    .navigationDestination(unwrapping: self.$viewModel.fact) { $fact in
+      FactEditor(fact: $fact.description)
+        .disabled(self.viewModel.isLoading)
+        .foregroundColor(self.viewModel.isLoading ? .gray : nil)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+          ToolbarItem(placement: .cancellationAction) {
+            Button("Cancel") {
+              self.viewModel.cancelButtonTapped()
+            }
+          }
+          ToolbarItem(placement: .confirmationAction) {
+            Button("Save") {
+              self.viewModel.saveButtonTapped(fact: fact)
+            }
+          }
+        }
+    }
   }
 }
 
@@ -60,10 +61,14 @@ private struct FactEditor: View {
 
   var body: some View {
     VStack {
-      TextEditor(text: self.$fact)
+      if #available(iOS 14, *) {
+        TextEditor(text: self.$fact)
+      } else {
+        TextField("Untitled", text: self.$fact)
+      }
     }
     .padding()
-    .navigationTitle("Fact Editor")
+    .navigationBarTitle("Fact Editor")
   }
 }
 
@@ -73,6 +78,10 @@ private class ViewModel: ObservableObject {
   @Published var isLoading = false
   @Published var savedFacts: [Fact] = []
   private var task: Task<Void, Error>?
+
+  deinit {
+    self.task?.cancel()
+  }
 
   func setFactNavigation(isActive: Bool) {
     if isActive {
@@ -89,6 +98,10 @@ private class ViewModel: ObservableObject {
       self.task = nil
       self.fact = nil
     }
+  }
+
+  func numberFactButtonTapped() {
+    self.setFactNavigation(isActive: true)
   }
 
   func cancelButtonTapped() {

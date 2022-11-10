@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftUINavigation
 
-struct OptionalPopovers: View {
+struct OptionalNavigationLinks: View {
   @ObservedObject private var viewModel = ViewModel()
 
   var body: some View {
@@ -10,23 +10,27 @@ struct OptionalPopovers: View {
         Stepper("Number: \(self.viewModel.count)", value: self.$viewModel.count)
 
         HStack {
-          Button("Get number fact") {
-            self.viewModel.numberFactButtonTapped()
-          }
-          .popover(unwrapping: self.$viewModel.fact, arrowEdge: .bottom) { $fact in
-            NavigationView {
-              FactEditor(fact: $fact.description)
-                .disabled(self.viewModel.isLoading)
-                .foregroundColor(self.viewModel.isLoading ? .gray : nil)
-                .navigationBarItems(
-                  leading: Button("Cancel") {
+          NavigationLink(unwrapping: self.$viewModel.fact) {
+            self.viewModel.setFactNavigation(isActive: $0)
+          } destination: { $fact in
+            FactEditor(fact: $fact.description)
+              .disabled(self.viewModel.isLoading)
+              .foregroundColor(self.viewModel.isLoading ? .gray : nil)
+              .navigationBarBackButtonHidden(true)
+              .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                  Button("Cancel") {
                     self.viewModel.cancelButtonTapped()
-                  },
-                  trailing: Button("Save") {
+                  }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                  Button("Save") {
                     self.viewModel.saveButtonTapped(fact: fact)
                   }
-                )
-            }
+                }
+              }
+          } label: {
+            Text("Get number fact")
           }
 
           if self.viewModel.isLoading {
@@ -47,7 +51,7 @@ struct OptionalPopovers: View {
         Text("Saved Facts")
       }
     }
-    .navigationTitle("Popovers")
+    .navigationTitle("Links")
   }
 }
 
@@ -74,28 +78,30 @@ private class ViewModel: ObservableObject {
     self.task?.cancel()
   }
 
-  func numberFactButtonTapped() {
-    self.isLoading = true
-    self.fact = Fact(description: "\(self.count) is still loading...", number: self.count)
-    self.task = Task { @MainActor in
-      let fact = await getNumberFact(self.count)
-      self.isLoading = false
-      try Task.checkCancellation()
-      self.fact = fact
+  func setFactNavigation(isActive: Bool) {
+    if isActive {
+      self.isLoading = true
+      self.fact = Fact(description: "\(self.count) is still loading...", number: self.count)
+      self.task = Task { @MainActor in
+        let fact = await getNumberFact(self.count)
+        self.isLoading = false
+        try Task.checkCancellation()
+        self.fact = fact
+      }
+    } else {
+      self.task?.cancel()
+      self.task = nil
+      self.fact = nil
     }
   }
 
   func cancelButtonTapped() {
-    self.task?.cancel()
-    self.task = nil
-    self.fact = nil
+    self.setFactNavigation(isActive: false)
   }
 
   func saveButtonTapped(fact: Fact) {
-    self.task?.cancel()
-    self.task = nil
     self.savedFacts.append(fact)
-    self.fact = nil
+    self.setFactNavigation(isActive: false)
   }
 
   func removeSavedFacts(atOffsets offsets: IndexSet) {

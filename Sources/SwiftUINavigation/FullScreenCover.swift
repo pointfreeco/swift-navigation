@@ -22,7 +22,7 @@ extension View {
   ///       self.draft = Post()
   ///     }
   ///     .fullScreenCover(unwrapping: self.$draft) { $draft in
-  ///        ComposeView(post: $draft, onSubmit: { ... })
+  ///       ComposeView(post: $draft, onSubmit: { ... })
   ///     }
   ///   }
   /// }
@@ -37,7 +37,7 @@ extension View {
   ///   - value: A binding to a source of truth for the sheet. When `value` is non-`nil`, a
   ///     non-optional binding to the value is passed to the `content` closure. You use this binding
   ///     to produce content that the system presents to the user in a sheet. Changes made to the
-  ///     sheet's binding will be reflected back in the source or truth. Likewise, changes to
+  ///     sheet's binding will be reflected back in the source of truth. Likewise, changes to
   ///     `value` are instantly reflected in the sheet. If `value` becomes `nil`, the sheet is
   ///     dismissed.
   ///   - onDismiss: The closure to execute when dismissing the sheet.
@@ -65,7 +65,7 @@ extension View {
   ///     particular case. When `enum` is non-`nil`, and `casePath` successfully extracts a value, a
   ///     non-optional binding to the value is passed to the `content` closure. You use this binding
   ///     to produce content that the system presents to the user in a sheet. Changes made to the
-  ///     sheet's binding will be reflected back in the source of truth. Likewise, change to `enum`
+  ///     sheet's binding will be reflected back in the source of truth. Likewise, changes to `enum`
   ///     at the given case are instantly reflected in the sheet. If `enum` becomes `nil`, or
   ///     becomes a case other than the one identified by `casePath`, the sheet is dismissed.
   ///   - casePath: A case path that identifies a case of `enum` that holds a source of truth for
