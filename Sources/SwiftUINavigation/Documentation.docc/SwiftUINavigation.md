@@ -39,9 +39,13 @@ to that enum.
 
 ### Essentials
 
+- <doc:WhatIsNavigation>
+
+### Tools
+
 - <doc:AlertsDialogs>
 - <doc:SheetsPopoversCovers>
-- <doc:NavigationLinks>
+- <doc:Navigation>
 - <doc:Destructuring>
 - <doc:BindingTransformations>
 

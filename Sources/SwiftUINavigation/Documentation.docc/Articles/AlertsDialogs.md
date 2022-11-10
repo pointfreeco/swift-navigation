@@ -1,6 +1,6 @@
 # Alerts and Confirmation Dialogs
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+Learn how to present alerts and confirmation dialogs in a concise and testable manner.
 
 ## Overview
 

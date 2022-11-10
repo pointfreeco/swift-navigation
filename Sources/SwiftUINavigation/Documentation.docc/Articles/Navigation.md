@@ -1,6 +1,7 @@
-# Navigation links
+# Navigation views and stacks
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+Learn how to drive navigation in `NavigationView` and `NavigationStack` in a concise and testable
+manner.
 
 ## Overview
 

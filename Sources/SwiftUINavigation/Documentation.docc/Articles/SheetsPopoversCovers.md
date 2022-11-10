@@ -1,6 +1,6 @@
 # Sheets, popovers and covers
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+Learn how to present sheets, popovers and covers in a concise and testable manner.
 
 ## Overview
 

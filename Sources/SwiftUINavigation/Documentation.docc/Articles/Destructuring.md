@@ -1,6 +1,6 @@
 # If-lets, case-lets, switches
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+Learn how leverage SwiftUI views in order to destructure bindings of optionals and enums.
 
 ## Overview
 
