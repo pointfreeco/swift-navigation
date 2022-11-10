@@ -30,7 +30,7 @@ struct OptionalConfirmationDialogs: View {
       },
       message: { Text($0.description) }
     )
-    .navigationTitle("Confirmation dialogs")
+    .navigationTitle("Dialogs")
   }
 }
 

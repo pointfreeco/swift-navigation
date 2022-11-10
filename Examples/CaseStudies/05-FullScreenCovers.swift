@@ -51,7 +51,7 @@ struct OptionalFullScreenCovers: View {
           }
       }
     }
-    .navigationTitle("Full-screen covers")
+    .navigationTitle("Covers")
   }
 }
 

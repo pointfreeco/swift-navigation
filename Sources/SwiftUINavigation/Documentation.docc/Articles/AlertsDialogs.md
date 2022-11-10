@@ -1,4 +1,4 @@
-# Alerts and Confirmation Dialogs
+# Alerts and dialogs
 
 Learn how to present alerts and confirmation dialogs in a concise and testable manner.
 

@@ -1,4 +1,4 @@
-# Sheets, popovers and covers
+# Sheets, popovers, and covers
 
 Learn how to present sheets, popovers and covers in a concise and testable manner.
 

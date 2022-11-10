@@ -50,6 +50,7 @@ struct Routing: View {
         Form {
           Stepper("Number: \(count)", value: $count)
         }
+        .navigationTitle("Routing link")
       } label: {
         Text("Link")
       }

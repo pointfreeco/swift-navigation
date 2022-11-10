@@ -34,7 +34,7 @@ struct RootView: View {
 
         Section {
           if #available(iOS 16, *) {
-            NavigationLink("Navigation destinations") {
+            NavigationLink("Optional destinations") {
               NavigationStack {
                 NavigationDestinations()
               }
