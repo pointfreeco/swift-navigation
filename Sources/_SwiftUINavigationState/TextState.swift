@@ -644,19 +644,23 @@ extension TextState: CustomDumpRepresentable {
       case let .verbatim(string):
         output = string
       }
+      func tag(_ name: String, attribute: String? = nil, _ value: String? = nil) {
+        output = """
+          <\(name)\(attribute.map { " \($0)" } ?? "")\(value.map { "=\($0)" } ?? "")>\
+          \(output)\
+          </\(name)>
+          """
+      }
       for modifier in textState.modifiers {
         switch modifier {
         case let .accessibilityHeading(headingLevel):
-          let tag = "accessibility-heading-level"
-          output = "<\(tag)=\(headingLevel.rawValue)>\(output)</\(tag)>"
+          tag("accessibility-heading-level", headingLevel.rawValue)
         case let .accessibilityLabel(value):
-          let tag = "accessibility-label"
-          output = "<\(tag)=\(dumpHelp(value))>\(output)</\(tag)>"
+          tag("accessibility-label", dumpHelp(value))
         case let .accessibilityTextContentType(type):
-          let tag = "accessibility-text-content-type"
-          output = "<\(tag)=\(type.rawValue)>\(output)</\(tag)>"
+          tag("accessibility-text-content-type", type.rawValue)
         case let .baselineOffset(baselineOffset):
-          output = "<baseline-offset=\(baselineOffset)>\(output)</baseline-offset>"
+          tag("baseline-offset", "\(baselineOffset)")
         case .bold(isActive: true), .fontWeight(.some(.bold)):
           output = "**\(output)**"
         case .font(.some):
@@ -671,7 +675,7 @@ extension TextState: CustomDumpRepresentable {
             @unknown default: return "\(design)"
             }
           }
-          output = "<font-design=\(describe(design: design))>\(output)</font-width>"
+          tag("font-design", describe(design: design))
         case let .fontWeight(.some(weight)):
           func describe(weight: Font.Weight) -> String {
             switch weight {
@@ -686,31 +690,33 @@ extension TextState: CustomDumpRepresentable {
             default: return "\(weight)"
             }
           }
-          output = "<font-weight=\(describe(weight: weight))>\(output)</font-weight>"
+          tag("font-weight", describe(weight: weight))
         case let .fontWidth(.some(width)):
-          output = "<font-width=\(width.rawValue)>\(output)</font-width>"
+          tag("font-width", width.rawValue)
         case let .foregroundColor(.some(color)):
-          output = "<foreground-color=\(color)>\(output)</foreground-color>"
+          tag("foreground-color", "\(color)")
         case .italic(isActive: true):
           output = "_\(output)_"
         case let .kerning(kerning):
-          output = "<kerning=\(kerning)>\(output)</kerning>"
+          tag("kerning", "\(kerning)")
         case let .speechAdjustedPitch(value):
-          output = "<speech-adjusted-pitch value=\(value)>\(output)</speech-adjusted-pitch>"
+          tag("speech-adjusted-pitch", "\(value)")
         case .speechAlwaysIncludesPunctuation(true):
-          output = "<speech-always-includes-punctuation>\(output)</speech-always-includes-punctuation>"
+          tag("speech-always-includes-punctuation")
         case .speechAnnouncementsQueued(true):
-          output = "<speech-announcements-queued>\(output)</speech-announcements-queued>"
+          tag("speech-announcements-queued")
         case .speechSpellsOutCharacters(true):
-          output = "<speech-spells-out-characters>\(output)</speech-spells-out-characters>"
+          tag("speech-spells-out-characters")
         case let .strikethrough(isActive: true, pattern: _, color: .some(color)):
-          output = "<s color=\(color)>\(output)</s>"
+          tag("s", attribute: "color", "\(color)")
         case .strikethrough(isActive: true, pattern: _, color: .none):
           output = "~~\(output)~~"
         case let .tracking(tracking):
-          output = "<tracking=\(tracking)>\(output)</tracking>"
-        case let .underline(isActive: true, pattern: _, color):
-          output = "<u\(color.map { " color=\($0)" } ?? "")>\(output)</u>"
+          tag("tracking", "\(tracking)")
+        case let .underline(isActive: true, pattern: _, .some(color)):
+          tag("u", attribute: "color", "\(color)")
+        case .underline(isActive: true, pattern: _, color: .none):
+          tag("u")
         case .bold(isActive: false),
             .font(.none),
             .fontDesign(.none),

@@ -47,7 +47,7 @@ final class TextStateTests: XCTestCase {
       + TextState("\n") + TextState("Not underlined purple").underline(false, color: .pink),
       to: &dump
     )
-    XCTAssertEqual(
+    XCTAssertNoDifference(
       dump,
         #"""
         """
