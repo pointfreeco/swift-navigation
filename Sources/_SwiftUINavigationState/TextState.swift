@@ -1,8 +1,8 @@
 import CustomDump
 import SwiftUI
 
-/// An equatable description of SwiftUI `Text`. Useful for storing rich text in state for the
-/// purpose of rendering in a view hierarchy.
+/// An equatable description of SwiftUI `Text`. Useful for storing rich text in feature models
+/// that can still be tested for equality.
 ///
 /// Although `SwiftUI.Text` and `SwiftUI.LocalizedStringKey` are value types that conform to
 /// `Equatable`, their `==` do not return `true` when used with seemingly equal values. If we were
