@@ -80,10 +80,8 @@ struct FeatureView: View {
   var body: some View {
     List {
       ForEach(self.model.items) { item in 
-        Button {
+        Button(item.name) {
           self.model.tapped(item: item)
-        } label: {
-          Text("\(item.name)")
         }
       }
     }

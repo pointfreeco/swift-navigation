@@ -7,8 +7,8 @@ private let readMe = """
 
   The screen has three navigation destinations: an alert, a navigation link to a count stepper, \
   and a modal sheet to a count stepper. The state for each of these destinations is held as \
-  associated data of an enum, and bindings to the cases of that enum are derived using \
-  the tools in this library.
+  associated data of an enum, and bindings to the cases of that enum are derived using the tools \
+  in this library.
   """
 
 enum Destination {
@@ -32,15 +32,13 @@ struct Routing: View {
       }
       .alert(unwrapping: self.$destination, case: /Destination.alert)
 
-      Button {
+      Button("Confirmation dialog") {
         self.destination = .confirmationDialog(
           ConfirmationDialogState(
             title: TextState("Hello world!"),
             titleVisibility: .visible 
           )
         )
-      } label: {
-        Text("Confirmation dialog")
       }
       .confirmationDialog(unwrapping: self.$destination, case: /Destination.confirmationDialog)
 
