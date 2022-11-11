@@ -15,9 +15,9 @@ new screen. Full screen covers and popovers are also an example of navigation, a
 similar to sheets except they either take over the full screen (i.e. covers) or only partially
 take over the screen (i.e. popovers).
 
-Even UI components such as alerts and confirmation dialogs can be thought of navigation as they
-take full control over the interface and force you to make a selection. It's also possible for you
-to define your own notions of navigation, such as bottom menus, toasts, and more.
+Even alerts and confirmation dialogs can be thought of navigation as they take full control over 
+the interface and force you to make a selection. It's also possible for you to define your own 
+notions of navigation, such as bottom menus, toasts, and more.
 
 ## State-driven navigation
 
@@ -45,8 +45,7 @@ this pattern?
 
 ## SwiftUI's tools for navigation
 
-Many of SwiftUI's navigation tools are driven off of optional state, but sadly not all, and even the 
-ones that are have some problems.
+Many of SwiftUI's navigation tools are driven off of optional state, but sadly not all.
 
 The simplest example is modal sheets. A simple API is provided that takes a binding of an optional
 item, and when that item flips to a non-`nil` value it is handed to a content closure to produce
@@ -287,9 +286,9 @@ NavigationLink(
 Read the following articles to learn more about the tools that ship with this library for presenting
 alerts, dialogs, sheets, popovers, covers, and navigation links all from bindings of enum state. 
 
-- <doc:AlertsDialogs>
-- <doc:SheetsPopoversCovers>
 - <doc:Navigation>
+- <doc:SheetsPopoversCovers>
+- <doc:AlertsDialogs>
 - <doc:Destructuring>
 - <doc:BindingTransformations>
 

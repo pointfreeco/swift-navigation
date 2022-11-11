@@ -52,7 +52,7 @@ import SwiftUI
 ///
 /// ```swift
 /// class HomeScreenModel: ObservableObject {
-///   // ...
+///   // ... 
 ///   func deleteAppButtonTapped() {
 ///     self.alert = AlertState(
 ///       title: TextState(#"Remove "Twitter"?"#),

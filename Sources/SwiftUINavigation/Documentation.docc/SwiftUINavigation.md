@@ -43,9 +43,9 @@ to that enum.
 
 ### Tools
 
-- <doc:AlertsDialogs>
-- <doc:SheetsPopoversCovers>
 - <doc:Navigation>
+- <doc:SheetsPopoversCovers>
+- <doc:AlertsDialogs>
 - <doc:Destructuring>
 - <doc:BindingTransformations>
 
