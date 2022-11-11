@@ -90,35 +90,35 @@ extension Binding {
   /// Useful for interacting with APIs that take a binding of a boolean that you want to drive with
   /// with an enum case that has no associated data.
   ///
-  /// For example, a view may model all of its presentations in a single route enum to prevent the
-  /// invalid states that can be introduced by holding onto many booleans and optionals, instead.
-  /// Even the simple case of two booleans driving two alerts introduces a potential runtime state
-  /// where both alerts are presented at the same time. By modeling these alerts using a two-case
-  /// enum instead of two booleans, we can eliminate this invalid state at compile time. Then we
-  /// can transform a binding to the route enum into a boolean binding using `isPresent`, so that it
-  /// can be passed to various presentation APIs.
+  /// For example, a view may model all of its presentations in a single destination enum to prevent
+  /// the invalid states that can be introduced by holding onto many booleans and optionals,
+  /// instead. Even the simple case of two booleans driving two alerts introduces a potential
+  /// runtime state where both alerts are presented at the same time. By modeling these alerts
+  /// using a two-case enum instead of two booleans, we can eliminate this invalid state at compile
+  /// time. Then we can transform a binding to the destination enum into a boolean binding using
+  /// `isPresent`, so that it can be passed to various presentation APIs.
   ///
   /// ```swift
-  /// enum Route {
+  /// enum Destination {
   ///   case deleteAlert
   ///   ...
   /// }
   ///
   /// struct ProductView: View {
-  ///   @State var route: Route?
+  ///   @State var destination: Destination?
   ///   @State var product: Product
   ///
   ///   var body: some View {
   ///     Button("Delete") {
-  ///       self.viewModel.route = .deleteAlert
+  ///       self.model.destination = .deleteAlert
   ///     }
   ///     // SwiftUI's vanilla alert modifier
   ///     .alert(
   ///       self.product.name
-  ///       isPresented: self.$viewModel.route.isPresent(/Route.deleteAlert),
+  ///       isPresented: self.$model.destination.isPresent(/Destination.deleteAlert),
   ///       actions: {
   ///         Button("Delete", role: .destructive) {
-  ///           self.viewModel.deleteConfirmationButtonTapped()
+  ///           self.model.deleteConfirmationButtonTapped()
   ///         }
   ///       },
   ///       message: {

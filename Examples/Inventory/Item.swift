@@ -40,7 +40,7 @@ struct Item: Equatable, Identifiable {
     static let white = Self(name: "White", red: 1, green: 1, blue: 1)
 
     var swiftUIColor: SwiftUI.Color {
-      .init(red: self.red, green: self.green, blue: self.blue)
+      SwiftUI.Color(red: self.red, green: self.green, blue: self.blue)
     }
   }
 }

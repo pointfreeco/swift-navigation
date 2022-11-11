@@ -2,34 +2,34 @@ import SwiftUI
 import SwiftUINavigation
 
 struct OptionalPopovers: View {
-  @ObservedObject private var viewModel = ViewModel()
+  @ObservedObject private var model = FeatureModel()
 
   var body: some View {
     List {
       Section {
-        Stepper("Number: \(self.viewModel.count)", value: self.$viewModel.count)
+        Stepper("Number: \(self.model.count)", value: self.$model.count)
 
         HStack {
           Button("Get number fact") {
-            self.viewModel.numberFactButtonTapped()
+            self.model.numberFactButtonTapped()
           }
-          .popover(unwrapping: self.$viewModel.fact, arrowEdge: .bottom) { $fact in
+          .popover(unwrapping: self.$model.fact, arrowEdge: .bottom) { $fact in
             NavigationView {
               FactEditor(fact: $fact.description)
-                .disabled(self.viewModel.isLoading)
-                .foregroundColor(self.viewModel.isLoading ? .gray : nil)
+                .disabled(self.model.isLoading)
+                .foregroundColor(self.model.isLoading ? .gray : nil)
                 .navigationBarItems(
                   leading: Button("Cancel") {
-                    self.viewModel.cancelButtonTapped()
+                    self.model.cancelButtonTapped()
                   },
                   trailing: Button("Save") {
-                    self.viewModel.saveButtonTapped(fact: fact)
+                    self.model.saveButtonTapped(fact: fact)
                   }
                 )
             }
           }
 
-          if self.viewModel.isLoading {
+          if self.model.isLoading {
             Spacer()
             ProgressView()
           }
@@ -39,10 +39,10 @@ struct OptionalPopovers: View {
       }
 
       Section {
-        ForEach(self.viewModel.savedFacts) { fact in
+        ForEach(self.model.savedFacts) { fact in
           Text(fact.description)
         }
-        .onDelete { self.viewModel.removeSavedFacts(atOffsets: $0) }
+        .onDelete { self.model.removeSavedFacts(atOffsets: $0) }
       } header: {
         Text("Saved Facts")
       }
@@ -63,7 +63,7 @@ private struct FactEditor: View {
   }
 }
 
-private class ViewModel: ObservableObject {
+private class FeatureModel: ObservableObject {
   @Published var count = 0
   @Published var fact: Fact?
   @Published var isLoading = false

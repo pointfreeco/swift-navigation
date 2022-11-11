@@ -4,9 +4,9 @@ import XCTestDynamicOverlay
 
 class ItemRowModel: Identifiable, ObservableObject {
   @Published var item: Item
-  @Published var route: Route?
+  @Published var destination: Destination?
 
-  enum Route: Equatable {
+  enum Destination: Equatable {
     case alert(AlertState<AlertAction>)
     case duplicate(Item)
   }
@@ -26,7 +26,7 @@ class ItemRowModel: Identifiable, ObservableObject {
   }
 
   func deleteButtonTapped() {
-    self.route = .alert(
+    self.destination = .alert(
       AlertState(
         title: TextState(self.item.name),
         message: TextState("Are you sure you want to delete this item?"),
@@ -48,16 +48,16 @@ class ItemRowModel: Identifiable, ObservableObject {
   }
 
   func cancelButtonTapped() {
-    self.route = nil
+    self.destination = nil
   }
 
   func duplicateButtonTapped() {
-    self.route = .duplicate(self.item.duplicate())
+    self.destination = .duplicate(self.item.duplicate())
   }
 
   func duplicate(item: Item) {
     self.onDuplicate(item)
-    self.route = nil
+    self.destination = nil
   }
 
   func rowTapped() {
@@ -67,7 +67,7 @@ class ItemRowModel: Identifiable, ObservableObject {
 
 extension Item {
   func duplicate() -> Self {
-    .init(color: self.color, name: self.name, status: self.status)
+    Self(color: self.color, name: self.name, status: self.status)
   }
 }
 
@@ -113,13 +113,13 @@ struct ItemRowView: View {
       .buttonStyle(.plain)
       .foregroundColor(self.model.item.status.isInStock ? nil : Color.gray)
       .alert(
-        unwrapping: self.$model.route,
-        case: /ItemRowModel.Route.alert,
+        unwrapping: self.$model.destination,
+        case: /ItemRowModel.Destination.alert,
         action: self.model.alertButtonTapped
       )
       .popover(
-        unwrapping: self.$model.route,
-        case: /ItemRowModel.Route.duplicate
+        unwrapping: self.$model.destination,
+        case: /ItemRowModel.Destination.duplicate
       ) { $item in
         NavigationStack {
           ItemView(item: $item)

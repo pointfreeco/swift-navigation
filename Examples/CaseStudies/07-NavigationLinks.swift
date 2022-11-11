@@ -2,30 +2,30 @@ import SwiftUI
 import SwiftUINavigation
 
 struct OptionalNavigationLinks: View {
-  @ObservedObject private var viewModel = ViewModel()
+  @ObservedObject private var model = FeatureModel()
 
   var body: some View {
     List {
       Section {
-        Stepper("Number: \(self.viewModel.count)", value: self.$viewModel.count)
+        Stepper("Number: \(self.model.count)", value: self.$model.count)
 
         HStack {
-          NavigationLink(unwrapping: self.$viewModel.fact) {
-            self.viewModel.setFactNavigation(isActive: $0)
+          NavigationLink(unwrapping: self.$model.fact) {
+            self.model.setFactNavigation(isActive: $0)
           } destination: { $fact in
             FactEditor(fact: $fact.description)
-              .disabled(self.viewModel.isLoading)
-              .foregroundColor(self.viewModel.isLoading ? .gray : nil)
+              .disabled(self.model.isLoading)
+              .foregroundColor(self.model.isLoading ? .gray : nil)
               .navigationBarBackButtonHidden(true)
               .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                   Button("Cancel") {
-                    self.viewModel.cancelButtonTapped()
+                    self.model.cancelButtonTapped()
                   }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                   Button("Save") {
-                    self.viewModel.saveButtonTapped(fact: fact)
+                    self.model.saveButtonTapped(fact: fact)
                   }
                 }
               }
@@ -33,7 +33,7 @@ struct OptionalNavigationLinks: View {
             Text("Get number fact")
           }
 
-          if self.viewModel.isLoading {
+          if self.model.isLoading {
             Spacer()
             ProgressView()
           }
@@ -43,10 +43,10 @@ struct OptionalNavigationLinks: View {
       }
 
       Section {
-        ForEach(self.viewModel.savedFacts) { fact in
+        ForEach(self.model.savedFacts) { fact in
           Text(fact.description)
         }
-        .onDelete { self.viewModel.removeSavedFacts(atOffsets: $0) }
+        .onDelete { self.model.removeSavedFacts(atOffsets: $0) }
       } header: {
         Text("Saved Facts")
       }
@@ -67,7 +67,7 @@ private struct FactEditor: View {
   }
 }
 
-private class ViewModel: ObservableObject {
+private class FeatureModel: ObservableObject {
   @Published var count = 0
   @Published var fact: Fact?
   @Published var isLoading = false

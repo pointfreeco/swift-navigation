@@ -15,10 +15,10 @@ class InventoryModel: ObservableObject {
 
   init(
     inventory: IdentifiedArrayOf<ItemRowModel> = [],
-    route: Destination? = nil
+    destination: Destination? = nil
   ) {
     self.inventory = inventory
-    self.destination = route
+    self.destination = destination
     self.bind()
   }
 
@@ -36,7 +36,7 @@ class InventoryModel: ObservableObject {
   }
 
   func addButtonTapped() {
-    self.destination = .add(.init(color: nil, name: "", status: .inStock(quantity: 1)))
+    self.destination = .add(Item(color: nil, name: "", status: .inStock(quantity: 1)))
   }
 
   func cancelButtonTapped() {
@@ -136,17 +136,23 @@ struct InventoryView_Previews: PreviewProvider {
 
     NavigationStack {
       InventoryView(
-         model: .init(
+         model: InventoryModel(
           inventory: [
-            .init(item: keyboard),
-            .init(item: Item(color: .yellow, name: "Charger", status: .inStock(quantity: 20))),
-            .init(
-              item: Item(color: .green, name: "Phone", status: .outOfStock(isOnBackOrder: true))),
-            .init(
+            ItemRowModel(
+              item: keyboard
+            ),
+            ItemRowModel(
+              item: Item(color: .yellow, name: "Charger", status: .inStock(quantity: 20))
+            ),
+            ItemRowModel(
+              item: Item(color: .green, name: "Phone", status: .outOfStock(isOnBackOrder: true))
+            ),
+            ItemRowModel(
               item: Item(
-                color: .green, name: "Headphones", status: .outOfStock(isOnBackOrder: false))),
-          ],
-          route: nil
+                color: .green, name: "Headphones", status: .outOfStock(isOnBackOrder: false)
+              )
+            ),
+          ]
         )
       )
     }

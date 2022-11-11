@@ -2,8 +2,8 @@ import SwiftUI
 import SwiftUINavigation
 
 private let readMe = """
-  This case study demonstrates how to power multiple forms of navigation from a single route enum \
-  that describes all of the possible destinations one can travel to from this screen.
+  This case study demonstrates how to power multiple forms of navigation from a single destination \
+  enum that describes all of the possible destinations one can travel to from this screen.
 
   The screen has three navigation destinations: an alert, a navigation link to a count stepper, \
   and a modal sheet to a count stepper. The state for each of these destinations is held as \
@@ -11,7 +11,7 @@ private let readMe = """
   the tools in this library.
   """
 
-enum Route {
+enum Destination {
   case alert(AlertState<Never>)
   case confirmationDialog(ConfirmationDialogState<Never>)
   case link(Int)
@@ -19,7 +19,7 @@ enum Route {
 }
 
 struct Routing: View {
-  @State var route: Route?
+  @State var destination: Destination?
 
   var body: some View {
     Form {
@@ -28,12 +28,12 @@ struct Routing: View {
       }
 
       Button("Alert") {
-        self.route = .alert(AlertState(title: TextState("Hello world!")))
+        self.destination = .alert(AlertState(title: TextState("Hello world!")))
       }
-      .alert(unwrapping: self.$route, case: /Route.alert)
+      .alert(unwrapping: self.$destination, case: /Destination.alert)
 
       Button {
-        self.route = .confirmationDialog(
+        self.destination = .confirmationDialog(
           ConfirmationDialogState(
             title: TextState("Hello world!"),
             titleVisibility: .visible 
@@ -42,10 +42,10 @@ struct Routing: View {
       } label: {
         Text("Confirmation dialog")
       }
-      .confirmationDialog(unwrapping: self.$route, case: /Route.confirmationDialog)
+      .confirmationDialog(unwrapping: self.$destination, case: /Destination.confirmationDialog)
 
-      NavigationLink(unwrapping: self.$route, case: /Route.link) {
-        self.route = $0 ? .link(0) : nil
+      NavigationLink(unwrapping: self.$destination, case: /Destination.link) {
+        self.destination = $0 ? .link(0) : nil
       } destination: { $count in
         Form {
           Stepper("Number: \(count)", value: $count)
@@ -56,9 +56,9 @@ struct Routing: View {
       }
 
       Button("Sheet") {
-        self.route = .sheet(0)
+        self.destination = .sheet(0)
       }
-      .sheet(unwrapping: self.$route, case: /Route.sheet) { $count in
+      .sheet(unwrapping: self.$destination, case: /Destination.sheet) { $count in
         Form {
           Stepper("Number: \(count)", value: $count)
         }

@@ -84,30 +84,30 @@ This forces us to hold 3 optional values in state, which has 2^3=8 different sta
 Ideally we'd like to represent these navigation destinations as 3 mutually exclusive states so that we could guarantee at compile time that only one can be active at a time. Luckily for us Swift’s enums are perfect for this:
 
 ```swift
-enum Route {
+enum Destination {
   case draft(Post)
   case settings(Settings)
   case userProfile(Profile)
 }
 ```
 
-And then we could hold an optional `Route` in state to represent that we are either navigating to a specific destination or we are not navigating anywhere:
+And then we could hold an optional `Destination` in state to represent that we are either navigating to a specific destination or we are not navigating anywhere:
 
 ```swift
-@State var route: Route?
+@State var destination: Destination?
 ```
 
 This would be the most optimal way to model our navigation domain, but unfortunately SwiftUI's tools do not make easy for us to drive navigation off of enums.
 
 This library comes with a number of `Binding` transformations and navigation API overloads that allow you to model your domain as concisely as possible, using enums, while still allowing you to use SwiftUI's navigation tools.
 
-For example, powering multiple modal sheets off a single `Route` enum looks like this with the tools in this library:
+For example, powering multiple modal sheets off a single `Destination` enum looks like this with the tools in this library:
 
 ```swift
 struct ContentView {
-  @State var route: Route?
+  @State var destination: Destinatino?
 
-  enum Route {
+  enum Destination {
     case draft(Post)
     case settings(Settings)
     case userProfile(Profile)
@@ -116,13 +116,13 @@ struct ContentView {
   var body: some View {
     /* Main view omitted */
 
-    .sheet(unwrapping: self.$route, case: /Route.draft) { $draft in
+    .sheet(unwrapping: self.$destination, case: /Destination.draft) { $draft in
       EditPostView(post: $draft)
     }
-    .sheet(unwrapping: self.$route, case: /Route.settings) { $settings in
+    .sheet(unwrapping: self.$destination, case: /Destination.settings) { $settings in
       SettingsView(settings: $settings)
     }
-    .sheet(unwrapping: self.$route, case: /Route.userProfile) { $userProfile in
+    .sheet(unwrapping: self.$destination, case: /Destination.userProfile) { $userProfile in
       UserProfile(profile: $userProfile)
     }
   }
@@ -132,7 +132,7 @@ struct ContentView {
 The forward-slash syntax you see above represents a [case path](https://github.com/pointfreeco/swift-case-paths) to a particular case of an enum. Case paths are our imagining of what key paths could look like for enums, and every concept for key paths has an analogous concept for case paths:
 
   * Each property of an struct is naturally endowed with a key path, and so each case of an enum is endowed with a case path.
-  * Key paths are constructed using a back slash, name of the type and name of the property (_e.g._, `\User.name`), and case paths are constructed similarly, but with a forward slash (_e.g._, `/Route.draft`).
+  * Key paths are constructed using a back slash, name of the type and name of the property (_e.g._, `\User.name`), and case paths are constructed similarly, but with a forward slash (_e.g._, `/Destination.draft`).
   * Key paths describe how to get and set a value in some root structure, whereas case paths describe how to extract and embed a value into a root structure.
 
 Case paths are crucial for allowing us to build the tools to drive navigation off of enum state.
@@ -155,7 +155,7 @@ This library provides additional overloads for all of SwiftUI's "state-driven" n
 For example, here is how a navigation link, a modal sheet and an alert can all be driven off a single enum with 3 cases:
 
 ```swift
-enum Route {
+enum Destination {
   case add(Post)
   case alert(Alert)
   case edit(Post)
@@ -163,25 +163,25 @@ enum Route {
 
 struct ContentView {
   @State var posts: [Post]
-  @State var route: Route?
+  @State var destination: Destination?
 
   var body: some View {
     ForEach(self.posts) { post in
-      NavigationLink(unwrapping: self.$route, case: /Route.edit) { isActive in 
-        self.route = isActive ? .edit(post) : nil 
+      NavigationLink(unwrapping: self.$destination, case: /Destination.edit) { isActive in 
+        self.destination = isActive ? .edit(post) : nil 
       } destination: { $post in 
         EditPostView(post: $post)
       } label: {
         Text(post.title)
       }
     }
-    .sheet(unwrapping: self.$route, case: /Route.add) { $post in
+    .sheet(unwrapping: self.$destination, case: /Destination.add) { $post in
       EditPostView(post: $post)
     }
     .alert(
       title: { Text("Delete \($0.title)?") },
-      unwrapping: self.$route,
-      case: /Route.alert
+      unwrapping: self.$destination,
+      case: /Destination.alert
       actions: { post in
         Button("Delete") { self.posts.remove(post) }
       },
