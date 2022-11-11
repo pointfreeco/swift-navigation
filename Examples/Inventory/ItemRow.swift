@@ -1,22 +1,23 @@
 import SwiftUI
 import SwiftUINavigation
+import XCTestDynamicOverlay
 
-class ItemRowViewModel: Identifiable, ObservableObject {
+class ItemRowModel: Identifiable, ObservableObject {
   @Published var item: Item
   @Published var route: Route?
 
   enum Route: Equatable {
     case alert(AlertState<AlertAction>)
     case duplicate(Item)
-    case edit(Item)
   }
-
-  var onDelete: () -> Void = {}
-  var onDuplicate: (Item) -> Void = { _ in }
 
   enum AlertAction {
     case deleteConfirmation
   }
+
+  var onDelete: () -> Void = unimplemented("ItemRowModel.onDelete")
+  var onDuplicate: (Item) -> Void = unimplemented("ItemRowModel.onDuplicate")
+  var onTap: () -> Void = unimplemented("ItemRowModel.onTap")
 
   var id: Item.ID { self.item.id }
 
@@ -46,15 +47,6 @@ class ItemRowViewModel: Identifiable, ObservableObject {
     }
   }
 
-  func setEditNavigation(isActive: Bool) {
-    self.route = isActive ? .edit(self.item) : nil
-  }
-
-  func edit(item: Item) {
-    self.item = item
-    self.route = nil
-  }
-
   func cancelButtonTapped() {
     self.route = nil
   }
@@ -67,42 +59,31 @@ class ItemRowViewModel: Identifiable, ObservableObject {
     self.onDuplicate(item)
     self.route = nil
   }
+
+  func rowTapped() {
+    self.onTap()
+  }
 }
 
 extension Item {
   func duplicate() -> Self {
-    .init(name: self.name, color: self.color, status: self.status)
+    .init(color: self.color, name: self.name, status: self.status)
   }
 }
 
 struct ItemRowView: View {
-  @ObservedObject var viewModel: ItemRowViewModel
+  @ObservedObject var model: ItemRowModel
 
   var body: some View {
-    NavigationLink(unwrapping: self.$viewModel.route, case: /ItemRowViewModel.Route.edit) {
-      self.viewModel.setEditNavigation(isActive: $0)
-    } destination: { $item in
-      ItemView(item: $item)
-        .navigationBarTitle("Edit")
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-          ToolbarItem(placement: .cancellationAction) {
-            Button("Cancel") {
-              self.viewModel.cancelButtonTapped()
-            }
-          }
-          ToolbarItem(placement: .primaryAction) {
-            Button("Save") {
-              self.viewModel.edit(item: item)
-            }
-          }
-        }
+    Button {
+      self.model.rowTapped()
     } label: {
       HStack {
         VStack(alignment: .leading) {
-          Text(self.viewModel.item.name)
+          Text(self.model.item.name)
+            .font(.title3)
 
-          switch self.viewModel.item.status {
+          switch self.model.item.status {
           case let .inStock(quantity):
             Text("In stock: \(quantity)")
           case let .outOfStock(isOnBackOrder):
@@ -112,46 +93,46 @@ struct ItemRowView: View {
 
         Spacer()
 
-        if let color = self.viewModel.item.color {
+        if let color = self.model.item.color {
           Rectangle()
             .frame(width: 30, height: 30)
             .foregroundColor(color.swiftUIColor)
             .border(Color.black, width: 1)
         }
 
-        Button(action: { self.viewModel.duplicateButtonTapped() }) {
+        Button(action: { self.model.duplicateButtonTapped() }) {
           Image(systemName: "square.fill.on.square.fill")
         }
         .padding(.leading)
 
-        Button(action: { self.viewModel.deleteButtonTapped() }) {
+        Button(action: { self.model.deleteButtonTapped() }) {
           Image(systemName: "trash.fill")
         }
         .padding(.leading)
       }
       .buttonStyle(.plain)
-      .foregroundColor(self.viewModel.item.status.isInStock ? nil : Color.gray)
+      .foregroundColor(self.model.item.status.isInStock ? nil : Color.gray)
       .alert(
-        unwrapping: self.$viewModel.route,
-        case: /ItemRowViewModel.Route.alert,
-        action: self.viewModel.alertButtonTapped
+        unwrapping: self.$model.route,
+        case: /ItemRowModel.Route.alert,
+        action: self.model.alertButtonTapped
       )
       .popover(
-        unwrapping: self.$viewModel.route,
-        case: /ItemRowViewModel.Route.duplicate
+        unwrapping: self.$model.route,
+        case: /ItemRowModel.Route.duplicate
       ) { $item in
-        NavigationView {
+        NavigationStack {
           ItemView(item: $item)
             .navigationBarTitle("Duplicate")
             .toolbar {
               ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
-                  self.viewModel.cancelButtonTapped()
+                  self.model.cancelButtonTapped()
                 }
               }
               ToolbarItem(placement: .primaryAction) {
                 Button("Add") {
-                  self.viewModel.duplicate(item: item)
+                  self.model.duplicate(item: item)
                 }
               }
             }

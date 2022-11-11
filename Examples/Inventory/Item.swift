@@ -3,8 +3,8 @@ import SwiftUINavigation
 
 struct Item: Equatable, Identifiable {
   let id = UUID()
-  var name: String
   var color: Color?
+  var name: String
   var status: Status
 
   enum Status: Equatable {
@@ -91,10 +91,10 @@ struct ItemView: View {
 }
 
 struct ItemView_Previews: PreviewProvider, View {
-  @State var item = Item(name: "", color: nil, status: .inStock(quantity: 1))
+  @State var item = Item(color: nil, name: "", status: .inStock(quantity: 1))
 
   static var previews: some View {
-    NavigationView {
+    NavigationStack {
       ItemView_Previews()
     }
   }

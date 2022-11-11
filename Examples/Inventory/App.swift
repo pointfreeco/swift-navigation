@@ -1,47 +1,72 @@
 import SwiftUI
 
-class AppViewModel: ObservableObject {
-  @Published var inventoryViewModel: InventoryViewModel
-  @Published var selectedTab: Tab
-
-  init(
-    inventoryViewModel: InventoryViewModel = .init(),
-    selectedTab: Tab = .inventory
-  ) {
-    self.inventoryViewModel = inventoryViewModel
-    self.selectedTab = selectedTab
-  }
-
-  enum Tab {
-    case inventory
-  }
-}
-
 @main
 struct InventoryApp: App {
-  @ObservedObject var viewModel = AppViewModel(
-    inventoryViewModel: InventoryViewModel(
-      inventory: [],
-      route: .add(
-        .init(
-          name: "Keyboard",
-          color: .blue,
-          status: .outOfStock(isOnBackOrder: true)
-        )
-      )
+  let model = AppModel(
+    inventoryModel: InventoryModel(
+      inventory: [
+        ItemRowModel(
+          item: Item(color: .red, name: "Keyboard", status: .inStock(quantity: 100))
+        ),
+        ItemRowModel(
+          item: Item(color: .blue, name: "Mouse", status: .inStock(quantity: 200))
+        ),
+        ItemRowModel(
+          item: Item(color: .green, name: "Monitor", status: .inStock(quantity: 20))
+        ),
+        ItemRowModel(
+          item: Item(color: .yellow, name: "Chair", status: .outOfStock(isOnBackOrder: true))
+        ),
+      ]
     )
   )
 
   var body: some Scene {
     WindowGroup {
-      TabView(selection: self.$viewModel.selectedTab) {
-        NavigationView {
-          InventoryView(viewModel: self.viewModel.inventoryViewModel)
-            .tag(AppViewModel.Tab.inventory)
-            .tabItem {
-              Label("Inventory", systemImage: "building.2")
-            }
-        }
+      AppView(model: self.model)
+    }
+  }
+}
+
+class AppModel: ObservableObject {
+  @Published var inventoryModel: InventoryModel
+  @Published var selectedTab: Tab
+
+  init(
+    inventoryModel: InventoryModel,
+    selectedTab: Tab = .first
+  ) {
+    self.inventoryModel = inventoryModel
+    self.selectedTab = selectedTab
+  }
+
+  enum Tab {
+    case first
+    case inventory
+  }
+}
+
+struct AppView: View {
+  @ObservedObject var model: AppModel
+
+  var body: some View {
+    TabView(selection: self.$model.selectedTab) {
+      Button {
+        self.model.selectedTab = .inventory
+      } label: {
+        Text("Go to inventory tab")
+      }
+      .tag(AppModel.Tab.first)
+      .tabItem {
+        Label("First", systemImage: "arrow.forward")
+      }
+
+      NavigationStack {
+        InventoryView(model: self.model.inventoryModel)
+      }
+      .tag(AppModel.Tab.inventory)
+      .tabItem {
+        Label("Inventory", systemImage: "list.clipboard.fill")
       }
     }
   }

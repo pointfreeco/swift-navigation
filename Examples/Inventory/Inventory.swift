@@ -2,25 +2,24 @@ import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
 
-class InventoryViewModel: ObservableObject {
-  @Published var inventory: IdentifiedArrayOf<ItemRowViewModel>
-  @Published var route: Route?
+class InventoryModel: ObservableObject {
+  @Published var inventory: IdentifiedArrayOf<ItemRowModel> {
+    didSet { self.bind() }
+  }
+  @Published var destination: Destination?
 
-  enum Route: Equatable {
+  enum Destination: Equatable {
     case add(Item)
-    case row(id: ItemRowViewModel.ID, route: ItemRowViewModel.Route)
+    case edit(Item)
   }
 
   init(
-    inventory: IdentifiedArrayOf<ItemRowViewModel> = [],
-    route: Route? = nil
+    inventory: IdentifiedArrayOf<ItemRowModel> = [],
+    route: Destination? = nil
   ) {
-    self.inventory = []
-    self.route = route
-
-    for itemRowViewModel in inventory {
-      self.bind(itemRowViewModel: itemRowViewModel)
-    }
+    self.inventory = inventory
+    self.destination = route
+    self.bind()
   }
 
   func delete(item: Item) {
@@ -31,88 +30,99 @@ class InventoryViewModel: ObservableObject {
 
   func add(item: Item) {
     withAnimation {
-      self.bind(itemRowViewModel: .init(item: item))
-      self.route = nil
+      self.inventory.append(ItemRowModel(item: item))
+      self.destination = nil
     }
   }
 
   func addButtonTapped() {
-    self.route = .add(.init(name: "", color: nil, status: .inStock(quantity: 1)))
-
-    Task { @MainActor in
-      try await Task.sleep(nanoseconds: 500 * NSEC_PER_MSEC)
-      try (/Route.add).modify(&self.route) {
-        $0.name = "Bluetooth Keyboard"
-      }
-    }
+    self.destination = .add(.init(color: nil, name: "", status: .inStock(quantity: 1)))
   }
 
   func cancelButtonTapped() {
-    self.route = nil
+    self.destination = nil
   }
 
-  private func bind(itemRowViewModel: ItemRowViewModel) {
-    itemRowViewModel.onDelete = { [weak self, item = itemRowViewModel.item] in
-      withAnimation {
-        self?.delete(item: item)
+  func cancelEditButtonTapped() {
+    self.destination = nil
+  }
+
+  func commitEdit(item: Item) {
+    self.inventory[id: item.id]?.item = item
+    self.destination = nil
+  }
+
+  private func bind() {
+    for itemRowModel in self.inventory {
+      itemRowModel.onDelete = { [weak self, weak itemRowModel] in
+        guard let self, let itemRowModel else { return }
+        withAnimation {
+          self.delete(item: itemRowModel.item)
+        }
+      }
+      itemRowModel.onDuplicate = { [weak self] item in
+        guard let self else { return }
+        withAnimation {
+          self.add(item: item)
+        }
+      }
+      itemRowModel.onTap = { [weak self, weak itemRowModel] in
+        guard let self, let itemRowModel else { return }
+        self.destination = .edit(itemRowModel.item)
       }
     }
-
-    itemRowViewModel.onDuplicate = { [weak self] item in
-      withAnimation {
-        self?.add(item: item)
-      }
-    }
-
-    itemRowViewModel.$route
-      .map { [id = itemRowViewModel.id] route in
-        route.map { Route.row(id: id, route: $0) }
-      }
-      .removeDuplicates()
-      .dropFirst()
-      .assign(to: &self.$route)
-
-    self.$route
-      .map { [id = itemRowViewModel.id] route in
-        guard
-          case let .row(id: routeRowId, route: route) = route,
-          routeRowId == id
-        else { return nil }
-        return route
-      }
-      .removeDuplicates()
-      .assign(to: &itemRowViewModel.$route)
-
-    self.inventory.append(itemRowViewModel)
   }
 }
 
 struct InventoryView: View {
-  @ObservedObject var viewModel: InventoryViewModel
+  @ObservedObject var model: InventoryModel
 
   var body: some View {
     List {
       ForEach(
-        self.viewModel.inventory,
-        content: ItemRowView.init(viewModel:)
+        self.model.inventory,
+        content: ItemRowView.init(model:)
       )
     }
     .toolbar {
       ToolbarItem(placement: .primaryAction) {
-        Button("Add") { self.viewModel.addButtonTapped() }
+        Button("Add") { self.model.addButtonTapped() }
       }
     }
     .navigationTitle("Inventory")
-    .sheet(unwrapping: self.$viewModel.route, case: /InventoryViewModel.Route.add) { $itemToAdd in
-      NavigationView {
+    .navigationDestination(
+      unwrapping: self.$model.destination,
+      case: /InventoryModel.Destination.edit
+    ) { $item in
+      ItemView(item: $item)
+        .navigationBarTitle("Edit")
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+          ToolbarItem(placement: .cancellationAction) {
+            Button("Cancel") {
+              self.model.cancelEditButtonTapped()
+            }
+          }
+          ToolbarItem(placement: .primaryAction) {
+            Button("Save") {
+              self.model.commitEdit(item: item)
+            }
+          }
+        }
+    }
+    .sheet(
+      unwrapping: self.$model.destination,
+      case: /InventoryModel.Destination.add
+    ) { $itemToAdd in
+      NavigationStack {
         ItemView(item: $itemToAdd)
           .navigationTitle("Add")
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-              Button("Cancel") { self.viewModel.cancelButtonTapped() }
+              Button("Cancel") { self.model.cancelButtonTapped() }
             }
             ToolbarItem(placement: .primaryAction) {
-              Button("Save") { self.viewModel.add(item: itemToAdd) }
+              Button("Save") { self.model.add(item: itemToAdd) }
             }
           }
       }
@@ -122,19 +132,19 @@ struct InventoryView: View {
 
 struct InventoryView_Previews: PreviewProvider {
   static var previews: some View {
-    let keyboard = Item(name: "Keyboard", color: .blue, status: .inStock(quantity: 100))
+    let keyboard = Item(color: .blue, name: "Keyboard", status: .inStock(quantity: 100))
 
-    NavigationView {
+    NavigationStack {
       InventoryView(
-        viewModel: .init(
+         model: .init(
           inventory: [
             .init(item: keyboard),
-            .init(item: Item(name: "Charger", color: .yellow, status: .inStock(quantity: 20))),
+            .init(item: Item(color: .yellow, name: "Charger", status: .inStock(quantity: 20))),
             .init(
-              item: Item(name: "Phone", color: .green, status: .outOfStock(isOnBackOrder: true))),
+              item: Item(color: .green, name: "Phone", status: .outOfStock(isOnBackOrder: true))),
             .init(
               item: Item(
-                name: "Headphones", color: .green, status: .outOfStock(isOnBackOrder: false))),
+                color: .green, name: "Headphones", status: .outOfStock(isOnBackOrder: false))),
           ],
           route: nil
         )
