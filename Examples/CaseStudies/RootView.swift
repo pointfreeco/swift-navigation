@@ -58,6 +58,9 @@ struct RootView: View {
           NavigationLink("Custom components") {
             CustomComponents()
           }
+          NavigationLink("Synchronized bindings") {
+            SynchronizedBindings()
+          }
         } header: {
           Text("Advanced")
         }

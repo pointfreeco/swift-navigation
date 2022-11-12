@@ -52,11 +52,11 @@ item, and when that item flips to a non-`nil` value it is handed to a content cl
 a view, and that view is what is animated from bottom-to-top:
 
 ```swift
-func sheet<Item, Content>(
+func sheet<Item: Identifiable, Content: View>(
   item: Binding<Item?>,
   onDismiss: (() -> Void)? = nil,
   content: @escaping (Item) -> Content
-) -> some View where Item : Identifiable, Content : View
+) -> some View
 ```
 
 And when SwiftUI detects the binding flips back to `nil`, the sheet will automatically be dismissed.

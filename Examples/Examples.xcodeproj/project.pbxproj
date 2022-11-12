@@ -26,6 +26,7 @@
 		CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */; };
 		CABE9FC1272F2C0000AFC150 /* 09-Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */; };
 		DC609AD6291D76150052647F /* 06-NavigationDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */; };
+		DC6A8411291F227400B3F6C9 /* 11-SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */; };
 		DCD4E685273B300F00CDF3BD /* 05-FullScreenCovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */; };
 		DCD4E687273B30DA00CDF3BD /* 04-Popovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E686273B30DA00CDF3BD /* 04-Popovers.swift */; };
 		DCD4E68B274180F500CDF3BD /* 07-NavigationLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E68A274180F500CDF3BD /* 07-NavigationLinks.swift */; };
@@ -52,6 +53,7 @@
 		CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-NavigationLinkList.swift"; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "09-Routing.swift"; sourceTree = "<group>"; };
 		DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "06-NavigationDestinations.swift"; sourceTree = "<group>"; };
+		DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "11-SynchronizedBindings.swift"; sourceTree = "<group>"; };
 		DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-FullScreenCovers.swift"; sourceTree = "<group>"; };
 		DCD4E686273B30DA00CDF3BD /* 04-Popovers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Popovers.swift"; sourceTree = "<group>"; };
 		DCD4E68A274180F500CDF3BD /* 07-NavigationLinks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "07-NavigationLinks.swift"; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */,
 				CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */,
 				CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */,
+				DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */,
 				CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */,
 				CA473831272F0D860012CAC3 /* FactClient.swift */,
 				CA47382E272F0D860012CAC3 /* RootView.swift */,
@@ -261,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CABE9FC1272F2C0000AFC150 /* 09-Routing.swift in Sources */,
+				DC6A8411291F227400B3F6C9 /* 11-SynchronizedBindings.swift in Sources */,
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
 				CA473835272F0D860012CAC3 /* 02-ConfirmationDialogs.swift in Sources */,
 				CA47383E272F0F9B0012CAC3 /* 10-CustomComponents.swift in Sources */,
