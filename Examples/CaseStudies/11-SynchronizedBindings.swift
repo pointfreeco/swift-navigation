@@ -20,10 +20,10 @@ struct SynchronizedBindings: View {
 
       Section {
         TextField("Username", text: self.$model.username)
-          .focused($focusedField, equals: .username)
+          .focused(self.$focusedField, equals: .username)
 
         SecureField("Password", text: self.$model.password)
-          .focused($focusedField, equals: .password)
+          .focused(self.$focusedField, equals: .password)
 
         Button("Sign In") {
           self.model.signInButtonTapped()
