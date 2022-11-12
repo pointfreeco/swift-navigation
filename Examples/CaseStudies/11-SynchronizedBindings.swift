@@ -3,7 +3,7 @@ import SwiftUINavigation
 
 private let readMe = """
   This demonstrates how to synchronize model state with view state using the "bind" view modifier. \
-  The model starts focused on the "username" field, which is immediately focused when the form \
+  The model starts focused on the "Username" field, which is immediately focused when the form \
   first appears. When you tap the "Sign in" button, the focus will change to the first non-empty \
   field.
   """
