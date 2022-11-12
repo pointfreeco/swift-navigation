@@ -41,9 +41,9 @@ extension View {
     unwrapping value: Binding<Value?>,
     @ViewBuilder destination: (Binding<Value>) -> Destination
   ) -> some View {
-    self.navigationDestination(isPresented: value.isPresent()) {
-      Binding(unwrapping: value).map(destination)
-    }
+    let destination = Binding(unwrapping: value).map(destination)
+    return self
+      .modifier(_NavigationDestination(isPresented: value.isPresent(), destination: destination))
   }
 
   /// Pushes a view onto a `NavigationStack` using a binding and case path as a data source for the
@@ -69,5 +69,36 @@ extension View {
     @ViewBuilder destination: (Binding<Case>) -> Destination
   ) -> some View {
     self.navigationDestination(unwrapping: `enum`.case(casePath), destination: destination)
+  }
+}
+
+// NB: This view modifier works around a bug in SwiftUI's built-in modifier:
+// https://gist.github.com/mbrandonw/f8b94957031160336cac6898a919cbb7#file-fb11056434-md
+@available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+public struct _NavigationDestination<Destination: View>: ViewModifier {
+  @State private var isPresentedState = false
+  @State private var hasAppeared = false
+  @Binding var isPresented: Bool
+  let destination: Destination
+
+  public func body(content: Content) -> some View {
+    content
+      .navigationDestination(isPresented: self.$isPresentedState) { destination }
+      .onAppear {
+        guard !self.hasAppeared
+        else { return }
+        self.hasAppeared = true
+        self.isPresentedState = self.isPresented
+      }
+      .onChange(of: self.isPresentedState) { isPresentedState in
+        guard isPresentedState != self.isPresented
+        else { return }
+        self.isPresented = isPresentedState
+      }
+      .onChange(of: self.isPresented) { isPresented in
+        guard isPresented != self.isPresentedState
+        else { return }
+        self.isPresentedState = isPresented
+      }
   }
 }
