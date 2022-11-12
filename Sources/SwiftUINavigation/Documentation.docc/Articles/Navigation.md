@@ -15,11 +15,14 @@ drill-down should occur:
 ```swift
 struct ContentView: View {
   @State var destination: Int?
+
+  // ...
 }
 ```
 
-Then you can construct a `NavigationLink` that will activate when that state becomes non-`nil`, 
-and will deactivate when the state becomes `nil`:
+Further suppose that the screen being navigated to wants a binding to the integer when it is 
+non-`nil`. You can construct a `NavigationLink` that will activate when that state becomes 
+non-`nil`, and will deactivate when the state becomes `nil`:
 
 ```swift
 NavigationLink(unwrapping: self.$destination) { isActive in
@@ -34,6 +37,10 @@ NavigationLink(unwrapping: self.$destination) { isActive in
 The first trailing closure is the "action" of the navigation link. It is invoked with `true` when
 the user taps on the link, and it is invoked with `false` when the user taps the back button or
 swipes on the left edge of the screen. It is your job to hydrate the state in the action closure.
+
+The second trailing closure, labeled `destination`, takes an argument that is the binding of the
+unwrapped state. This binding can be handed to the child view, and any changes made by the parent
+will be reflected in the child, and vice-versa.
 
 For iOS 16+ you can use the `navigationDestination` overload:
 
