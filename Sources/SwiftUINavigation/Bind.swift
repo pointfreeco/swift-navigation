@@ -21,9 +21,21 @@ extension View {
   ) -> some View
   where ModelValue.Value == ViewValue.Value, ModelValue.Value: Equatable {
     self
-      .onAppear { viewValue.wrappedValue = modelValue.wrappedValue }
-      .onChange(of: modelValue.wrappedValue) { viewValue.wrappedValue = $0 }
-      .onChange(of: viewValue.wrappedValue) { modelValue.wrappedValue = $0 }
+      .onAppear {
+        guard viewValue.wrappedValue != modelValue.wrappedValue
+        else { return }
+        viewValue.wrappedValue = modelValue.wrappedValue
+      }
+      .onChange(of: modelValue.wrappedValue) {
+        guard viewValue.wrappedValue != $0
+        else { return }
+        viewValue.wrappedValue = $0
+      }
+      .onChange(of: viewValue.wrappedValue) {
+        guard modelValue.wrappedValue != $0
+        else { return }
+        modelValue.wrappedValue = $0
+      }
   }
 }
 
