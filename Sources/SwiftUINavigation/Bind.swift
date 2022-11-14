@@ -39,6 +39,11 @@ extension View {
   }
 }
 
+public protocol _Bindable: DynamicProperty {
+  associatedtype Value
+  var wrappedValue: Value { get nonmutating set }
+}
+
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension AccessibilityFocusState: _Bindable {}
 
@@ -49,6 +54,18 @@ extension AccessibilityFocusState.Binding: _Bindable {}
 extension AppStorage: _Bindable {}
 
 extension Binding: _Bindable {}
+
+@available(iOS 15.0, macOS 12, macCatalyst 15, tvOS 15, watchOS 8, *)
+extension DismissAction: _Bindable {
+  public var wrappedValue: Bool {
+    get { false }
+    nonmutating set(newValue) {
+      if newValue {
+        self.callAsFunction()
+      }
+    }
+  }
+}
 
 @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
 extension FocusedBinding: _Bindable {}
@@ -63,8 +80,3 @@ extension FocusState.Binding: _Bindable {}
 extension SceneStorage: _Bindable {}
 
 extension State: _Bindable {}
-
-public protocol _Bindable: DynamicProperty {
-  associatedtype Value
-  var wrappedValue: Value { get nonmutating set }
-}
