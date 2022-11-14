@@ -76,31 +76,14 @@ extension View {
 // https://gist.github.com/mbrandonw/f8b94957031160336cac6898a919cbb7#file-fb11056434-md
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
 private struct _NavigationDestination<Destination: View>: ViewModifier {
-  @State private var isPresentedState = false
-  @State private var hasAppeared = false
   @Binding var isPresented: Bool
   let destination: Destination
 
+  @State private var isPresentedState = false
+
   public func body(content: Content) -> some View {
     content
-      .navigationDestination(isPresented: self.$isPresentedState) { destination }
-      .onAppear {
-        guard
-          !self.hasAppeared,
-          self.isPresentedState != self.isPresented
-        else { return }
-        self.hasAppeared = true
-        self.isPresentedState = self.isPresented
-      }
-      .onChange(of: self.isPresentedState) { isPresentedState in
-        guard isPresentedState != self.isPresented
-        else { return }
-        self.isPresented = isPresentedState
-      }
-      .onChange(of: self.isPresented) { isPresented in
-        guard isPresented != self.isPresentedState
-        else { return }
-        self.isPresentedState = isPresented
-      }
+      .navigationDestination(isPresented: self.$isPresentedState) { self.destination }
+      .bind(self.$isPresented, to: self.$isPresentedState)
   }
 }

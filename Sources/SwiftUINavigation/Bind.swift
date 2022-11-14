@@ -20,21 +20,35 @@ extension View {
     _ modelValue: ModelValue, to viewValue: ViewValue
   ) -> some View
   where ModelValue.Value == ViewValue.Value, ModelValue.Value: Equatable {
-    self
+    self.modifier(_Bind(modelValue: modelValue, viewValue: viewValue))
+  }
+}
+
+@available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
+private struct _Bind<ModelValue: _Bindable, ViewValue: _Bindable>: ViewModifier
+where ModelValue.Value == ViewValue.Value, ModelValue.Value: Equatable {
+  let modelValue: ModelValue
+  let viewValue: ViewValue
+
+  @State var hasAppeared = false
+
+  func body(content: Content) -> some View {
+    content
       .onAppear {
-        guard viewValue.wrappedValue != modelValue.wrappedValue
-        else { return }
-        viewValue.wrappedValue = modelValue.wrappedValue
+        guard !self.hasAppeared else { return }
+        self.hasAppeared = true
+        guard self.viewValue.wrappedValue != self.modelValue.wrappedValue else { return }
+        self.viewValue.wrappedValue = self.modelValue.wrappedValue
       }
-      .onChange(of: modelValue.wrappedValue) {
-        guard viewValue.wrappedValue != $0
+      .onChange(of: self.modelValue.wrappedValue) {
+        guard self.viewValue.wrappedValue != $0
         else { return }
-        viewValue.wrappedValue = $0
+        self.viewValue.wrappedValue = $0
       }
-      .onChange(of: viewValue.wrappedValue) {
-        guard modelValue.wrappedValue != $0
+      .onChange(of: self.viewValue.wrappedValue) {
+        guard self.modelValue.wrappedValue != $0
         else { return }
-        modelValue.wrappedValue = $0
+        self.modelValue.wrappedValue = $0
       }
   }
 }
