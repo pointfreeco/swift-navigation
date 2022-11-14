@@ -85,7 +85,9 @@ public struct _NavigationDestination<Destination: View>: ViewModifier {
     content
       .navigationDestination(isPresented: self.$isPresentedState) { destination }
       .onAppear {
-        guard !self.hasAppeared
+        guard
+          !self.hasAppeared,
+          self.isPresentedState != self.isPresented
         else { return }
         self.hasAppeared = true
         self.isPresentedState = self.isPresented
