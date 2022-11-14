@@ -50,7 +50,10 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
-    self.fullScreenCover(isPresented: value.isPresent(), onDismiss: onDismiss) {
+    self.fullScreenCover(
+      isPresented: value.isPresent().resignFirstResponder(),
+      onDismiss: onDismiss
+    ) {
       Binding(unwrapping: value).map(content)
     }
   }

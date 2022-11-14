@@ -41,9 +41,12 @@ extension View {
     unwrapping value: Binding<Value?>,
     @ViewBuilder destination: (Binding<Value>) -> Destination
   ) -> some View {
-    let destination = Binding(unwrapping: value).map(destination)
-    return self
-      .modifier(_NavigationDestination(isPresented: value.isPresent(), destination: destination))
+    self.modifier(
+      _NavigationDestination(
+        isPresented: value.isPresent().resignFirstResponder(),
+        destination: Binding(unwrapping: value).map(destination)
+      )
+    )
   }
 
   /// Pushes a view onto a `NavigationStack` using a binding and case path as a data source for the

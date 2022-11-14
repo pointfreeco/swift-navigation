@@ -48,7 +48,7 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
-    self.sheet(isPresented: value.isPresent(), onDismiss: onDismiss) {
+    self.sheet(isPresented: value.isPresent().resignFirstResponder(), onDismiss: onDismiss) {
       Binding(unwrapping: value).map(content)
     }
   }

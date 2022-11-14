@@ -53,7 +53,9 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View where Content: View {
     self.popover(
-      isPresented: value.isPresent(), attachmentAnchor: attachmentAnchor, arrowEdge: arrowEdge
+      isPresented: value.isPresent().resignFirstResponder(),
+      attachmentAnchor: attachmentAnchor,
+      arrowEdge: arrowEdge
     ) {
       Binding(unwrapping: value).map(content)
     }
