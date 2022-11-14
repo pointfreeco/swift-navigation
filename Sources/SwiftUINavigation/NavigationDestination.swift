@@ -75,7 +75,7 @@ extension View {
 // NB: This view modifier works around a bug in SwiftUI's built-in modifier:
 // https://gist.github.com/mbrandonw/f8b94957031160336cac6898a919cbb7#file-fb11056434-md
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-public struct _NavigationDestination<Destination: View>: ViewModifier {
+private struct _NavigationDestination<Destination: View>: ViewModifier {
   @State private var isPresentedState = false
   @State private var hasAppeared = false
   @Binding var isPresented: Bool
