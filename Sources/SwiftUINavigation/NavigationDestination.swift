@@ -37,14 +37,13 @@ extension View {
   ///     truth. Likewise, changes to `value` are instantly reflected in the destination. If `value`
   ///     becomes `nil`, the destination is popped.
   ///   - destination: A closure returning the content of the destination.
-  @MainActor
   public func navigationDestination<Value, Destination: View>(
     unwrapping value: Binding<Value?>,
     @ViewBuilder destination: (Binding<Value>) -> Destination
   ) -> some View {
     self.modifier(
       _NavigationDestination(
-        isPresented: value.isPresent().resignFirstResponder(),
+        isPresented: value.isPresent(),
         destination: Binding(unwrapping: value).map(destination)
       )
     )
@@ -67,7 +66,6 @@ extension View {
   ///   - casePath: A case path that identifies a case of `enum` that holds a source of truth for
   ///     the destination.
   ///   - destination: A closure returning the content of the destination.
-  @MainActor
   public func navigationDestination<Enum, Case, Destination: View>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,

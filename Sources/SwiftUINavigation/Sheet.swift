@@ -1,5 +1,11 @@
 import SwiftUI
 
+#if canImport(UIKit)
+  import UIKit
+#elseif canImport(AppKit)
+  import AppKit
+#endif
+
 extension View {
   /// Presents a sheet using a binding as a data source for the sheet's content.
   ///
@@ -49,7 +55,20 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
-    self.sheet(isPresented: value.isPresent().resignFirstResponder(), onDismiss: onDismiss) {
+    self.sheet(isPresented: value.isPresent()) {
+      // NB: If a text field is focused during dismissal, the binding can be written to, which
+      //     causes the sheet to immediately re-present.
+      #if canImport(UIKit)
+        UIApplication.shared.sendAction(
+          #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil
+        )
+      #elseif canImport(AppKit)
+        NSApp.sendAction(
+          #selector(NSResponder.resignFirstResponder), to: nil, from: nil
+        )
+      #endif
+      onDismiss?()
+    } content: {
       Binding(unwrapping: value).map(content)
     }
   }
