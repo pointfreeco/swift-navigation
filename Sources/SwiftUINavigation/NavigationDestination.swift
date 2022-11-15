@@ -86,7 +86,28 @@ private struct _NavigationDestination<Destination: View>: ViewModifier {
 
   public func body(content: Content) -> some View {
     content
-      .navigationDestination(isPresented: self.$isPresentedState) { self.destination }
+      .navigationDestination(isPresented: self.$isPresentedState) {
+        _Destination(isPresented: self.$isPresentedState) { dismiss in
+          self.destination
+            .onChange(of: self.isPresented) { isPresented in
+              if !isPresented {
+                dismiss()
+              }
+            }
+        }
+      }
       .bind(self.$isPresented, to: self.$isPresentedState)
+  }
+}
+
+@available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+private struct _Destination<Content: View>: View {
+  @Binding var isPresented: Bool
+  @ViewBuilder let content: (DismissAction) -> Content
+
+  @Environment(\.dismiss) var dismiss
+
+  var body: some View {
+    self.content(self.dismiss)
   }
 }
