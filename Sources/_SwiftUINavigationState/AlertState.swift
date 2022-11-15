@@ -52,7 +52,7 @@ import SwiftUI
 ///
 /// ```swift
 /// class HomeScreenModel: ObservableObject {
-///   // ... 
+///   // ...
 ///   func deleteAppButtonTapped() {
 ///     self.alert = AlertState(
 ///       title: TextState(#"Remove "Twitter"?"#),
@@ -147,6 +147,24 @@ public struct AlertState<Action> {
     self.buttons = buttons
   }
 
+  @available(
+    iOS, introduced: 13, deprecated: 100000, message: "use `init(title:message:buttons:) instead."
+  )
+  @available(
+    macOS,
+    introduced: 10.15,
+    deprecated: 100000,
+    message: "use `init(title:message:buttons:) instead."
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 100000, message: "use `init(title:message:buttons:) instead."
+  )
+  @available(
+    watchOS,
+    introduced: 6,
+    deprecated: 100000,
+    message: "use `init(title:message:buttons:) instead."
+  )
   public init(
     title: TextState,
     message: TextState? = nil,
@@ -157,6 +175,24 @@ public struct AlertState<Action> {
     self.buttons = dismissButton.map { [$0] } ?? []
   }
 
+  @available(
+    iOS, introduced: 13, deprecated: 100000, message: "use `init(title:message:buttons:) instead."
+  )
+  @available(
+    macOS,
+    introduced: 10.15,
+    deprecated: 100000,
+    message: "use `init(title:message:buttons:) instead."
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 100000, message: "use `init(title:message:buttons:) instead."
+  )
+  @available(
+    watchOS,
+    introduced: 6,
+    deprecated: 100000,
+    message: "use `init(title:message:buttons:) instead."
+  )
   public init(
     title: TextState,
     message: TextState? = nil,
@@ -287,8 +323,8 @@ extension AlertState.ButtonAction: CustomDumpReflectable {
 extension AlertState: Equatable where Action: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.title == rhs.title
-    && lhs.message == rhs.message
-    && lhs.buttons == rhs.buttons
+      && lhs.message == rhs.message
+      && lhs.buttons == rhs.buttons
   }
 }
 
