@@ -171,3 +171,19 @@ extension Binding where Value: Equatable {
     self.removeDuplicates(by: ==)
   }
 }
+
+extension Binding {
+  public func _printChanges(_ prefix: String = "") -> Self {
+    Self(
+      get: { self.wrappedValue },
+      set: { newValue, transaction in
+        var oldDescription = ""
+        debugPrint(self.wrappedValue, terminator: "", to: &oldDescription)
+        var newDescription = ""
+        debugPrint(newValue, terminator: "", to: &newDescription)
+        print("\(prefix.isEmpty ? "\(Self.self)" : prefix):", oldDescription, "=", newDescription)
+        self.transaction(transaction).wrappedValue = newValue
+      }
+    )
+  }
+}
