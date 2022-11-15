@@ -46,6 +46,7 @@ extension View {
   ///   - content: A closure returning the content of the popover.
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
+  @MainActor
   public func popover<Value, Content>(
     unwrapping value: Binding<Value?>,
     attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
@@ -81,6 +82,7 @@ extension View {
   ///   - content: A closure returning the content of the popover.
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
+  @MainActor
   public func popover<Enum, Case, Content>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,

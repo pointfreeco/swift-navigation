@@ -44,6 +44,7 @@ extension View {
   ///   - content: A closure returning the content of the sheet.
   @available(iOS 14, tvOS 14, watchOS 7, *)
   @available(macOS, unavailable)
+  @MainActor
   public func fullScreenCover<Value, Content>(
     unwrapping value: Binding<Value?>,
     onDismiss: (() -> Void)? = nil,
@@ -77,6 +78,7 @@ extension View {
   ///   - content: A closure returning the content of the sheet.
   @available(iOS 14, tvOS 14, watchOS 7, *)
   @available(macOS, unavailable)
+  @MainActor
   public func fullScreenCover<Enum, Case, Content>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,

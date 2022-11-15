@@ -42,6 +42,7 @@ extension View {
   ///     dismissed.
   ///   - onDismiss: The closure to execute when dismissing the sheet.
   ///   - content: A closure returning the content of the sheet.
+  @MainActor
   public func sheet<Value, Content>(
     unwrapping value: Binding<Value?>,
     onDismiss: (() -> Void)? = nil,
@@ -69,6 +70,7 @@ extension View {
   ///     the sheet.
   ///   - onDismiss: The closure to execute when dismissing the sheet.
   ///   - content: A closure returning the content of the sheet.
+  @MainActor
   public func sheet<Enum, Case, Content>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
