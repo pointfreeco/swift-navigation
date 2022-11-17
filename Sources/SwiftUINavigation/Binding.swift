@@ -39,6 +39,7 @@ extension Binding {
         return `case`
       },
       set: {
+        guard casePath.extract(from: `enum`.wrappedValue) != nil else { return }
         `case` = $0
         `enum`.transaction($1).wrappedValue = casePath.embed($0)
       }
