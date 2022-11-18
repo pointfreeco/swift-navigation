@@ -30,14 +30,14 @@ buttons:
 
 ```swift
 func deleteButtonTapped() {
-  self.alert = AlertState(
-    title: TextState("Are you sure?"),
-    message: TextState("Deleting this item cannot be undone."),
-    buttons: [
-      .destructive(TextState("Delete"), action: .send(.delete)),
-      .cancel(TextState("Nevermind")),
-    ]
-  )
+  self.alert = AlertState {
+    TextState("Are you sure?")
+  } message: {
+    TextState("Deleting this item cannot be undone.")
+  } actions: {
+    ButtonState("Delete", action: .send(.delete)),
+    ButtonState("Nevermind", role: .cancel)
+  }
 }
 ```
 

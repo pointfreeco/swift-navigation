@@ -122,6 +122,9 @@ public struct ConfirmationDialogState<Action> {
   public var title: TextState
   public var titleVisibility: Visibility
 
+  // TODO: New initializers?
+
+  // TODO: Deprecate?
   @available(iOS 15, *)
   @available(macOS 12, *)
   @available(tvOS 15, *)
@@ -138,6 +141,7 @@ public struct ConfirmationDialogState<Action> {
     self.titleVisibility = titleVisibility
   }
 
+  // TODO: Deprecate?
   public init(
     title: TextState,
     message: TextState? = nil,
@@ -149,7 +153,8 @@ public struct ConfirmationDialogState<Action> {
     self.titleVisibility = .automatic
   }
 
-  public typealias Button = AlertState<Action>.Button
+  // TODO: Deprecate?
+  public typealias Button = ButtonState<Action>
 
   public enum Visibility {
     case automatic

@@ -27,16 +27,15 @@ class ItemRowModel: Identifiable, ObservableObject {
 
   func deleteButtonTapped() {
     self.destination = .alert(
-      AlertState(
-        title: TextState(self.item.name),
-        message: TextState("Are you sure you want to delete this item?"),
-        buttons: [
-          .destructive(
-            TextState("Delete"),
-            action: .send(.deleteConfirmation, animation: .default)
-          )
-        ]
-      )
+      AlertState<AlertAction> {
+        TextState(self.item.name)
+      } message: {
+        TextState("Are you sure you want to delete this item?")
+      } actions: {
+        ButtonState(role: .destructive, action: .send(.deleteConfirmation, animation: .default)) {
+          TextState("Delete")
+        }
+      }
     )
   }
 

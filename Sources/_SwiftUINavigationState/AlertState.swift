@@ -54,22 +54,20 @@ import SwiftUI
 /// class HomeScreenModel: ObservableObject {
 ///   // ...
 ///   func deleteAppButtonTapped() {
-///     self.alert = AlertState(
-///       title: TextState(#"Remove "Twitter"?"#),
-///       message: TextState(
+///     self.alert = AlertState {
+///       TextState(#"Remove "Twitter"?"#)
+///     } message: {
+///       TextState(
 ///         "Removing from Home Screen will keep the app in your App Library."
-///       ),
-///       buttons: [
-///         .destructive(
-///           TextState("Delete App"),
-///           action: .send(.delete)
-///         ),
-///         .default(
-///           TextState("Remove from Home Screen"),
-///           action: .send(.removeFromHomeScreen)
-///         )
-///       ]
-///     )
+///       )
+///     } actions: {
+///       ButtonState(role: .destructive, action: .send(.delete)) {
+///         TextState("Delete App")
+///       }
+///       ButtonState(action: .send(.removeFromHomeScreen)) {
+///         TextState("Remove from Home Screen")
+///       }
+///     }
 ///   }
 /// }
 /// ```
@@ -107,22 +105,20 @@ import SwiftUI
 /// model.deleteAppButtonTapped()
 /// XCTAssertEqual(
 ///   model.alert,
-///   AlertState(
-///     title: TextState(#"Remove "Twitter"?"#),
-///     message: TextState(
+///   AlertState {
+///     TextState(#"Remove "Twitter"?"#)
+///   } message: {
+///     TextState(
 ///       "Removing from Home Screen will keep the app in your App Library."
-///     ),
-///     buttons: [
-///       .destructive(
-///         TextState("Delete App"),
-///         action: .send(.deleteButtonTapped)
-///       ),
-///       .default(
-///         TextState("Remove from Home Screen"),
-///         action: .send(.removeFromHomeScreenButtonTapped)
-///       )
-///     ]
-///   )
+///     )
+///   } actions: {
+///     ButtonState(role: .destructive, action: .send(.deleteButtonTapped)) {
+///       TextState("Delete App"),
+///     },
+///     ButtonState(action: .send(.removeFromHomeScreenButtonTapped)) {
+///       TextState("Remove from Home Screen"),
+///     }
+///   }
 /// )
 ///
 /// model.alertButtonTapped(.delete) {
@@ -130,7 +126,7 @@ import SwiftUI
 /// }
 /// model.alert = nil
 /// ```
-public struct AlertState<Action> {
+public struct AlertState<Action>: Identifiable {
   public let id = UUID()
   public var buttons: [Button]
   public var message: TextState?
@@ -138,13 +134,13 @@ public struct AlertState<Action> {
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public init(
-    title: TextState,
-    message: TextState? = nil,
-    buttons: [Button]
+    title: () -> TextState,
+    message: (() -> TextState)? = nil,
+    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] }
   ) {
-    self.title = title
-    self.message = message
-    self.buttons = buttons
+    self.title = title()
+    self.message = message?()
+    self.buttons = actions()
   }
 
   @available(
@@ -204,120 +200,14 @@ public struct AlertState<Action> {
     self.buttons = [primaryButton, secondaryButton]
   }
 
-  public struct Button {
-    public let id = UUID()
-    public var action: ButtonAction?
-    public var label: TextState
-    public var role: ButtonRole?
+  // TODO: Deprecate?
+  public typealias Button = ButtonState<Action>
 
-    public static func cancel(
-      _ label: TextState,
-      action: ButtonAction? = nil
-    ) -> Self {
-      Self(action: action, label: label, role: .cancel)
-    }
+  // TODO: Deprecate?
+  public typealias ButtonAction = ButtonState<Action>.ButtonAction
 
-    public static func `default`(
-      _ label: TextState,
-      action: ButtonAction? = nil
-    ) -> Self {
-      Self(action: action, label: label, role: nil)
-    }
-
-    public static func destructive(
-      _ label: TextState,
-      action: ButtonAction? = nil
-    ) -> Self {
-      Self(action: action, label: label, role: .destructive)
-    }
-
-    public func withAction(_ perform: (Action) -> Void) {
-      switch self.action?.type {
-      case let .send(action):
-        perform(action)
-      case let .animatedSend(action, animation: animation):
-        withAnimation(animation) {
-          perform(action)
-        }
-      case .none:
-        return
-      }
-    }
-  }
-
-  public struct ButtonAction {
-    public let type: ActionType
-
-    public static func send(_ action: Action) -> Self {
-      .init(type: .send(action))
-    }
-
-    public static func send(_ action: Action, animation: Animation?) -> Self {
-      .init(type: .animatedSend(action, animation: animation))
-    }
-
-    public enum ActionType {
-      case send(Action)
-      case animatedSend(Action, animation: Animation?)
-    }
-  }
-
-  public enum ButtonRole {
-    case cancel
-    case destructive
-  }
-}
-
-extension AlertState: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    Mirror(
-      self,
-      children: [
-        "title": self.title,
-        "message": self.message as Any,
-        "buttons": self.buttons,
-      ],
-      displayStyle: .struct
-    )
-  }
-}
-
-extension AlertState.Button: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    Mirror(
-      self,
-      children: [
-        self.role.map { "\($0)" } ?? "default": (
-          self.label,
-          action: self.action
-        )
-      ],
-      displayStyle: .enum
-    )
-  }
-}
-
-extension AlertState.ButtonAction: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    switch self.type {
-    case let .send(action):
-      return Mirror(
-        self,
-        children: [
-          "send": action
-        ],
-        displayStyle: .enum
-      )
-    case let .animatedSend(action, animation):
-      return Mirror(
-        self,
-        children: [
-          "send": (action, animation: animation)
-        ],
-        displayStyle: .enum
-      )
-    }
-  }
+  // TODO: Deprecate?
+  public typealias ButtonRole = ButtonState<Action>.Role
 }
 
 extension AlertState: Equatable where Action: Equatable {
@@ -333,32 +223,6 @@ extension AlertState: Hashable where Action: Hashable {
     hasher.combine(self.title)
     hasher.combine(self.message)
     hasher.combine(self.buttons)
-  }
-}
-
-extension AlertState: Identifiable {}
-extension AlertState.Button: Identifiable {}
-
-extension AlertState.ButtonAction: Equatable where Action: Equatable {}
-extension AlertState.ButtonAction.ActionType: Equatable where Action: Equatable {}
-extension AlertState.ButtonRole: Equatable {}
-extension AlertState.Button: Equatable where Action: Equatable {}
-
-extension AlertState.ButtonAction: Hashable where Action: Hashable {}
-extension AlertState.ButtonAction.ActionType: Hashable where Action: Hashable {
-  public func hash(into hasher: inout Hasher) {
-    switch self {
-    case let .send(action), let .animatedSend(action, animation: _):
-      hasher.combine(action)
-    }
-  }
-}
-extension AlertState.ButtonRole: Hashable {}
-extension AlertState.Button: Hashable where Action: Hashable {
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(self.action)
-    hasher.combine(self.label)
-    hasher.combine(self.role)
   }
 }
 
