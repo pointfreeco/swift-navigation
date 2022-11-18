@@ -51,7 +51,7 @@ struct OptionalPopovers: View {
           }
       }
     }
-    .navigationTitle("Sheets")
+    .navigationTitle("Popovers")
   }
 }
 
