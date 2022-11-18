@@ -21,7 +21,7 @@ Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
 
 SwiftUI comes with many forms of navigation (tabs, alerts, dialogs, modal sheets, popovers, navigation links, and more), and each comes with a few ways to construct them. These ways roughly fall in two categories:
 
-  * "Fire-and-forget": These are initializers and methods that do not take binding arguments, which means SwiftUI fully manages navigation state internally. This makes it is easy to get something on the screen quickly, but you also have no programmatic control over the navigation. Examples of this are the initializers on [`TabView`][TabView.init] and [`NavigationLink`][NavigationLink.init] that do not take a binding.
+  * "Fire-and-forget": These are initializers and methods that do not take binding arguments, which means SwiftUI fully manages navigation state internally. This makes it easy to get something on the screen quickly, but you also have no programmatic control over the navigation. Examples of this are the initializers on [`TabView`][TabView.init] and [`NavigationLink`][NavigationLink.init] that do not take a binding.
 
     [NavigationLink.init]: https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-27n7s
     [TabView.init]: https://developer.apple.com/documentation/swiftui/tabview/init(content:)
@@ -78,7 +78,7 @@ struct ContentView: View {
 }
 ```
 
-This forces us to hold 3 optional values in state, which has 2^3=8 different states, 4 of which are invalid. The only valid states is for all values to be `nil` or exactly one be non-`nil`. It makes no sense if two or more values are non-`nil`, for that would representing wanting to show two modal sheets at the same time.
+This forces us to hold 3 optional values in state, which has 2^3=8 different states, 4 of which are invalid. The only valid state is for all values to be `nil` or exactly one be non-`nil`. It makes no sense if two or more values are non-`nil`, for that would represent wanting to show two modal sheets at the same time.
 
 Ideally we'd like to represent these navigation destinations as 3 mutually exclusive states so that we could guarantee at compile time that only one can be active at a time. Luckily for us Swift’s enums are perfect for this:
 
@@ -96,7 +96,7 @@ And then we could hold an optional `Route` in state to represent that we are eit
 @State var route: Route?
 ```
 
-This would be the most optimal way to model our navigation domain, but unfortunately SwiftUI's tools do not make easy for us to drive navigation off of enums.
+This would be the most optimal way to model our navigation domain, but unfortunately SwiftUI's tools do not make it easy for us to drive navigation off of enums.
 
 This library comes with a number of `Binding` transformations and navigation API overloads that allow you to model your domain as concisely as possible, using enums, while still allowing you to use SwiftUI's navigation tools.
 
@@ -130,7 +130,7 @@ struct ContentView {
 
 The forward-slash syntax you see above represents a [case path](https://github.com/pointfreeco/swift-case-paths) to a particular case of an enum. Case paths are our imagining of what key paths could look like for enums, and every concept for key paths has an analogous concept for case paths:
 
-  * Each property of an struct is naturally endowed with a key path, and so each case of an enum is endowed with a case path.
+  * Each property of a struct is naturally endowed with a key path, and so each case of an enum is endowed with a case path.
   * Key paths are constructed using a back slash, name of the type and name of the property (_e.g._, `\User.name`), and case paths are constructed similarly, but with a forward slash (_e.g._, `/Route.draft`).
   * Key paths describe how to get and set a value in some root structure, whereas case paths describe how to extract and embed a value into a root structure.
 
@@ -331,7 +331,7 @@ If you want to use SwiftUI Navigation in a [SwiftPM](https://swift.org/package-m
 
 ``` swift
 dependencies: [
-  .package(url: "https://github.com/pointfreeco/swiftui-navigation", from: "0.1.0")
+  .package(url: "https://github.com/pointfreeco/swiftui-navigation", from: "0.3.0")
 ]
 ```
 
