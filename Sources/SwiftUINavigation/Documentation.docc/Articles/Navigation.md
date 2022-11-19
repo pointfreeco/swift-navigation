@@ -1,4 +1,4 @@
-# Navigation views and stacks
+# Navigation links and destinations
 
 Learn how to drive navigation in `NavigationView` and `NavigationStack` in a concise and testable
 manner.

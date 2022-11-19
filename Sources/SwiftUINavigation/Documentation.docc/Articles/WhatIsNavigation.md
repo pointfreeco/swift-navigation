@@ -5,9 +5,9 @@ creation of concise and testable APIs for navigation.
 
 ## Overview
 
-Navigation is a "mode" change in an application. The most prototypical example of this in SwiftUI
-are navigation stacks and links. A user taps a button, and a right-to-left animation transitions you 
-from the current screen to the next screen.
+We will define navigation as a "mode" change in an application. The most prototypical example of 
+this in SwiftUI are navigation stacks and links. A user taps a button, and a right-to-left 
+animation transitions you from the current screen to the next screen.
 
 But there are more examples of navigation beyond that one example. Modal sheets can be thought of
 as navigation too. They slide from bottom-to-top and transition you from the current screen to a
@@ -17,7 +17,7 @@ take over the screen (i.e. popovers).
 
 Even alerts and confirmation dialogs can be thought of navigation as they take full control over 
 the interface and force you to make a selection. It's also possible for you to define your own 
-notions of navigation, such as bottom menus, toasts, and more.
+notions of navigation, such as bottom sheets, toasts, and more.
 
 ## State-driven navigation
 
@@ -59,7 +59,7 @@ func sheet<Item: Identifiable, Content: View>(
 ) -> some View
 ```
 
-And when SwiftUI detects the binding flips back to `nil`, the sheet will automatically be dismissed.
+When SwiftUI detects the binding flips back to `nil`, the sheet will automatically be dismissed.
 
 For example, suppose you have a list of items, and when one is tapped you want to bring up a modal
 sheet for editing the item:
@@ -118,19 +118,21 @@ a view that is presented in the popover or cover.
 
 There are, however, two potential problems with these APIs.
 
-First, the argument passed to the content closure is the plain, non-`nil` value. This means the
+First, the argument passed to the `content` closure is the plain, non-`nil` value. This means the
 sheet view presented is handed a plain, inert value, and if that view wants to make mutations it
 will need to find a way to communicate that back to the parent. However, two-way communication
 is already a solved problem in SwiftUI with bindings.
 
-So, it might be better if the `sheet(item:)` API handed a binding to the unwrapped item so that
-any mutations in the sheet would be instantly observable by the parent:
+So, it might be better if the `sheet(item:content:)` API handed a binding to the unwrapped item so 
+that any mutations in the sheet would be instantly observable by the parent:
 
 ```swift
 .sheet(item: self.$model.editingItem) { $item in 
   EditItemView(item: $item)
 }
 ```
+
+However, this is not the API exposed to us from SwiftUI.
 
 The second problem is that while optional state is a great way to drive navigation, it doesn't
 scale to multiple navigation destinations.
@@ -278,6 +280,9 @@ NavigationLink(
   Text("\(item.name)")
 }
 ```
+
+That is the basics of using this library's APIs for driving navigation off of state. Learn more
+by reading the articles below.
 
 ## Topics
 
