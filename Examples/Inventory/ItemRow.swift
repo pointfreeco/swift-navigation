@@ -27,7 +27,7 @@ class ItemRowModel: Identifiable, ObservableObject {
 
   func deleteButtonTapped() {
     self.destination = .alert(
-      AlertState<AlertAction> {
+      AlertState {
         TextState(self.item.name)
       } message: {
         TextState("Are you sure you want to delete this item?")

@@ -25,7 +25,7 @@ struct ListOfNavigationLinks: View {
         .onDelete(perform: self.model.deleteButtonTapped(indexSet:))
       }
     }
-    .navigationTitle("List of Links")
+    .navigationTitle("List of links")
     .toolbar {
       ToolbarItem {
         Button("Add") {
@@ -61,8 +61,8 @@ private struct RowView: View {
     NavigationLink(
       unwrapping: self.$model.destination,
       case: /ListOfNavigationLinksRowModel.Destination.edit
-    ) {
-      self.model.setEditNavigation(isActive: $0)
+    ) { isActive in
+      self.model.setEditNavigation(isActive: isActive)
     } destination: { $counter in
       EditView(counter: $counter)
         .navigationBarBackButtonHidden(true)

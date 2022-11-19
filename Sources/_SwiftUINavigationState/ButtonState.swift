@@ -41,26 +41,27 @@ public struct ButtonState<Action>: Identifiable {
     self.label = label()
   }
 
-  public init(
-    _ titleKey: LocalizedStringKey,
-    role: Role? = nil,
-    action: ButtonAction? = nil
-  ) {
-    self.role = role
-    self.action = action
-    self.label = TextState(titleKey)
-  }
-
-  @_disfavoredOverload
-  public init<S: StringProtocol>(
-    _ title: S,
-    role: Role? = nil,
-    action: ButtonAction? = nil
-  ) {
-    self.role = role
-    self.action = action
-    self.label = TextState(title)
-  }
+  // TODO: Keep these of leave these?
+//  public init(
+//    _ titleKey: LocalizedStringKey,
+//    role: Role? = nil,
+//    action: ButtonAction? = nil
+//  ) {
+//    self.role = role
+//    self.action = action
+//    self.label = TextState(titleKey)
+//  }
+//
+//  @_disfavoredOverload
+//  public init<S: StringProtocol>(
+//    _ title: S,
+//    role: Role? = nil,
+//    action: ButtonAction? = nil
+//  ) {
+//    self.role = role
+//    self.action = action
+//    self.label = TextState(title)
+//  }
 
   public func withAction(_ perform: (Action) -> Void) {
     switch self.action?.type {

@@ -51,7 +51,7 @@ struct OptionalFullScreenCovers: View {
           }
       }
     }
-    .navigationTitle("Full-Screen Covers")
+    .navigationTitle("Full-screen covers")
   }
 }
 
@@ -63,7 +63,7 @@ private struct FactEditor: View {
       TextEditor(text: self.$fact)
     }
     .padding()
-    .navigationTitle("Fact Editor")
+    .navigationTitle("Fact editor")
   }
 }
 

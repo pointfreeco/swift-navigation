@@ -6,7 +6,7 @@ final class AlertTests: XCTestCase {
   func testAlertState() {
     var dump = ""
     customDump(
-      AlertState<Bool>(
+      AlertState(
         title: .init("Alert!"),
         message: .init("Something went wrong..."),
         primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .default)),
@@ -40,7 +40,7 @@ final class AlertTests: XCTestCase {
     if #available(iOS 13, macOS 12, tvOS 13, watchOS 6, *) {
       dump = ""
       customDump(
-        ConfirmationDialogState<Bool>(
+        ConfirmationDialogState(
           title: .init("Alert!"),
           message: .init("Something went wrong..."),
           buttons: [

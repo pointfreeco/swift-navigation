@@ -59,7 +59,7 @@ private struct FactEditor: View {
       TextEditor(text: self.$fact)
     }
     .padding()
-    .navigationTitle("Fact Editor")
+    .navigationTitle("Fact editor")
   }
 }
 

@@ -1,5 +1,7 @@
 import SwiftUI
 
+// TODO: Bring back `title` and `titleKey` overloads?
+
 extension NavigationLink {
   /// Creates a navigation link that presents the destination view when a bound value is non-`nil`.
   ///

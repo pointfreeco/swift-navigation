@@ -69,18 +69,6 @@ extension AppStorage: _Bindable {}
 
 extension Binding: _Bindable {}
 
-@available(iOS 15.0, macOS 12, macCatalyst 15, tvOS 15, watchOS 8, *)
-extension DismissAction: _Bindable {
-  public var wrappedValue: Bool {
-    get { false }
-    nonmutating set(newValue) {
-      if newValue {
-        self.callAsFunction()
-      }
-    }
-  }
-}
-
 @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
 extension FocusedBinding: _Bindable {}
 

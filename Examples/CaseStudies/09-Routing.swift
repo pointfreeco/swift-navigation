@@ -12,13 +12,23 @@ private let readMe = """
   """
 
 enum Destination {
-  case alert(AlertState<Never>)
-  case confirmationDialog(ConfirmationDialogState<Never>)
+  case alert(AlertState<AlertAction>)
+  case confirmationDialog(ConfirmationDialogState<DialogAction>)
   case link(Int)
   case sheet(Int)
+
+  enum AlertAction {
+    case randomize
+    case reset
+  }
+  enum DialogAction {
+    case decrement
+    case increment
+  }
 }
 
 struct Routing: View {
+  @State var count = 0
   @State var destination: Destination?
 
   var body: some View {
@@ -27,42 +37,83 @@ struct Routing: View {
         Text(readMe)
       }
 
-      Button("Alert") {
-        self.destination = .alert(AlertState { TextState("Hello world!") })
+      Section {
+        Text("Count: \(self.count)")
       }
-      .alert(unwrapping: self.$destination, case: /Destination.alert)
+
+      Button("Alert") {
+        self.destination = .alert(
+          AlertState {
+            TextState("Update count?")
+          } actions: {
+            ButtonState(action: .send(.randomize)) {
+              TextState("Randomize")
+            }
+            ButtonState(role: .destructive, action: .send(.reset)) {
+              TextState("Reset")
+            }
+          }
+        )
+      }
 
       Button("Confirmation dialog") {
         self.destination = .confirmationDialog(
-          ConfirmationDialogState(
-            title: TextState("Hello world!"),
-            titleVisibility: .visible 
-          )
+          ConfirmationDialogState(titleVisibility: .visible) {
+            TextState("Update count?")
+          } actions: {
+            ButtonState(action: .send(.increment)) {
+              TextState("Increment")
+            }
+            ButtonState(action: .send(.decrement)) {
+              TextState("Decrement")
+            }
+          }
         )
       }
-      .confirmationDialog(unwrapping: self.$destination, case: /Destination.confirmationDialog)
 
-      NavigationLink(unwrapping: self.$destination, case: /Destination.link) {
-        self.destination = $0 ? .link(0) : nil
-      } destination: { $count in
-        Form {
-          Stepper("Number: \(count)", value: $count)
-        }
-        .navigationTitle("Routing link")
-      } label: {
-        Text("Link")
+      // TODO: Why doesn't this work?
+      Button("Link") {
+        self.destination = .link(self.count)
       }
 
       Button("Sheet") {
-        self.destination = .sheet(0)
-      }
-      .sheet(unwrapping: self.$destination, case: /Destination.sheet) { $count in
-        Form {
-          Stepper("Number: \(count)", value: $count)
-        }
+        self.destination = .sheet(self.count)
       }
     }
     .navigationTitle("Routing")
+    .alert(unwrapping: self.$destination, case: /Destination.alert) { action in
+      switch action {
+      case .randomize:
+        self.count = .random(in: 0...1_000)
+      case .reset:
+        self.count = 0
+      }
+    }
+    .confirmationDialog(
+      unwrapping: self.$destination,
+      case: /Destination.confirmationDialog
+    ) { action in
+      switch action {
+      case .decrement:
+        self.count -= 1
+      case .increment:
+        self.count += 1
+      }
+    }
+    .sheet(unwrapping: self.$destination, case: /Destination.sheet) { $count in
+      NavigationView {
+        Form {
+          Stepper("Number: \(count)", value: $count)
+        }
+        .navigationTitle("Routing sheet")
+      }
+    }
+    .navigationDestination(unwrapping: self.$destination, case: /Destination.link) { $count in
+      Form {
+        Stepper("Number: \(count)", value: $count)
+      }
+      .navigationTitle("Routing link")
+    }
   }
 }
 

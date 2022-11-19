@@ -122,7 +122,32 @@ public struct ConfirmationDialogState<Action> {
   public var title: TextState
   public var titleVisibility: Visibility
 
-  // TODO: New initializers?
+  @available(iOS 15, *)
+  @available(macOS 12, *)
+  @available(tvOS 15, *)
+  @available(watchOS 8, *)
+  public init(
+    titleVisibility: Visibility,
+    title: () -> TextState,
+    message: (() -> TextState)? = nil,
+    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>]
+  ) {
+    self.buttons = actions()
+    self.message = message?()
+    self.title = title()
+    self.titleVisibility = titleVisibility
+  }
+
+  public init(
+    title: () -> TextState,
+    message: (() -> TextState)? = nil,
+    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>]
+  ) {
+    self.buttons = actions()
+    self.message = message?()
+    self.title = title()
+    self.titleVisibility = .automatic
+  }
 
   // TODO: Deprecate?
   @available(iOS 15, *)
