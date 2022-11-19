@@ -5,17 +5,15 @@ struct RootView: View {
   var body: some View {
     NavigationView {
       List {
-        if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-          Section {
-            NavigationLink("Optional-driven alerts") {
-              OptionalAlerts()
-            }
-            NavigationLink("Optional confirmation dialogs") {
-              OptionalConfirmationDialogs()
-            }
-          } header: {
-            Text("Alerts and confirmation dialogs")
+        Section {
+          NavigationLink("Optional-driven alerts") {
+            OptionalAlerts()
           }
+          NavigationLink("Optional confirmation dialogs") {
+            OptionalConfirmationDialogs()
+          }
+        } header: {
+          Text("Alerts and confirmation dialogs")
         }
 
         Section {
@@ -33,13 +31,11 @@ struct RootView: View {
         }
 
         Section {
-          if #available(iOS 16, *) {
-            NavigationLink("Optional destinations") {
-              NavigationStack {
-                NavigationDestinations()
-              }
-              .navigationTitle("Navigation stack")
+          NavigationLink("Optional destinations") {
+            NavigationStack {
+              NavigationDestinations()
             }
+            .navigationTitle("Navigation stack")
           }
           NavigationLink("Optional navigation links") {
             OptionalNavigationLinks()

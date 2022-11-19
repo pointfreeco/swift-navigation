@@ -71,9 +71,17 @@ struct Routing: View {
         )
       }
 
-      // TODO: Why doesn't this work?
-      Button("Link") {
-        self.destination = .link(self.count)
+      NavigationLink(unwrapping: self.$destination, case: /Destination.link) { isActive in
+        if isActive {
+          self.destination = .link(self.count)
+        }
+      } destination: { $count in
+        Form {
+          Stepper("Number: \(count)", value: $count)
+        }
+        .navigationTitle("Routing link")
+      } label: {
+        Text("Link")
       }
 
       Button("Sheet") {
@@ -107,12 +115,6 @@ struct Routing: View {
         }
         .navigationTitle("Routing sheet")
       }
-    }
-    .navigationDestination(unwrapping: self.$destination, case: /Destination.link) { $count in
-      Form {
-        Stepper("Number: \(count)", value: $count)
-      }
-      .navigationTitle("Routing link")
     }
   }
 }
