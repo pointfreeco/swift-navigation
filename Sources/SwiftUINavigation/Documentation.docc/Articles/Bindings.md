@@ -56,6 +56,7 @@ struct SignInView: View {
         }
       }
     }
+    // ⬇️ Replays changes of `model.focus` to `focus` and vice-versa.
     .bind(self.$model.focus, to: self.$focus)
   }
 }
