@@ -46,6 +46,7 @@ to that enum.
 - <doc:Navigation>
 - <doc:SheetsPopoversCovers>
 - <doc:AlertsDialogs>
+- <doc:Bindings>
 
 ## See Also
 

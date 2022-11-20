@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension View {
-  /// Presents an alert from a binding to optional alert state.
+  /// Presents an alert from a binding to an optional value.
   ///
   /// SwiftUI's `alert` view modifiers are driven by two disconnected pieces of state: an
   /// `isPresented` binding to a boolean that determines if the alert should be presented, and
@@ -68,9 +68,12 @@ extension View {
     )
   }
 
-  /// Presents an alert from a binding to an optional enum, and a case path to a specific case.
+  /// Presents an alert from a binding to an optional enum, and a [case path][case-paths-gh] to a
+  /// specific case.
   ///
   /// A version of `alert(unwrapping:)` that works with enum state.
+  ///
+  /// [case-paths-gh]: http://github.com/pointfreeco/swift-case-paths
   ///
   /// - Parameters:
   ///   - title: A closure returning the alert's title given the current alert state.
@@ -101,6 +104,8 @@ extension View {
 
   /// Presents an alert from a binding to optional ``AlertState``.
   ///
+  ///  See <doc:AlertsDialogs> for more information on how to use this API.
+  ///
   /// - Parameters:
   ///   - value: A binding to an optional value that determines whether an alert should be
   ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
@@ -127,10 +132,13 @@ extension View {
     )
   }
 
-  /// Presents an alert from a binding to an optional enum, and a case path to a specific case of
-  /// ``AlertState``.
+  /// Presents an alert from a binding to an optional enum, and a [case path][case-paths-gh] to a
+  /// specific case of ``AlertState``.
   ///
-  /// A version of `alert(unwrapping:)` that works with enum state.
+  /// A version of `alert(unwrapping:)` that works with enum state. See <doc:AlertsDialogs> for
+  /// more information on how to use this API.
+  ///
+  /// [case-paths-gh]: http://github.com/pointfreeco/swift-case-paths
   ///
   /// - Parameters:
   ///   - enum: A binding to an optional enum that holds alert state at a particular case. When
