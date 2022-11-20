@@ -1,8 +1,6 @@
 import CustomDump
 import SwiftUI
 
-// TODO: bring back custom dump conformances
-
 /// A data type that describes the state of an alert that can be shown to the user. The `Action`
 /// generic is the type of actions that can be sent from tapping on a button in the alert.
 ///
@@ -58,10 +56,6 @@ import SwiftUI
 ///   func deleteAppButtonTapped() {
 ///     self.alert = AlertState {
 ///       TextState(#"Remove "Twitter"?"#)
-///     } message: {
-///       TextState(
-///         "Removing from Home Screen will keep the app in your App Library."
-///       )
 ///     } actions: {
 ///       ButtonState(role: .destructive, action: .send(.delete)) {
 ///         TextState("Delete App")
@@ -69,6 +63,10 @@ import SwiftUI
 ///       ButtonState(action: .send(.removeFromHomeScreen)) {
 ///         TextState("Remove from Home Screen")
 ///       }
+///     } message: {
+///       TextState(
+///         "Removing from Home Screen will keep the app in your App Library."
+///       )
 ///     }
 ///   }
 /// }
@@ -114,10 +112,10 @@ import SwiftUI
 ///       "Removing from Home Screen will keep the app in your App Library."
 ///     )
 ///   } actions: {
-///     ButtonState(role: .destructive, action: .send(.deleteButtonTapped)) {
+///     ButtonState(role: .destructive, action: .deleteButtonTapped) {
 ///       TextState("Delete App"),
 ///     },
-///     ButtonState(action: .send(.removeFromHomeScreenButtonTapped)) {
+///     ButtonState(action: .removeFromHomeScreenButtonTapped) {
 ///       TextState("Remove from Home Screen"),
 ///     }
 ///   }
@@ -130,87 +128,45 @@ import SwiftUI
 /// ```
 public struct AlertState<Action>: Identifiable {
   public let id = UUID()
-  public var buttons: [Button]
+  public var buttons: [ButtonState<Action>]
   public var message: TextState?
   public var title: TextState
 
+  /// Initialize alert state.
+  ///
+  /// - Parameters:
+  ///   - title: The title of the alert.
+  ///   - actions: A ``ButtonStateBuilder`` returning the alert's actions.
+  ///   - message: The message for the alert.
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public init(
     title: () -> TextState,
-    // TODO: flip message and actions
-    message: (() -> TextState)? = nil,
-    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] }
+    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] },
+    message: (() -> TextState)? = nil
   ) {
     self.title = title()
     self.message = message?()
     self.buttons = actions()
   }
+}
 
-  @available(
-    iOS, introduced: 13, deprecated: 100000, message: "use `init(title:message:buttons:) instead."
-  )
-  @available(
-    macOS,
-    introduced: 10.15,
-    deprecated: 100000,
-    message: "use `init(title:message:buttons:) instead."
-  )
-  @available(
-    tvOS, introduced: 13, deprecated: 100000, message: "use `init(title:message:buttons:) instead."
-  )
-  @available(
-    watchOS,
-    introduced: 6,
-    deprecated: 100000,
-    message: "use `init(title:message:buttons:) instead."
-  )
-  public init(
-    title: TextState,
-    message: TextState? = nil,
-    dismissButton: Button? = nil
-  ) {
-    self.title = title
-    self.message = message
-    self.buttons = dismissButton.map { [$0] } ?? []
+extension AlertState: CustomDumpReflectable {
+  public var customDumpMirror: Mirror {
+    var children: [(label: String?, value: Any)] = [
+      ("title", self.title)
+    ]
+    if !self.buttons.isEmpty {
+      children.append(("actions", self.buttons))
+    }
+    if let message = self.message {
+      children.append(("message", message))
+    }
+    return Mirror(
+      self,
+      children: children,
+      displayStyle: .struct
+    )
   }
-
-  @available(
-    iOS, introduced: 13, deprecated: 100000, message: "use `init(title:message:buttons:) instead."
-  )
-  @available(
-    macOS,
-    introduced: 10.15,
-    deprecated: 100000,
-    message: "use `init(title:message:buttons:) instead."
-  )
-  @available(
-    tvOS, introduced: 13, deprecated: 100000, message: "use `init(title:message:buttons:) instead."
-  )
-  @available(
-    watchOS,
-    introduced: 6,
-    deprecated: 100000,
-    message: "use `init(title:message:buttons:) instead."
-  )
-  public init(
-    title: TextState,
-    message: TextState? = nil,
-    primaryButton: Button,
-    secondaryButton: Button
-  ) {
-    self.title = title
-    self.message = message
-    self.buttons = [primaryButton, secondaryButton]
-  }
-
-  // TODO: Deprecate?
-  public typealias Button = ButtonState<Action>
-
-  // TODO: Deprecate?
-  public typealias ButtonAction = ButtonState<Action>.ButtonAction
-
-  // TODO: Deprecate?
-  public typealias ButtonRole = ButtonState<Action>.Role
 }
 
 extension AlertState: Equatable where Action: Equatable {
@@ -229,7 +185,7 @@ extension AlertState: Hashable where Action: Hashable {
   }
 }
 
-// TODO: support ios <15
+// MARK: - SwiftUI bridging
 
 extension Alert {
   public init<Action>(_ state: AlertState<Action>, action: @escaping (Action) -> Void) {
@@ -250,40 +206,100 @@ extension Alert {
   }
 }
 
-extension Alert.Button {
-  public init<Action>(_ button: AlertState<Action>.Button, action: @escaping (Action) -> Void) {
-    let action = button.action.map { _ in { button.withAction(action) } }
-    switch button.role {
-    case .cancel:
-      self = .cancel(Text(button.label), action: action)
-    case .destructive:
-      self = .destructive(Text(button.label), action: action)
-    case .none:
-      self = .default(Text(button.label), action: action)
-    }
-  }
-}
+// MARK: - Deprecations
 
-@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-extension ButtonRole {
-  public init<Action>(_ role: AlertState<Action>.ButtonRole) {
-    switch role {
-    case .cancel:
-      self = .cancel
-    case .destructive:
-      self = .destructive
-    }
-  }
-}
+extension AlertState {
+  @available(*, deprecated, message: "Use 'ButtonState<Action>' instead.")
+  public typealias Button = ButtonState<Action>
 
-extension Button where Label == Text {
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  public init<Action>(_ button: AlertState<Action>.Button, action: @escaping (Action) -> Void) {
-    self.init(
-      role: button.role.map(ButtonRole.init),
-      action: { button.withAction(action) }
-    ) {
-      Text(button.label)
-    }
+  @available(*, deprecated, message: "Use 'ButtonState<Action>.ButtonAction' instead.")
+  public typealias ButtonAction = ButtonState<Action>.ButtonAction
+
+  @available(*, deprecated, message: "Use 'ButtonState<Action>.Role' instead.")
+  public typealias ButtonRole = ButtonState<Action>.Role
+
+  @available(
+    iOS, introduced: 15, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    macOS,
+    introduced: 12,
+    deprecated: 100000,
+    message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    tvOS, introduced: 15, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    watchOS,
+    introduced: 8,
+    deprecated: 100000,
+    message: "Use 'init(title:actions:message:)' instead."
+  )
+  public init(
+    title: TextState,
+    message: TextState? = nil,
+    buttons: [ButtonState<Action>]
+  ) {
+    self.title = title
+    self.message = message
+    self.buttons = buttons
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    macOS,
+    introduced: 10.15,
+    deprecated: 100000,
+    message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    watchOS,
+    introduced: 6,
+    deprecated: 100000,
+    message: "Use 'init(title:actions:message:)' instead."
+  )
+  public init(
+    title: TextState,
+    message: TextState? = nil,
+    dismissButton: ButtonState<Action>? = nil
+  ) {
+    self.title = title
+    self.message = message
+    self.buttons = dismissButton.map { [$0] } ?? []
+  }
+
+  @available(
+    iOS, introduced: 13, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    macOS,
+    introduced: 10.15,
+    deprecated: 100000,
+    message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
+  )
+  @available(
+    watchOS,
+    introduced: 6,
+    deprecated: 100000,
+    message: "Use 'init(title:actions:message:)' instead."
+  )
+  public init(
+    title: TextState,
+    message: TextState? = nil,
+    primaryButton: ButtonState<Action>,
+    secondaryButton: ButtonState<Action>
+  ) {
+    self.title = title
+    self.message = message
+    self.buttons = [primaryButton, secondaryButton]
   }
 }

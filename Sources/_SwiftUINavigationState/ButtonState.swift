@@ -13,10 +13,6 @@ public struct ButtonState<Action>: Identifiable {
       .init(type: .animatedSend(action, animation: animation))
     }
 
-    // TODO: finish deprecation, message can say to use `withAction`
-    @available(*, deprecated)
-    public typealias ActionType = _ActionType
-
     public enum _ActionType {
       case send(Action)
       case animatedSend(Action, animation: Animation?)
@@ -67,48 +63,20 @@ public struct ButtonState<Action>: Identifiable {
   }
 }
 
-@resultBuilder
-public enum ButtonStateBuilder<Action> {
-  public static func buildArray(_ components: [[ButtonState<Action>]]) -> [ButtonState<Action>] {
-    components.flatMap { $0 }
-  }
-
-  public static func buildBlock(_ components: [ButtonState<Action>]...) -> [ButtonState<Action>] {
-    components.flatMap { $0 }
-  }
-
-  public static func buildLimitedAvailability(_ component: [ButtonState<Action>]) -> [ButtonState<Action>] {
-    component
-  }
-
-  public static func buildEither(first component: [ButtonState<Action>]) -> [ButtonState<Action>] {
-    component
-  }
-
-  public static func buildEither(second component: [ButtonState<Action>]) -> [ButtonState<Action>] {
-    component
-  }
-
-  public static func buildExpression(_ expression: ButtonState<Action>) -> [ButtonState<Action>] {
-    [expression]
-  }
-
-  public static func buildOptional(_ component: [ButtonState<Action>]?) -> [ButtonState<Action>] {
-    component ?? []
-  }
-}
-
 extension ButtonState: CustomDumpReflectable {
   public var customDumpMirror: Mirror {
-    Mirror(
+    var children: [(label: String?, value: Any)] = []
+    if let role = self.role {
+      children.append(("role", role))
+    }
+    if let action = self.action {
+      children.append(("action", action))
+    }
+    children.append(("label", self.label))
+    return Mirror(
       self,
-      children: [
-        self.role.map { "\($0)" } ?? "default": (
-          self.label,
-          action: self.action
-        )
-      ],
-      displayStyle: .enum
+      children: children,
+      displayStyle: .struct
     )
   }
 }
@@ -159,6 +127,76 @@ extension ButtonState: Hashable where Action: Hashable {
   }
 }
 
+// MARK: - SwiftUI bridging
+
+extension Alert.Button {
+  public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) -> Void) {
+    let action = button.action.map { _ in { button.withAction(action) } }
+    switch button.role {
+    case .cancel:
+      self = .cancel(Text(button.label), action: action)
+    case .destructive:
+      self = .destructive(Text(button.label), action: action)
+    case .none:
+      self = .default(Text(button.label), action: action)
+    }
+  }
+}
+
+@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+extension ButtonRole {
+  public init<Action>(_ role: ButtonState<Action>.Role) {
+    switch role {
+    case .cancel:
+      self = .cancel
+    case .destructive:
+      self = .destructive
+    }
+  }
+}
+
+extension Button where Label == Text {
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+  public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) -> Void) {
+    self.init(
+      role: button.role.map(ButtonRole.init),
+      action: { button.withAction(action) }
+    ) {
+      Text(button.label)
+    }
+  }
+}
+
+// MARK: - Deprecations
+
+extension ButtonState.ButtonAction {
+  @available(*, deprecated, message: "Use 'ButtonState.withAction' instead.")
+  public typealias ActionType = _ActionType
+}
+
+@available(
+  iOS,
+  introduced: 13,
+  deprecated: 100000,
+  message: "Use 'ButtonState.init(role:action:label:)' instead."
+)
+@available(
+  macOS, introduced: 10.15,
+  deprecated: 100000,
+  message: "Use 'ButtonState.init(role:action:label:)' instead."
+)
+@available(
+  tvOS,
+  introduced: 13,
+  deprecated: 100000,
+  message: "Use 'ButtonState.init(role:action:label:)' instead."
+)
+@available(
+  watchOS,
+  introduced: 6,
+  deprecated: 100000,
+  message: "Use 'ButtonState.init(role:action:label:)' instead."
+)
 extension ButtonState {
   public static func cancel(
     _ label: TextState,

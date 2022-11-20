@@ -19,20 +19,22 @@ final class AlertTests: XCTestCase {
       """
       AlertState(
         title: "Alert!",
-        message: "Something went wrong...",
-        buttons: [
-          [0]: AlertState.Button.destructive(
-            "Destroy",
-            action: AlertState.ButtonAction.send(
+        actions: [
+          [0]: ButtonState(
+            role: ButtonState.Role.destructive,
+            action: ButtonState.ButtonAction.send(
               true,
               animation: Animation.easeInOut
-            )
+            ),
+            label: "Destroy"
           ),
-          [1]: AlertState.Button.cancel(
-            "Cancel",
-            action: AlertState.ButtonAction.send(false)
+          [1]: ButtonState(
+            role: ButtonState.Role.cancel,
+            action: ButtonState.ButtonAction.send(false),
+            label: "Cancel"
           )
-        ]
+        ],
+        message: "Something went wrong..."
       )
       """
     )
@@ -50,25 +52,27 @@ final class AlertTests: XCTestCase {
         ),
         to: &dump
       )
-      XCTAssertEqual(
+      XCTAssertNoDifference(
         dump,
         """
         ConfirmationDialogState(
           title: "Alert!",
-          message: "Something went wrong...",
-          buttons: [
-            [0]: AlertState.Button.destructive(
-              "Destroy",
-              action: AlertState.ButtonAction.send(
+          actions: [
+            [0]: ButtonState(
+              role: ButtonState.Role.destructive,
+              action: ButtonState.ButtonAction.send(
                 true,
                 animation: Animation.easeInOut
-              )
+              ),
+              label: "Destroy"
             ),
-            [1]: AlertState.Button.cancel(
-              "Cancel",
-              action: AlertState.ButtonAction.send(false)
+            [1]: ButtonState(
+              role: ButtonState.Role.cancel,
+              action: ButtonState.ButtonAction.send(false),
+              label: "Cancel"
             )
-          ]
+          ],
+          message: "Something went wrong..."
         )
         """
       )
