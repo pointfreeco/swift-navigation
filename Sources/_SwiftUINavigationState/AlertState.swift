@@ -1,6 +1,8 @@
 import CustomDump
 import SwiftUI
 
+// TODO: bring back custom dump conformances
+
 /// A data type that describes the state of an alert that can be shown to the user. The `Action`
 /// generic is the type of actions that can be sent from tapping on a button in the alert.
 ///
@@ -127,7 +129,6 @@ import SwiftUI
 /// model.alert = nil
 /// ```
 public struct AlertState<Action>: Identifiable {
-  // TODO: omit id from mirror/description/etc?
   public let id = UUID()
   public var buttons: [Button]
   public var message: TextState?
@@ -136,8 +137,8 @@ public struct AlertState<Action>: Identifiable {
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public init(
     title: () -> TextState,
+    // TODO: flip message and actions
     message: (() -> TextState)? = nil,
-    // TODO: buttons?
     @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] }
   ) {
     self.title = title()
@@ -227,6 +228,8 @@ extension AlertState: Hashable where Action: Hashable {
     hasher.combine(self.buttons)
   }
 }
+
+// TODO: support ios <15
 
 extension Alert {
   public init<Action>(_ state: AlertState<Action>, action: @escaping (Action) -> Void) {

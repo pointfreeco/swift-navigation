@@ -89,7 +89,6 @@ extension View {
   ///   - actions: A view builder returning the dialog's actions given the current dialog case.
   ///   - message: A view builder returning the message for the dialog given the current dialog
   ///     case.
-  // TODO: deprecate?
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public func confirmationDialog<Enum, Case, A: View, M: View>(
     title: (Case) -> Text,

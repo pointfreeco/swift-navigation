@@ -1,6 +1,8 @@
 import CustomDump
 import SwiftUI
 
+// TODO: support ios <15
+
 /// A data type that describes the state of a confirmation dialog that can be shown to the user. The
 /// `Action` generic is the type of actions that can be sent from tapping on a button in the sheet.
 ///

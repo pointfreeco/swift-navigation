@@ -55,22 +55,7 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
-    self.sheet(isPresented: value.isPresent()) {
-      // TODO: is this needed anymore?
-
-      // NB: If a text field is focused during dismissal, the binding can be written to, which
-      //     causes the sheet to immediately re-present.
-      #if canImport(UIKit)
-        UIApplication.shared.sendAction(
-          #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil
-        )
-      #elseif canImport(AppKit)
-        NSApp.sendAction(
-          #selector(NSResponder.resignFirstResponder), to: nil, from: nil
-        )
-      #endif
-      onDismiss?()
-    } content: {
+    self.sheet(isPresented: value.isPresent(), onDismiss: onDismiss) {
       Binding(unwrapping: value).map(content)
     }
   }

@@ -2,9 +2,8 @@ import CustomDump
 import SwiftUI
 
 public struct ButtonState<Action>: Identifiable {
-  // TODO: Rename?
   public struct ButtonAction {
-    public let type: ActionType
+    public let type: _ActionType
 
     public static func send(_ action: Action) -> Self {
       .init(type: .send(action))
@@ -14,8 +13,11 @@ public struct ButtonState<Action>: Identifiable {
       .init(type: .animatedSend(action, animation: animation))
     }
 
-    // TODO: Rename?
-    public enum ActionType {
+    // TODO: finish deprecation, message can say to use `withAction`
+    @available(*, deprecated)
+    public typealias ActionType = _ActionType
+
+    public enum _ActionType {
       case send(Action)
       case animatedSend(Action, animation: Animation?)
     }
@@ -41,39 +43,15 @@ public struct ButtonState<Action>: Identifiable {
     self.label = label()
   }
 
-  // TODO: Is this initializer worth it?
-  //       Allows for ButtonState(role: .destructive, send: .confirmDeletion)
   public init(
     role: Role? = nil,
-    send action: Action? = nil,
+    action: Action? = nil,
     label: () -> TextState
   ) {
     self.role = role
     self.action = action.map(ButtonAction.send)
     self.label = label()
   }
-
-  // TODO: Keep these of leave these?
-//  public init(
-//    _ titleKey: LocalizedStringKey,
-//    role: Role? = nil,
-//    action: ButtonAction? = nil
-//  ) {
-//    self.role = role
-//    self.action = action
-//    self.label = TextState(titleKey)
-//  }
-//
-//  @_disfavoredOverload
-//  public init<S: StringProtocol>(
-//    _ title: S,
-//    role: Role? = nil,
-//    action: ButtonAction? = nil
-//  ) {
-//    self.role = role
-//    self.action = action
-//    self.label = TextState(title)
-//  }
 
   public func withAction(_ perform: (Action) -> Void) {
     switch self.action?.type {
@@ -159,12 +137,12 @@ extension ButtonState.ButtonAction: CustomDumpReflectable {
 }
 
 extension ButtonState.ButtonAction: Equatable where Action: Equatable {}
-extension ButtonState.ButtonAction.ActionType: Equatable where Action: Equatable {}
+extension ButtonState.ButtonAction._ActionType: Equatable where Action: Equatable {}
 extension ButtonState.Role: Equatable {}
 extension ButtonState: Equatable where Action: Equatable {}
 
 extension ButtonState.ButtonAction: Hashable where Action: Hashable {}
-extension ButtonState.ButtonAction.ActionType: Hashable where Action: Hashable {
+extension ButtonState.ButtonAction._ActionType: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     switch self {
     case let .send(action), let .animatedSend(action, animation: _):
