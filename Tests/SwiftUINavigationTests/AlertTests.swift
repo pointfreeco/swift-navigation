@@ -14,7 +14,7 @@ final class AlertTests: XCTestCase {
       ),
       to: &dump
     )
-    XCTAssertEqual(
+    XCTAssertNoDifference(
       dump,
       """
       AlertState(

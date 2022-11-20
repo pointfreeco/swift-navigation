@@ -41,6 +41,18 @@ public struct ButtonState<Action>: Identifiable {
     self.label = label()
   }
 
+  // TODO: Is this initializer worth it?
+  //       Allows for ButtonState(role: .destructive, send: .confirmDeletion)
+  public init(
+    role: Role? = nil,
+    send action: Action? = nil,
+    label: () -> TextState
+  ) {
+    self.role = role
+    self.action = action.map(ButtonAction.send)
+    self.label = label()
+  }
+
   // TODO: Keep these of leave these?
 //  public init(
 //    _ titleKey: LocalizedStringKey,

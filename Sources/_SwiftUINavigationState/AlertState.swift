@@ -127,6 +127,7 @@ import SwiftUI
 /// model.alert = nil
 /// ```
 public struct AlertState<Action>: Identifiable {
+  // TODO: omit id from mirror/description/etc?
   public let id = UUID()
   public var buttons: [Button]
   public var message: TextState?
@@ -136,6 +137,7 @@ public struct AlertState<Action>: Identifiable {
   public init(
     title: () -> TextState,
     message: (() -> TextState)? = nil,
+    // TODO: buttons?
     @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] }
   ) {
     self.title = title()
