@@ -132,7 +132,7 @@ public struct AlertState<Action>: Identifiable {
   public var message: TextState?
   public var title: TextState
 
-  /// Initialize alert state.
+  /// Creates alert state.
   ///
   /// - Parameters:
   ///   - title: The title of the alert.
@@ -188,6 +188,12 @@ extension AlertState: Hashable where Action: Hashable {
 // MARK: - SwiftUI bridging
 
 extension Alert {
+  /// Creates an alert from alert state.
+  ///
+  /// - Parameters:
+  ///   - state: Alert state used to populate the alert.
+  ///   - action: An action handler, called when a button with an action is tapped, by passing the
+  ///     action to the closure.
   public init<Action>(_ state: AlertState<Action>, action: @escaping (Action) -> Void) {
     if state.buttons.count == 2 {
       self.init(

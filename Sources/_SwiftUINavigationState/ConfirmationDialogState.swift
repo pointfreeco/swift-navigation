@@ -122,7 +122,7 @@ public struct ConfirmationDialogState<Action>: Identifiable {
   public var title: TextState
   public var titleVisibility: Visibility
 
-  /// Initialize confirmation dialog state.
+  /// Creates confirmation dialog state.
   ///
   /// - Parameters:
   ///   - titleVisibility: The visibility of the dialog's title.
@@ -145,7 +145,7 @@ public struct ConfirmationDialogState<Action>: Identifiable {
     self.titleVisibility = titleVisibility
   }
 
-  /// Initialize confirmation dialog state.
+  /// Creates confirmation dialog state.
   ///
   /// - Parameters:
   ///   - title: The title of the dialog.

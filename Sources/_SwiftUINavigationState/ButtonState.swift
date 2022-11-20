@@ -2,7 +2,8 @@ import CustomDump
 import SwiftUI
 
 public struct ButtonState<Action>: Identifiable {
-  public struct ButtonAction {
+  /// A type that wraps an action with additional context, _e.g._ for animation.
+  public struct Handler {
     public let type: _ActionType
 
     public static func send(_ action: Action) -> Self {
@@ -19,19 +20,36 @@ public struct ButtonState<Action>: Identifiable {
     }
   }
 
+  /// A value that describes the purpose of a button.
+  ///
+  /// See `SwiftUI.ButtonRole` for more information.
   public enum Role {
-    case destructive
+    /// A role that indicates a cancel button.
+    ///
+    /// See `SwiftUI.ButtonRole.cancel` for more information.
     case cancel
+
+    /// A role that indicates a destructive button.
+    ///
+    /// See `SwiftUI.ButtonRole.destructive` for more information.
+    case destructive
   }
 
   public let id = UUID()
-  public let action: ButtonAction?
+  public let action: Handler?
   public let label: TextState
   public let role: Role?
 
+  /// Creates button state.
+  ///
+  /// - Parameters:
+  ///   - role: An optional semantic role that describes the button. A value of `nil` means that the
+  ///     button doesn't have an assigned role.
+  ///   - action: The action to send when the user interacts with the button.
+  ///   - label: A view that describes the purpose of the button's `action`.
   public init(
     role: Role? = nil,
-    action: ButtonAction? = nil,
+    action: Handler? = nil,
     label: () -> TextState
   ) {
     self.role = role
@@ -39,16 +57,28 @@ public struct ButtonState<Action>: Identifiable {
     self.label = label()
   }
 
+  /// Creates button state.
+  ///
+  /// - Parameters:
+  ///   - role: An optional semantic role that describes the button. A value of `nil` means that the
+  ///     button doesn't have an assigned role.
+  ///   - action: The action to send when the user interacts with the button.
+  ///   - label: A view that describes the purpose of the button's `action`.
   public init(
     role: Role? = nil,
     action: Action? = nil,
     label: () -> TextState
   ) {
     self.role = role
-    self.action = action.map(ButtonAction.send)
+    self.action = action.map(Handler.send)
     self.label = label()
   }
 
+  /// Handle the button's action in a closure.
+  ///
+  /// - Parameter perform: Unwraps and passes a button's action to a closure to be performed. If the
+  ///   action has an associated animation, the context will be wrapped using SwiftUI's
+  ///   `withAnimation`.
   public func withAction(_ perform: (Action) -> Void) {
     switch self.action?.type {
     case let .send(action):
@@ -81,7 +111,7 @@ extension ButtonState: CustomDumpReflectable {
   }
 }
 
-extension ButtonState.ButtonAction: CustomDumpReflectable {
+extension ButtonState.Handler: CustomDumpReflectable {
   public var customDumpMirror: Mirror {
     switch self.type {
     case let .send(action):
@@ -104,13 +134,13 @@ extension ButtonState.ButtonAction: CustomDumpReflectable {
   }
 }
 
-extension ButtonState.ButtonAction: Equatable where Action: Equatable {}
-extension ButtonState.ButtonAction._ActionType: Equatable where Action: Equatable {}
+extension ButtonState.Handler: Equatable where Action: Equatable {}
+extension ButtonState.Handler._ActionType: Equatable where Action: Equatable {}
 extension ButtonState.Role: Equatable {}
 extension ButtonState: Equatable where Action: Equatable {}
 
-extension ButtonState.ButtonAction: Hashable where Action: Hashable {}
-extension ButtonState.ButtonAction._ActionType: Hashable where Action: Hashable {
+extension ButtonState.Handler: Hashable where Action: Hashable {}
+extension ButtonState.Handler._ActionType: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     switch self {
     case let .send(action), let .animatedSend(action, animation: _):
@@ -169,7 +199,12 @@ extension Button where Label == Text {
 
 // MARK: - Deprecations
 
-extension ButtonState.ButtonAction {
+extension ButtonState {
+  @available(*, deprecated, renamed: "Handler")
+  public typealias ButtonAction = Handler
+}
+
+extension ButtonState.Handler {
   @available(*, deprecated, message: "Use 'ButtonState.withAction' instead.")
   public typealias ActionType = _ActionType
 }
@@ -198,28 +233,19 @@ extension ButtonState.ButtonAction {
   message: "Use 'ButtonState.init(role:action:label:)' instead."
 )
 extension ButtonState {
-  public static func cancel(
-    _ label: TextState,
-    action: ButtonAction? = nil
-  ) -> Self {
+  public static func cancel(_ label: TextState, action: Handler? = nil) -> Self {
     Self(role: .cancel, action: action) {
       label
     }
   }
 
-  public static func `default`(
-    _ label: TextState,
-    action: ButtonAction? = nil
-  ) -> Self {
+  public static func `default`(_ label: TextState, action: Handler? = nil) -> Self {
     Self(action: action) {
       label
     }
   }
 
-  public static func destructive(
-    _ label: TextState,
-    action: ButtonAction? = nil
-  ) -> Self {
+  public static func destructive(_ label: TextState, action: Handler? = nil) -> Self {
     Self(role: .destructive, action: action) {
       label
     }
