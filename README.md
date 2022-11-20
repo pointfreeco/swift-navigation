@@ -317,15 +317,15 @@ class HomeScreenModel: ObservableObject {
   func deleteAppButtonTapped() {
     self.alert = AlertState {
       TextState(#"Remove "Twitter"?"#)
-    } message: {
-      TextState("Removing from Home Screen will keep the app in your App Library.")
-    } buttons: {
+    } actions: {
       ButtonState(role: .destructive, action: .send(.delete)) {
         TextState("Delete App")
       }
       ButtonState(action: .send(.removeFromHomeScreen)) {
         TextState("Remove from Home Screen")
       }
+    } message: {
+      TextState("Removing from Home Screen will keep the app in your App Library.")
     }
   }
 

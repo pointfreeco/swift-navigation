@@ -29,12 +29,12 @@ class ItemRowModel: Identifiable, ObservableObject {
     self.destination = .alert(
       AlertState {
         TextState(self.item.name)
-      } message: {
-        TextState("Are you sure you want to delete this item?")
       } actions: {
         ButtonState(role: .destructive, action: .send(.deleteConfirmation, animation: .default)) {
           TextState("Delete")
         }
+      } message: {
+        TextState("Are you sure you want to delete this item?")
       }
     )
   }

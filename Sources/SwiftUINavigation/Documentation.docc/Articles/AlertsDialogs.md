@@ -32,11 +32,11 @@ buttons:
 func deleteButtonTapped() {
   self.alert = AlertState {
     TextState("Are you sure?")
-  } message: {
-    TextState("Deleting this item cannot be undone.")
   } actions: {
     ButtonState("Delete", action: .send(.delete)),
     ButtonState("Nevermind", role: .cancel)
+  } message: {
+    TextState("Deleting this item cannot be undone.")
   }
 }
 ```

@@ -107,10 +107,6 @@ import SwiftUI
 ///   model.alert,
 ///   AlertState {
 ///     TextState(#"Remove "Twitter"?"#)
-///   } message: {
-///     TextState(
-///       "Removing from Home Screen will keep the app in your App Library."
-///     )
 ///   } actions: {
 ///     ButtonState(role: .destructive, action: .deleteButtonTapped) {
 ///       TextState("Delete App"),
@@ -118,6 +114,10 @@ import SwiftUI
 ///     ButtonState(action: .removeFromHomeScreenButtonTapped) {
 ///       TextState("Remove from Home Screen"),
 ///     }
+///   } message: {
+///     TextState(
+///       "Removing from Home Screen will keep the app in your App Library."
+///     )
 ///   }
 /// )
 ///
