@@ -20,18 +20,29 @@ Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
 
 ## Motivation
 
-SwiftUI comes with many forms of navigation (tabs, alerts, dialogs, modal sheets, popovers, navigation links, and more), and each comes with a few ways to construct them. These ways roughly fall in two categories:
+SwiftUI comes with many forms of navigation (tabs, alerts, dialogs, modal sheets, popovers, 
+navigation links, and more), and each comes with a few ways to construct them. These ways roughly 
+fall in two categories:
 
-  * "Fire-and-forget": These are initializers and methods that do not take binding arguments, which means SwiftUI fully manages navigation state internally. This makes it easy to get something on the screen quickly, but you also have no programmatic control over the navigation. Examples of this are the initializers on [`TabView`][TabView.init] and [`NavigationLink`][NavigationLink.init] that do not take a binding.
+  * "Fire-and-forget": These are initializers and methods that do not take binding arguments, which 
+  means SwiftUI fully manages navigation state internally. This makes it easy to get something on 
+  the screen quickly, but you also have no programmatic control over the navigation. Examples of 
+  this are the initializers on [`TabView`][TabView.init] and [`NavigationLink`][NavigationLink.init] 
+  that do not take a binding.
 
-    [NavigationLink.init]: https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-27n7s
-    [TabView.init]: https://developer.apple.com/documentation/swiftui/tabview/init(content:)
+  * "State-driven": Most other initializers and methods do take a binding, which means you can 
+  mutate state in your domain to tell SwiftUI when it should activate or deactivate navigation. 
+  Using these APIs is more complicated than the "fire-and-forget" style, but doing so instantly
+  gives you the ability to deep-link into any state of your application by just constructing a 
+  piece of data, handing it to a SwiftUI view, and letting SwiftUI handle the rest.
 
-  * "State-driven": Most other initializers and methods do take a binding, which means you can mutate state in your domain to tell SwiftUI when it should activate or deactivate navigation. Using these APIs is more complicated than the "fire-and-forget" style, but doing so instantly gives you the ability to deep-link into any state of your application by just constructing a piece of data, handing it to a SwiftUI view, and letting SwiftUI handle the rest.
+Navigation that is "state-driven" is the more powerful form of navigation, albeit slightly more 
+complicated, but unfortunately SwiftUI does not ship with all the tools necessary to model our 
+domains as concisely as possible and use these navigation APIs.
 
-Navigation that is "state-driven" is the more powerful form of navigation, albeit slightly more complicated, but unfortunately SwiftUI does not ship with all the tools necessary to model our domains as concisely as possible and use these navigation APIs.
-
-For example, to show a modal sheet in SwiftUI you can provide a binding of some optional state so that when the state flips to non-`nil` the modal is presented. However, the content closure of the sheet is handed a plain value, not a binding:
+For example, to show a modal sheet in SwiftUI you can provide a binding of some optional state so 
+that when the state flips to non-`nil` the modal is presented. However, the content closure of the 
+sheet is handed a plain value, not a binding:
 
 ```swift
 struct ContentView: View {
@@ -53,9 +64,13 @@ struct EditPostView: View {
 }
 ```
 
-This means that the `Post` handed to the `EditPostView` is fully disconnected from the source of truth `draft` that powers the presentation of the modal. Ideally we should be able to derive a `Binding<Post>` for the draft so that any mutations `EditPostView` makes will be instantly visible in `ContentView`.
+This means that the `Post` handed to the `EditPostView` is fully disconnected from the source of 
+truth `draft` that powers the presentation of the modal. Ideally we should be able to derive a 
+`Binding<Post>` for the draft so that any mutations `EditPostView` makes will be instantly visible 
+in `ContentView`.
 
-Another problem arises when trying to model multiple navigation destinations as multiple optional values. For example, suppose there are 3 different sheets that can be shown in a screen:
+Another problem arises when trying to model multiple navigation destinations as multiple optional 
+values. For example, suppose there are 3 different sheets that can be shown in a screen:
 
 ```swift
 struct ContentView: View {
@@ -79,9 +94,14 @@ struct ContentView: View {
 }
 ```
 
-This forces us to hold 3 optional values in state, which has 2^3=8 different states, 4 of which are invalid. The only valid state is for all values to be `nil` or exactly one be non-`nil`. It makes no sense if two or more values are non-`nil`, for that would represent wanting to show two modal sheets at the same time.
+This forces us to hold 3 optional values in state, which has 2^3=8 different states, 4 of which are 
+invalid. The only valid state is for all values to be `nil` or exactly one be non-`nil`. It makes 
+no sense if two or more values are non-`nil`, for that would represent wanting to show two modal 
+sheets at the same time.
 
-Ideally we'd like to represent these navigation destinations as 3 mutually exclusive states so that we could guarantee at compile time that only one can be active at a time. Luckily for us Swift’s enums are perfect for this:
+Ideally we'd like to represent these navigation destinations as 3 mutually exclusive states so that
+we could guarantee at compile time that only one can be active at a time. Luckily for us Swift’s 
+enums are perfect for this:
 
 ```swift
 enum Destination {
@@ -91,17 +111,22 @@ enum Destination {
 }
 ```
 
-And then we could hold an optional `Destination` in state to represent that we are either navigating to a specific destination or we are not navigating anywhere:
+And then we could hold an optional `Destination` in state to represent that we are either navigating 
+to a specific destination or we are not navigating anywhere:
 
 ```swift
 @State var destination: Destination?
 ```
 
-This would be the most optimal way to model our navigation domain, but unfortunately SwiftUI's tools do not make it easy for us to drive navigation off of enums.
+This would be the most optimal way to model our navigation domain, but unfortunately SwiftUI's 
+tools do not make it easy for us to drive navigation off of enums.
 
-This library comes with a number of `Binding` transformations and navigation API overloads that allow you to model your domain as concisely as possible, using enums, while still allowing you to use SwiftUI's navigation tools.
+This library comes with a number of `Binding` transformations and navigation API overloads that 
+allow you to model your domain as concisely as possible, using enums, while still allowing you to 
+use SwiftUI's navigation tools.
 
-For example, powering multiple modal sheets off a single `Destination` enum looks like this with the tools in this library:
+For example, powering multiple modal sheets off a single `Destination` enum looks like this with 
+the tools in this library:
 
 ```swift
 struct ContentView {
@@ -129,21 +154,30 @@ struct ContentView {
 }
 ```
 
-The forward-slash syntax you see above represents a [case path](https://github.com/pointfreeco/swift-case-paths) to a particular case of an enum. Case paths are our imagining of what key paths could look like for enums, and every concept for key paths has an analogous concept for case paths:
+The forward-slash syntax you see above represents a [case path][case-paths-gh] to a particular case 
+of an enum. Case paths are our imagining of what key paths could look like for enums, and every 
+concept for key paths has an analogous concept for case paths:
 
-  * Each property of a struct is naturally endowed with a key path, and so each case of an enum is endowed with a case path.
-  * Key paths are constructed using a back slash, name of the type and name of the property (_e.g._, `\User.name`), and case paths are constructed similarly, but with a forward slash (_e.g._, `/Destination.draft`).
-  * Key paths describe how to get and set a value in some root structure, whereas case paths describe how to extract and embed a value into a root structure.
+  * Each property of a struct is naturally endowed with a key path, and so each case of an enum is 
+  endowed with a case path.
+  * Key paths are constructed using a back slash, name of the type and name of the property (_e.g._,
+  `\User.name`), and case paths are constructed similarly, but with a forward slash (_e.g._, 
+  `/Destination.draft`).
+  * Key paths describe how to get and set a value in some root structure, whereas case paths 
+  describe how to extract and embed a value into a root structure.
 
 Case paths are crucial for allowing us to build the tools to drive navigation off of enum state.
 
 ## Tools
 
-This library comes with many tools that allow you to model your domain as concisely as possible, using enums, while still allowing you to use SwiftUI's navigation APIs.
+This library comes with many tools that allow you to model your domain as concisely as possible, 
+using enums, while still allowing you to use SwiftUI's navigation APIs.
 
 ### Navigation API overloads
 
-This library provides additional overloads for all of SwiftUI's "state-driven" navigation APIs that allow you to activate navigation based on a particular case of an enum. Further, all overloads unify presentation in a single, consistent API:
+This library provides additional overloads for all of SwiftUI's "state-driven" navigation APIs that 
+allow you to activate navigation based on a particular case of an enum. Further, all overloads 
+unify presentation in a single, consistent API:
 
   * `NavigationLink.init(unwrapping:case:)`
   * `View.alert(unwrapping:case:)`
@@ -152,7 +186,8 @@ This library provides additional overloads for all of SwiftUI's "state-driven" n
   * `View.popover(unwrapping:case:)`
   * `View.sheet(unwrapping:case:)`
 
-For example, here is how a navigation link, a modal sheet and an alert can all be driven off a single enum with 3 cases:
+For example, here is how a navigation link, a modal sheet and an alert can all be driven off a 
+single enum with 3 cases:
 
 ```swift
 enum Destination {
@@ -198,13 +233,15 @@ struct EditPostView: View {
 
 ### Navigation views
 
-This library comes with additional SwiftUI views that transform and destructure bindings, allowing you to better handle optional and enum state:
+This library comes with additional SwiftUI views that transform and destructure bindings, allowing 
+you to better handle optional and enum state:
 
   * `IfLet`
   * `IfCaseLet`
   * `Switch`/`CaseLet`
 
-For example, suppose you were working on an inventory application that modeled in-stock and out-of-stock as an enum:
+For example, suppose you were working on an inventory application that modeled in-stock and 
+out-of-stock as an enum:
 
 ```swift
 enum ItemStatus {
@@ -213,7 +250,10 @@ enum ItemStatus {
 }
 ```
 
-If you want to conditionally show a stepper view for the quantity when in-stock and a toggle for the backorder when out-of-stock, you're out of luck when it comes to using SwiftUI's standard tools. However, the `Switch` view that comes with this library allows you to destructure a `Binding<ItemStatus>` into bindings of each case so that you can present different views:
+If you want to conditionally show a stepper view for the quantity when in-stock and a toggle for 
+the backorder when out-of-stock, you're out of luck when it comes to using SwiftUI's standard tools. 
+However, the `Switch` view that comes with this library allows you to destructure a 
+`Binding<ItemStatus>` into bindings of each case so that you can present different views:
 
 ```swift
 struct InventoryItemView {
@@ -240,13 +280,16 @@ struct InventoryItemView {
 
 ### Binding transformations
 
-This library comes with tools that transform and destructure bindings of optional and enum state, which allows you to build your own navigation views similar to the ones that ship in this library.
+This library comes with tools that transform and destructure bindings of optional and enum state, 
+which allows you to build your own navigation views similar to the ones that ship in this library.
 
   * `Binding.init(unwrapping:)`
   * `Binding.case(_:)`
   * `Binding.isPresent()` and `Binding.isPresent(_:)`
 
-For example, suppose you have built a `BottomSheet` view for presenting a modal-like view that only takes up the bottom half of the screen. You can build the entire view using the most simplistic domain modeling where navigation is driven off a single boolean binding:
+For example, suppose you have built a `BottomSheet` view for presenting a modal-like view that 
+only takes up the bottom half of the screen. You can build the entire view using the most simplistic 
+domain modeling where navigation is driven off a single boolean binding:
 
 ```swift
 struct BottomSheet<Content>: View where Content: View {
@@ -259,9 +302,12 @@ struct BottomSheet<Content>: View where Content: View {
 }
 ```
 
-Then, additional convenience initializers can be introduced that allow the bottom sheet to be created with a more concisely modeled domain.
+Then, additional convenience initializers can be introduced that allow the bottom sheet to be 
+created with a more concisely modeled domain.
 
-For example, an initializer that allows the bottom sheet to be presented and dismissed with optional state, and further the content closure is provided a binding of the non-optional state. We can accomplish this using the `isPresent()` method and `Binding.init(unwrapping:)`:
+For example, an initializer that allows the bottom sheet to be presented and dismissed with optional 
+state, and further the content closure is provided a binding of the non-optional state. We can 
+accomplish this using the `isPresent()` method and `Binding.init(unwrapping:)`:
 
 ```swift
 extension BottomSheet {
@@ -279,7 +325,9 @@ extension BottomSheet {
 }
 ```
 
-An even more robust initializer can be provided by providing a binding to an optional enum _and_ a case path to specify which case of the enum triggers navigation. This can be accomplished using the `case(_:)` method on binding:
+An even more robust initializer can be provided by providing a binding to an optional enum _and_ a 
+case path to specify which case of the enum triggers navigation. This can be accomplished using 
+the `case(_:)` method on binding:
 
 ```swift
 extension BottomSheet {
@@ -298,11 +346,16 @@ extension BottomSheet {
 }
 ```
 
-Both of these more powerful initializers are just conveniences. If the user of `BottomSheet` does not want to worry about concise domain modeling they are free to continue using the `isActive` boolean binding. But the day they need the more powerful APIs they will be available.
+Both of these more powerful initializers are just conveniences. If the user of `BottomSheet` does 
+not want to worry about concise domain modeling they are free to continue using the `isActive` 
+boolean binding. But the day they need the more powerful APIs they will be available.
 
 ### State-driven alerts and dialogs
 
-SwiftUI's alert and dialog modifiers can be configured with a lot of state that populates title, message, buttons, and even button actions. This is a lot of data that is calculated at the view layer, which makes it harder to test. This library provides data types and tools that allow you to move this logic into your model, instead.
+SwiftUI's alert and dialog modifiers can be configured with a lot of state that populates title, 
+message, buttons, and even button actions. This is a lot of data that is calculated at the view 
+layer, which makes it harder to test. This library provides data types and tools that allow you to 
+move this logic into your model, instead.
 
 ```swift
 class HomeScreenModel: ObservableObject {
@@ -357,7 +410,8 @@ struct FeatureView: View {
 
 ## Examples
 
-This repo comes with lots of examples to demonstrate how to solve common and complex navigation problems with the library. Check out [this](./Examples) directory to see them all, including:
+This repo comes with lots of examples to demonstrate how to solve common and complex navigation 
+problems with the library. Check out [this](./Examples) directory to see them all, including:
 
 * [Case Studies](./Examples/CaseStudies)
   * Alerts & Confirmation Dialogs
@@ -365,11 +419,13 @@ This repo comes with lots of examples to demonstrate how to solve common and com
   * Navigation Links
   * Routing
   * Custom Components
-* [Inventory](./Examples/Inventory): A multi-screen application with lists, sheets, popovers and alerts, all driven by state and deep-linkable.
+* [Inventory](./Examples/Inventory): A multi-screen application with lists, sheets, popovers and 
+alerts, all driven by state and deep-linkable.
 
 ## Learn More
 
-SwiftUI Navigation's tools were motivated and designed over the course of many episodes on [Point-Free](https://www.pointfree.co), a video series exploring functional programming and the Swift language, hosted by [Brandon Williams](https://twitter.com/mbrandonw) and [Stephen Celis](https://twitter.com/stephencelis).
+SwiftUI Navigation's tools were motivated and designed over the course of many episodes on [Point-Free](https://www.pointfree.co), a video series exploring functional programming and the 
+Swift language, hosted by [Brandon Williams](https://twitter.com/mbrandonw) and [Stephen Celis](https://twitter.com/stephencelis).
 
 You can watch all of the episodes [here](https://www.pointfree.co/collections/swiftui/navigation).
 
@@ -383,7 +439,8 @@ You can add SwiftUI Navigation to an Xcode project by adding it as a package dep
 
 > https://github.com/pointfreeco/swiftui-navigation
 
-If you want to use SwiftUI Navigation in a [SwiftPM](https://swift.org/package-manager/) project, it's as simple as adding it to a `dependencies` clause in your `Package.swift`:
+If you want to use SwiftUI Navigation in a [SwiftPM](https://swift.org/package-manager/) project, 
+it's as simple as adding it to a `dependencies` clause in your `Package.swift`:
 
 ``` swift
 dependencies: [
@@ -398,3 +455,7 @@ The latest documentation for the SwiftUI Navigation APIs is available [here](htt
 ## License
 
 This library is released under the MIT license. See [LICENSE](LICENSE) for details.
+
+[NavigationLink.init]: https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-27n7s
+[TabView.init]: https://developer.apple.com/documentation/swiftui/tabview/init(content:)
+[case-paths-gh]: https://github.com/pointfreeco/swift-case-paths

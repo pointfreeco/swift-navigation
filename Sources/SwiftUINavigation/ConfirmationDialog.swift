@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension View {
-  /// Presents a confirmation dialog from a binding to optional dialog state.
+  /// Presents a confirmation dialog from a binding to an optional value.
   ///
   /// SwiftUI's `confirmationDialog` view modifiers are driven by two disconnected pieces of
   /// state: an `isPresented` binding to a boolean that determines if the dialog should be
@@ -43,6 +43,8 @@ extension View {
   /// }
   /// ```
   ///
+  /// See <doc:AlertsDialogs> for more information on how to use this API.
+  ///
   /// - Parameters:
   ///   - title: A closure returning the dialog's title given the current dialog state.
   ///   - titleVisibility: The visibility of the dialog's title.
@@ -75,7 +77,8 @@ extension View {
   /// Presents a confirmation dialog from a binding to an optional enum, and a case path to a
   /// specific case.
   ///
-  /// A version of `confirmationDialog(unwrapping:)` that works with enum state.
+  /// A version of `confirmationDialog(unwrapping:)` that works with enum state. See
+  /// <doc:AlertsDialogs> for more information on how to use this API.
   ///
   /// - Parameters:
   ///   - title: A closure returning the dialog's title given the current dialog case.
@@ -109,6 +112,8 @@ extension View {
 
   /// Presents a confirmation dialog from a binding to optional ``ConfirmationDialogState``.
   ///
+  /// See <doc:AlertsDialogs> for more information on how to use this API.
+  ///
   /// - Parameters:
   ///   - value: A binding to an optional value that determines whether a confirmation dialog should
   ///     be presented. When the binding is updated with non-`nil` value, it is unwrapped and used
@@ -139,7 +144,8 @@ extension View {
   /// Presents a confirmation dialog from a binding to an optional enum, and a case path to a
   /// specific case of ``ConfirmationDialogState``.
   ///
-  /// A version of `confirmationDialog(unwrapping:)` that works with enum state.
+  /// A version of `confirmationDialog(unwrapping:)` that works with enum state. See
+  /// <doc:AlertsDialogs> for more information on how to use this API.
   ///
   /// - Parameters:
   ///   - enum: A binding to an optional enum that holds dialog state at a particular case. When

@@ -33,7 +33,7 @@ func deleteButtonTapped() {
   self.alert = AlertState {
     TextState("Are you sure?")
   } actions: {
-    ButtonState("Delete", action: .send(.delete)),
+    ButtonState("Delete", action: .send(.delete))
     ButtonState("Nevermind", role: .cancel)
   } message: {
     TextState("Deleting this item cannot be undone.")
@@ -41,10 +41,22 @@ func deleteButtonTapped() {
 }
 ```
 
-> The type `TextState` is closely related to `Text` from SwiftUI, but plays more nicely with
+The type `TextState` is closely related to `Text` from SwiftUI, but plays more nicely with
 equatability. This makes it possible to write tests against these values.
 
-And you can provide an endpoint that will be called when the alert is interacted with:
+> Tip: The `actions` closure is a result builder, which allows you to insert small bits of logic:
+> ```swift
+> } actions: {
+>   if item.isLocked {
+>     ButtonState("Unlock and delete", action: .send(.unlockAndDelete))
+>   } else {
+>     ButtonState("Delete", action: .send(.delete))
+>   }
+>   ButtonState("Nevermind", role: .cancel)
+> }
+> ```
+
+Next you can provide an endpoint that will be called when the alert is interacted with:
 
 ```swift
 func alertButtonTapped(_ action: AlertAction) {
