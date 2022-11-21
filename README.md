@@ -43,21 +43,21 @@ to that enum.
 Explore all of the tools this library comes with by checking out the [documentation][docs], and
 reading these articles:
 
-* [What is navigation?][what-is-article]
+* #### [What is navigation?][what-is-article]
   Learn how one can think of navigation as a domain modeling problem, and how that leads to the
   creation of concise and testable APIs for navigation.
 
-* [Navigation links and destinations][nav-links-dests-article]
+* #### [Navigation links and destinations][nav-links-dests-article]
   Learn how to drive navigation in NavigationView and NavigationStack in a concise and testable 
   manner.
 
-* [Sheets, popovers, and covers][sheets-popovers-covers-article]
+* #### [Sheets, popovers, and covers][sheets-popovers-covers-article]
   Learn how to present sheets, popovers and covers in a concise and testable manner.
 
-* [Alerts and dialogs][alerts-dialogs-article]
+* #### [Alerts and dialogs][alerts-dialogs-article]
   Learn how to present alerts and confirmation dialogs in a concise and testable manner.
   
-* [Bindings][bindings]
+* #### [Bindings][bindings]
   Learn how to manage certain view state, such as `@FocusState` directly in your observable object.
   
 ## Examples
