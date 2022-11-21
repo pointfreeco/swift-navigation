@@ -1,3 +1,5 @@
+import SwiftUI
+
 /// A view that computes content by unwrapping a binding to an optional and passing a non-optional
 /// binding to its content closure.
 ///

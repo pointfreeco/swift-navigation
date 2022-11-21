@@ -1,16 +1,17 @@
+import SwiftUI
 import SwiftUINavigation
 
 private let readMe = """
-  This case study demonstrates how to enhance an existing SwiftUI component so that it can be driven \
-  off of optional and enum state.
+  This case study demonstrates how to enhance an existing SwiftUI component so that it can be \
+  driven off of optional and enum state.
 
-  The BottomMenuModifier component in this is file is primarily powered by a simple boolean binding, \
-  which means its content cannot be dynamic based off of the source of truth that drives its \
-  presentation, and it cannot make mutations to the source of truth.
+  The BottomMenuModifier component in this is file is primarily powered by a simple boolean \
+  binding, which means its content cannot be dynamic based off of the source of truth that drives \
+  its presentation, and it cannot make mutations to the source of truth.
 
   However, by leveraging the binding transformations that come with this library we can extend the \
-  bottom menu component with additional APIs that allow presentation and dismissal to be powered by \
-  optionals and enums.
+  bottom menu component with additional APIs that allow presentation and dismissal to be powered \
+  by optionals and enums.
   """
 
 struct CustomComponents: View {

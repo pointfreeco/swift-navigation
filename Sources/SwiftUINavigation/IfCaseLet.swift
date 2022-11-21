@@ -60,8 +60,8 @@ where IfContent: View, ElseContent: View {
   public init(
     _ `enum`: Binding<Enum>,
     pattern casePath: CasePath<Enum, Case>,
-    @ViewBuilder ifContent: @escaping (Binding<Case>) -> IfContent,
-    @ViewBuilder elseContent: () -> ElseContent
+    @ViewBuilder then ifContent: @escaping (Binding<Case>) -> IfContent,
+    @ViewBuilder else elseContent: () -> ElseContent
   ) {
     self.casePath = casePath
     self.elseContent = elseContent()

@@ -3,47 +3,47 @@ import SwiftUINavigation
 
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 struct OptionalConfirmationDialogs: View {
-  @ObservedObject private var viewModel = ViewModel()
+  @ObservedObject private var model = FeatureModel()
 
   var body: some View {
     List {
-      Stepper("Number: \(self.viewModel.count)", value: self.$viewModel.count)
-      Button(action: { self.viewModel.numberFactButtonTapped() }) {
+      Stepper("Number: \(self.model.count)", value: self.$model.count)
+      Button(action: { self.model.numberFactButtonTapped() }) {
         HStack {
           Text("Get number fact")
-          if self.viewModel.isLoading {
+          if self.model.isLoading {
             Spacer()
             ProgressView()
           }
         }
       }
-      .disabled(self.viewModel.isLoading)
+      .disabled(self.model.isLoading)
     }
     .confirmationDialog(
       title: { Text("Fact about \($0.number)") },
       titleVisibility: .visible,
-      unwrapping: self.$viewModel.fact,
+      unwrapping: self.$model.fact,
       actions: {
         Button("Get another fact about \($0.number)") {
-          self.viewModel.numberFactButtonTapped()
+          self.model.numberFactButtonTapped()
         }
       },
       message: { Text($0.description) }
     )
-    .navigationTitle("Confirmation dialogs")
+    .navigationTitle("Dialogs")
   }
 }
 
-private class ViewModel: ObservableObject {
+private class FeatureModel: ObservableObject {
   @Published var count = 0
   @Published var isLoading = false
   @Published var fact: Fact?
 
   func numberFactButtonTapped() {
-    self.isLoading = true
     Task { @MainActor in
+      self.isLoading = true
+      defer { self.isLoading = false }
       self.fact = await getNumberFact(self.count)
-      self.isLoading = false
     }
   }
 }

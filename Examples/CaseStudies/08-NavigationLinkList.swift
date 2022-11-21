@@ -5,12 +5,12 @@ private let readMe = """
   This case study demonstrates how to model a list of navigation links. Tap a row to drill down \
   and edit a counter. Edit screen allows cancelling or saving the edits.
 
-  The domain for a row in the list has its own ObservableObject and Route enum, and it uses the \
-  library's NavigationLink initializer to drive navigation from the route enum.
+  The domain for a row in the list has its own ObservableObject and Destination enum, and it uses \
+  the library's NavigationLink initializer to drive navigation from the destination enum.
   """
 
 struct ListOfNavigationLinks: View {
-  @ObservedObject var viewModel: ListOfNavigationLinksViewModel
+  @ObservedObject var model: ListOfNavigationLinksModel
 
   var body: some View {
     Form {
@@ -19,27 +19,27 @@ struct ListOfNavigationLinks: View {
       }
 
       List {
-        ForEach(self.viewModel.rows) { rowViewModel in
-          RowView(viewModel: rowViewModel)
+        ForEach(self.model.rows) { rowModel in
+          RowView(model: rowModel)
         }
-        .onDelete(perform: self.viewModel.deleteButtonTapped(indexSet:))
+        .onDelete(perform: self.model.deleteButtonTapped(indexSet:))
       }
     }
-    .navigationTitle("List of Links")
+    .navigationTitle("List of links")
     .toolbar {
       ToolbarItem {
         Button("Add") {
-          self.viewModel.addButtonTapped()
+          self.model.addButtonTapped()
         }
       }
     }
   }
 }
 
-class ListOfNavigationLinksViewModel: ObservableObject {
-  @Published var rows: [ListOfNavigationLinksRowViewModel]
+class ListOfNavigationLinksModel: ObservableObject {
+  @Published var rows: [ListOfNavigationLinksRowModel]
 
-  init(rows: [ListOfNavigationLinksRowViewModel] = []) {
+  init(rows: [ListOfNavigationLinksRowModel] = []) {
     self.rows = rows
   }
 
@@ -55,59 +55,59 @@ class ListOfNavigationLinksViewModel: ObservableObject {
 }
 
 private struct RowView: View {
-  @ObservedObject var viewModel: ListOfNavigationLinksRowViewModel
+  @ObservedObject var model: ListOfNavigationLinksRowModel
 
   var body: some View {
     NavigationLink(
-      unwrapping: self.$viewModel.route,
-      case: /ListOfNavigationLinksRowViewModel.Route.edit
-    ) {
-      self.viewModel.setEditNavigation(isActive: $0)
+      unwrapping: self.$model.destination,
+      case: /ListOfNavigationLinksRowModel.Destination.edit
+    ) { isActive in
+      self.model.setEditNavigation(isActive: isActive)
     } destination: { $counter in
       EditView(counter: $counter)
         .navigationBarBackButtonHidden(true)
         .toolbar {
           ToolbarItem(placement: .primaryAction) {
-            Button("Save") { self.viewModel.saveButtonTapped(counter: counter) }
+            Button("Save") { self.model.saveButtonTapped(counter: counter) }
           }
           ToolbarItem(placement: .cancellationAction) {
-            Button("Cancel") { self.viewModel.cancelButtonTapped() }
+            Button("Cancel") { self.model.cancelButtonTapped() }
           }
         }
     } label: {
-      Text("\(self.viewModel.counter)")
+      Text("\(self.model.counter)")
     }
   }
 }
 
-class ListOfNavigationLinksRowViewModel: Identifiable, ObservableObject {
+class ListOfNavigationLinksRowModel: Identifiable, ObservableObject {
   let id = UUID()
   @Published var counter: Int
-  @Published var route: Route?
+  @Published var destination: Destination?
 
-  enum Route {
+  enum Destination {
     case edit(Int)
   }
 
   init(
     counter: Int = 0,
-    route: Route? = nil
+    destination: Destination? = nil
   ) {
     self.counter = counter
-    self.route = route
+    self.destination = destination
   }
 
   func setEditNavigation(isActive: Bool) {
-    self.route = isActive ? .edit(self.counter) : nil
+    self.destination = isActive ? .edit(self.counter) : nil
   }
 
   func saveButtonTapped(counter: Int) {
     self.counter = counter
-    self.route = nil
+    self.destination = nil
   }
 
   func cancelButtonTapped() {
-    self.route = nil
+    self.destination = nil
   }
 }
 
@@ -131,7 +131,7 @@ struct ListOfNavigationLinks_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {
       ListOfNavigationLinks(
-        viewModel: .init(
+        model: .init(
           rows: [
             .init(counter: 0),
             .init(counter: 0),

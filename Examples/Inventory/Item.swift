@@ -1,9 +1,10 @@
+import SwiftUI
 import SwiftUINavigation
 
 struct Item: Equatable, Identifiable {
   let id = UUID()
-  var name: String
   var color: Color?
+  var name: String
   var status: Status
 
   enum Status: Equatable {
@@ -39,7 +40,7 @@ struct Item: Equatable, Identifiable {
     static let white = Self(name: "White", red: 1, green: 1, blue: 1)
 
     var swiftUIColor: SwiftUI.Color {
-      .init(red: self.red, green: self.green, blue: self.blue)
+      SwiftUI.Color(red: self.red, green: self.green, blue: self.blue)
     }
   }
 }
@@ -90,10 +91,10 @@ struct ItemView: View {
 }
 
 struct ItemView_Previews: PreviewProvider, View {
-  @State var item = Item(name: "", color: nil, status: .inStock(quantity: 1))
+  @State var item = Item(color: nil, name: "", status: .inStock(quantity: 1))
 
   static var previews: some View {
-    NavigationView {
+    NavigationStack {
       ItemView_Previews()
     }
   }

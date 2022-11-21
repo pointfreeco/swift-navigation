@@ -1,3 +1,5 @@
+import SwiftUI
+
 extension View {
   /// Presents a popover using a binding as a data source for the popover's content.
   ///
@@ -35,7 +37,7 @@ extension View {
   ///   - value: A binding to an optional source of truth for the popover. When `value` is
   ///     non-`nil`, a non-optional binding to the value is passed to the `content` closure. You use
   ///     this binding to produce content that the system presents to the user in a popover. Changes
-  ///     made to the popover's binding will be reflected back in the source or truth. Likewise,
+  ///     made to the popover's binding will be reflected back in the source of truth. Likewise,
   ///     changes to `value` are instantly reflected in the popover. If `value` becomes `nil`, the
   ///     popover is dismissed.
   ///   - attachmentAnchor: The positioning anchor that defines the attachment point of the popover.
@@ -51,7 +53,9 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View where Content: View {
     self.popover(
-      isPresented: value.isPresent(), attachmentAnchor: attachmentAnchor, arrowEdge: arrowEdge
+      isPresented: value.isPresent(),
+      attachmentAnchor: attachmentAnchor,
+      arrowEdge: arrowEdge
     ) {
       Binding(unwrapping: value).map(content)
     }
@@ -66,7 +70,7 @@ extension View {
   ///     particular case. When `enum` is non-`nil`, and `casePath` successfully extracts a value, a
   ///     non-optional binding to the value is passed to the `content` closure. You use this binding
   ///     to produce content that the system presents to the user in a popover. Changes made to the
-  ///     popover's binding will be reflected back in the source of truth. Likewise, change to
+  ///     popover's binding will be reflected back in the source of truth. Likewise, changes to
   ///     `enum` at the given case are instantly reflected in the popover. If `enum` becomes `nil`,
   ///     or becomes a case other than the one identified by `casePath`, the popover is dismissed.
   ///   - casePath: A case path that identifies a case of `enum` that holds a source of truth for

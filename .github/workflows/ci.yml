@@ -7,13 +7,18 @@ on:
   pull_request:
     branches:
       - '*'
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   library:
     runs-on: macos-12
     strategy:
       matrix:
-        xcode: ['14.0.1']
+        xcode: ['14.1']
 
     steps:
       - uses: actions/checkout@v3

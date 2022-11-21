@@ -1,3 +1,5 @@
+import SwiftUI
+
 extension NavigationLink {
   /// Creates a navigation link that presents the destination view when a bound value is non-`nil`.
   ///
@@ -69,18 +71,18 @@ extension NavigationLink {
   ///
   /// ```swift
   /// struct ContentView: View {
-  ///   @State var route: Route?
+  ///   @State var destination: Destination?
   ///   @State var posts: [Post]
   ///
-  ///   enum Route {
+  ///   enum Destination {
   ///     case edit(Post)
-  ///     /* other routes */
+  ///     /* other destinations */
   ///   }
   ///
   ///   var body: some View {
   ///     ForEach(self.posts) { post in
-  ///       NavigationLink(unwrapping: self.$route, case: /Route.edit) { isActive in
-  ///         self.route = isActive ? .edit(post) : nil
+  ///       NavigationLink(unwrapping: self.$destination, case: /Destination.edit) { isActive in
+  ///         self.destination = isActive ? .edit(post) : nil
   ///       } destination: { $draft in
   ///         EditPostView(post: $draft)
   ///       } label: {
