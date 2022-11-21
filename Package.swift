@@ -14,6 +14,10 @@ let package = Package(
     .library(
       name: "SwiftUINavigation",
       targets: ["SwiftUINavigation"]
+    ),
+    .library(
+      name: "_SwiftUINavigationState",
+      targets: ["_SwiftUINavigationState"]
     )
   ],
   dependencies: [
