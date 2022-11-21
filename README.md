@@ -6,19 +6,14 @@
 
 Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
 
-  * [Motivation](#motivation)
-  * [Tools](#tools)
-      * [Navigation overloads](#navigation-api-overloads)
-      * [Navigation views](#navigation-views)
-      * [Binding transformations](#binding-transformations)
-      * [State-driven alerts and dialogs](#State-driven-alerts-and-dialogs)
+  * [Overview](#overview)
   * [Examples](#examples)
   * [Learn more](#learn-more)
   * [Installation](#installation)
   * [Documentation](#documentation)
   * [License](#license)
 
-## Motivation
+## Overview
 
 SwiftUI comes with many forms of navigation (tabs, alerts, dialogs, modal sheets, popovers, 
 navigation links, and more), and each comes with a few ways to construct them. These ways roughly 
@@ -40,373 +35,32 @@ Navigation that is "state-driven" is the more powerful form of navigation, albei
 complicated, but unfortunately SwiftUI does not ship with all the tools necessary to model our 
 domains as concisely as possible and use these navigation APIs.
 
-For example, to show a modal sheet in SwiftUI you can provide a binding of some optional state so 
-that when the state flips to non-`nil` the modal is presented. However, the content closure of the 
-sheet is handed a plain value, not a binding:
+Unfortunately, SwiftUI does not ship with all of the tools necessary to model our domains with 
+enums and make use of navigation APIs. This library bridges that gap by providing APIs that allow
+you to model your navigation destinations as an enum, and then drive navigation by a binding
+to that enum.
 
-```swift
-struct ContentView: View {
-  @State var draft: Post?
+* [What is navigation?](#)
 
-  var body: some View {
-    Button("Edit") {
-      self.draft = Post()
-    }
-    .sheet(item: self.$draft) { (draft: Post) in
-      EditPostView(post: draft)
-    }
-  }
-}
+  Learn how one can think of navigation as a domain modeling problem, and how that leads to the
+  creation of concise and testable APIs for navigation.
 
-struct EditPostView: View {
-  let post: Post
-  var body: some View { ... }
-}
-```
+* [Navigation links and destinations](#)
 
-This means that the `Post` handed to the `EditPostView` is fully disconnected from the source of 
-truth `draft` that powers the presentation of the modal. Ideally we should be able to derive a 
-`Binding<Post>` for the draft so that any mutations `EditPostView` makes will be instantly visible 
-in `ContentView`.
+  Learn how to drive navigation in NavigationView and NavigationStack in a concise and testable 
+  manner.
 
-Another problem arises when trying to model multiple navigation destinations as multiple optional 
-values. For example, suppose there are 3 different sheets that can be shown in a screen:
+* [Sheets, popovers, and covers](#)
 
-```swift
-struct ContentView: View {
-  @State var draft: Post?
-  @State var settings: Settings?
-  @State var userProfile: UserProfile?
+  Learn how to present sheets, popovers and covers in a concise and testable manner.
 
-  var body: some View {
-    /* Main view omitted */
+* [Alerts and dialogs](#)
 
-    .sheet(item: self.$draft) { (draft: Post) in
-      EditPostView(post: draft)
-    }
-    .sheet(item: self.$settings) { (settings: Settings) in
-      SettingsView(settings: settings)
-    }
-    .sheet(item: self.$userProfile) { (userProfile: Profile) in
-      UserProfile(profile: userProfile)
-    }
-  }
-}
-```
+  Learn how to present alerts and confirmation dialogs in a concise and testable manner.
+  
+* [Bindings](#)
 
-This forces us to hold 3 optional values in state, which has 2^3=8 different states, 4 of which are 
-invalid. The only valid state is for all values to be `nil` or exactly one be non-`nil`. It makes 
-no sense if two or more values are non-`nil`, for that would represent wanting to show two modal 
-sheets at the same time.
-
-Ideally we'd like to represent these navigation destinations as 3 mutually exclusive states so that
-we could guarantee at compile time that only one can be active at a time. Luckily for us Swift’s 
-enums are perfect for this:
-
-```swift
-enum Destination {
-  case draft(Post)
-  case settings(Settings)
-  case userProfile(Profile)
-}
-```
-
-And then we could hold an optional `Destination` in state to represent that we are either navigating 
-to a specific destination or we are not navigating anywhere:
-
-```swift
-@State var destination: Destination?
-```
-
-This would be the most optimal way to model our navigation domain, but unfortunately SwiftUI's 
-tools do not make it easy for us to drive navigation off of enums.
-
-This library comes with a number of `Binding` transformations and navigation API overloads that 
-allow you to model your domain as concisely as possible, using enums, while still allowing you to 
-use SwiftUI's navigation tools.
-
-For example, powering multiple modal sheets off a single `Destination` enum looks like this with 
-the tools in this library:
-
-```swift
-struct ContentView {
-  @State var destination: Destinatino?
-
-  enum Destination {
-    case draft(Post)
-    case settings(Settings)
-    case userProfile(Profile)
-  }
-
-  var body: some View {
-    /* Main view omitted */
-
-    .sheet(unwrapping: self.$destination, case: /Destination.draft) { $draft in
-      EditPostView(post: $draft)
-    }
-    .sheet(unwrapping: self.$destination, case: /Destination.settings) { $settings in
-      SettingsView(settings: $settings)
-    }
-    .sheet(unwrapping: self.$destination, case: /Destination.userProfile) { $userProfile in
-      UserProfile(profile: $userProfile)
-    }
-  }
-}
-```
-
-The forward-slash syntax you see above represents a [case path][case-paths-gh] to a particular case 
-of an enum. Case paths are our imagining of what key paths could look like for enums, and every 
-concept for key paths has an analogous concept for case paths:
-
-  * Each property of a struct is naturally endowed with a key path, and so each case of an enum is 
-  endowed with a case path.
-  * Key paths are constructed using a back slash, name of the type and name of the property (_e.g._,
-  `\User.name`), and case paths are constructed similarly, but with a forward slash (_e.g._, 
-  `/Destination.draft`).
-  * Key paths describe how to get and set a value in some root structure, whereas case paths 
-  describe how to extract and embed a value into a root structure.
-
-Case paths are crucial for allowing us to build the tools to drive navigation off of enum state.
-
-## Tools
-
-This library comes with many tools that allow you to model your domain as concisely as possible, 
-using enums, while still allowing you to use SwiftUI's navigation APIs.
-
-### Navigation API overloads
-
-This library provides additional overloads for all of SwiftUI's "state-driven" navigation APIs that 
-allow you to activate navigation based on a particular case of an enum. Further, all overloads 
-unify presentation in a single, consistent API:
-
-  * `NavigationLink.init(unwrapping:case:)`
-  * `View.alert(unwrapping:case:)`
-  * `View.confirmationDialog(unwrapping:case:)`
-  * `View.fullScreenCover(unwrapping:case:)`
-  * `View.popover(unwrapping:case:)`
-  * `View.sheet(unwrapping:case:)`
-
-For example, here is how a navigation link, a modal sheet and an alert can all be driven off a 
-single enum with 3 cases:
-
-```swift
-enum Destination {
-  case add(Post)
-  case alert(Alert)
-  case edit(Post)
-}
-
-struct ContentView {
-  @State var posts: [Post]
-  @State var destination: Destination?
-
-  var body: some View {
-    ForEach(self.posts) { post in
-      NavigationLink(unwrapping: self.$destination, case: /Destination.edit) { isActive in 
-        self.destination = isActive ? .edit(post) : nil 
-      } destination: { $post in 
-        EditPostView(post: $post)
-      } label: {
-        Text(post.title)
-      }
-    }
-    .sheet(unwrapping: self.$destination, case: /Destination.add) { $post in
-      EditPostView(post: $post)
-    }
-    .alert(
-      title: { Text("Delete \($0.title)?") },
-      unwrapping: self.$destination,
-      case: /Destination.alert
-      actions: { post in
-        Button("Delete") { self.posts.remove(post) }
-      },
-      message: { Text($0.summary) }
-    )
-  }
-}
-
-struct EditPostView: View {
-  @Binding var post: Post
-  var body: some View { ... }
-}
-```
-
-### Navigation views
-
-This library comes with additional SwiftUI views that transform and destructure bindings, allowing 
-you to better handle optional and enum state:
-
-  * `IfLet`
-  * `IfCaseLet`
-  * `Switch`/`CaseLet`
-
-For example, suppose you were working on an inventory application that modeled in-stock and 
-out-of-stock as an enum:
-
-```swift
-enum ItemStatus {
-  case inStock(quantity: Int)
-  case outOfStock(isOnBackorder: Bool)
-}
-```
-
-If you want to conditionally show a stepper view for the quantity when in-stock and a toggle for 
-the backorder when out-of-stock, you're out of luck when it comes to using SwiftUI's standard tools. 
-However, the `Switch` view that comes with this library allows you to destructure a 
-`Binding<ItemStatus>` into bindings of each case so that you can present different views:
-
-```swift
-struct InventoryItemView {
-  @State var status: ItemStatus
-
-  var body: some View {
-    Switch(self.$status) {
-      CaseLet(/ItemStatus.inStock) { $quantity in
-        HStack {
-          Text("Quantity: \(quantity)")
-          Stepper("Quantity", value: $quantity)
-        }
-        Button("Out of stock") { self.status = .outOfStock(isOnBackorder: false) }
-      }
-
-      CaseLet(/ItemStatus.outOfStock) { $isOnBackorder in
-        Toggle("Is on back order?", isOn: $isOnBackorder)
-        Button("In stock") { self.status = .inStock(quantity: 1) }
-      }
-    }
-  }
-}
-```
-
-### Binding transformations
-
-This library comes with tools that transform and destructure bindings of optional and enum state, 
-which allows you to build your own navigation views similar to the ones that ship in this library.
-
-  * `Binding.init(unwrapping:)`
-  * `Binding.case(_:)`
-  * `Binding.isPresent()` and `Binding.isPresent(_:)`
-
-For example, suppose you have built a `BottomSheet` view for presenting a modal-like view that 
-only takes up the bottom half of the screen. You can build the entire view using the most simplistic 
-domain modeling where navigation is driven off a single boolean binding:
-
-```swift
-struct BottomSheet<Content>: View where Content: View {
-  @Binding var isActive: Bool
-  let content: () -> Content
-
-  var body: some View {
-    ...
-  }
-}
-```
-
-Then, additional convenience initializers can be introduced that allow the bottom sheet to be 
-created with a more concisely modeled domain.
-
-For example, an initializer that allows the bottom sheet to be presented and dismissed with optional 
-state, and further the content closure is provided a binding of the non-optional state. We can 
-accomplish this using the `isPresent()` method and `Binding.init(unwrapping:)`:
-
-```swift
-extension BottomSheet {
-  init<Value, WrappedContent>(
-    unwrapping value: Binding<Value?>,
-    @ViewBuilder content: @escaping (Binding<Value>) -> WrappedContent
-  )
-  where Content == WrappedContent?
-  {
-    self.init(
-      isActive: value.isPresent(),
-      content: { Binding(unwrapping: value).map(content) }
-    )
-  }
-}
-```
-
-An even more robust initializer can be provided by providing a binding to an optional enum _and_ a 
-case path to specify which case of the enum triggers navigation. This can be accomplished using 
-the `case(_:)` method on binding:
-
-```swift
-extension BottomSheet {
-  init<Enum, Case, WrappedContent>(
-    unwrapping enum: Binding<Enum?>,
-    case casePath: CasePath<Enum, Case>,
-    @ViewBuilder content: @escaping (Binding<Case>) -> WrappedContent
-  )
-  where Content == WrappedContent?
-  {
-    self.init(
-      unwrapping: `enum`.case(casePath),
-      content: content
-    )
-  }
-}
-```
-
-Both of these more powerful initializers are just conveniences. If the user of `BottomSheet` does 
-not want to worry about concise domain modeling they are free to continue using the `isActive` 
-boolean binding. But the day they need the more powerful APIs they will be available.
-
-### State-driven alerts and dialogs
-
-SwiftUI's alert and dialog modifiers can be configured with a lot of state that populates title, 
-message, buttons, and even button actions. This is a lot of data that is calculated at the view 
-layer, which makes it harder to test. This library provides data types and tools that allow you to 
-move this logic into your model, instead.
-
-```swift
-class HomeScreenModel: ObservableObject {
-  enum AlertAction {
-    case delete
-  }
-
-  @Published var alert: AlertState<AlertAction>?
-
-  // ...
-
-  func deleteAppButtonTapped() {
-    self.alert = AlertState {
-      TextState(#"Remove "Twitter"?"#)
-    } actions: {
-      ButtonState(role: .destructive, action: .send(.delete)) {
-        TextState("Delete App")
-      }
-      ButtonState(action: .send(.removeFromHomeScreen)) {
-        TextState("Remove from Home Screen")
-      }
-    } message: {
-      TextState("Removing from Home Screen will keep the app in your App Library.")
-    }
-  }
-
-  func alertButtonTapped(_ action: AlertAction) {
-    switch action {
-    case .delete:
-      // ...
-    case .removeFromHomeScreen:
-      // ...
-    }
-  }
-}
-
-struct FeatureView: View {
-  @ObservedObject var model: HomeScreenModel
-
-  var body: some View {
-    // ...
-    Button("Delete") {
-      self.model.deleteAppButtonTapped()
-    }
-    .alert(
-      unwrapping: self.$model.alert,
-      action: self.model.alertButtonTapped
-    )
-  }
-}
-```
+  Learn how to manage certain view state, such as `@FocusState` directly in your observable object.
 
 ## Examples
 
