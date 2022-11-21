@@ -120,7 +120,7 @@ public struct TextState: Equatable, Hashable {
 
       case let (.localized(lk, lt, lb, lc), .localized(rk, rt, rb, rc)):
         return lk.formatted(tableName: lt, bundle: lb, comment: lc)
-        == rk.formatted(tableName: rt, bundle: rb, comment: rc)
+          == rk.formatted(tableName: rt, bundle: rb, comment: rc)
 
       case let (.verbatim(lhs), .verbatim(rhs)):
         return lhs == rhs
@@ -129,7 +129,7 @@ public struct TextState: Equatable, Hashable {
         let (.verbatim(string), .localized(key, tableName, bundle, comment)):
         return key.formatted(tableName: tableName, bundle: bundle, comment: comment) == string
 
-        // NB: We do not attempt to equate concatenated cases.
+      // NB: We do not attempt to equate concatenated cases.
       default:
         return false
       }
@@ -455,8 +455,8 @@ extension Text {
           }
       #else
         case .accessibilityHeading,
-            .accessibilityLabel,
-            .accessibilityTextContentType:
+          .accessibilityLabel,
+          .accessibilityTextContentType:
           return text
       #endif
       case let .baselineOffset(baselineOffset):
@@ -611,7 +611,7 @@ extension LocalizedStringKey {
         // `LocalizedStringKey.FormatArgument` differs depending on OS/platform.
         if children[0].label == "storage" {
           (value, formatter) =
-          Array(Mirror(reflecting: children[0].value).children)[0].value as! (Any, Formatter?)
+            Array(Mirror(reflecting: children[0].value).children)[0].value as! (Any, Formatter?)
         } else {
           value = children[0].value
           formatter = children[1].value as? Formatter
@@ -718,18 +718,18 @@ extension TextState: CustomDumpRepresentable {
         case .underline(isActive: true, pattern: _, color: .none):
           tag("u")
         case .bold(isActive: false),
-            .font(.none),
-            .fontDesign(.none),
-            .fontWeight(.none),
-            .fontWidth(.none),
-            .foregroundColor(.none),
-            .italic(isActive: false),
-            .monospacedDigit,
-            .speechAlwaysIncludesPunctuation(false),
-            .speechAnnouncementsQueued(false),
-            .speechSpellsOutCharacters(false),
-            .strikethrough(isActive: false, pattern: _, color: _),
-            .underline(isActive: false, pattern: _, color: _):
+          .font(.none),
+          .fontDesign(.none),
+          .fontWeight(.none),
+          .fontWidth(.none),
+          .foregroundColor(.none),
+          .italic(isActive: false),
+          .monospacedDigit,
+          .speechAlwaysIncludesPunctuation(false),
+          .speechAnnouncementsQueued(false),
+          .speechSpellsOutCharacters(false),
+          .strikethrough(isActive: false, pattern: _, color: _),
+          .underline(isActive: false, pattern: _, color: _):
           break
         }
       }

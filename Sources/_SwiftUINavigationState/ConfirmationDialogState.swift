@@ -201,8 +201,8 @@ extension ConfirmationDialogState: CustomDumpReflectable {
 extension ConfirmationDialogState: Equatable where Action: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.title == rhs.title
-    && lhs.message == rhs.message
-    && lhs.buttons == rhs.buttons
+      && lhs.message == rhs.message
+      && lhs.buttons == rhs.buttons
   }
 }
 
