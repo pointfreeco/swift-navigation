@@ -317,7 +317,7 @@ extension ConfirmationDialogState {
 }
 
 @available(iOS, introduced: 13, deprecated: 100000, renamed: "ConfirmationDialogState")
-@available(macOS, unavailable)
+@available(macOS, introduced: 12, unavailable)
 @available(tvOS, introduced: 13, deprecated: 100000, renamed: "ConfirmationDialogState")
 @available(watchOS, introduced: 6, deprecated: 100000, renamed: "ConfirmationDialogState")
 public typealias ActionSheetState<Action> = ConfirmationDialogState<Action>
@@ -331,6 +331,7 @@ public typealias ActionSheetState<Action> = ConfirmationDialogState<Action>
 )
 @available(
   macOS,
+  introduced: 12,
   unavailable
 )
 @available(
