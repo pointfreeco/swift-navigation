@@ -236,13 +236,17 @@ extension Visibility {
 
 // MARK: - Deprecations
 
+@available(iOS 13, *)
+@available(macOS 12, *)
+@available(tvOS 13, *)
+@available(watchOS 6, *)
 extension ConfirmationDialogState {
   @available(*, deprecated, message: "Use 'ButtonState<Action>' instead.")
   public typealias Button = ButtonState<Action>
 
   @available(
     iOS,
-    introduced: 15,
+    introduced: 13,
     deprecated: 100000,
     message: "Use 'init(titleVisibility:title:actions:message:)' instead."
   )
@@ -254,13 +258,13 @@ extension ConfirmationDialogState {
   )
   @available(
     tvOS,
-    introduced: 15,
+    introduced: 13,
     deprecated: 100000,
     message: "Use 'init(titleVisibility:title:actions:message:)' instead."
   )
   @available(
     watchOS,
-    introduced: 8,
+    introduced: 6,
     deprecated: 100000,
     message: "Use 'init(titleVisibility:title:actions:message:)' instead."
   )
@@ -284,7 +288,7 @@ extension ConfirmationDialogState {
   )
   @available(
     macOS,
-    introduced: 10.15,
+    introduced: 12,
     deprecated: 100000,
     message: "Use 'init(title:actions:message:)' instead."
   )
