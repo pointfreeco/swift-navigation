@@ -57,6 +57,12 @@ struct RootView: View {
           NavigationLink("Synchronized bindings") {
             SynchronizedBindings()
           }
+          NavigationLink("IfLet view") {
+            IfLetCaseStudy()
+          }
+          NavigationLink("IfCaseLet view") {
+            IfCaseLetCaseStudy()
+          }
         } header: {
           Text("Advanced")
         }

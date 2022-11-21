@@ -1,5 +1,22 @@
 import SwiftUI
 
+// NB: Deprecated after 0.3.0
+
+@available(*, deprecated, renamed: "init(_:pattern:then:else:)")
+extension IfCaseLet {
+  public init(
+    _ `enum`: Binding<Enum>,
+    pattern casePath: CasePath<Enum, Case>,
+    @ViewBuilder ifContent: @escaping (Binding<Case>) -> IfContent,
+    @ViewBuilder elseContent: () -> ElseContent
+  ) {
+    self.casePath = casePath
+    self.elseContent = elseContent()
+    self.enum = `enum`
+    self.ifContent = ifContent
+  }
+}
+
 // NB: Deprecated after 0.2.0
 
 extension NavigationLink {

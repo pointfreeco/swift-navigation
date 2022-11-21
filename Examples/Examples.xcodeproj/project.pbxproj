@@ -24,6 +24,8 @@
 		CA47383B272F0DD60012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA47383A272F0DD60012CAC3 /* SwiftUINavigation */; };
 		CA47383E272F0F9B0012CAC3 /* 10-CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */; };
 		CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */; };
+		CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */; };
+		CAAC0072292BDE660083F2FF /* 12-IfLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAC0071292BDE660083F2FF /* 12-IfLet.swift */; };
 		CABE9FC1272F2C0000AFC150 /* 09-Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */; };
 		DC609AD6291D76150052647F /* 06-NavigationDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */; };
 		DC6A8411291F227400B3F6C9 /* 11-SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */; };
@@ -51,6 +53,8 @@
 		CA47383C272F0F0D0012CAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "10-CustomComponents.swift"; sourceTree = "<group>"; };
 		CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-NavigationLinkList.swift"; sourceTree = "<group>"; };
+		CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "13-IfCaseLet.swift"; sourceTree = "<group>"; };
+		CAAC0071292BDE660083F2FF /* 12-IfLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "12-IfLet.swift"; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "09-Routing.swift"; sourceTree = "<group>"; };
 		DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "06-NavigationDestinations.swift"; sourceTree = "<group>"; };
 		DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "11-SynchronizedBindings.swift"; sourceTree = "<group>"; };
@@ -134,6 +138,8 @@
 				CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */,
 				CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */,
 				DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */,
+				CAAC0071292BDE660083F2FF /* 12-IfLet.swift */,
+				CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */,
 				CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */,
 				CA473831272F0D860012CAC3 /* FactClient.swift */,
 				CA47382E272F0D860012CAC3 /* RootView.swift */,
@@ -275,7 +281,9 @@
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
 				CA473839272F0D860012CAC3 /* 01-Alerts.swift in Sources */,
 				DCD4E68B274180F500CDF3BD /* 07-NavigationLinks.swift in Sources */,
+				CAAC0072292BDE660083F2FF /* 12-IfLet.swift in Sources */,
 				DC609AD6291D76150052647F /* 06-NavigationDestinations.swift in Sources */,
+				CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */,
 				CA473838272F0D860012CAC3 /* 03-Sheets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

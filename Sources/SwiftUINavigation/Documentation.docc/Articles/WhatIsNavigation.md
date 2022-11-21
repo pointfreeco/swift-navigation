@@ -294,5 +294,7 @@ alerts, dialogs, sheets, popovers, covers, and navigation links all from binding
 - <doc:Navigation>
 - <doc:SheetsPopoversCovers>
 - <doc:AlertsDialogs>
+- <doc:DestructuringViews>
+- <doc:Bindings>
 
 [case-paths-gh]: http://github.com/pointfreeco/swift-case-paths
