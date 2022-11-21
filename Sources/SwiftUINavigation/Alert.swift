@@ -102,61 +102,115 @@ extension View {
     )
   }
 
-  /// Presents an alert from a binding to optional ``AlertState``.
-  ///
-  ///  See <doc:AlertsDialogs> for more information on how to use this API.
-  ///
-  /// - Parameters:
-  ///   - value: A binding to an optional value that determines whether an alert should be
-  ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
-  ///     populate the fields of an alert that the system displays to the user. When the user
-  ///     presses or taps one of the alert's actions, the system sets this value to `nil` and
-  ///     dismisses the alert, and the action is fed to the `action` closure.
-  ///   - action: A closure that is called with an action from a particular alert button when
-  ///     tapped.
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  public func alert<Value>(
-    unwrapping value: Binding<AlertState<Value>?>,
-    action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
-  ) -> some View {
-    self.alert(
-      (value.wrappedValue?.title).map(Text.init) ?? Text(""),
-      isPresented: value.isPresent(),
-      presenting: value.wrappedValue,
-      actions: {
-        ForEach($0.buttons) {
-          Button($0, action: action)
-        }
-      },
-      message: { $0.message.map { Text($0) } }
-    )
-  }
+  #if swift(>=5.7)
+    /// Presents an alert from a binding to optional ``AlertState``.
+    ///
+    ///  See <doc:AlertsDialogs> for more information on how to use this API.
+    ///
+    /// - Parameters:
+    ///   - value: A binding to an optional value that determines whether an alert should be
+    ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
+    ///     populate the fields of an alert that the system displays to the user. When the user
+    ///     presses or taps one of the alert's actions, the system sets this value to `nil` and
+    ///     dismisses the alert, and the action is fed to the `action` closure.
+    ///   - action: A closure that is called with an action from a particular alert button when
+    ///     tapped.
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert<Value>(
+      unwrapping value: Binding<AlertState<Value>?>,
+      action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+    ) -> some View {
+      self.alert(
+        (value.wrappedValue?.title).map(Text.init) ?? Text(""),
+        isPresented: value.isPresent(),
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: action)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
 
-  /// Presents an alert from a binding to an optional enum, and a [case path][case-paths-gh] to a
-  /// specific case of ``AlertState``.
-  ///
-  /// A version of `alert(unwrapping:)` that works with enum state. See <doc:AlertsDialogs> for
-  /// more information on how to use this API.
-  ///
-  /// [case-paths-gh]: http://github.com/pointfreeco/swift-case-paths
-  ///
-  /// - Parameters:
-  ///   - enum: A binding to an optional enum that holds alert state at a particular case. When
-  ///     the binding is updated with a non-`nil` enum, the case path will attempt to extract this
-  ///     state and use it to populate the fields of an alert that the system displays to the user.
-  ///     When the user presses or taps one of the alert's actions, the system sets this value to
-  ///     `nil` and dismisses the alert, and the action is fed to the `action` closure.
-  ///   - casePath: A case path that identifies a particular case that holds alert state.
-  ///   - action: A closure that is called with an action from a particular alert button when
-  ///     tapped.
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  public func alert<Enum, Value>(
-    unwrapping `enum`: Binding<Enum?>,
-    case casePath: CasePath<Enum, AlertState<Value>>,
-    action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
-  ) -> some View {
-    self.alert(unwrapping: `enum`.case(casePath), action: action)
-  }
+    /// Presents an alert from a binding to an optional enum, and a [case path][case-paths-gh] to a
+    /// specific case of ``AlertState``.
+    ///
+    /// A version of `alert(unwrapping:)` that works with enum state. See <doc:AlertsDialogs> for
+    /// more information on how to use this API.
+    ///
+    /// [case-paths-gh]: http://github.com/pointfreeco/swift-case-paths
+    ///
+    /// - Parameters:
+    ///   - enum: A binding to an optional enum that holds alert state at a particular case. When
+    ///     the binding is updated with a non-`nil` enum, the case path will attempt to extract this
+    ///     state and use it to populate the fields of an alert that the system displays to the user.
+    ///     When the user presses or taps one of the alert's actions, the system sets this value to
+    ///     `nil` and dismisses the alert, and the action is fed to the `action` closure.
+    ///   - casePath: A case path that identifies a particular case that holds alert state.
+    ///   - action: A closure that is called with an action from a particular alert button when
+    ///     tapped.
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: CasePath<Enum, AlertState<Value>>,
+      action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+    ) -> some View {
+      self.alert(unwrapping: `enum`.case(casePath), action: action)
+    }
+  #else
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert<Value>(
+      unwrapping value: Binding<AlertState<Value>?>,
+      action: @escaping (Value) -> Void
+    ) -> some View {
+      self.alert(
+        (value.wrappedValue?.title).map(Text.init) ?? Text(""),
+        isPresented: value.isPresent(),
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: action)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
+
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert(
+      unwrapping value: Binding<AlertState<Never>?>
+    ) -> some View {
+      self.alert(
+        (value.wrappedValue?.title).map(Text.init) ?? Text(""),
+        isPresented: value.isPresent(),
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: { (_: Never) in fatalError() })
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
+
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: CasePath<Enum, AlertState<Value>>,
+      action: @escaping (Value) -> Void
+    ) -> some View {
+      self.alert(unwrapping: `enum`.case(casePath), action: action)
+    }
+
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert<Enum>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: CasePath<Enum, AlertState<Never>>
+    ) -> some View {
+      self.alert(unwrapping: `enum`.case(casePath), action: { (_: Never) in fatalError() })
+    }
+  #endif
 
   // TODO: support iOS <15?
 }
