@@ -1,6 +1,6 @@
 # Destructuring views
 
-Learn how to use `IfLet`, `IfCaseLet` and `Switch` views in order to destructure bindings into
+Learn how to use ``IfLet``, ``IfCaseLet`` and ``Switch`` views in order to destructure bindings into
 smaller parts.
 
 ## Overview

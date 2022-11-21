@@ -10,10 +10,7 @@ extension IfCaseLet {
     @ViewBuilder ifContent: @escaping (Binding<Case>) -> IfContent,
     @ViewBuilder elseContent: () -> ElseContent
   ) {
-    self.casePath = casePath
-    self.elseContent = elseContent()
-    self.enum = `enum`
-    self.ifContent = ifContent
+    self.init(`enum`, pattern: casePath, then: ifContent, else: elseContent)
   }
 }
 
