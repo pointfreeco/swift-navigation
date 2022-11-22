@@ -4,16 +4,24 @@ import XCTest
 
 final class AlertTests: XCTestCase {
   func testAlertState() {
-    var dump = ""
-    customDump(
+    let alert = AlertState(
+      title: .init("Alert!"),
+      message: .init("Something went wrong..."),
+      primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .default)),
+      secondaryButton: .cancel(.init("Cancel"), action: .send(false))
+    )
+    XCTAssertNoDifference(
+      alert,
       AlertState(
         title: .init("Alert!"),
         message: .init("Something went wrong..."),
         primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .default)),
         secondaryButton: .cancel(.init("Cancel"), action: .send(false))
-      ),
-      to: &dump
+      )
     )
+    
+    var dump = ""
+    customDump(alert, to: &dump)
     XCTAssertNoDifference(
       dump,
       """

@@ -137,7 +137,13 @@ extension ButtonState.Handler: CustomDumpReflectable {
 extension ButtonState.Handler: Equatable where Action: Equatable {}
 extension ButtonState.Handler._ActionType: Equatable where Action: Equatable {}
 extension ButtonState.Role: Equatable {}
-extension ButtonState: Equatable where Action: Equatable {}
+extension ButtonState: Equatable where Action: Equatable {
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.action == rhs.action
+      && lhs.label == rhs.label
+      && lhs.role == rhs.role
+  }
+}
 
 extension ButtonState.Handler: Hashable where Action: Hashable {}
 extension ButtonState.Handler._ActionType: Hashable where Action: Hashable {
