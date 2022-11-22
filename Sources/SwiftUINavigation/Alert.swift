@@ -169,8 +169,8 @@ extension View {
         isPresented: value.isPresent(),
         presenting: value.wrappedValue,
         actions: {
-          ForEach($0.buttons) {
-            Button($0, action: action)
+          ForEach(Array(zip(0..., $0.buttons)), id: \.0) {
+            Button($0.1, action: action)
           }
         },
         message: { $0.message.map { Text($0) } }
@@ -186,8 +186,8 @@ extension View {
         isPresented: value.isPresent(),
         presenting: value.wrappedValue,
         actions: {
-          ForEach($0.buttons) {
-            Button($0, action: { (_: Never) in fatalError() })
+          ForEach(Array(zip(0..., $0.buttons)), id: \.0) {
+            Button($0.1, action: { (_: Never) in fatalError() })
           }
         },
         message: { $0.message.map { Text($0) } }
