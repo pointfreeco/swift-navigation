@@ -1,7 +1,7 @@
 import CustomDump
 import SwiftUI
 
-public struct ButtonState<Action>: Identifiable {
+public struct ButtonState<Action> {
   /// A type that wraps an action with additional context, _e.g._ for animation.
   public struct Handler {
     public let type: _ActionType
@@ -35,7 +35,6 @@ public struct ButtonState<Action>: Identifiable {
     case destructive
   }
 
-  public let id = UUID()
   public let action: Handler?
   public let label: TextState
   public let role: Role?
@@ -137,13 +136,7 @@ extension ButtonState.Handler: CustomDumpReflectable {
 extension ButtonState.Handler: Equatable where Action: Equatable {}
 extension ButtonState.Handler._ActionType: Equatable where Action: Equatable {}
 extension ButtonState.Role: Equatable {}
-extension ButtonState: Equatable where Action: Equatable {
-  public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.action == rhs.action
-      && lhs.label == rhs.label
-      && lhs.role == rhs.role
-  }
-}
+extension ButtonState: Equatable where Action: Equatable {}
 
 extension ButtonState.Handler: Hashable where Action: Hashable {}
 extension ButtonState.Handler._ActionType: Hashable where Action: Hashable {
@@ -155,13 +148,7 @@ extension ButtonState.Handler._ActionType: Hashable where Action: Hashable {
   }
 }
 extension ButtonState.Role: Hashable {}
-extension ButtonState: Hashable where Action: Hashable {
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(self.action)
-    hasher.combine(self.label)
-    hasher.combine(self.role)
-  }
-}
+extension ButtonState: Hashable where Action: Hashable {}
 
 // MARK: - SwiftUI bridging
 

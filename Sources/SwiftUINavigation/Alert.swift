@@ -125,8 +125,8 @@ extension View {
         isPresented: value.isPresent(),
         presenting: value.wrappedValue,
         actions: {
-          ForEach($0.buttons) {
-            Button($0, action: action)
+          ForEach(Array(zip(0..., $0.buttons)), id: \.0) { _, button in
+            Button(button, action: action)
           }
         },
         message: { $0.message.map { Text($0) } }

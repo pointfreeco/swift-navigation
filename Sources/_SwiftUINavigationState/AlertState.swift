@@ -126,8 +126,7 @@ import SwiftUI
 /// }
 /// model.alert = nil
 /// ```
-public struct AlertState<Action>: Identifiable {
-  public let id = UUID()
+public struct AlertState<Action> {
   public var buttons: [ButtonState<Action>]
   public var message: TextState?
   public var title: TextState
