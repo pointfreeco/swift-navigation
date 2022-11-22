@@ -19,7 +19,7 @@ final class AlertTests: XCTestCase {
         secondaryButton: .cancel(.init("Cancel"), action: .send(false))
       )
     )
-    
+
     var dump = ""
     customDump(alert, to: &dump)
     XCTAssertNoDifference(
