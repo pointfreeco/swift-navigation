@@ -82,7 +82,7 @@ Swift language, hosted by [Brandon Williams](https://twitter.com/mbrandonw) and 
 You can watch all of the episodes [here](https://www.pointfree.co/collections/swiftui/navigation).
 
 <a href="https://www.pointfree.co/collections/swiftui/navigation">
-  <img alt="video poster image" src="https://d3rccdn33rt8ze.cloudfront.net/episodes/0166.jpeg" width="600">
+  <img alt="video poster image" src="https://d3rccdn33rt8ze.cloudfront.net/episodes/0211.jpeg" width="600">
 </a>
 
 ## Installation
