@@ -93,6 +93,13 @@ public struct ButtonState<Action>: Identifiable {
   }
 }
 
+@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+extension ButtonState: ActionState {
+  public func body(withAction perform: @escaping (Action) -> Void) -> some View {
+    Button(self, action: perform)
+  }
+}
+
 extension ButtonState: CustomDumpReflectable {
   public var customDumpMirror: Mirror {
     var children: [(label: String?, value: Any)] = []
