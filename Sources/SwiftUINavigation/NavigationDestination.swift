@@ -12,7 +12,7 @@
     ///
     /// ```swift
     /// struct TimelineView: View {
-    ///   @State var detail: Post?
+    ///   @State var draft: Post?
     ///
     ///   var body: Body {
     ///     Button("Compose") {

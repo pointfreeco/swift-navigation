@@ -19,7 +19,7 @@ extension NavigationLink {
   ///         self.postToEdit = isActive ? post : nil
   ///       } destination: { $draft in
   ///         EditPostView(post: $draft)
-  ///       } onNavigate:  label: {
+  ///       } label: {
   ///         Text(post.title)
   ///       }
   ///     }
