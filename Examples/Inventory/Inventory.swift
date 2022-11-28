@@ -79,10 +79,9 @@ struct InventoryView: View {
 
   var body: some View {
     List {
-      ForEach(
-        self.model.inventory,
-        content: ItemRowView.init(model:)
-      )
+      ForEach(self.model.inventory) {
+        ItemRowView(model: $0)
+      }
     }
     .toolbar {
       ToolbarItem(placement: .primaryAction) {
