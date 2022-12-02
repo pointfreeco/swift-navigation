@@ -37,7 +37,7 @@ Notice that we store the focus as a `@Published` property in the model rather th
 This is because `@FocusState` only works when installed directly in a view. It cannot be used in
 an observable object.
 
-You can implement the view as you would normally, except you must also us `@FocusState` for the 
+You can implement the view as you would normally, except you must also use `@FocusState` for the 
 focus _and_ use the `bind` helper to make sure that changes to the model's focus are replayed to
 the view, and vice versa.
 
