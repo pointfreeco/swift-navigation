@@ -53,7 +53,7 @@ where ModelValue.Value == ViewValue.Value, ModelValue.Value: Equatable {
   }
 }
 
-public protocol _Bindable: DynamicProperty {
+public protocol _Bindable {
   associatedtype Value
   var wrappedValue: Value { get nonmutating set }
 }
