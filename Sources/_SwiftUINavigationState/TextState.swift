@@ -441,7 +441,7 @@ extension Text {
               return text.accessibilityLabel(
                 Text(key, tableName: tableName, bundle: bundle, comment: comment))
             case .concatenated(_, _):
-              assertionFailure("`.accessibilityLabel` does not support contcatenated `TextState`")
+              assertionFailure("`.accessibilityLabel` does not support concatenated `TextState`")
               return text
             }
           } else {
