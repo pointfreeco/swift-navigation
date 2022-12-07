@@ -49,7 +49,9 @@ struct SignInView: View {
   var body: some View {
     Form {
       TextField("Email", text: self.$model.email)
+        .focused(self.$focus, equals: .email)
       TextField("Password", text: self.$model.password)
+        .focused(self.$focus, equals: .password)
       Button("Sign in") {
         Task {
           await self.model.signInButtonTapped()
