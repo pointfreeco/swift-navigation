@@ -1,25 +1,33 @@
+import Dependencies
 import SwiftUI
 import SwiftUINavigation
 
 class EditStandupModel: ObservableObject {
-  @Published var focus: EditStandupView.Field?
+  @Published var focus: Field?
   @Published var standup: Standup
 
+  @Dependency(\.uuid) var uuid
+
+  enum Field: Hashable {
+    case attendee(Attendee.ID)
+    case title
+  }
+
   init(
-    focus: EditStandupView.Field? = .title,
+    focus: Field? = .title,
     standup: Standup
   ) {
     self.focus = focus
     self.standup = standup
     if self.standup.attendees.isEmpty {
-      self.standup.attendees.append(Attendee(id: Attendee.ID(UUID())))
+      self.standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
   }
 
   func deleteAttendees(atOffsets indices: IndexSet) {
     self.standup.attendees.remove(atOffsets: indices)
     if self.standup.attendees.isEmpty {
-      self.standup.attendees.append(Attendee(id: Attendee.ID(UUID())))
+      self.standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
     let index = min(indices.first!, self.standup.attendees.count - 1)
     self.focus = .attendee(self.standup.attendees[index].id)
@@ -33,12 +41,7 @@ class EditStandupModel: ObservableObject {
 }
 
 struct EditStandupView: View {
-  enum Field: Hashable {
-    case attendee(Attendee.ID)
-    case title
-  }
-
-  @FocusState var focus: Field?
+  @FocusState var focus: EditStandupModel.Field?
   @ObservedObject var model: EditStandupModel
 
   var body: some View {

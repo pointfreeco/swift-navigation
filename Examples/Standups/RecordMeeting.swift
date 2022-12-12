@@ -21,6 +21,7 @@ class RecordMeetingModel: ObservableObject {
   enum Destination {
     case alert(AlertState<AlertAction>)
   }
+
   enum AlertAction {
     case confirmSave
     case confirmDiscard
@@ -32,14 +33,6 @@ class RecordMeetingModel: ObservableObject {
     self.standup.duration - .seconds(self.secondsElapsed)
   }
 
-  init(
-    destination: Destination? = nil,
-    standup: Standup
-  ) {
-    self.destination = destination
-    self.standup = standup
-  }
-
   var isAlertOpen: Bool {
     switch destination {
     case .alert:
@@ -49,19 +42,18 @@ class RecordMeetingModel: ObservableObject {
     }
   }
 
+  init(
+    destination: Destination? = nil,
+    standup: Standup
+  ) {
+    self.destination = destination
+    self.standup = standup
+  }
+
   func nextButtonTapped() {
     guard self.speakerIndex < self.standup.attendees.count - 1
     else {
-      self.destination = .alert(
-        AlertState(
-          title: TextState("End meeting?"),
-          message: TextState("You are ending the meeting early. What would you like to do?"),
-          buttons: [
-            .default(TextState("Save and end"), action: .send(.confirmSave)),
-            .cancel(TextState("Resume")),
-          ]
-        )
-      )
+      self.destination = .alert(.endMeeting(isDiscardable: false))
       return
     }
 
@@ -71,17 +63,7 @@ class RecordMeetingModel: ObservableObject {
   }
 
   func endMeetingButtonTapped() {
-    self.destination = .alert(
-      AlertState(
-        title: TextState("End meeting?"),
-        message: TextState("You are ending the meeting early. What would you like to do?"),
-        buttons: [
-          .default(TextState("Save and end"), action: .send(.confirmSave)),
-          .destructive(TextState("Discard"), action: .send(.confirmDiscard)),
-          .cancel(TextState("Resume")),
-        ]
-      )
-    )
+    self.destination = .alert(.endMeeting(isDiscardable: true))
   }
 
   func alertButtonTapped(_ action: AlertAction) {
@@ -137,6 +119,28 @@ class RecordMeetingModel: ObservableObject {
         self.speakerIndex += 1
       }
 
+    }
+  }
+}
+
+extension AlertState where Action == RecordMeetingModel.AlertAction {
+  static func endMeeting(isDiscardable: Bool) -> Self {
+    Self {
+      TextState("End meeting?")
+    } actions: {
+      ButtonState(action: .confirmSave) {
+        TextState("Save and end")
+      }
+      if isDiscardable {
+        ButtonState(role: .destructive, action: .confirmDiscard) {
+          TextState("Discard")
+        }
+      }
+      ButtonState(role: .cancel) {
+        TextState("Resume")
+      }
+    } message: {
+      TextState("You are ending the meeting early. What would you like to do?")
     }
   }
 }

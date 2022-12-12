@@ -14,6 +14,8 @@ class StandupDetailModel: ObservableObject {
   @Published var standup: Standup
 
   @Dependency(\.continuousClock) var clock
+  @Dependency(\.date.now) var now
+  @Dependency(\.uuid) var uuid
 
   var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
 
@@ -94,8 +96,8 @@ class StandupDetailModel: ObservableObject {
           withAnimation {
             _ = self.standup.meetings.insert(
               Meeting(
-                id: Meeting.ID(UUID()),
-                date: Date(),
+                id: Meeting.ID(self.uuid()),
+                date: self.now,
                 transcript: transcript
               ),
               at: 0
@@ -112,14 +114,18 @@ class StandupDetailModel: ObservableObject {
 }
 
 extension AlertState where Action == StandupDetailModel.AlertAction {
-  static let delete = AlertState(
-    title: TextState("Delete?"),
-    message: TextState("Are you sure you want to delete this meeting?"),
-    buttons: [
-      .destructive(TextState("Yes"), action: .send(.confirmDeletion)),
-      .cancel(TextState("Nevermind"))
-    ]
-  )
+  static let delete = Self {
+    TextState("Delete?")
+  } actions: {
+    ButtonState(role: .destructive, action: .confirmDeletion) {
+      TextState("Yes")
+    }
+    ButtonState(role: .cancel) {
+      TextState("Nevermind")
+    }
+  } message: {
+    TextState("Are you sure you want to delete this meeting?")
+  }
 }
 
 struct StandupDetailView: View {

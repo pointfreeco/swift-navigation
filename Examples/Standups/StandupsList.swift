@@ -1,8 +1,8 @@
 import Combine
 import Dependencies
 import IdentifiedCollections
-import SwiftUINavigation
 import SwiftUI
+import SwiftUINavigation
 
 @MainActor
 final class StandupsListModel: ObservableObject {
@@ -16,6 +16,7 @@ final class StandupsListModel: ObservableObject {
 
   @Dependency(\.dataManager) var dataManager
   @Dependency(\.mainQueue) var mainQueue
+  @Dependency(\.uuid) var uuid
 
   enum Destination {
     case add(EditStandupModel)
@@ -58,7 +59,7 @@ final class StandupsListModel: ObservableObject {
   }
 
   func addStandupButtonTapped() {
-    self.destination = .add(EditStandupModel(standup: Standup(id: Standup.ID(UUID()))))
+    self.destination = .add(EditStandupModel(standup: Standup(id: Standup.ID(self.uuid()))))
   }
 
   func dismissAddStandupButtonTapped() {
@@ -76,7 +77,7 @@ final class StandupsListModel: ObservableObject {
       attendee.name.allSatisfy(\.isWhitespace)
     }
     if standup.attendees.isEmpty {
-      standup.attendees.append(Attendee(id: Attendee.ID(UUID()), name: ""))
+      standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
     self.standups.append(standup)
   }
@@ -89,23 +90,15 @@ final class StandupsListModel: ObservableObject {
     switch self.destination {
     case let .detail(standupDetailModel):
       standupDetailModel.onConfirmDeletion = { [weak self, id = standupDetailModel.standup.id] in
-        guard let self else { return }
-
         withAnimation {
-//          self.standups.removeAll { $0.id == id }
-          self.standups.remove(id: id)
-          self.destination = nil
+          self?.standups.remove(id: id)
+          self?.destination = nil
         }
       }
 
       self.destinationCancellable = standupDetailModel.$standup
         .sink { [weak self] standup in
-          guard let self else { return }
-//          guard let index = self.standups.firstIndex(where: { $0.id == standup.id })
-//          else { return }
-//          try await apiService.save(...)
-//          self.standups[index] = standup
-          self.standups[id: standup.id] = standup
+          self?.standups[id: standup.id] = standup
         }
 
     case .add, .none:
