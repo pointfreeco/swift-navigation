@@ -66,11 +66,11 @@ public struct ButtonState<Action>: Identifiable {
   ///   - label: A view that describes the purpose of the button's `action`.
   public init(
     role: Role? = nil,
-    action: Action? = nil,
+    action: Action,
     label: () -> TextState
   ) {
     self.role = role
-    self.action = action.map(Handler.send)
+    self.action = .send(action)
     self.label = label()
   }
 
