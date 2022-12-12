@@ -1,6 +1,6 @@
 import Clocks
 import Dependencies
-@preconcurrency import Speech
+import Speech
 import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay

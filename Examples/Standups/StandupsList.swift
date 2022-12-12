@@ -203,14 +203,17 @@ extension URL {
 struct StandupsList_Previews: PreviewProvider {
   static var previews: some View {
     StandupsList(
-      model: StandupsListModel(
-//        destination: .add(
-//          EditStandupModel(
-//            focus: .attendee(Standup.mock.attendees[3].id),
-//            standup: .mock
-//          )
-//        ),
-      )
+      model: DependencyValues.withValues {
+        $0.dataManager = .mock(
+          initialData: try! JSONEncoder().encode([
+            Standup.mock,
+            .engineeringMock,
+            .designMock
+          ])
+        )
+      } operation: {
+        StandupsListModel()
+      }
     )
   }
 }

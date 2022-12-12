@@ -61,7 +61,6 @@ enum Theme: String, CaseIterable, Equatable, Hashable, Identifiable, Codable {
   var name: String { self.rawValue.capitalized }
 }
 
-
 extension Standup {
   static let mock = Self(
     id: Standup.ID(UUID()),
@@ -90,5 +89,29 @@ extension Standup {
     ],
     theme: .orange,
     title: "Design"
+  )
+
+  static let engineeringMock = Self(
+    id: Standup.ID(UUID()),
+    attendees: [
+      Attendee(id: Attendee.ID(UUID()), name: "Blob"),
+      Attendee(id: Attendee.ID(UUID()), name: "Blob Jr"),
+    ],
+    duration: .seconds(60 * 10),
+    meetings: [],
+    theme: .periwinkle,
+    title: "Engineering"
+  )
+
+  static let designMock = Self(
+    id: Standup.ID(UUID()),
+    attendees: [
+      Attendee(id: Attendee.ID(UUID()), name: "Blob Sr"),
+      Attendee(id: Attendee.ID(UUID()), name: "Blob Jr"),
+    ],
+    duration: .seconds(60 * 30),
+    meetings: [],
+    theme: .poppy,
+    title: "Product"
   )
 }
