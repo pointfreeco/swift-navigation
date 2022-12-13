@@ -167,7 +167,7 @@ extension ButtonState: Hashable where Action: Hashable {
 
 extension Alert.Button {
   public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) -> Void) {
-    let action = button.action.map { _ in { button.withAction(action) } }
+    let action = { button.withAction(action) }
     switch button.role {
     case .cancel:
       self = .cancel(Text(button.label), action: action)
