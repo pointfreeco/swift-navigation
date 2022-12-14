@@ -11,13 +11,14 @@ class StandupDetailModel: ObservableObject {
       self.bind()
     }
   }
+  @Published var dismiss = false
   @Published var standup: Standup
 
   @Dependency(\.continuousClock) var clock
   @Dependency(\.date.now) var now
   @Dependency(\.uuid) var uuid
 
-  var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
+  var onConfirmDeletion: () -> Bool = unimplemented("StandupDetailModel.onConfirmDeletion")
 
   enum Destination {
     case alert(AlertState<AlertAction>)
@@ -53,7 +54,7 @@ class StandupDetailModel: ObservableObject {
   func alertButtonTapped(_ action: AlertAction) {
     switch action {
     case .confirmDeletion:
-      self.onConfirmDeletion()
+      self.dismiss = self.onConfirmDeletion()
     }
   }
 
@@ -129,6 +130,7 @@ extension AlertState where Action == StandupDetailModel.AlertAction {
 }
 
 struct StandupDetailView: View {
+  @Environment(\.dismiss) var dismiss
   @ObservedObject var model: StandupDetailModel
 
   var body: some View {
@@ -241,6 +243,9 @@ struct StandupDetailView: View {
             }
           }
       }
+    }
+    .onChange(of: self.model.dismiss) { _ in
+      self.dismiss()
     }
   }
 }

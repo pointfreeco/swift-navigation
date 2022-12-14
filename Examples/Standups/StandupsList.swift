@@ -90,9 +90,10 @@ final class StandupsListModel: ObservableObject {
     switch self.destination {
     case let .detail(standupDetailModel):
       standupDetailModel.onConfirmDeletion = { [weak self, id = standupDetailModel.standup.id] in
-        withAnimation {
+        return withAnimation {
           self?.standups.remove(id: id)
           self?.destination = nil
+          return true
         }
       }
 

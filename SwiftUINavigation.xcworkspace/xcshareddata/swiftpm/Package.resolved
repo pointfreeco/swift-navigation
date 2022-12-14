@@ -48,10 +48,10 @@
       },
       {
         "package": "swift-dependencies",
-        "repositoryURL": "https://github.com/pointfreeco/swift-dependencies",
+        "repositoryURL": "https://github.com/pointfreeco/swift-dependencies.git",
         "state": {
           "branch": "main",
-          "revision": "9ea2f4639f6a7ff3a19b2648a56a10b24107d1c3",
+          "revision": "573d5a39b60cd901855f4351bfefc6313a2838d2",
           "version": null
         }
       },
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-tagged.git",
         "state": {
           "branch": null,
-          "revision": "33f44ceb793b12d6af5019cbe26f8b0e66e6389f",
-          "version": "0.8.0"
+          "revision": "af06825aaa6adffd636c10a2570b2010c7c07e6a",
+          "version": "0.9.0"
         }
       },
       {
