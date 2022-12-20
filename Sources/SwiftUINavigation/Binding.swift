@@ -59,6 +59,7 @@ extension Binding {
     .init(
       get: { self.wrappedValue.flatMap(casePath.extract(from:)) },
       set: { newValue, transaction in
+        guard self.wrappedValue == nil || casePath ~= self.wrappedValue! else { return }
         self.transaction(transaction).wrappedValue = newValue.map(casePath.embed)
       }
     )
