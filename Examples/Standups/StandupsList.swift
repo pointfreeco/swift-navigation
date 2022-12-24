@@ -59,7 +59,11 @@ final class StandupsListModel: ObservableObject {
   }
 
   func addStandupButtonTapped() {
-    self.destination = .add(EditStandupModel(standup: Standup(id: Standup.ID(self.uuid()))))
+    self.destination = .add(
+      DependencyValues.withValues(from: self) {
+        EditStandupModel(standup: Standup(id: Standup.ID(self.uuid())))
+      }
+    )
   }
 
   func dismissAddStandupButtonTapped() {
@@ -83,7 +87,11 @@ final class StandupsListModel: ObservableObject {
   }
 
   func standupTapped(standup: Standup) {
-    self.destination = .detail(StandupDetailModel(standup: standup))
+    self.destination = .detail(
+      DependencyValues.withValues(from: self) {
+        StandupDetailModel(standup: standup)
+      }
+    )
   }
 
   private func bind() {

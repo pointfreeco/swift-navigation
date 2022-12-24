@@ -16,6 +16,8 @@ class StandupDetailModel: ObservableObject {
 
   @Dependency(\.continuousClock) var clock
   @Dependency(\.date.now) var now
+  @Dependency(\.openSettings) var openSettings
+  @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
   @Dependency(\.uuid) var uuid
 
   var onConfirmDeletion: () -> Bool = unimplemented("StandupDetailModel.onConfirmDeletion")
@@ -28,6 +30,8 @@ class StandupDetailModel: ObservableObject {
   }
   enum AlertAction {
     case confirmDeletion
+    case continueWithoutRecording
+    case openSettings
   }
 
   init(
@@ -55,14 +59,28 @@ class StandupDetailModel: ObservableObject {
     switch action {
     case .confirmDeletion:
       self.dismiss = self.onConfirmDeletion()
+
+    case .continueWithoutRecording:
+      // TODO: Needs a delay to let alert finishing animating away
+      Task {
+        try await self.clock.sleep(for: .milliseconds(100))
+        self.destination = .record(
+          DependencyValues.withValues(from: self) {
+            RecordMeetingModel(standup: self.standup)
+          }
+        )
+      }
+
+    case .openSettings:
+      Task { await self.openSettings() }
     }
   }
 
   func editButtonTapped() {
     self.destination = .edit(
-      EditStandupModel(
-        standup: self.standup
-      )
+      DependencyValues.withValues(from: self) {
+        EditStandupModel(standup: self.standup)
+      }
     )
   }
 
@@ -78,12 +96,26 @@ class StandupDetailModel: ObservableObject {
     self.destination = nil
   }
 
+  private let speechAlertSeenKey = "speechAlertSeenKey"
+
   func startMeetingButtonTapped() {
-    self.destination = .record(
-      RecordMeetingModel(
-        standup: self.standup
+    switch self.authorizationStatus() {
+    case .notDetermined, .authorized:
+      self.destination = .record(
+        DependencyValues.withValues(from: self) {
+          RecordMeetingModel(standup: self.standup)
+        }
       )
-    )
+
+    case .denied:
+      self.destination = .alert(.speechRecognitionDenied)
+
+    case .restricted:
+      self.destination = .alert(.speechRecognitionRestricted)
+
+    @unknown default:
+      break
+    }
   }
 
   private func bind() {
@@ -126,6 +158,35 @@ extension AlertState where Action == StandupDetailModel.AlertAction {
     }
   } message: {
     TextState("Are you sure you want to delete this meeting?")
+  }
+
+  static let speechRecognitionDenied = Self {
+    TextState("Speech recognition denied")
+  } actions: {
+    ButtonState(action: .openSettings) {
+      TextState("Open settings")
+    }
+    ButtonState(action: .continueWithoutRecording) {
+      TextState("Continue without recording")
+    }
+  } message: {
+    TextState("""
+      You previously denied speech recognition and so your meeting meeting will not be
+      recorded. You can enable speech recognition in settings, or you can continue without
+      recording.
+      """)
+  }
+
+  static let speechRecognitionRestricted = Self {
+    TextState("Speech recognition restricted")
+  } actions: {
+    ButtonState(action: .continueWithoutRecording) {
+      TextState("Continue without recording")
+    }
+  } message: {
+    TextState("""
+      Your device does not support speech recognition and so your meeting will not be recorded.
+      """)
   }
 }
 
@@ -283,10 +344,13 @@ struct StandupDetail_Previews: PreviewProvider {
         Attendee(id: Attendee.ID(UUID()), name: "Blob")
       ]
       StandupDetailView(
-        model: StandupDetailModel(
-          destination: .record(RecordMeetingModel(standup: standup)),
-          standup: standup
-        )
+        model: DependencyValues.withValues {
+          $0.speechClient.authorizationStatus = { .restricted }
+        } operation: {
+          StandupDetailModel(
+            standup: standup
+          )
+        }
       )
     }
   }

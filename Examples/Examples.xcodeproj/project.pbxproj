@@ -24,6 +24,7 @@
 		CA47383E272F0F9B0012CAC3 /* 10-CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */; };
 		CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */; };
 		CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */; };
+		CAAA74E02956956B009A25CA /* OpenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAA74DF2956956B009A25CA /* OpenSettings.swift */; };
 		CAAC0072292BDE660083F2FF /* 12-IfLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAC0071292BDE660083F2FF /* 12-IfLet.swift */; };
 		CABE9FC1272F2C0000AFC150 /* 09-Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */; };
 		DC5E07772947CCD700293F45 /* StandupsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07762947CCD700293F45 /* StandupsApp.swift */; };
@@ -79,6 +80,7 @@
 		CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "10-CustomComponents.swift"; sourceTree = "<group>"; };
 		CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-NavigationLinkList.swift"; sourceTree = "<group>"; };
 		CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "13-IfCaseLet.swift"; sourceTree = "<group>"; };
+		CAAA74DF2956956B009A25CA /* OpenSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSettings.swift; sourceTree = "<group>"; };
 		CAAC0071292BDE660083F2FF /* 12-IfLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "12-IfLet.swift"; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "09-Routing.swift"; sourceTree = "<group>"; };
 		DC5E07742947CCD700293F45 /* Standups.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Standups.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -217,6 +219,7 @@
 				DC5E07AC2947CFD300293F45 /* RecordMeeting.swift */,
 				DC5E07A82947CFB700293F45 /* SpeechClient.swift */,
 				DC5E07782947CCD700293F45 /* StandupDetail.swift */,
+				CAAA74DF2956956B009A25CA /* OpenSettings.swift */,
 				DC5E07762947CCD700293F45 /* StandupsApp.swift */,
 				DC5E07A62947CFA600293F45 /* StandupsList.swift */,
 				DC5E077A2947CCD800293F45 /* Assets.xcassets */,
@@ -460,6 +463,7 @@
 				DC5E07AB2947CFCA00293F45 /* Models.swift in Sources */,
 				DC5E07AD2947CFD300293F45 /* RecordMeeting.swift in Sources */,
 				DC5E07A92947CFB700293F45 /* SpeechClient.swift in Sources */,
+				CAAA74E02956956B009A25CA /* OpenSettings.swift in Sources */,
 				DC5E07A72947CFA600293F45 /* StandupsList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -541,6 +545,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Debug;
 		};
@@ -595,6 +600,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -746,7 +752,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.Standups;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -779,7 +784,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.Standups;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -800,7 +804,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.StandupsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Standups.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Standups";
@@ -822,7 +825,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.StandupsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Standups.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Standups";

@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "combine-schedulers",
+        "repositoryURL": "https://github.com/pointfreeco/combine-schedulers",
+        "state": {
+          "branch": null,
+          "revision": "882ac01eb7ef9e36d4467eb4b1151e74fcef85ab",
+          "version": "0.9.1"
+        }
+      },
+      {
         "package": "swift-case-paths",
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
@@ -11,12 +20,21 @@
         }
       },
       {
+        "package": "swift-clocks",
+        "repositoryURL": "https://github.com/pointfreeco/swift-clocks",
+        "state": {
+          "branch": null,
+          "revision": "20b25ca0dd88ebfb9111ec937814ddc5a8880172",
+          "version": "0.2.0"
+        }
+      },
+      {
         "package": "swift-collections",
         "repositoryURL": "https://github.com/apple/swift-collections",
         "state": {
           "branch": null,
-          "revision": "2d33a0ea89c961dcb2b3da2157963d9c0370347e",
-          "version": "1.0.1"
+          "revision": "937e904258d22af6e447a0b72c0bc67583ef64a2",
+          "version": "1.0.4"
         }
       },
       {
@@ -26,6 +44,15 @@
           "branch": null,
           "revision": "819d9d370cd721c9d87671e29d947279292e4541",
           "version": "0.6.0"
+        }
+      },
+      {
+        "package": "swift-dependencies",
+        "repositoryURL": "https://github.com/pointfreeco/swift-dependencies.git",
+        "state": {
+          "branch": "main",
+          "revision": "a6acf5421184051f8da8b109997e037277b19cd2",
+          "version": null
         }
       },
       {
@@ -42,8 +69,17 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections.git",
         "state": {
           "branch": null,
-          "revision": "680bf440178a78a627b1c2c64c0855f6523ad5b9",
-          "version": "0.3.2"
+          "revision": "a08887de589e3829d488e0b4b707b2ca804b1060",
+          "version": "0.5.0"
+        }
+      },
+      {
+        "package": "swift-tagged",
+        "repositoryURL": "https://github.com/pointfreeco/swift-tagged.git",
+        "state": {
+          "branch": null,
+          "revision": "af06825aaa6adffd636c10a2570b2010c7c07e6a",
+          "version": "0.9.0"
         }
       },
       {
