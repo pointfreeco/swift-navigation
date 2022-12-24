@@ -52,7 +52,7 @@ class StandupDetailModel: ObservableObject {
   }
 
   func deleteButtonTapped() {
-    self.destination = .alert(.delete)
+    self.destination = .alert(.deleteStandup)
   }
 
   func alertButtonTapped(_ action: AlertAction) {
@@ -62,6 +62,7 @@ class StandupDetailModel: ObservableObject {
 
     case .continueWithoutRecording:
       // TODO: Needs a delay to let alert finishing animating away
+      // TODO: can alertButtonTapped be made async? or have the choice?
       Task {
         try await self.clock.sleep(for: .milliseconds(100))
         self.destination = .record(
@@ -147,7 +148,7 @@ class StandupDetailModel: ObservableObject {
 }
 
 extension AlertState where Action == StandupDetailModel.AlertAction {
-  static let delete = Self {
+  static let deleteStandup = Self {
     TextState("Delete?")
   } actions: {
     ButtonState(role: .destructive, action: .confirmDeletion) {

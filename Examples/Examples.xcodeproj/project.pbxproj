@@ -25,6 +25,9 @@
 		CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */; };
 		CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */; };
 		CAAA74E02956956B009A25CA /* OpenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAA74DF2956956B009A25CA /* OpenSettings.swift */; };
+		CAAA74E429569F6C009A25CA /* StandupsListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAA74E329569F6C009A25CA /* StandupsListTests.swift */; };
+		CAAA74E62956A60A009A25CA /* RecordMeetingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAA74E52956A60A009A25CA /* RecordMeetingTests.swift */; };
+		CAAA74E82956A658009A25CA /* StandupDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAA74E72956A658009A25CA /* StandupDetailTests.swift */; };
 		CAAC0072292BDE660083F2FF /* 12-IfLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAC0071292BDE660083F2FF /* 12-IfLet.swift */; };
 		CABE9FC1272F2C0000AFC150 /* 09-Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */; };
 		DC5E07772947CCD700293F45 /* StandupsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07762947CCD700293F45 /* StandupsApp.swift */; };
@@ -81,6 +84,9 @@
 		CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-NavigationLinkList.swift"; sourceTree = "<group>"; };
 		CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "13-IfCaseLet.swift"; sourceTree = "<group>"; };
 		CAAA74DF2956956B009A25CA /* OpenSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSettings.swift; sourceTree = "<group>"; };
+		CAAA74E329569F6C009A25CA /* StandupsListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupsListTests.swift; sourceTree = "<group>"; };
+		CAAA74E52956A60A009A25CA /* RecordMeetingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordMeetingTests.swift; sourceTree = "<group>"; };
+		CAAA74E72956A658009A25CA /* StandupDetailTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupDetailTests.swift; sourceTree = "<group>"; };
 		CAAC0071292BDE660083F2FF /* 12-IfLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "12-IfLet.swift"; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "09-Routing.swift"; sourceTree = "<group>"; };
 		DC5E07742947CCD700293F45 /* Standups.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Standups.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -240,6 +246,9 @@
 			isa = PBXGroup;
 			children = (
 				DC5E07872947CCD800293F45 /* StandupsTests.swift */,
+				CAAA74E329569F6C009A25CA /* StandupsListTests.swift */,
+				CAAA74E52956A60A009A25CA /* RecordMeetingTests.swift */,
+				CAAA74E72956A658009A25CA /* StandupDetailTests.swift */,
 			);
 			path = StandupsTests;
 			sourceTree = "<group>";
@@ -472,7 +481,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAAA74E82956A658009A25CA /* StandupDetailTests.swift in Sources */,
+				CAAA74E62956A60A009A25CA /* RecordMeetingTests.swift in Sources */,
 				DC5E07882947CCD800293F45 /* StandupsTests.swift in Sources */,
+				CAAA74E429569F6C009A25CA /* StandupsListTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

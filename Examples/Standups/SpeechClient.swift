@@ -68,6 +68,13 @@ extension SpeechClient: DependencyKey {
       }
     )
   }
+
+  static let testValue = SpeechClient(
+    // TODO: possible to have placeholder support objc enums? raw representable?
+    authorizationStatus: unimplemented("SpeechClient.authorizationStatus", placeholder: .denied),
+    requestAuthorization: unimplemented("SpeechClient.requestAuthorization", placeholder: .denied),
+    startTask: unimplemented("SpeechClient.startTask")
+  )
 }
 
 extension DependencyValues {
