@@ -117,7 +117,7 @@ The "pattern" for the ``IfCaseLet`` is expressed by what is known as a "[case pa
 A case path is like a key path, except it is specifically tuned for abstracting over the
 shape of enums rather than structs. A key path abstractly bundles up the functionality of getting 
 and setting a property on a struct, whereas a case path bundles up the functionality of "extracting"
-a value from an enum and "embedding" a value into an enum. They are an indispensible tool for 
+a value from an enum and "embedding" a value into an enum. They are an indispensable tool for 
 transforming bindings.
 
 ### Switch and CaseLet
