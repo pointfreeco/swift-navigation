@@ -27,7 +27,7 @@ class RecordMeetingModel: ObservableObject {
     case confirmDiscard
   }
 
-  var onMeetingFinished: (String) -> Void = unimplemented("RecordMeetingModel.onMeetingFinished")
+  var onMeetingFinished: (String) async -> Void = unimplemented("RecordMeetingModel.onMeetingFinished")
 
   var durationRemaining: Duration {
     self.standup.duration - .seconds(self.secondsElapsed)
@@ -66,11 +66,11 @@ class RecordMeetingModel: ObservableObject {
     self.destination = .alert(.endMeeting(isDiscardable: true))
   }
 
-  func alertButtonTapped(_ action: AlertAction) {
+  func alertButtonTapped(_ action: AlertAction) async {
     switch action {
     case .confirmSave:
-      self.onMeetingFinished(self.transcript)
       self.dismiss = true
+      await self.onMeetingFinished(self.transcript)
 
     case .confirmDiscard:
       self.dismiss = true
@@ -79,7 +79,10 @@ class RecordMeetingModel: ObservableObject {
 
   func task() async {
     do {
-      let authorization = await self.speechClient.requestAuthorization()
+      let authorization = await self.speechClient.authorizationStatus() == .notDetermined
+      ? self.speechClient.requestAuthorization()
+      : self.speechClient.authorizationStatus()
+      
       try await withThrowingTaskGroup(of: Void.self) { group in
         if authorization == .authorized {
           group.addTask {
@@ -112,8 +115,8 @@ class RecordMeetingModel: ObservableObject {
         of: Int(self.standup.durationPerAttendee.components.seconds)
       ) {
         if self.speakerIndex == self.standup.attendees.count - 1 {
-          self.onMeetingFinished(self.transcript)
           self.dismiss = true
+          await self.onMeetingFinished(self.transcript)
           break
         }
         self.speakerIndex += 1
@@ -188,7 +191,7 @@ struct RecordMeetingView: View {
       unwrapping: self.$model.destination,
       case: /RecordMeetingModel.Destination.alert
     ) { action in
-      self.model.alertButtonTapped(action)
+      await self.model.alertButtonTapped(action)
     }
   }
 }

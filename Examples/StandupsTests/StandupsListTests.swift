@@ -102,7 +102,7 @@ final class StandupsListTests: XCTestCase {
 
     XCTAssertNoDifference(alert, .deleteStandup)
 
-    detailModel.alertButtonTapped(.confirmDeletion)
+    await detailModel.alertButtonTapped(.confirmDeletion)
 
     XCTAssertNil(model.destination)
     XCTAssertEqual(model.standups, [])

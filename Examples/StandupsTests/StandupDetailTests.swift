@@ -1,12 +1,12 @@
 import CustomDump
 import Dependencies
 import XCTest
-import CustomDump
+
 @testable import Standups
 
 @MainActor
 final class StandupDetailTests: XCTestCase {
-  func testRestricted() {
+  func testSpeechRestricted() {
     let model = DependencyValues.withTestValues {
       $0.speechClient.authorizationStatus = { .restricted }
     } operation: {
@@ -24,7 +24,7 @@ final class StandupDetailTests: XCTestCase {
     XCTAssertNoDifference(alert, .speechRecognitionRestricted)
   }
 
-  func testDenied() {
+  func testSpeechDenied() async {
     let model = DependencyValues.withTestValues {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
@@ -53,12 +53,8 @@ final class StandupDetailTests: XCTestCase {
       )
     }
 
-    model.alertButtonTapped(.openSettings)
+    await model.alertButtonTapped(.openSettings)
 
-    // TODO: do better
-    while !settingsOpened.value {
-      await Task.yield()
-    }
     XCTAssertEqual(settingsOpened.value, true)
   }
 
@@ -72,13 +68,8 @@ final class StandupDetailTests: XCTestCase {
       )
     }
 
-    model.alertButtonTapped(.continueWithoutRecording)
+    await model.alertButtonTapped(.continueWithoutRecording)
 
-    while model.destination == nil {
-      await Task.yield()
-    }
-
-    // TODO: alertButtonTapped should really be async
     guard case let .some(.record(recordModel)) = model.destination
     else {
       XCTFail()
@@ -86,5 +77,70 @@ final class StandupDetailTests: XCTestCase {
     }
 
     XCTAssertEqual(recordModel.standup, model.standup)
+  }
+
+  func testSpeechAuthorized() async {
+    let model = DependencyValues.withTestValues {
+      $0.speechClient.authorizationStatus = { .authorized }
+    } operation: {
+      StandupDetailModel(standup: .mock)
+    }
+
+    model.startMeetingButtonTapped()
+
+    guard case let .some(.record(recordModel)) = model.destination
+    else {
+      XCTFail()
+      return
+    }
+
+    XCTAssertEqual(recordModel.standup, model.standup)
+  }
+
+  func testRecordWithTranscript() async {
+    let model = DependencyValues.withTestValues {
+      $0.continuousClock = ImmediateClock()
+      $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
+      $0.speechClient.authorizationStatus = { .authorized }
+      $0.speechClient.startTask = { _ in
+        AsyncThrowingStream([
+          .init(bestTranscription: .init(formattedString: "I completed the project"), isFinal: true)
+        ])
+      }
+      $0.uuid = .incrementing
+    } operation: {
+      StandupDetailModel(
+        destination: .record(RecordMeetingModel(standup: .mock)),
+        standup: Standup(
+          id: Standup.ID(),
+          attendees: [
+            .init(id: Attendee.ID()),
+            .init(id: Attendee.ID()),
+          ],
+          duration: .seconds(10),
+          title: "Engineering"
+        )
+      )
+    }
+
+    guard case let .some(.record(recordModel)) = model.destination
+    else {
+      XCTFail()
+      return
+    }
+
+    await recordModel.task()
+
+    XCTAssertNil(model.destination)
+    XCTAssertNoDifference(
+      model.standup.meetings,
+      [
+        Meeting(
+          id: Meeting.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+          date: Date(timeIntervalSince1970: 1_234_567_890),
+          transcript: "I completed the project"
+        )
+      ]
+    )
   }
 }

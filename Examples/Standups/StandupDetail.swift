@@ -1,4 +1,5 @@
 import Clocks
+import CustomDump
 import Dependencies
 import SwiftUI
 import SwiftUINavigation
@@ -55,25 +56,22 @@ class StandupDetailModel: ObservableObject {
     self.destination = .alert(.deleteStandup)
   }
 
-  func alertButtonTapped(_ action: AlertAction) {
+  func alertButtonTapped(_ action: AlertAction) async {
     switch action {
     case .confirmDeletion:
       self.dismiss = self.onConfirmDeletion()
 
     case .continueWithoutRecording:
       // TODO: Needs a delay to let alert finishing animating away
-      // TODO: can alertButtonTapped be made async? or have the choice?
-      Task {
-        try await self.clock.sleep(for: .milliseconds(100))
-        self.destination = .record(
-          DependencyValues.withValues(from: self) {
-            RecordMeetingModel(standup: self.standup)
-          }
-        )
-      }
+      try? await self.clock.sleep(for: .milliseconds(100))
+      self.destination = .record(
+        DependencyValues.withValues(from: self) {
+          RecordMeetingModel(standup: self.standup)
+        }
+      )
 
     case .openSettings:
-      Task { await self.openSettings() }
+      await self.openSettings()
     }
   }
 
@@ -122,22 +120,22 @@ class StandupDetailModel: ObservableObject {
   private func bind() {
     switch destination {
     case let .record(recordMeetingModel):
-      recordMeetingModel.onMeetingFinished = { [weak self] transcript in
+      recordMeetingModel.onMeetingFinished = { [weak self] transcript async in
+        print("!!!!")
         guard let self else { return }
 
-        Task {
-          try? await self.clock.sleep(for: .milliseconds(400))
-          withAnimation {
-            _ = self.standup.meetings.insert(
-              Meeting(
-                id: Meeting.ID(self.uuid()),
-                date: self.now,
-                transcript: transcript
-              ),
-              at: 0
-            )
-          }
+        try? await self.clock.sleep(for: .milliseconds(400))
+        withAnimation {
+          _ = self.standup.meetings.insert(
+            Meeting(
+              id: Meeting.ID(self.uuid()),
+              date: self.now,
+              transcript: transcript
+            ),
+            at: 0
+          )
         }
+        customDump(self.standup)
         self.destination = nil
       }
 
@@ -283,7 +281,7 @@ struct StandupDetailView: View {
       unwrapping: self.$model.destination,
       case: /StandupDetailModel.Destination.alert
     ) { action in
-      self.model.alertButtonTapped(action)
+      await self.model.alertButtonTapped(action)
     }
     .sheet(
       unwrapping: self.$model.destination,

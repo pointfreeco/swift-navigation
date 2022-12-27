@@ -51,7 +51,7 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-dependencies.git",
         "state": {
           "branch": "main",
-          "revision": "a6acf5421184051f8da8b109997e037277b19cd2",
+          "revision": "a1d5f68471fe14558c3cdf1771861b57c7d1191e",
           "version": null
         }
       },
@@ -87,8 +87,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "16e6409ee82e1b81390bdffbf217b9c08ab32784",
-          "version": "0.5.0"
+          "revision": "df16fe6ffe4d6e2e06761aa67716b808b2c9109e",
+          "version": "0.7.0"
         }
       }
     ]
