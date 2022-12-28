@@ -21,10 +21,17 @@ extension DependencyValues {
 }
 
 extension DataManager {
-  static func mock(initialData: Data = Data()) -> DataManager {
+  static func mock(initialData: Data? = nil) -> DataManager {
     let data = LockIsolated(initialData)
     return DataManager(
-      load: { _ in data.value },
+      load: { _ in
+        guard let data = data.value
+        else {
+          struct FileNotFound: Error {}
+          throw FileNotFound()
+        }
+        return data
+      },
       save: { newData, _ in data.setValue(newData) }
     )
   }

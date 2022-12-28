@@ -22,7 +22,7 @@ class EditStandupModel: ObservableObject {
     if self.standup.attendees.isEmpty {
       self.standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
-  }
+  } 
 
   func deleteAttendees(atOffsets indices: IndexSet) {
     self.standup.attendees.remove(atOffsets: indices)
@@ -34,7 +34,7 @@ class EditStandupModel: ObservableObject {
   }
 
   func addAttendeeButtonTapped() {
-    let attendee = Attendee(id: Attendee.ID(UUID()))
+    let attendee = Attendee(id: Attendee.ID(self.uuid()))
     self.standup.attendees.append(attendee)
     self.focus = .attendee(attendee.id)
   }

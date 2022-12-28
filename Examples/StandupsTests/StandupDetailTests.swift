@@ -1,3 +1,4 @@
+import CasePaths
 import CustomDump
 import Dependencies
 import XCTest
@@ -5,8 +6,8 @@ import XCTest
 @testable import Standups
 
 @MainActor
-final class StandupDetailTests: XCTestCase {
-  func testSpeechRestricted() {
+final class StandupDetailTests: BaseTestCase {
+  func testSpeechRestricted() throws {
     let model = DependencyValues.withTestValues {
       $0.speechClient.authorizationStatus = { .restricted }
     } operation: {
@@ -15,16 +16,12 @@ final class StandupDetailTests: XCTestCase {
 
     model.startMeetingButtonTapped()
 
-    guard case let .some(.alert(alert)) = model.destination
-    else {
-      XCTFail()
-      return
-    }
+    let alert = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.alert)
 
     XCTAssertNoDifference(alert, .speechRecognitionRestricted)
   }
 
-  func testSpeechDenied() async {
+  func testSpeechDenied() async throws {
     let model = DependencyValues.withTestValues {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
@@ -33,11 +30,7 @@ final class StandupDetailTests: XCTestCase {
 
     model.startMeetingButtonTapped()
 
-    guard case let .some(.alert(alert)) = model.destination
-    else {
-      XCTFail()
-      return
-    }
+    let alert = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.alert)
 
     XCTAssertNoDifference(alert, .speechRecognitionDenied)
   }
@@ -58,7 +51,7 @@ final class StandupDetailTests: XCTestCase {
     XCTAssertEqual(settingsOpened.value, true)
   }
 
-  func testContinueWithoutRecording() async {
+  func testContinueWithoutRecording() async throws {
     let model = DependencyValues.withTestValues {
       $0.continuousClock = ImmediateClock()
     } operation: {
@@ -70,16 +63,12 @@ final class StandupDetailTests: XCTestCase {
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    guard case let .some(.record(recordModel)) = model.destination
-    else {
-      XCTFail()
-      return
-    }
+    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
 
     XCTAssertEqual(recordModel.standup, model.standup)
   }
 
-  func testSpeechAuthorized() async {
+  func testSpeechAuthorized() async throws {
     let model = DependencyValues.withTestValues {
       $0.speechClient.authorizationStatus = { .authorized }
     } operation: {
@@ -88,16 +77,12 @@ final class StandupDetailTests: XCTestCase {
 
     model.startMeetingButtonTapped()
 
-    guard case let .some(.record(recordModel)) = model.destination
-    else {
-      XCTFail()
-      return
-    }
+    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
 
     XCTAssertEqual(recordModel.standup, model.standup)
   }
 
-  func testRecordWithTranscript() async {
+  func testRecordWithTranscript() async throws {
     let model = DependencyValues.withTestValues {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
@@ -123,11 +108,7 @@ final class StandupDetailTests: XCTestCase {
       )
     }
 
-    guard case let .some(.record(recordModel)) = model.destination
-    else {
-      XCTFail()
-      return
-    }
+    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
 
     await recordModel.task()
 
@@ -141,6 +122,42 @@ final class StandupDetailTests: XCTestCase {
           transcript: "I completed the project"
         )
       ]
+    )
+  }
+
+  func testEdit() throws {
+    let model = DependencyValues.withTestValues {
+      $0.uuid = .incrementing
+    } operation: {
+      @Dependency(\.uuid) var uuid
+
+      return StandupDetailModel(
+        standup: Standup(
+          id: Standup.ID(uuid()),
+          title: "Engineering"
+        )
+      )
+    }
+
+    model.editButtonTapped()
+
+    let editModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.edit)
+
+    editModel.standup.title = "Engineering"
+    editModel.standup.theme = .lavender
+    model.doneEditingButtonTapped()
+
+    XCTAssertNil(model.destination)
+    XCTAssertEqual(
+      model.standup,
+      Standup(
+        id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+        attendees: [
+          Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
+        ],
+        theme: .lavender,
+        title: "Engineering"
+      )
     )
   }
 }

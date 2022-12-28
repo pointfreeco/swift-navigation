@@ -23,7 +23,7 @@ class RecordMeetingModel: ObservableObject {
   }
 
   enum AlertAction {
-    case confirmSave
+    case confirmSave 
     case confirmDiscard
   }
 
@@ -82,7 +82,7 @@ class RecordMeetingModel: ObservableObject {
       let authorization = await self.speechClient.authorizationStatus() == .notDetermined
       ? self.speechClient.requestAuthorization()
       : self.speechClient.authorizationStatus()
-      
+
       try await withThrowingTaskGroup(of: Void.self) { group in
         if authorization == .authorized {
           group.addTask {
@@ -121,7 +121,6 @@ class RecordMeetingModel: ObservableObject {
         }
         self.speakerIndex += 1
       }
-
     }
   }
 }

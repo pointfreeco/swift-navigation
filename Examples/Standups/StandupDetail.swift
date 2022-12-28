@@ -121,11 +121,10 @@ class StandupDetailModel: ObservableObject {
     switch destination {
     case let .record(recordMeetingModel):
       recordMeetingModel.onMeetingFinished = { [weak self] transcript async in
-        print("!!!!")
         guard let self else { return }
 
-        try? await self.clock.sleep(for: .milliseconds(400))
-        withAnimation {
+        let didCancel = nil == (try? await self.clock.sleep(for: .milliseconds(400)))
+        withAnimation(didCancel ? nil : .default) {
           _ = self.standup.meetings.insert(
             Meeting(
               id: Meeting.ID(self.uuid()),
@@ -135,57 +134,12 @@ class StandupDetailModel: ObservableObject {
             at: 0
           )
         }
-        customDump(self.standup)
         self.destination = nil
       }
 
     case .edit, .meeting, .alert, .none:
       break
     }
-  }
-}
-
-extension AlertState where Action == StandupDetailModel.AlertAction {
-  static let deleteStandup = Self {
-    TextState("Delete?")
-  } actions: {
-    ButtonState(role: .destructive, action: .confirmDeletion) {
-      TextState("Yes")
-    }
-    ButtonState(role: .cancel) {
-      TextState("Nevermind")
-    }
-  } message: {
-    TextState("Are you sure you want to delete this meeting?")
-  }
-
-  static let speechRecognitionDenied = Self {
-    TextState("Speech recognition denied")
-  } actions: {
-    ButtonState(action: .openSettings) {
-      TextState("Open settings")
-    }
-    ButtonState(action: .continueWithoutRecording) {
-      TextState("Continue without recording")
-    }
-  } message: {
-    TextState("""
-      You previously denied speech recognition and so your meeting meeting will not be
-      recorded. You can enable speech recognition in settings, or you can continue without
-      recording.
-      """)
-  }
-
-  static let speechRecognitionRestricted = Self {
-    TextState("Speech recognition restricted")
-  } actions: {
-    ButtonState(action: .continueWithoutRecording) {
-      TextState("Continue without recording")
-    }
-  } message: {
-    TextState("""
-      Your device does not support speech recognition and so your meeting will not be recorded.
-      """)
   }
 }
 
@@ -310,6 +264,50 @@ struct StandupDetailView: View {
   }
 }
 
+extension AlertState where Action == StandupDetailModel.AlertAction {
+  static let deleteStandup = Self {
+    TextState("Delete?")
+  } actions: {
+    ButtonState(role: .destructive, action: .confirmDeletion) {
+      TextState("Yes")
+    }
+    ButtonState(role: .cancel) {
+      TextState("Nevermind")
+    }
+  } message: {
+    TextState("Are you sure you want to delete this meeting?")
+  }
+
+  static let speechRecognitionDenied = Self {
+    TextState("Speech recognition denied")
+  } actions: {
+    ButtonState(action: .openSettings) {
+      TextState("Open settings")
+    }
+    ButtonState(action: .continueWithoutRecording) {
+      TextState("Continue without recording")
+    }
+  } message: {
+    TextState("""
+      You previously denied speech recognition and so your meeting meeting will not be
+      recorded. You can enable speech recognition in settings, or you can continue without
+      recording.
+      """)
+  }
+
+  static let speechRecognitionRestricted = Self {
+    TextState("Speech recognition restricted")
+  } actions: {
+    ButtonState(action: .continueWithoutRecording) {
+      TextState("Continue without recording")
+    }
+  } message: {
+    TextState("""
+      Your device does not support speech recognition and so your meeting will not be recorded.
+      """)
+  }
+}
+
 struct MeetingView: View {
   let meeting: Meeting
   let standup: Standup
@@ -334,14 +332,15 @@ struct MeetingView: View {
     .padding()
   }
 }
+
 struct StandupDetail_Previews: PreviewProvider {
   static var previews: some View {
+    var standup = Standup.mock
+    let _ = standup.duration = .seconds(60)
+    let _ = standup.attendees = [
+      Attendee(id: Attendee.ID(UUID()), name: "Blob")
+    ]
     NavigationStack {
-      var standup = Standup.mock
-      let _ = standup.duration = .seconds(60)
-      let _ = standup.attendees = [
-        Attendee(id: Attendee.ID(UUID()), name: "Blob")
-      ]
       StandupDetailView(
         model: DependencyValues.withValues {
           $0.speechClient.authorizationStatus = { .restricted }

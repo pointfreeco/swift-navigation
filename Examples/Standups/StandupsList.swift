@@ -20,7 +20,12 @@ final class StandupsListModel: ObservableObject {
 
   enum Destination {
     case add(EditStandupModel)
+    case alert(AlertState<AlertAction>)
     case detail(StandupDetailModel)
+  }
+  enum AlertAction {
+    case confirmLoadMockData
+    case dismissFailedAlert
   }
 
   init(
@@ -34,8 +39,9 @@ final class StandupsListModel: ObservableObject {
         IdentifiedArray.self,
         from: self.dataManager.load(.standups)
       )
+    } catch is DecodingError {
+      self.destination = .alert(.dataFailedToLoad)
     } catch {
-      // TODO: alert
     }
 
     self.$standups
@@ -50,7 +56,6 @@ final class StandupsListModel: ObservableObject {
             .standups
           )
         } catch {
-          // TODO: alert
         }
       }
       .store(in: &self.cancellables)
@@ -110,9 +115,41 @@ final class StandupsListModel: ObservableObject {
           self?.standups[id: standup.id] = standup
         }
 
-    case .add, .none:
+    case .add, .alert, .none:
       break
     }
+  }
+
+  func alertButtonTapped(_ action: AlertAction) {
+    switch action {
+    case .confirmLoadMockData:
+      self.standups = [
+        .mock,
+        .designMock,
+        .engineeringMock
+      ]
+
+    case .dismissFailedAlert:
+      self.standups = []
+    }
+  }
+}
+
+extension AlertState where Action == StandupsListModel.AlertAction {
+  static let dataFailedToLoad = Self {
+    TextState("Data failed to load")
+  } actions: {
+    ButtonState(action: .confirmLoadMockData) {
+      TextState("Yes")
+    }
+    ButtonState(role: .cancel) {
+      TextState("No")
+    }
+  } message: {
+    TextState("""
+      Unfortunately your past data failed to load. Would you like to load some mock data to play
+      around with?
+      """)
   }
 }
 
@@ -165,6 +202,12 @@ struct StandupsList: View {
         case: /StandupsListModel.Destination.detail
       ) { $detailModel in
         StandupDetailView(model: detailModel)
+      }
+      .alert(
+        unwrapping: self.$model.destination,
+        case: /StandupsListModel.Destination.alert
+      ) {
+        self.model.alertButtonTapped($0)
       }
     }
   }

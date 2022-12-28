@@ -1,10 +1,11 @@
+import CasePaths
 import Dependencies
 import XCTest
 import CustomDump
 @testable import Standups
 
 @MainActor
-final class StandupsListTests: XCTestCase {
+final class StandupsListTests: BaseTestCase {
   let mainQueue = DispatchQueue.test
 
   func testAdd() async throws {
@@ -21,11 +22,7 @@ final class StandupsListTests: XCTestCase {
 
     model.addStandupButtonTapped()
 
-    guard case let .some(.add(addModel)) = model.destination
-    else {
-      XCTFail()
-      return
-    }
+    let addModel = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.add)
 
     addModel.standup.title = "Product"
     addModel.standup.attendees[0].name = "Blob"
@@ -67,6 +64,48 @@ final class StandupsListTests: XCTestCase {
     )
   }
 
+  func testAdd_ValidatedAttendees() async throws {
+    let model = DependencyValues.withTestValues {
+      $0.dataManager = .mock()
+      $0.mainQueue = mainQueue.eraseToAnyScheduler()
+      $0.uuid = .incrementing
+    } operation: {
+      StandupsListModel(
+        destination: .add(
+          EditStandupModel(
+            standup: Standup(
+              id: Standup.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
+              attendees: [
+                Attendee(id: Attendee.ID(), name: ""),
+                Attendee(id: Attendee.ID(), name: "    "),
+              ],
+              title: "Design"
+            )
+          )
+        )
+      )
+    }
+
+    model.confirmAddStandupButtonTapped()
+
+    XCTAssertNil(model.destination)
+    XCTAssertNoDifference(
+      model.standups,
+      [
+        Standup(
+          id: Standup.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
+          attendees: [
+            Attendee(
+              id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+              name: ""
+            ),
+          ],
+          title: "Design"
+        )
+      ]
+    )
+  }
+
   func testDelete() async throws {
     let model = try DependencyValues.withTestValues { dependencies in
       dependencies.dataManager = .mock(
@@ -86,19 +125,11 @@ final class StandupsListTests: XCTestCase {
 
     model.standupTapped(standup: model.standups[0])
 
-    guard case let .some(.detail(detailModel)) = model.destination
-    else {
-      XCTFail()
-      return
-    }
+    let detailModel = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.detail)
 
     detailModel.deleteButtonTapped()
 
-    guard case let .some(.alert(alert)) = detailModel.destination
-    else {
-      XCTFail()
-      return
-    }
+    let alert = try XCTUnwrap(detailModel.destination, case: /StandupDetailModel.Destination.alert)
 
     XCTAssertNoDifference(alert, .deleteStandup)
 
@@ -127,19 +158,11 @@ final class StandupsListTests: XCTestCase {
 
     model.standupTapped(standup: model.standups[0])
 
-    guard case let .some(.detail(detailModel)) = model.destination
-    else {
-      XCTFail()
-      return
-    }
+    let detailModel = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.detail)
 
     detailModel.editButtonTapped()
 
-    guard case let .some(.edit(editModel)) = detailModel.destination
-    else {
-      XCTFail()
-      return
-    }
+    let editModel = try XCTUnwrap(detailModel.destination, case: /StandupDetailModel.Destination.edit)
 
     editModel.standup.title = "Design"
     detailModel.doneEditingButtonTapped()
@@ -157,5 +180,37 @@ final class StandupsListTests: XCTestCase {
         )
       ]
     )
+  }
+
+  func testLoadingDataDecodingFailed() async throws {
+    let model = DependencyValues.withTestValues {
+      $0.mainQueue = .immediate
+      $0.dataManager = .mock(
+        initialData: Data("!@#$ BAD DATA %^&*()".utf8)
+      )
+    } operation: {
+      StandupsListModel()
+    }
+
+    let alert = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.alert)
+
+    XCTAssertNoDifference(alert, .dataFailedToLoad)
+
+    model.alertButtonTapped(.confirmLoadMockData)
+
+    XCTAssertNoDifference(model.standups, [.mock, .designMock, .engineeringMock])
+  }
+
+  func testLoadingDataFileNotFound() async throws {
+    let model = DependencyValues.withTestValues {
+      $0.dataManager.load = { _ in
+        struct FileNotFound: Error {}
+        throw FileNotFound()
+      }
+    } operation: {
+      StandupsListModel()
+    }
+
+    XCTAssertNil(model.destination)
   }
 }

@@ -22,6 +22,9 @@
 		CA473839272F0D860012CAC3 /* 01-Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473833272F0D860012CAC3 /* 01-Alerts.swift */; };
 		CA47383B272F0DD60012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA47383A272F0DD60012CAC3 /* SwiftUINavigation */; };
 		CA47383E272F0F9B0012CAC3 /* 10-CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */; };
+		CA53F7F1295BBDB700DE68FE /* EditStandupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA53F7F0295BBDB700DE68FE /* EditStandupTests.swift */; };
+		CA53F7F3295BBDEE00DE68FE /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA53F7F2295BBDEE00DE68FE /* BaseTestCase.swift */; };
+		CA53F7F5295BC50400DE68FE /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA53F7F4295BC50400DE68FE /* TestHelpers.swift */; };
 		CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */; };
 		CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */; };
 		CAAA74E02956956B009A25CA /* OpenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAA74DF2956956B009A25CA /* OpenSettings.swift */; };
@@ -81,6 +84,9 @@
 		CA473833272F0D860012CAC3 /* 01-Alerts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "01-Alerts.swift"; sourceTree = "<group>"; };
 		CA47383C272F0F0D0012CAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "10-CustomComponents.swift"; sourceTree = "<group>"; };
+		CA53F7F0295BBDB700DE68FE /* EditStandupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditStandupTests.swift; sourceTree = "<group>"; };
+		CA53F7F2295BBDEE00DE68FE /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
+		CA53F7F4295BC50400DE68FE /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-NavigationLinkList.swift"; sourceTree = "<group>"; };
 		CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "13-IfCaseLet.swift"; sourceTree = "<group>"; };
 		CAAA74DF2956956B009A25CA /* OpenSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSettings.swift; sourceTree = "<group>"; };
@@ -245,10 +251,13 @@
 		DC5E07862947CCD800293F45 /* StandupsTests */ = {
 			isa = PBXGroup;
 			children = (
-				DC5E07872947CCD800293F45 /* StandupsTests.swift */,
-				CAAA74E329569F6C009A25CA /* StandupsListTests.swift */,
+				CA53F7F2295BBDEE00DE68FE /* BaseTestCase.swift */,
+				CA53F7F0295BBDB700DE68FE /* EditStandupTests.swift */,
 				CAAA74E52956A60A009A25CA /* RecordMeetingTests.swift */,
 				CAAA74E72956A658009A25CA /* StandupDetailTests.swift */,
+				CA53F7F4295BC50400DE68FE /* TestHelpers.swift */,
+				CAAA74E329569F6C009A25CA /* StandupsListTests.swift */,
+				DC5E07872947CCD800293F45 /* StandupsTests.swift */,
 			);
 			path = StandupsTests;
 			sourceTree = "<group>";
@@ -483,7 +492,10 @@
 			files = (
 				CAAA74E82956A658009A25CA /* StandupDetailTests.swift in Sources */,
 				CAAA74E62956A60A009A25CA /* RecordMeetingTests.swift in Sources */,
+				CA53F7F5295BC50400DE68FE /* TestHelpers.swift in Sources */,
 				DC5E07882947CCD800293F45 /* StandupsTests.swift in Sources */,
+				CA53F7F1295BBDB700DE68FE /* EditStandupTests.swift in Sources */,
+				CA53F7F3295BBDEE00DE68FE /* BaseTestCase.swift in Sources */,
 				CAAA74E429569F6C009A25CA /* StandupsListTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
