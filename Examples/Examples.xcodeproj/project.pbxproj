@@ -257,19 +257,27 @@
 			path = Standups;
 			sourceTree = "<group>";
 		};
-		DC5E07752947CCD700293F45 /* Standups */ = {
+		CA53F809295CE9AD00DE68FE /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
 				DCE73E0B2947D163004EE92E /* DataManager.swift */,
+				CAAA74DF2956956B009A25CA /* OpenSettings.swift */,
+				DC5E07A82947CFB700293F45 /* SpeechClient.swift */,
+			);
+			path = Dependencies;
+			sourceTree = "<group>";
+		};
+		DC5E07752947CCD700293F45 /* Standups */ = {
+			isa = PBXGroup;
+			children = (
 				DC5E07A42947CFA000293F45 /* EditStandup.swift */,
 				DC5E07AA2947CFCA00293F45 /* Models.swift */,
 				DC5E07AC2947CFD300293F45 /* RecordMeeting.swift */,
-				DC5E07A82947CFB700293F45 /* SpeechClient.swift */,
 				DC5E07782947CCD700293F45 /* StandupDetail.swift */,
-				CAAA74DF2956956B009A25CA /* OpenSettings.swift */,
 				DC5E07762947CCD700293F45 /* StandupsApp.swift */,
 				DC5E07A62947CFA600293F45 /* StandupsList.swift */,
 				DC5E077A2947CCD800293F45 /* Assets.xcassets */,
+				CA53F809295CE9AD00DE68FE /* Dependencies */,
 				DC5E077C2947CCD800293F45 /* Preview Content */,
 			);
 			path = Standups;

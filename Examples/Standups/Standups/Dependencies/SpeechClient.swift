@@ -75,6 +75,34 @@ extension SpeechClient: DependencyKey {
     requestAuthorization: unimplemented("SpeechClient.requestAuthorization", placeholder: .denied),
     startTask: unimplemented("SpeechClient.startTask")
   )
+
+  static func fail(after duration: Duration) -> Self {
+    Self(
+      authorizationStatus: { .authorized },
+      requestAuthorization: { .authorized },
+      startTask: { request in
+        AsyncThrowingStream { continuation in
+          Task { @MainActor in
+            let start = ContinuousClock.now
+            do {
+              for try await result in await Self.previewValue.startTask(request) {
+                if ContinuousClock.now - start > duration {
+                  struct SpeechRecognitionFailed: Error {}
+                  continuation.finish(throwing: SpeechRecognitionFailed())
+                  break
+                } else {
+                  continuation.yield(result)
+                }
+              }
+              continuation.finish()
+            } catch {
+              continuation.finish(throwing: error)
+            }
+          }
+        }
+      }
+    )
+  }
 }
 
 extension DependencyValues {

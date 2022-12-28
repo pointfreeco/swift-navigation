@@ -7,12 +7,11 @@ import XCTestDynamicOverlay
 
 @MainActor
 class RecordMeetingModel: ObservableObject {
-  let standup: Standup
-
   @Published var destination: Destination?
   @Published var dismiss = false
   @Published var secondsElapsed = 0
   @Published var speakerIndex = 0
+  let standup: Standup
   private var transcript = ""
 
   @Dependency(\.continuousClock) var clock
@@ -23,11 +22,13 @@ class RecordMeetingModel: ObservableObject {
   }
 
   enum AlertAction {
-    case confirmSave 
+    case confirmSave
     case confirmDiscard
+    case dismissErrorAlert
   }
 
-  var onMeetingFinished: (String) async -> Void = unimplemented("RecordMeetingModel.onMeetingFinished")
+  var onMeetingFinished: (String) async -> Void = unimplemented(
+    "RecordMeetingModel.onMeetingFinished")
 
   var durationRemaining: Duration {
     self.standup.duration - .seconds(self.secondsElapsed)
@@ -69,24 +70,27 @@ class RecordMeetingModel: ObservableObject {
   func alertButtonTapped(_ action: AlertAction) async {
     switch action {
     case .confirmSave:
-      self.dismiss = true
-      await self.onMeetingFinished(self.transcript)
+      await self.finishMeeting()
 
     case .confirmDiscard:
       self.dismiss = true
+
+    case .dismissErrorAlert:
+      await self.finishMeeting()
     }
   }
 
   func task() async {
     do {
-      let authorization = await self.speechClient.authorizationStatus() == .notDetermined
-      ? self.speechClient.requestAuthorization()
-      : self.speechClient.authorizationStatus()
+      let authorization =
+        await self.speechClient.authorizationStatus() == .notDetermined
+        ? self.speechClient.requestAuthorization()
+        : self.speechClient.authorizationStatus()
 
       try await withThrowingTaskGroup(of: Void.self) { group in
         if authorization == .authorized {
           group.addTask {
-            try await self.startSpeechRecognition()
+            await self.startSpeechRecognition()
           }
         }
         group.addTask {
@@ -95,15 +99,24 @@ class RecordMeetingModel: ObservableObject {
         try await group.waitForAll()
       }
     } catch {
-      self.destination = .alert(AlertState(title: TextState("Something went wrong.")))
+
     }
   }
 
-  private func startSpeechRecognition() async throws {
-    for try await result in await self.speechClient.startTask(
-      SFSpeechAudioBufferRecognitionRequest()
-    ) {
-      self.transcript = result.bestTranscription.formattedString
+  private func finishMeeting() async {
+    self.dismiss = true
+    await self.onMeetingFinished(self.transcript)
+  }
+
+  private func startSpeechRecognition() async {
+    do {
+      for try await result in await self.speechClient.startTask(
+        SFSpeechAudioBufferRecognitionRequest())
+      {
+        self.transcript = result.bestTranscription.formattedString
+      }
+    } catch {
+      self.destination = .alert(.speechRecognizerFailed)
     }
   }
 
@@ -115,8 +128,7 @@ class RecordMeetingModel: ObservableObject {
         of: Int(self.standup.durationPerAttendee.components.seconds)
       ) {
         if self.speakerIndex == self.standup.attendees.count - 1 {
-          self.dismiss = true
-          await self.onMeetingFinished(self.transcript)
+          await self.finishMeeting()
           break
         }
         self.speakerIndex += 1
@@ -144,6 +156,22 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
     } message: {
       TextState("You are ending the meeting early. What would you like to do?")
     }
+  }
+
+  static let speechRecognizerFailed = Self {
+    TextState("Speech recognition failure")
+  } actions: {
+    ButtonState {
+      TextState("Continue meeting")
+    }
+    ButtonState(role: .cancel) {
+      TextState("Discard meeting")
+    }
+  } message: {
+    TextState("""
+      The speech recognizer has failed for some reason and so your meeting will no longer be \
+      recorded. What do you want to do?
+      """)
   }
 }
 

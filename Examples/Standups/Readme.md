@@ -62,6 +62,8 @@ because we controlled all dependencies, we can write very comprehensive and nuan
 example, we can write a unit test that proves that when a standup meeting's timer runs out the 
 screen pops off the stack and a new transcript is added to the standup. Such a test would be very 
 difficult, if not impossible, without controlling dependencies or as a UI test.
+<!--1. We added a bunch of user experience improvements, such as confirmation alerts when ending-->
+<!--a meeting, pausing -->
 
 [modern-swiftui-collection]: https://www.pointfree.co/collections/swiftui/modern-swiftui
 [scrumdinger]: https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger

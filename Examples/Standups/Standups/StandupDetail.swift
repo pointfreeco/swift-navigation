@@ -282,16 +282,19 @@ extension AlertState where Action == StandupDetailModel.AlertAction {
   static let speechRecognitionDenied = Self {
     TextState("Speech recognition denied")
   } actions: {
-    ButtonState(action: .openSettings) {
-      TextState("Open settings")
-    }
     ButtonState(action: .continueWithoutRecording) {
       TextState("Continue without recording")
     }
+    ButtonState(action: .openSettings) {
+      TextState("Open settings")
+    }
+    ButtonState(role: .cancel) {
+      TextState("Cancel")
+    }
   } message: {
     TextState("""
-      You previously denied speech recognition and so your meeting meeting will not be
-      recorded. You can enable speech recognition in settings, or you can continue without
+      You previously denied speech recognition and so your meeting meeting will not be \
+      recorded. You can enable speech recognition in settings, or you can continue without \
       recording.
       """)
   }
@@ -301,6 +304,9 @@ extension AlertState where Action == StandupDetailModel.AlertAction {
   } actions: {
     ButtonState(action: .continueWithoutRecording) {
       TextState("Continue without recording")
+    }
+    ButtonState(role: .cancel) {
+      TextState("Cancel")
     }
   } message: {
     TextState("""
@@ -336,21 +342,56 @@ struct MeetingView: View {
 
 struct StandupDetail_Previews: PreviewProvider {
   static var previews: some View {
-    var standup = Standup.mock
-    let _ = standup.duration = .seconds(60)
-    let _ = standup.attendees = [
-      Attendee(id: Attendee.ID(UUID()), name: "Blob")
-    ]
+    // This preview demonstrates the "happy path" of the application where everything works
+    // perfectly. You can start a meeting, wait a few moments, end the meeting, and you will see
+    // that a new transcription was added to the past meetings. The transcript will consist of
+    // some "lorem ipsum" text because a mock speech recongizer is used for Xcode previews.
+    NavigationStack {
+      StandupDetailView(model: StandupDetailModel(standup: .mock))
+    }
+    .previewDisplayName("Happy path")
+
+    // This preview demonstrates an "unhappy path" of the application where the speech recognizer
+    // mysteriously fails after 2 seconds of recording. This gives us an opportunity to see how
+    // the application deals with this rare occurence. To see the behavior, run the preview,
+    // tap the "Start Meeting" button and wait 2 seconds.
+    NavigationStack {
+      StandupDetailView(
+        model: DependencyValues.withValues {
+          $0.speechClient = .fail(after: .seconds(2))
+        } operation: {
+          StandupDetailModel(standup: .mock)
+        }
+      )
+    }
+    .previewDisplayName("Speech recongition failed")
+
+    // This preview demonstrates how the feature behaves when access to speech recognition has been
+    // previously denied by the user. Tap the "Start Meeting" button to see how we handle that
+    // situation.
+    NavigationStack {
+      StandupDetailView(
+        model: DependencyValues.withValues {
+          $0.speechClient.authorizationStatus = { .denied }
+        } operation: {
+          StandupDetailModel(standup: .mock)
+        }
+      )
+    }
+    .previewDisplayName("Denied")
+
+    // This preview demonstrates how the feature behaves when the device restricts access to
+    // speech recognition APIs. Tap the "Start Meeting" button to see how we handle that
+    // situation.
     NavigationStack {
       StandupDetailView(
         model: DependencyValues.withValues {
           $0.speechClient.authorizationStatus = { .restricted }
         } operation: {
-          StandupDetailModel(
-            standup: standup
-          )
+          StandupDetailModel(standup: .mock)
         }
       )
     }
+    .previewDisplayName("Restricted")
   }
 }
