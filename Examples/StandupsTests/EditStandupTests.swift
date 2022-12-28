@@ -4,7 +4,7 @@ import CustomDump
 @testable import Standups
 
 @MainActor
-final class EditStandupTests: BaseTestCase {
+final class EditStandupTests: DependencyTestCase {
   func testAddAttendee() {
     let model = DependencyValues.withTestValues {
       $0.uuid = .incrementing

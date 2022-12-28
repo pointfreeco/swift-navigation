@@ -5,7 +5,7 @@ import CustomDump
 @testable import Standups
 
 @MainActor
-final class RecordMeetingTests: BaseTestCase {
+final class RecordMeetingTests: DependencyTestCase {
   func testTimer() async throws {
     let clock = TestClock()
     

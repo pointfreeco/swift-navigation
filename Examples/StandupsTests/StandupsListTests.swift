@@ -7,7 +7,7 @@ import XCTest
 @testable import Standups
 
 @MainActor
-final class StandupsListTests: BaseTestCase {
+final class StandupsListTests: DependencyTestCase {
   let mainQueue = DispatchQueue.test
 
   func testAdd() async throws {

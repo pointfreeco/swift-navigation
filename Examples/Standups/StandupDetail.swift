@@ -62,7 +62,8 @@ class StandupDetailModel: ObservableObject {
       self.dismiss = self.onConfirmDeletion()
 
     case .continueWithoutRecording:
-      // TODO: Needs a delay to let alert finishing animating away
+      // TODO: NB: SwiftUI does not support performing navigation immediately after clearing out
+      //     alert state, so we have to wait a small amount of time for the alert to dismiss.
       try? await self.clock.sleep(for: .milliseconds(100))
       self.destination = .record(
         DependencyValues.withValues(from: self) {

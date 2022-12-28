@@ -16,7 +16,7 @@ public func XCTUnwrap<Root, Case>(
 private struct CaseDoesNotMatch: Error {}
 
 // TODO: move this to swift-dependencies?
-class BaseTestCase: XCTestCase {
+class DependencyTestCase: XCTestCase {
   override func invokeTest() {
     DependencyValues.withTestValues {
       super.invokeTest()

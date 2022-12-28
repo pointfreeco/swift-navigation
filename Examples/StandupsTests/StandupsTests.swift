@@ -1,5 +1,5 @@
 import XCTest
 @testable import Standups
 
-final class StandupsTests: BaseTestCase {
+final class StandupsTests: DependencyTestCase {
 }
