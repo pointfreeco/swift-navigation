@@ -1,7 +1,9 @@
 import CasePaths
-import Dependencies
-import XCTest
 import CustomDump
+import Dependencies
+import IdentifiedCollections
+import XCTest
+
 @testable import Standups
 
 @MainActor
@@ -24,8 +26,10 @@ final class StandupsListTests: BaseTestCase {
 
     let addModel = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.add)
 
-    addModel.standup.title = "Product"
+    addModel.standup.title = "Engineering"
     addModel.standup.attendees[0].name = "Blob"
+    addModel.addAttendeeButtonTapped()
+    addModel.standup.attendees[1].name = "Blob Jr."
     model.confirmAddStandupButtonTapped()
 
     XCTAssertNil(model.destination)
@@ -39,28 +43,21 @@ final class StandupsListTests: BaseTestCase {
             Attendee(
               id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!,
               name: "Blob"
-            )
+            ),
+            Attendee(
+              id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000002")!,
+              name: "Blob Jr."
+            ),
           ],
-          title: "Product"
+          title: "Engineering"
         )
       ]
     )
 
     await self.mainQueue.run()
     XCTAssertEqual(
-      try JSONDecoder().decode([Standup].self, from: XCTUnwrap(savedData.value)),
-      [
-        Standup(
-          id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-          attendees: [
-            Attendee(
-              id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!,
-              name: "Blob"
-            )
-          ],
-          title: "Product"
-        )
-      ]
+      try JSONDecoder().decode(IdentifiedArrayOf<Standup>.self, from: XCTUnwrap(savedData.value)),
+      model.standups
     )
   }
 
@@ -98,7 +95,7 @@ final class StandupsListTests: BaseTestCase {
             Attendee(
               id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
               name: ""
-            ),
+            )
           ],
           title: "Design"
         )
@@ -162,7 +159,8 @@ final class StandupsListTests: BaseTestCase {
 
     detailModel.editButtonTapped()
 
-    let editModel = try XCTUnwrap(detailModel.destination, case: /StandupDetailModel.Destination.edit)
+    let editModel = try XCTUnwrap(
+      detailModel.destination, case: /StandupDetailModel.Destination.edit)
 
     editModel.standup.title = "Design"
     detailModel.doneEditingButtonTapped()
