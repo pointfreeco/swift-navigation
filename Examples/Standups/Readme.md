@@ -2,7 +2,18 @@
 
 This project demonstrates how to build a complex, real world application that deals with many
 forms of navigation (e.g. sheets, drill-downs, alerts), many side effects (timers, speech
-recognzer, persistence), and do so in a way that is testable and modular.
+recognzer, persistence), and do so in a way that is testable and modular.  
+
+This application was built over the course of [many episodes][modern-swiftui-collection] on
+Point-Free, a video series exploring functional programming and the Swift language, hosted by 
+[Brandon Williams](https://twitter.com/mbrandonw) and [Stephen
+Celis](https://twitter.com/stephencelis).
+
+<a href="https://www.pointfree.co/collections/swiftui/modern-swiftui">
+  <img alt="video poster image" src="https://d3rccdn33rt8ze.cloudfront.net/episodes/0209.jpeg" width="600">
+</a>
+
+## Overview
 
 The inspiration for this application comes Apple's [Scrumdinger][scrumdinger] tutorial:
 
@@ -22,6 +33,8 @@ However, the simplicity of Apple's Scrumdinger codebase is not a defect. In fact
 Apple's sample code is viewed by hundreds of thousands of developers across the world, and so it's 
 goal is to be as approachable as possible in order to teach the basics of SwiftUI. But, that doesn't
 mean there isn't room for improvement.
+
+## Modern SwiftUI
 
 Our Standups application is a rebuild of Apple's Scrumdinger application, but with a focus on
 modern, best practices for SwiftUI development. We faithfully recreate the Scrumdinger, but with
