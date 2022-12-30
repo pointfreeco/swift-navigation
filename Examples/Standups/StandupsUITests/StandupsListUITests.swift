@@ -30,10 +30,11 @@ final class StandupsListUITests: XCTestCase {
   // available on next launch.
   func testAdd() throws {
     app.launch()
-    app.navigationBars["Daily Standups"]/*@START_MENU_TOKEN@*/.buttons["Add"]/*[[".otherElements[\"Add\"].buttons[\"Add\"]",".buttons[\"Add\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+    app.navigationBars["Daily Standups"].buttons["Add"].tap()
     let collectionViews = app.collectionViews
     let nameTextField = collectionViews.textFields["Name"]
 
+    // NB: Fails if keyboard is not visible.
     app.keys["E"].tap()
     app.keys["n"].tap()
     app.keys["g"].tap()
@@ -57,12 +58,31 @@ final class StandupsListUITests: XCTestCase {
     app.keys["l"].tap()
     app.keys["o"].tap()
     app.keys["b"].tap()
-    // app.keys[" "].tap() // TODO: How to type a space?
-    app.keys["j"].tap()
+     app.keys["space"].tap()
+    app.keys["j"].tap() // TODO: How to type a capital "J"?
     app.keys["r"].tap()
+    // TODO: How to type a "."?
 
     app.navigationBars["New standup"].buttons["Add"].tap()
 
     XCTAssertEqual(collectionViews.staticTexts["engineering"].exists, true)
   }
+
+//  func testAdd_Faster() throws {
+//    app.launch()
+//    app.navigationBars["Daily Standups"]/*@START_MENU_TOKEN@*/.buttons["Add"]/*[[".otherElements[\"Add\"].buttons[\"Add\"]",".buttons[\"Add\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+//    let collectionViews = app.collectionViews
+//    let titleTextField = collectionViews.textFields["Title"]
+//    let nameTextField = collectionViews.textFields["Name"]
+//
+//    titleTextField.typeText("Engineering")
+//    nameTextField.tap()
+//    nameTextField.typeText("Blob")
+//    collectionViews.buttons["New attendee"].tap()
+//    collectionViews.textFields.element(boundBy: 0).typeText("Blob Jr.")
+//
+//    app.navigationBars["New standup"].buttons["Add"].tap()
+//
+//    XCTAssertEqual(collectionViews.staticTexts["Engineering"].exists, true)
+//  }
 }

@@ -53,8 +53,6 @@ final class StandupDetailTests: DependencyTestCase {
 
   func testContinueWithoutRecording() async throws {
     let model = DependencyValues.withTestValues {
-      $0.continuousClock = ImmediateClock()
-    } operation: {
       StandupDetailModel(
         destination: .alert(.speechRecognitionDenied),
         standup: .mock
