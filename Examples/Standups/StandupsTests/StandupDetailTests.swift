@@ -1,3 +1,4 @@
+import AsyncAlgorithms
 import CasePaths
 import CustomDump
 import Dependencies
@@ -86,9 +87,12 @@ final class StandupDetailTests: DependencyTestCase {
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
-        AsyncThrowingStream([
-          .init(bestTranscription: .init(formattedString: "I completed the project"), isFinal: true)
-        ])
+        [
+          SpeechRecognitionResult(
+            bestTranscription: Transcription(formattedString: "I completed the project"),
+            isFinal: true
+          )
+        ].async.eraseToThrowingStream()
       }
       $0.uuid = .incrementing
     } operation: {

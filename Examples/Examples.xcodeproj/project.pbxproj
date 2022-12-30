@@ -25,6 +25,7 @@
 		CA53F7F1295BBDB700DE68FE /* EditStandupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA53F7F0295BBDB700DE68FE /* EditStandupTests.swift */; };
 		CA53F7F5295BC50400DE68FE /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA53F7F4295BC50400DE68FE /* TestHelpers.swift */; };
 		CA53F806295BEE4F00DE68FE /* StandupsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA53F805295BEE4F00DE68FE /* StandupsListUITests.swift */; };
+		CA53F80C295F8BE600DE68FE /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = CA53F80B295F8BE600DE68FE /* AsyncAlgorithms */; };
 		CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */; };
 		CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */; };
 		CAAA74E02956956B009A25CA /* OpenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAA74DF2956956B009A25CA /* OpenSettings.swift */; };
@@ -164,6 +165,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA53F80C295F8BE600DE68FE /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +405,9 @@
 				DC5E07852947CCD800293F45 /* PBXTargetDependency */,
 			);
 			name = StandupsTests;
+			packageProductDependencies = (
+				CA53F80B295F8BE600DE68FE /* AsyncAlgorithms */,
+			);
 			productName = StandupsTests;
 			productReference = DC5E07832947CCD800293F45 /* StandupsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -451,6 +456,7 @@
 				DC5E07A12947CEA300293F45 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				DCE73E032947D063004EE92E /* XCRemoteSwiftPackageReference "swift-tagged" */,
 				DCE73E062947D082004EE92E /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
+				CA53F80A295F8BE600DE68FE /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 			);
 			productRefGroup = CA473795272F08EF0012CAC3 /* Products */;
 			projectDirPath = "";
@@ -1035,6 +1041,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CA53F80A295F8BE600DE68FE /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.3;
+			};
+		};
 		DC5E07A12947CEA300293F45 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies.git";
@@ -1069,6 +1083,11 @@
 		CA47383A272F0DD60012CAC3 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftUINavigation;
+		};
+		CA53F80B295F8BE600DE68FE /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA53F80A295F8BE600DE68FE /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
 		};
 		DC5E07A22947CEA300293F45 /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
