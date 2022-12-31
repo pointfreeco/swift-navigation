@@ -10,7 +10,7 @@ final class RecordMeetingTests: XCTestCase {
   func testTimer() async throws {
     let clock = TestClock()
     
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.continuousClock = clock
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
@@ -65,7 +65,7 @@ final class RecordMeetingTests: XCTestCase {
   }
 
   func testRecordTranscript() async throws {
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.continuousClock = ImmediateClock()
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
@@ -101,7 +101,7 @@ final class RecordMeetingTests: XCTestCase {
   func testEndMeetingSave() async throws {
     let clock = TestClock()
 
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.continuousClock = clock
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
@@ -141,7 +141,7 @@ final class RecordMeetingTests: XCTestCase {
   func testEndMeetingDiscard() async throws {
     let clock = TestClock()
 
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.continuousClock = clock
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
@@ -170,7 +170,7 @@ final class RecordMeetingTests: XCTestCase {
 
   func testNextSpeaker() async throws {
     let clock = TestClock()
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.continuousClock = clock
       $0.speechClient.authorizationStatus = { .denied }
 

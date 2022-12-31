@@ -31,6 +31,7 @@ final class StandupsListModel: ObservableObject {
   init(
     destination: Destination? = nil
   ) {
+    defer { self.bind() }
     self.destination = destination
     self.standups = []
 
@@ -48,24 +49,14 @@ final class StandupsListModel: ObservableObject {
       .dropFirst()
       .debounce(for: .seconds(1), scheduler: self.mainQueue)
       .sink { [weak self] standups in
-        guard let self else { return }
-
-        do {
-          try self.dataManager.save(
-            JSONEncoder().encode(standups),
-            .standups
-          )
-        } catch {
-        }
+        try? self?.dataManager.save(JSONEncoder().encode(standups), .standups)
       }
       .store(in: &self.cancellables)
-
-    self.bind()
   }
 
   func addStandupButtonTapped() {
     self.destination = .add(
-      DependencyValues.withValues(from: self) {
+      withDependencyValues(from: self) {
         EditStandupModel(standup: Standup(id: Standup.ID(self.uuid())))
       }
     )
@@ -93,7 +84,7 @@ final class StandupsListModel: ObservableObject {
 
   func standupTapped(standup: Standup) {
     self.destination = .detail(
-      DependencyValues.withValues(from: self) {
+      withDependencyValues(from: self) {
         StandupDetailModel(standup: standup)
       }
     )
@@ -123,11 +114,13 @@ final class StandupsListModel: ObservableObject {
   func alertButtonTapped(_ action: AlertAction) {
     switch action {
     case .confirmLoadMockData:
-      self.standups = [
-        .mock,
-        .designMock,
-        .engineeringMock
-      ]
+      withAnimation {
+        self.standups = [
+          .mock,
+          .designMock,
+          .engineeringMock
+        ]
+      }
 
     case .dismissFailedAlert:
       self.standups = []
@@ -259,7 +252,7 @@ struct StandupsList_Previews: PreviewProvider {
     // StandupsList model. But, we can override the DataManager dependency so that when its load
     // endpoint is called it will load whatever data we want.
     StandupsList(
-      model: DependencyValues.withValues {
+      model: withDependencyValues {
         $0.dataManager = .mock(
           initialData: try! JSONEncoder().encode([
             Standup.mock,
@@ -277,7 +270,7 @@ struct StandupsList_Previews: PreviewProvider {
     // an alert should be shown. This can be done by overridding the DataManager dependency so that
     // its initial data does not properly decode into a collection of standups.
     StandupsList(
-      model: DependencyValues.withValues {
+      model: withDependencyValues {
         $0.dataManager = .mock(
           initialData: Data("!@#$% bad data ^&*()".utf8)
         )
@@ -292,7 +285,7 @@ struct StandupsList_Previews: PreviewProvider {
     // down to the detail screen of a standup, and then further drilled down to the record screen
     // for a new meeting.
     StandupsList(
-      model: DependencyValues.withValues {
+      model: withDependencyValues {
         $0.dataManager = .mock(
           initialData: try! JSONEncoder().encode([
             Standup.mock,
@@ -313,13 +306,13 @@ struct StandupsList_Previews: PreviewProvider {
         )
       }
     )
-    .previewDisplayName("Deep link into record flow")
+    .previewDisplayName("Deep link record flow")
 
     // The preview demonstrates how you can start the application navigated to a very specific
     // screen just by constructing a piece of state. In particular we will start the app with the
     // "Add standup" screen opened and with the last attendee text field focused.
     StandupsList(
-      model: DependencyValues.withValues {
+      model: withDependencyValues {
         $0.dataManager = .mock()
       } operation: {
         var standup = Standup.mock
@@ -335,6 +328,6 @@ struct StandupsList_Previews: PreviewProvider {
         )
       }
     )
-    .previewDisplayName("Deep link into add flow")
+    .previewDisplayName("Deep link add flow")
   }
 }

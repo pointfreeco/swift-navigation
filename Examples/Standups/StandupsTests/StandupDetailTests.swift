@@ -9,7 +9,7 @@ import XCTest
 @MainActor
 final class StandupDetailTests: XCTestCase {
   func testSpeechRestricted() throws {
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.speechClient.authorizationStatus = { .restricted }
     } operation: {
       StandupDetailModel(standup: .mock)
@@ -23,7 +23,7 @@ final class StandupDetailTests: XCTestCase {
   }
 
   func testSpeechDenied() async throws {
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
       StandupDetailModel(standup: .mock)
@@ -38,7 +38,7 @@ final class StandupDetailTests: XCTestCase {
 
   func testOpenSettings() async {
     let settingsOpened = LockIsolated(false)
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.openSettings = { settingsOpened.setValue(true) }
     } operation: {
       StandupDetailModel(
@@ -66,7 +66,7 @@ final class StandupDetailTests: XCTestCase {
   }
 
   func testSpeechAuthorized() async throws {
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.speechClient.authorizationStatus = { .authorized }
     } operation: {
       StandupDetailModel(standup: .mock)
@@ -80,7 +80,7 @@ final class StandupDetailTests: XCTestCase {
   }
 
   func testRecordWithTranscript() async throws {
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
       $0.speechClient.authorizationStatus = { .authorized }
@@ -126,7 +126,7 @@ final class StandupDetailTests: XCTestCase {
   }
 
   func testEdit() throws {
-    let model = DependencyValues.withValues {
+    let model = withDependencyValues {
       $0.uuid = .incrementing
     } operation: {
       @Dependency(\.uuid) var uuid

@@ -6,7 +6,7 @@ import XCTest
 //
 // The key to doing this is to set a launch environment variable on your XCUIApplication instance,
 // and then check for that value in the entry point of the application. If the environment value
-// exists, you can use DependencyValues.withValues to override dependencies to be used in the UI
+// exists, you can use 'withDependencyValues' to override dependencies to be used in the UI
 // test.
 final class StandupsListUITests: XCTestCase {
   var app: XCUIApplication!
@@ -68,6 +68,7 @@ final class StandupsListUITests: XCTestCase {
     XCTAssertEqual(collectionViews.staticTexts["engineering"].exists, true)
   }
 
+  // TODO: can we figure this out?
 //  func testAdd_Faster() throws {
 //    app.launch()
 //    app.navigationBars["Daily Standups"]/*@START_MENU_TOKEN@*/.buttons["Add"]/*[[".otherElements[\"Add\"].buttons[\"Add\"]",".buttons[\"Add\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()

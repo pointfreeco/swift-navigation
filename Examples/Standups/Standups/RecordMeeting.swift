@@ -122,6 +122,9 @@ class RecordMeetingModel: ObservableObject {
 
   private func startTimer() async throws {
     for await _ in self.clock.timer(interval: .seconds(1)) where !self.isAlertOpen {
+      guard !self.dismiss
+      else { break }
+
       self.secondsElapsed += 1
 
       if self.secondsElapsed.isMultiple(
@@ -161,10 +164,10 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
   static let speechRecognizerFailed = Self {
     TextState("Speech recognition failure")
   } actions: {
-    ButtonState {
+    ButtonState (role: .cancel) {
       TextState("Continue meeting")
     }
-    ButtonState(role: .cancel) {
+    ButtonState(role: .destructive, action: .confirmDiscard) {
       TextState("Discard meeting")
     }
   } message: {

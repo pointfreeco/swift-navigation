@@ -63,7 +63,7 @@ class StandupDetailModel: ObservableObject {
 
     case .continueWithoutRecording:
       self.destination = .record(
-        DependencyValues.withValues(from: self) {
+        withDependencyValues(from: self) {
           RecordMeetingModel(standup: self.standup)
         }
       )
@@ -75,7 +75,7 @@ class StandupDetailModel: ObservableObject {
 
   func editButtonTapped() {
     self.destination = .edit(
-      DependencyValues.withValues(from: self) {
+      withDependencyValues(from: self) {
         EditStandupModel(standup: self.standup)
       }
     )
@@ -93,13 +93,11 @@ class StandupDetailModel: ObservableObject {
     self.destination = nil
   }
 
-  private let speechAlertSeenKey = "speechAlertSeenKey"
-
   func startMeetingButtonTapped() {
     switch self.authorizationStatus() {
     case .notDetermined, .authorized:
       self.destination = .record(
-        DependencyValues.withValues(from: self) {
+        withDependencyValues(from: self) {
           RecordMeetingModel(standup: self.standup)
         }
       )
@@ -123,7 +121,7 @@ class StandupDetailModel: ObservableObject {
 
         let didCancel = nil == (try? await self.clock.sleep(for: .milliseconds(400)))
         withAnimation(didCancel ? nil : .default) {
-          _ = self.standup.meetings.insert(
+          self.standup.meetings.insert(
             Meeting(
               id: Meeting.ID(self.uuid()),
               date: self.now,
@@ -131,8 +129,8 @@ class StandupDetailModel: ObservableObject {
             ),
             at: 0
           )
+          self.destination = nil
         }
-        self.destination = nil
       }
 
     case .edit, .meeting, .alert, .none:
@@ -354,7 +352,7 @@ struct StandupDetail_Previews: PreviewProvider {
     // tap the "Start Meeting" button and wait 2 seconds.
     NavigationStack {
       StandupDetailView(
-        model: DependencyValues.withValues {
+        model: withDependencyValues {
           $0.speechClient = .fail(after: .seconds(2))
         } operation: {
           StandupDetailModel(standup: .mock)
@@ -368,27 +366,27 @@ struct StandupDetail_Previews: PreviewProvider {
     // situation.
     NavigationStack {
       StandupDetailView(
-        model: DependencyValues.withValues {
+        model: withDependencyValues {
           $0.speechClient.authorizationStatus = { .denied }
         } operation: {
           StandupDetailModel(standup: .mock)
         }
       )
     }
-    .previewDisplayName("Denied")
+    .previewDisplayName("Speech recongition denied")
 
     // This preview demonstrates how the feature behaves when the device restricts access to
     // speech recognition APIs. Tap the "Start Meeting" button to see how we handle that
     // situation.
     NavigationStack {
       StandupDetailView(
-        model: DependencyValues.withValues {
+        model: withDependencyValues {
           $0.speechClient.authorizationStatus = { .restricted }
         } operation: {
           StandupDetailModel(standup: .mock)
         }
       )
     }
-    .previewDisplayName("Restricted")
+    .previewDisplayName("Speech recongition restricted")
   }
 }

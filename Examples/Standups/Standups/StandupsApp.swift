@@ -20,7 +20,7 @@ struct StandupsApp: App {
 
 struct UITestingView: View {
   var body: some View {
-    DependencyValues.withValues {
+    withDependencyValues {
       $0.dataManager = .mock()
     } operation: {
       StandupsList(model: StandupsListModel())

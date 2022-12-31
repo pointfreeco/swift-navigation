@@ -29,7 +29,9 @@ class EditStandupModel: ObservableObject {
     if self.standup.attendees.isEmpty {
       self.standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
-    let index = min(indices.first!, self.standup.attendees.count - 1)
+    guard let firstIndex = indices.first
+    else { return }
+    let index = min(firstIndex, self.standup.attendees.count - 1)
     self.focus = .attendee(self.standup.attendees[index].id)
   }
 
