@@ -215,14 +215,14 @@ struct RecordMeetingView: View {
       }
     }
     .navigationBarBackButtonHidden(true)
-    .task { await self.model.task() }
-    .onChange(of: self.model.dismiss) { _ in self.dismiss() }
     .alert(
       unwrapping: self.$model.destination,
       case: /RecordMeetingModel.Destination.alert
     ) { action in
       await self.model.alertButtonTapped(action)
     }
+    .task { await self.model.task() }
+    .onChange(of: self.model.dismiss) { _ in self.dismiss() }
   }
 }
 
@@ -290,8 +290,14 @@ struct MeetingTimerView: View {
       .strokeBorder(lineWidth: 24)
       .overlay {
         VStack {
-          Text(self.currentSpeakerName)
-            .font(.title)
+          Group {
+            if self.speakerIndex < self.standup.attendees.count {
+              Text(self.standup.attendees[self.speakerIndex].name)
+            } else {
+              Text("Someone")
+            }
+          }
+          .font(.title)
           Text("is speaking")
           Image(systemName: "mic.fill")
             .font(.largeTitle)
@@ -310,27 +316,11 @@ struct MeetingTimerView: View {
       }
       .padding(.horizontal)
   }
-
-  private var currentSpeakerName: String {
-    guard self.speakerIndex < self.standup.attendees.count
-    else { return "Someone" }
-    return self.standup.attendees[self.speakerIndex].name
-  }
 }
 
 struct SpeakerArc: Shape {
   let totalSpeakers: Int
   let speakerIndex: Int
-
-  private var degreesPerSpeaker: Double {
-    360.0 / Double(totalSpeakers)
-  }
-  private var startAngle: Angle {
-    Angle(degrees: degreesPerSpeaker * Double(speakerIndex) + 1.0)
-  }
-  private var endAngle: Angle {
-    Angle(degrees: startAngle.degrees + degreesPerSpeaker - 1.0)
-  }
 
   func path(in rect: CGRect) -> Path {
     let diameter = min(rect.size.width, rect.size.height) - 24.0
@@ -340,11 +330,21 @@ struct SpeakerArc: Shape {
       path.addArc(
         center: center,
         radius: radius,
-        startAngle: startAngle,
-        endAngle: endAngle,
+        startAngle: self.startAngle,
+        endAngle: self.endAngle,
         clockwise: false
       )
     }
+  }
+
+  private var degreesPerSpeaker: Double {
+    360.0 / Double(self.totalSpeakers)
+  }
+  private var startAngle: Angle {
+    Angle(degrees: self.degreesPerSpeaker * Double(self.speakerIndex) + 1.0)
+  }
+  private var endAngle: Angle {
+    Angle(degrees: self.startAngle.degrees + self.degreesPerSpeaker - 1.0)
   }
 }
 
@@ -356,7 +356,11 @@ struct MeetingFooterView: View {
   var body: some View {
     VStack {
       HStack {
-        Text(self.speakerText)
+        if self.speakerIndex < self.standup.attendees.count - 1 {
+          Text("Speaker \(self.speakerIndex + 1) of \(self.standup.attendees.count)")
+        } else {
+          Text("No more speakers.")
+        }
         Spacer()
         Button(action: self.nextButtonTapped) {
           Image(systemName: "forward.fill")
@@ -364,14 +368,6 @@ struct MeetingFooterView: View {
       }
     }
     .padding([.bottom, .horizontal])
-  }
-
-  private var speakerText: String {
-    guard self.speakerIndex < self.standup.attendees.count - 1
-    else {
-      return "No more speakers."
-    }
-    return "Speaker \(self.speakerIndex + 1) of \(self.standup.attendees.count)"
   }
 }
 
