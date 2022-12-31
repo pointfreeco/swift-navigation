@@ -7,13 +7,13 @@ import XCTest
 @testable import Standups
 
 @MainActor
-final class StandupsListTests: DependencyTestCase {
+final class StandupsListTests: XCTestCase {
   let mainQueue = DispatchQueue.test
 
   func testAdd() async throws {
     let savedData = LockIsolated(Data?.none)
 
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.dataManager = .mock()
       $0.dataManager.save = { data, _ in savedData.setValue(data) }
       $0.mainQueue = mainQueue.eraseToAnyScheduler()
@@ -62,7 +62,7 @@ final class StandupsListTests: DependencyTestCase {
   }
 
   func testAdd_ValidatedAttendees() async throws {
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.dataManager = .mock()
       $0.mainQueue = mainQueue.eraseToAnyScheduler()
       $0.uuid = .incrementing
@@ -104,7 +104,7 @@ final class StandupsListTests: DependencyTestCase {
   }
 
   func testDelete() async throws {
-    let model = try DependencyValues.withTestValues { dependencies in
+    let model = try DependencyValues.withValues { dependencies in
       dependencies.dataManager = .mock(
         initialData: try JSONEncoder().encode([
           Standup(
@@ -137,7 +137,7 @@ final class StandupsListTests: DependencyTestCase {
   }
 
   func testDetailEdit() async throws {
-    let model = try DependencyValues.withTestValues { dependencies in
+    let model = try DependencyValues.withValues { dependencies in
       dependencies.dataManager = .mock(
         initialData: try JSONEncoder().encode([
           Standup(
@@ -181,7 +181,7 @@ final class StandupsListTests: DependencyTestCase {
   }
 
   func testLoadingDataDecodingFailed() async throws {
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.mainQueue = .immediate
       $0.dataManager = .mock(
         initialData: Data("!@#$ BAD DATA %^&*()".utf8)
@@ -200,7 +200,7 @@ final class StandupsListTests: DependencyTestCase {
   }
 
   func testLoadingDataFileNotFound() async throws {
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.dataManager.load = { _ in
         struct FileNotFound: Error {}
         throw FileNotFound()

@@ -7,9 +7,9 @@ import XCTest
 @testable import Standups
 
 @MainActor
-final class StandupDetailTests: DependencyTestCase {
+final class StandupDetailTests: XCTestCase {
   func testSpeechRestricted() throws {
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.speechClient.authorizationStatus = { .restricted }
     } operation: {
       StandupDetailModel(standup: .mock)
@@ -23,7 +23,7 @@ final class StandupDetailTests: DependencyTestCase {
   }
 
   func testSpeechDenied() async throws {
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
       StandupDetailModel(standup: .mock)
@@ -38,7 +38,7 @@ final class StandupDetailTests: DependencyTestCase {
 
   func testOpenSettings() async {
     let settingsOpened = LockIsolated(false)
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.openSettings = { settingsOpened.setValue(true) }
     } operation: {
       StandupDetailModel(
@@ -53,12 +53,10 @@ final class StandupDetailTests: DependencyTestCase {
   }
 
   func testContinueWithoutRecording() async throws {
-    let model = DependencyValues.withTestValues {
-      StandupDetailModel(
-        destination: .alert(.speechRecognitionDenied),
-        standup: .mock
-      )
-    }
+    let model = StandupDetailModel(
+      destination: .alert(.speechRecognitionDenied),
+      standup: .mock
+    )
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
@@ -68,7 +66,7 @@ final class StandupDetailTests: DependencyTestCase {
   }
 
   func testSpeechAuthorized() async throws {
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.speechClient.authorizationStatus = { .authorized }
     } operation: {
       StandupDetailModel(standup: .mock)
@@ -82,7 +80,7 @@ final class StandupDetailTests: DependencyTestCase {
   }
 
   func testRecordWithTranscript() async throws {
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
       $0.speechClient.authorizationStatus = { .authorized }
@@ -128,7 +126,7 @@ final class StandupDetailTests: DependencyTestCase {
   }
 
   func testEdit() throws {
-    let model = DependencyValues.withTestValues {
+    let model = DependencyValues.withValues {
       $0.uuid = .incrementing
     } operation: {
       @Dependency(\.uuid) var uuid
