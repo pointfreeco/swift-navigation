@@ -37,7 +37,6 @@
 		DC5E07792947CCD700293F45 /* StandupDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07782947CCD700293F45 /* StandupDetail.swift */; };
 		DC5E077B2947CCD800293F45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC5E077A2947CCD800293F45 /* Assets.xcassets */; };
 		DC5E077E2947CCD800293F45 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC5E077D2947CCD800293F45 /* Preview Assets.xcassets */; };
-		DC5E07882947CCD800293F45 /* StandupsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07872947CCD800293F45 /* StandupsTests.swift */; };
 		DC5E07A32947CEA300293F45 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = DC5E07A22947CEA300293F45 /* Dependencies */; };
 		DC5E07A52947CFA000293F45 /* EditStandup.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07A42947CFA000293F45 /* EditStandup.swift */; };
 		DC5E07A72947CFA600293F45 /* StandupsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07A62947CFA600293F45 /* StandupsList.swift */; };
@@ -109,7 +108,6 @@
 		DC5E077A2947CCD800293F45 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DC5E077D2947CCD800293F45 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DC5E07832947CCD800293F45 /* StandupsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StandupsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DC5E07872947CCD800293F45 /* StandupsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupsTests.swift; sourceTree = "<group>"; };
 		DC5E07A42947CFA000293F45 /* EditStandup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditStandup.swift; sourceTree = "<group>"; };
 		DC5E07A62947CFA600293F45 /* StandupsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupsList.swift; sourceTree = "<group>"; };
 		DC5E07A82947CFB700293F45 /* SpeechClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechClient.swift; sourceTree = "<group>"; };
@@ -298,7 +296,6 @@
 				CAAA74E52956A60A009A25CA /* RecordMeetingTests.swift */,
 				CAAA74E72956A658009A25CA /* StandupDetailTests.swift */,
 				CAAA74E329569F6C009A25CA /* StandupsListTests.swift */,
-				DC5E07872947CCD800293F45 /* StandupsTests.swift */,
 			);
 			path = StandupsTests;
 			sourceTree = "<group>";
@@ -575,7 +572,6 @@
 			files = (
 				CAAA74E82956A658009A25CA /* StandupDetailTests.swift in Sources */,
 				CAAA74E62956A60A009A25CA /* RecordMeetingTests.swift in Sources */,
-				DC5E07882947CCD800293F45 /* StandupsTests.swift in Sources */,
 				CA53F7F1295BBDB700DE68FE /* EditStandupTests.swift in Sources */,
 				CAAA74E429569F6C009A25CA /* StandupsListTests.swift in Sources */,
 			);

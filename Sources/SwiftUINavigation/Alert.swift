@@ -222,6 +222,3 @@ extension View {
 
   // TODO: support iOS <15?
 }
-
-//public func _defaultActionHandler(_ never: Never) async {}
-public func _defaultActionHandler(_ never: Void) async {}
