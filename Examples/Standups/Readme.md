@@ -2,7 +2,7 @@
 
 This project demonstrates how to build a complex, real world application that deals with many
 forms of navigation (e.g. sheets, drill-downs, alerts), many side effects (timers, speech
-recognzer, persistence), and do so in a way that is testable and modular.  
+recognizer, data persistence), and do so in a way that is testable and modular.  
 
 This application was built over the course of [many episodes][modern-swiftui-collection] on
 Point-Free, a video series exploring functional programming and the Swift language, hosted by 
@@ -25,12 +25,13 @@ shows the time remaining in the meeting and creates a transcript that users can 
 The Scrumdinger app is one of Apple's most interesting code samples as it deals with many real
 world problems that one faces in application development. However, it is not necessarily built in
 the most ideal way. It uses mostly fire-and-forget style navigation, which means you can't easily
-deep link into any screen of the app. It also uses uncontrolled dependencies, including file
-system access, timers and a speech recognizer, which makes it nearly impossible to write automated
-tests and even hinders the ability to preview the app in Xcode previews.
+deep link into any screen of the app, which is handy for push notifications and opening URLs. It 
+also uses uncontrolled dependencies, including file system access, timers and a speech recognizer, 
+which makes it nearly impossible to write automated tests and even hinders the ability to preview 
+the app in Xcode previews.
 
 However, the simplicity of Apple's Scrumdinger codebase is not a defect. In fact, it's a feature!
-Apple's sample code is viewed by hundreds of thousands of developers across the world, and so it's 
+Apple's sample code is viewed by hundreds of thousands of developers across the world, and so its 
 goal is to be as approachable as possible in order to teach the basics of SwiftUI. But, that doesn't
 mean there isn't room for improvement.
 
@@ -49,9 +50,10 @@ and lead to bugs or crashes.
 1. _All_ navigation is driven off of state, including sheets, drill-downs and alerts. This makes
 it possible to deep link into any screen of the app by just constructing a piece of state and 
 handing it off to SwiftUI.
-1. Further, each view represents its navigation destinations as a single enum, which gives us compile
-time proof that two destinations cannot be active at the same time. This cannot be accomplished with
-default SwiftUI tools, but can be done with our [SwiftUINavigation library][swiftui-nav-gh].
+1. Further, each view represents its navigation destinations as a single enum, which gives us 
+compile time proof that two destinations cannot be active at the same time. This cannot be 
+accomplished with default SwiftUI tools, but can be done with our [SwiftUINavigation 
+library][swiftui-nav-gh].
 1. All side effects are controlled. This includes access to the file system for persistence, access
 to time-based asynchrony for timers, access to speech recognition APIs, and even the creation
 of dates and UUIDs. This allows us to run our application in specific execution contexts, which
@@ -62,8 +64,6 @@ because we controlled all dependencies, we can write very comprehensive and nuan
 example, we can write a unit test that proves that when a standup meeting's timer runs out the 
 screen pops off the stack and a new transcript is added to the standup. Such a test would be very 
 difficult, if not impossible, without controlling dependencies or as a UI test.
-<!--1. We added a bunch of user experience improvements, such as confirmation alerts when ending-->
-<!--a meeting, pausing -->
 
 [modern-swiftui-collection]: https://www.pointfree.co/collections/swiftui/modern-swiftui
 [scrumdinger]: https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger
