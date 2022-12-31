@@ -134,6 +134,7 @@ final class StandupsListTests: XCTestCase {
 
     XCTAssertNil(model.destination)
     XCTAssertEqual(model.standups, [])
+    XCTAssertEqual(detailModel.dismiss, true)
   }
 
   func testDetailEdit() async throws {

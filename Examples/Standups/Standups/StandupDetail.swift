@@ -21,7 +21,7 @@ class StandupDetailModel: ObservableObject {
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
   @Dependency(\.uuid) var uuid
 
-  var onConfirmDeletion: () -> Bool = unimplemented("StandupDetailModel.onConfirmDeletion")
+  var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
 
   enum Destination {
     case alert(AlertState<AlertAction>)
@@ -59,7 +59,8 @@ class StandupDetailModel: ObservableObject {
   func alertButtonTapped(_ action: AlertAction) async {
     switch action {
     case .confirmDeletion:
-      self.dismiss = self.onConfirmDeletion()
+      self.onConfirmDeletion()
+      self.dismiss = true
 
     case .continueWithoutRecording:
       self.destination = .record(
