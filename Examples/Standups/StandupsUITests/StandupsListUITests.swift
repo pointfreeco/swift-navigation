@@ -20,11 +20,11 @@ final class StandupsListUITests: XCTestCase {
 
   // This test demonstrates the simple flow of tapping the "Add" button, filling in some fields
   // in the form, and then adding the standup to the list. It's a very simple test, but it takes
-  // over 5 seconds to run, and it depends on a lot of internal implementation details to get
+  // over 10 seconds to run, and it depends on a lot of internal implementation details to get
   // right, such as tapping a button with the literal label "Add".
   //
   // This test is also written in the simpler, "unit test" style in StandupsListTests.swift, where
-  // it takes 0.025 seconds (200 times faster) and it even tests more. It further confirms that
+  // it takes 0.025 seconds (400 times faster) and it even tests more. It further confirms that
   // when the standup is added to the list its data will be persisted to disk so that it will be
   // available on next launch.
   func testAdd() throws {
