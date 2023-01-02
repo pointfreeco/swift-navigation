@@ -6,7 +6,7 @@ import CustomDump
 @MainActor
 final class EditStandupTests: XCTestCase {
   func testAddAttendee() {
-    let model = withDependencyValues {
+    let model = withDependencies {
       $0.uuid = .incrementing
     } operation: {
       EditStandupModel(
@@ -37,7 +37,7 @@ final class EditStandupTests: XCTestCase {
   }
 
   func testFocus_AddAttendee() {
-    let model = withDependencyValues {
+    let model = withDependencies {
       $0.uuid = .incrementing
     } operation: {
       EditStandupModel(
@@ -60,7 +60,7 @@ final class EditStandupTests: XCTestCase {
   }
 
   func testFocus_RemoveAttendee() {
-    let model = withDependencyValues {
+    let model = withDependencies {
       $0.uuid = .incrementing
     } operation: {
       @Dependency(\.uuid) var uuid

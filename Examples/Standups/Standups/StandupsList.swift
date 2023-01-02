@@ -56,7 +56,7 @@ final class StandupsListModel: ObservableObject {
 
   func addStandupButtonTapped() {
     self.destination = .add(
-      withDependencyValues(from: self) {
+      withDependencies(from: self) {
         EditStandupModel(standup: Standup(id: Standup.ID(self.uuid())))
       }
     )
@@ -84,7 +84,7 @@ final class StandupsListModel: ObservableObject {
 
   func standupTapped(standup: Standup) {
     self.destination = .detail(
-      withDependencyValues(from: self) {
+      withDependencies(from: self) {
         StandupDetailModel(standup: standup)
       }
     )
@@ -251,7 +251,7 @@ struct StandupsList_Previews: PreviewProvider {
     // StandupsList model. But, we can override the DataManager dependency so that when its load
     // endpoint is called it will load whatever data we want.
     StandupsList(
-      model: withDependencyValues {
+      model: withDependencies {
         $0.dataManager = .mock(
           initialData: try! JSONEncoder().encode([
             Standup.mock,
@@ -269,7 +269,7 @@ struct StandupsList_Previews: PreviewProvider {
     // an alert should be shown. This can be done by overridding the DataManager dependency so that
     // its initial data does not properly decode into a collection of standups.
     StandupsList(
-      model: withDependencyValues {
+      model: withDependencies {
         $0.dataManager = .mock(
           initialData: Data("!@#$% bad data ^&*()".utf8)
         )
@@ -284,7 +284,7 @@ struct StandupsList_Previews: PreviewProvider {
     // down to the detail screen of a standup, and then further drilled down to the record screen
     // for a new meeting.
     StandupsList(
-      model: withDependencyValues {
+      model: withDependencies {
         $0.dataManager = .mock(
           initialData: try! JSONEncoder().encode([
             Standup.mock,
@@ -311,7 +311,7 @@ struct StandupsList_Previews: PreviewProvider {
     // screen just by constructing a piece of state. In particular we will start the app with the
     // "Add standup" screen opened and with the last attendee text field focused.
     StandupsList(
-      model: withDependencyValues {
+      model: withDependencies {
         $0.dataManager = .mock()
       } operation: {
         var standup = Standup.mock

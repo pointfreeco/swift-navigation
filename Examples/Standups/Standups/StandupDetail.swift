@@ -64,7 +64,7 @@ class StandupDetailModel: ObservableObject {
 
     case .continueWithoutRecording:
       self.destination = .record(
-        withDependencyValues(from: self) {
+        withDependencies(from: self) {
           RecordMeetingModel(standup: self.standup)
         }
       )
@@ -76,7 +76,7 @@ class StandupDetailModel: ObservableObject {
 
   func editButtonTapped() {
     self.destination = .edit(
-      withDependencyValues(from: self) {
+      withDependencies(from: self) {
         EditStandupModel(standup: self.standup)
       }
     )
@@ -98,7 +98,7 @@ class StandupDetailModel: ObservableObject {
     switch self.authorizationStatus() {
     case .notDetermined, .authorized:
       self.destination = .record(
-        withDependencyValues(from: self) {
+        withDependencies(from: self) {
           RecordMeetingModel(standup: self.standup)
         }
       )
@@ -353,7 +353,7 @@ struct StandupDetail_Previews: PreviewProvider {
     // tap the "Start Meeting" button and wait 2 seconds.
     NavigationStack {
       StandupDetailView(
-        model: withDependencyValues {
+        model: withDependencies {
           $0.speechClient = .fail(after: .seconds(2))
         } operation: {
           StandupDetailModel(standup: .mock)
@@ -367,7 +367,7 @@ struct StandupDetail_Previews: PreviewProvider {
     // situation.
     NavigationStack {
       StandupDetailView(
-        model: withDependencyValues {
+        model: withDependencies {
           $0.speechClient.authorizationStatus = { .denied }
         } operation: {
           StandupDetailModel(standup: .mock)
@@ -381,7 +381,7 @@ struct StandupDetail_Previews: PreviewProvider {
     // situation.
     NavigationStack {
       StandupDetailView(
-        model: withDependencyValues {
+        model: withDependencies {
           $0.speechClient.authorizationStatus = { .restricted }
         } operation: {
           StandupDetailModel(standup: .mock)
