@@ -40,9 +40,7 @@ final class StandupsListUITests: XCTestCase {
     nameTextField.typeText("Blob")
 
     collectionViews.buttons["New attendee"].tap()
-    collectionViews.textFields
-      .element(boundBy: collectionViews.textFields.count - 1)
-      .typeText("Blob Jr.")
+    app.typeText("Blob Jr.")
 
     app.navigationBars["New standup"].buttons["Add"].tap()
 
