@@ -1,8 +1,8 @@
 import XCTest
 
-// This test case demonstrates how one can write UI tests using the swift-dependencies library.
-// We do not really recommend writing UI tests in general as they are slow and flakey, but if you
-// must then this shows how.
+// This test case demonstrates how one can write UI tests using the swift-dependencies library. We
+// do not really recommend writing UI tests in general as they are slow and flakey, but if you must
+// then this shows how.
 //
 // The key to doing this is to set a launch environment variable on your XCUIApplication instance,
 // and then check for that value in the entry point of the application. If the environment value
@@ -18,14 +18,14 @@ final class StandupsListUITests: XCTestCase {
     ]
   }
 
-  // This test demonstrates the simple flow of tapping the "Add" button, filling in some fields
-  // in the form, and then adding the standup to the list. It's a very simple test, but it takes
-  // over 10 seconds to run, and it depends on a lot of internal implementation details to get
-  // right, such as tapping a button with the literal label "Add".
+  // This test demonstrates the simple flow of tapping the "Add" button, filling in some fields in
+  // the form, and then adding the standup to the list. It's a very simple test, but it takes over
+  // 10 seconds to run, and it depends on a lot of internal implementation details to get right,
+  // such as tapping a button with the literal label "Add".
   //
   // This test is also written in the simpler, "unit test" style in StandupsListTests.swift, where
-  // it takes 0.025 seconds (400 times faster) and it even tests more. It further confirms that
-  // when the standup is added to the list its data will be persisted to disk so that it will be
+  // it takes 0.025 seconds (400 times faster) and it even tests more. It further confirms that when
+  // the standup is added to the list its data will be persisted to disk so that it will be
   // available on next launch.
   func testAdd() throws {
     app.launch()
