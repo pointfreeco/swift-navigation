@@ -8,7 +8,7 @@ import XCTestDynamicOverlay
 @MainActor
 class RecordMeetingModel: ObservableObject {
   @Published var destination: Destination?
-  @Published var dismiss = false
+  @Published var isDismissed = false
   @Published var secondsElapsed = 0
   @Published var speakerIndex = 0
   let standup: Standup
@@ -73,7 +73,7 @@ class RecordMeetingModel: ObservableObject {
       await self.finishMeeting()
 
     case .confirmDiscard:
-      self.dismiss = true
+      self.isDismissed = true
 
     case .dismissErrorAlert:
       await self.finishMeeting()
@@ -99,15 +99,14 @@ class RecordMeetingModel: ObservableObject {
   }
 
   private func finishMeeting() async {
-    self.dismiss = true
+    self.isDismissed = true
     await self.onMeetingFinished(self.transcript)
   }
 
   private func startSpeechRecognition() async {
     do {
-      for try await result in await self.speechClient.startTask(
-        SFSpeechAudioBufferRecognitionRequest())
-      {
+      let speechTask = await self.speechClient.startTask(SFSpeechAudioBufferRecognitionRequest())
+      for try await result in speechTask {
         self.transcript = result.bestTranscription.formattedString
       }
     } catch {
@@ -117,14 +116,13 @@ class RecordMeetingModel: ObservableObject {
 
   private func startTimer() async {
     for await _ in self.clock.timer(interval: .seconds(1)) where !self.isAlertOpen {
-      guard !self.dismiss
+      guard !self.isDismissed
       else { break }
 
       self.secondsElapsed += 1
 
-      if self.secondsElapsed.isMultiple(
-        of: Int(self.standup.durationPerAttendee.components.seconds)
-      ) {
+      let secondsPerAttendee = Int(self.standup.durationPerAttendee.components.seconds)
+      if self.secondsElapsed.isMultiple(of: secondsPerAttendee) {
         if self.speakerIndex == self.standup.attendees.count - 1 {
           await self.finishMeeting()
           break
@@ -218,7 +216,7 @@ struct RecordMeetingView: View {
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }
-    .onChange(of: self.model.dismiss) { _ in self.dismiss() }
+    .onChange(of: self.model.isDismissed) { _ in self.dismiss() }
   }
 }
 
@@ -374,5 +372,17 @@ struct RecordMeeting_Previews: PreviewProvider {
         model: RecordMeetingModel(standup: .mock)
       )
     }
+    .previewDisplayName("Happy path")
+
+    NavigationStack {
+      RecordMeetingView(
+        model: withDependencies {
+          $0.speechClient = .fail(after: .seconds(2))
+        } operation: {
+          RecordMeetingModel(standup: .mock)
+        }
+      )
+    }
+    .previewDisplayName("Speech failure after 2 secs")
   }
 }

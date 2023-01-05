@@ -61,7 +61,7 @@ final class RecordMeetingTests: XCTestCase {
     await task.value
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
-    XCTAssertEqual(model.dismiss, true)
+    XCTAssertEqual(model.isDismissed, true)
   }
 
   func testRecordTranscript() async throws {
@@ -96,7 +96,7 @@ final class RecordMeetingTests: XCTestCase {
     await model.task()
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
-    XCTAssertEqual(model.dismiss, true)
+    XCTAssertEqual(model.isDismissed, true)
   }
 
   func testEndMeetingSave() async throws {
@@ -133,7 +133,7 @@ final class RecordMeetingTests: XCTestCase {
     await model.alertButtonTapped(.confirmSave)
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
-    XCTAssertEqual(model.dismiss, true)
+    XCTAssertEqual(model.isDismissed, true)
 
     task.cancel()
     await task.value
@@ -163,7 +163,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.alertButtonTapped(.confirmDiscard)
 
-    XCTAssertEqual(model.dismiss, true)
+    XCTAssertEqual(model.isDismissed, true)
 
     task.cancel()
     await task.value
@@ -223,7 +223,7 @@ final class RecordMeetingTests: XCTestCase {
     await model.alertButtonTapped(.confirmSave)
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
-    XCTAssertEqual(model.dismiss, true)
+    XCTAssertEqual(model.isDismissed, true)
 
     task.cancel()
     await task.value
@@ -275,7 +275,7 @@ final class RecordMeetingTests: XCTestCase {
     XCTAssertEqual(alert, .speechRecognizerFailed)
 
     model.destination = nil  // NB: Simulate SwiftUI closing alert.
-    XCTAssertEqual(model.dismiss, false)
+    XCTAssertEqual(model.isDismissed, false)
 
     await task.value
 
@@ -316,7 +316,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.alertButtonTapped(.confirmDiscard)
     model.destination = nil  // NB: Simulate SwiftUI closing alert.
-    XCTAssertEqual(model.dismiss, true)
+    XCTAssertEqual(model.isDismissed, true)
 
     await task.value
   }
