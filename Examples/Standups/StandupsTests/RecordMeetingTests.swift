@@ -274,7 +274,7 @@ final class RecordMeetingTests: XCTestCase {
     let alert = try XCTUnwrap(model.destination, case: /RecordMeetingModel.Destination.alert)
     XCTAssertEqual(alert, .speechRecognizerFailed)
 
-    model.destination = nil  // NB: Similar SwiftUI closing alert.
+    model.destination = nil  // NB: Simulate SwiftUI closing alert.
     XCTAssertEqual(model.dismiss, false)
 
     await task.value
@@ -315,7 +315,7 @@ final class RecordMeetingTests: XCTestCase {
     XCTAssertEqual(alert, .speechRecognizerFailed)
 
     await model.alertButtonTapped(.confirmDiscard)
-    model.destination = nil  // NB: Similar SwiftUI closing alert.
+    model.destination = nil  // NB: Simulate SwiftUI closing alert.
     XCTAssertEqual(model.dismiss, true)
 
     await task.value
