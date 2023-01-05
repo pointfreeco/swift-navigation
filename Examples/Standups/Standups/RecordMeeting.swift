@@ -378,7 +378,10 @@ struct RecordMeeting_Previews: PreviewProvider {
     .previewDisplayName("Happy path")
 
     Preview(
-      message: "This preview demonstrates how the feature behaves when the speech recognizer emits a failure after 2 seconds of transcribing."
+      message: """
+        This preview demonstrates how the feature behaves when the speech recognizer emits a \
+        failure after 2 seconds of transcribing.
+        """
     ) {
       NavigationStack {
         RecordMeetingView(

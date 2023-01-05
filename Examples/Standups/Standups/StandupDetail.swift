@@ -337,7 +337,12 @@ struct MeetingView: View {
 struct StandupDetail_Previews: PreviewProvider {
   static var previews: some View {
     Preview(
-      message: "This preview demonstrates the \"happy path\" of the application where everything works perfectly. You can start a meeting, wait a few moments, end the meeting, and you will see that a new transcription was added to the past meetings. The transcript will consist of some \"lorem ipsum\" text because a mock speech recongizer is used for Xcode previews."
+      message: """
+        This preview demonstrates the "happy path" of the application where everything works \
+        perfectly. You can start a meeting, wait a few moments, end the meeting, and you will \
+        see that a new transcription was added to the past meetings. The transcript will consist \
+        of some "lorem ipsum" text because a mock speech recongizer is used for Xcode previews.
+        """
     ) {
       NavigationStack {
         StandupDetailView(model: StandupDetailModel(standup: .mock))
@@ -346,7 +351,12 @@ struct StandupDetail_Previews: PreviewProvider {
     .previewDisplayName("Happy path")
 
     Preview(
-      message: "This preview demonstrates an \"unhappy path\" of the application where the speech recognizer mysteriously fails after 2 seconds of recording. This gives us an opportunity to see how the application deals with this rare occurence. To see the behavior, run the preview, tap the \"Start Meeting\" button and wait 2 seconds."
+      message: """
+        This preview demonstrates an "unhappy path" of the application where the speech \
+        recognizer mysteriously fails after 2 seconds of recording. This gives us an opportunity \
+        to see how the application deals with this rare occurence. To see the behavior, run the \
+        preview, tap the "Start Meeting" button and wait 2 seconds.
+        """
     ) {
       NavigationStack {
         StandupDetailView(
@@ -361,7 +371,11 @@ struct StandupDetail_Previews: PreviewProvider {
     .previewDisplayName("Speech recongition failed")
 
     Preview(
-      message: "This preview demonstrates how the feature behaves when access to speech recognition has been previously denied by the user. Tap the \"Start Meeting\" button to see how we handle that situation."
+      message: """
+        This preview demonstrates how the feature behaves when access to speech recognition has \
+        been previously denied by the user. Tap the "Start Meeting" button to see how we handle \
+        that situation.
+        """
     ) {
       NavigationStack {
         StandupDetailView(
@@ -376,7 +390,11 @@ struct StandupDetail_Previews: PreviewProvider {
     .previewDisplayName("Speech recongition denied")
 
     Preview(
-      message: "This preview demonstrates how the feature behaves when the device restricts access to speech recognition APIs. Tap the \"Start Meeting\" button to see how we handle that situation."
+      message: """
+        This preview demonstrates how the feature behaves when the device restricts access to \
+        speech recognition APIs. Tap the "Start Meeting" button to see how we handle that \
+        situation.
+        """
     ) {
       NavigationStack {
         StandupDetailView(

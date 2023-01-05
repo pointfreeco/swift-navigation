@@ -16,6 +16,7 @@ struct Preview<Content: View>: View {
     VStack {
       DisclosureGroup {
         Text(self.message)
+          .frame(maxWidth: .infinity)
       } label: {
         HStack {
           Image(systemName: "info.circle.fill")

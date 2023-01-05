@@ -19,9 +19,9 @@ final class StandupsListUITests: XCTestCase {
   }
 
   // This test demonstrates the simple flow of tapping the "Add" button, filling in some fields in
-  // the form, and then adding the standup to the list. It's a very simple test, but it takes over
-  // 10 seconds to run, and it depends on a lot of internal implementation details to get right,
-  // such as tapping a button with the literal label "Add".
+  // the form, and then adding the standup to the list. It's a very simple test, but it takes
+  // approximately 10 seconds to run, and it depends on a lot of internal implementation details to
+  // get right, such as tapping a button with the literal label "Add".
   //
   // This test is also written in the simpler, "unit test" style in StandupsListTests.swift, where
   // it takes 0.025 seconds (400 times faster) and it even tests more. It further confirms that when
@@ -29,7 +29,7 @@ final class StandupsListUITests: XCTestCase {
   // available on next launch.
   func testAdd() throws {
     app.launch()
-    app.navigationBars["Daily Standups"]/*@START_MENU_TOKEN@*/.buttons["Add"]/*[[".otherElements[\"Add\"].buttons[\"Add\"]",".buttons[\"Add\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+    app.navigationBars["Daily Standups"].buttons["Add"].tap()
     let collectionViews = app.collectionViews
     let titleTextField = collectionViews.textFields["Title"]
     let nameTextField = collectionViews.textFields["Name"]

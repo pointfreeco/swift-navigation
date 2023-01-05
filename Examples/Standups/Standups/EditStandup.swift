@@ -117,8 +117,10 @@ struct EditStandup_Previews: PreviewProvider {
     .previewDisplayName("Edit")
 
     Preview(
-      message:
-        "This preview shows how we can start the screen if a very specific state, where the 4th attendee is already focused."
+      message: """
+        This preview shows how we can start the screen if a very specific state, where the 4th \
+        attendee is already focused.
+        """
     ) {
       NavigationStack {
         EditStandupView(

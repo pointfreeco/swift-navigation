@@ -247,7 +247,12 @@ extension URL {
 struct StandupsList_Previews: PreviewProvider {
   static var previews: some View {
     Preview(
-      message: "This preview demonstrates how to start the app in a state with a few standups pre-populated. Since the initial standups are loaded from disk we cannot simply pass some data to the StandupsList model. But, we can override the DataManager dependency so that when its load endpoint is called it will load whatever data we want."
+      message: """
+        This preview demonstrates how to start the app in a state with a few standups \
+        pre-populated. Since the initial standups are loaded from disk we cannot simply pass some \
+        data to the StandupsList model. But, we can override the DataManager dependency so that \
+        when its load endpoint is called it will load whatever data we want.
+        """
     ) {
       StandupsList(
         model: withDependencies {
@@ -266,7 +271,11 @@ struct StandupsList_Previews: PreviewProvider {
     .previewDisplayName("Mocking initial standups")
 
     Preview(
-      message: "This preview demonstrates how to test the flow of loading bad data from disk, in which case an alert should be shown. This can be done by overridding the DataManager dependency so that its initial data does not properly decode into a collection of standups."
+      message: """
+        This preview demonstrates how to test the flow of loading bad data from disk, in which \
+        case an alert should be shown. This can be done by overridding the DataManager dependency \
+        so that its initial data does not properly decode into a collection of standups.
+        """
     ) {
       StandupsList(
         model: withDependencies {
@@ -281,7 +290,12 @@ struct StandupsList_Previews: PreviewProvider {
     .previewDisplayName("Load data failure")
 
     Preview(
-      message: "The preview demonstrates how you can start the application navigated to a very specific screen just by constructing a piece of state. In particular we will start the app drilled down to the detail screen of a standup, and then further drilled down to the record screen for a new meeting."
+      message: """
+        The preview demonstrates how you can start the application navigated to a very specific \
+        screen just by constructing a piece of state. In particular we will start the app drilled \
+        down to the detail screen of a standup, and then further drilled down to the record screen \
+        for a new meeting.
+        """
     ) {
       StandupsList(
         model: withDependencies {
@@ -309,7 +323,11 @@ struct StandupsList_Previews: PreviewProvider {
     .previewDisplayName("Deep link record flow")
 
     Preview(
-      message: "The preview demonstrates how you can start the application navigated to a very specific screen just by constructing a piece of state. In particular we will start the app with the \"Add standup\" screen opened and with the last attendee text field focused."
+      message: """
+        The preview demonstrates how you can start the application navigated to a very specific \
+        screen just by constructing a piece of state. In particular we will start the app with the \
+        "Add standup" screen opened and with the last attendee text field focused.
+        """
     ) {
       StandupsList(
         model: withDependencies {
