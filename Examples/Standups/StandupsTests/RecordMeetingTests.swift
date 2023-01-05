@@ -257,7 +257,7 @@ final class RecordMeetingTests: XCTestCase {
 
     let onMeetingFinishedExpectation = self.expectation(description: "onMeetingFinished")
     model.onMeetingFinished = { transcript in
-      XCTAssertEqual(transcript, "I completed the project")
+      XCTAssertEqual(transcript, "I completed the project ❌")
       onMeetingFinishedExpectation.fulfill()
     }
 

@@ -8,9 +8,7 @@ import XCTestDynamicOverlay
 @MainActor
 class StandupDetailModel: ObservableObject {
   @Published var destination: Destination? {
-    didSet {
-      self.bind()
-    }
+    didSet { self.bind() }
   }
   @Published var dismiss = false
   @Published var standup: Standup
@@ -338,55 +336,57 @@ struct MeetingView: View {
 
 struct StandupDetail_Previews: PreviewProvider {
   static var previews: some View {
-    // This preview demonstrates the "happy path" of the application where everything works
-    // perfectly. You can start a meeting, wait a few moments, end the meeting, and you will see
-    // that a new transcription was added to the past meetings. The transcript will consist of
-    // some "lorem ipsum" text because a mock speech recongizer is used for Xcode previews.
-    NavigationStack {
-      StandupDetailView(model: StandupDetailModel(standup: .mock))
+    Preview(
+      message: "This preview demonstrates the \"happy path\" of the application where everything works perfectly. You can start a meeting, wait a few moments, end the meeting, and you will see that a new transcription was added to the past meetings. The transcript will consist of some \"lorem ipsum\" text because a mock speech recongizer is used for Xcode previews."
+    ) {
+      NavigationStack {
+        StandupDetailView(model: StandupDetailModel(standup: .mock))
+      }
     }
     .previewDisplayName("Happy path")
 
-    // This preview demonstrates an "unhappy path" of the application where the speech recognizer
-    // mysteriously fails after 2 seconds of recording. This gives us an opportunity to see how
-    // the application deals with this rare occurence. To see the behavior, run the preview,
-    // tap the "Start Meeting" button and wait 2 seconds.
-    NavigationStack {
-      StandupDetailView(
-        model: withDependencies {
-          $0.speechClient = .fail(after: .seconds(2))
-        } operation: {
-          StandupDetailModel(standup: .mock)
-        }
-      )
+    Preview(
+      message: "This preview demonstrates an \"unhappy path\" of the application where the speech recognizer mysteriously fails after 2 seconds of recording. This gives us an opportunity to see how the application deals with this rare occurence. To see the behavior, run the preview, tap the \"Start Meeting\" button and wait 2 seconds."
+    ) {
+      NavigationStack {
+        StandupDetailView(
+          model: withDependencies {
+            $0.speechClient = .fail(after: .seconds(2))
+          } operation: {
+            StandupDetailModel(standup: .mock)
+          }
+        )
+      }
     }
     .previewDisplayName("Speech recongition failed")
 
-    // This preview demonstrates how the feature behaves when access to speech recognition has been
-    // previously denied by the user. Tap the "Start Meeting" button to see how we handle that
-    // situation.
-    NavigationStack {
-      StandupDetailView(
-        model: withDependencies {
-          $0.speechClient.authorizationStatus = { .denied }
-        } operation: {
-          StandupDetailModel(standup: .mock)
-        }
-      )
+    Preview(
+      message: "This preview demonstrates how the feature behaves when access to speech recognition has been previously denied by the user. Tap the \"Start Meeting\" button to see how we handle that situation."
+    ) {
+      NavigationStack {
+        StandupDetailView(
+          model: withDependencies {
+            $0.speechClient.authorizationStatus = { .denied }
+          } operation: {
+            StandupDetailModel(standup: .mock)
+          }
+        )
+      }
     }
     .previewDisplayName("Speech recongition denied")
 
-    // This preview demonstrates how the feature behaves when the device restricts access to
-    // speech recognition APIs. Tap the "Start Meeting" button to see how we handle that
-    // situation.
-    NavigationStack {
-      StandupDetailView(
-        model: withDependencies {
-          $0.speechClient.authorizationStatus = { .restricted }
-        } operation: {
-          StandupDetailModel(standup: .mock)
-        }
-      )
+    Preview(
+      message: "This preview demonstrates how the feature behaves when the device restricts access to speech recognition APIs. Tap the \"Start Meeting\" button to see how we handle that situation."
+    ) {
+      NavigationStack {
+        StandupDetailView(
+          model: withDependencies {
+            $0.speechClient.authorizationStatus = { .restricted }
+          } operation: {
+            StandupDetailModel(standup: .mock)
+          }
+        )
+      }
     }
     .previewDisplayName("Speech recongition restricted")
   }

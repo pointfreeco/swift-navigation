@@ -110,6 +110,9 @@ class RecordMeetingModel: ObservableObject {
         self.transcript = result.bestTranscription.formattedString
       }
     } catch {
+      if !self.transcript.isEmpty {
+        self.transcript += " ❌"
+      }
       self.destination = .alert(.speechRecognizerFailed)
     }
   }
@@ -374,14 +377,18 @@ struct RecordMeeting_Previews: PreviewProvider {
     }
     .previewDisplayName("Happy path")
 
-    NavigationStack {
-      RecordMeetingView(
-        model: withDependencies {
-          $0.speechClient = .fail(after: .seconds(2))
-        } operation: {
-          RecordMeetingModel(standup: .mock)
-        }
-      )
+    Preview(
+      message: "This preview demonstrates how the feature behaves when the speech recognizer emits a failure after 2 seconds of transcribing."
+    ) {
+      NavigationStack {
+        RecordMeetingView(
+          model: withDependencies {
+            $0.speechClient = .fail(after: .seconds(2))
+          } operation: {
+            RecordMeetingModel(standup: .mock)
+          }
+        )
+      }
     }
     .previewDisplayName("Speech failure after 2 secs")
   }

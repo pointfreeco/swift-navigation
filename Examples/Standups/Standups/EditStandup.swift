@@ -22,7 +22,7 @@ class EditStandupModel: ObservableObject {
     if self.standup.attendees.isEmpty {
       self.standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
-  } 
+  }
 
   func deleteAttendees(atOffsets indices: IndexSet) {
     self.standup.attendees.remove(atOffsets: indices)
@@ -116,15 +116,18 @@ struct EditStandup_Previews: PreviewProvider {
     }
     .previewDisplayName("Edit")
 
-    // This preview shows how we can start the screen if a very specific state, where the 4th
-    // attendee is already focused.
-    NavigationStack {
-      EditStandupView(
-        model: EditStandupModel(
-          focus: .attendee(Standup.mock.attendees[3].id),
-          standup: .mock
+    Preview(
+      message:
+        "This preview shows how we can start the screen if a very specific state, where the 4th attendee is already focused."
+    ) {
+      NavigationStack {
+        EditStandupView(
+          model: EditStandupModel(
+            focus: .attendee(Standup.mock.attendees[3].id),
+            standup: .mock
+          )
         )
-      )
+      }
     }
     .previewDisplayName("4th attendee focused")
   }

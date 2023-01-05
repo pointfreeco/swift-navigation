@@ -246,87 +246,89 @@ extension URL {
 
 struct StandupsList_Previews: PreviewProvider {
   static var previews: some View {
-    // This preview demonstrates how to start the app in a state with a few standups pre-populated.
-    // Since the initial standups are loaded from disk we cannot simply pass some data to the
-    // StandupsList model. But, we can override the DataManager dependency so that when its load
-    // endpoint is called it will load whatever data we want.
-    StandupsList(
-      model: withDependencies {
-        $0.dataManager = .mock(
-          initialData: try! JSONEncoder().encode([
-            Standup.mock,
-            .engineeringMock,
-            .designMock
-          ])
-        )
-      } operation: {
-        StandupsListModel()
-      }
-    )
+    Preview(
+      message: "This preview demonstrates how to start the app in a state with a few standups pre-populated. Since the initial standups are loaded from disk we cannot simply pass some data to the StandupsList model. But, we can override the DataManager dependency so that when its load endpoint is called it will load whatever data we want."
+    ) {
+      StandupsList(
+        model: withDependencies {
+          $0.dataManager = .mock(
+            initialData: try! JSONEncoder().encode([
+              Standup.mock,
+              .engineeringMock,
+              .designMock
+            ])
+          )
+        } operation: {
+          StandupsListModel()
+        }
+      )
+    }
     .previewDisplayName("Mocking initial standups")
 
-    // This preview demonstrates how to test the flow of loading bad data from disk, in which case
-    // an alert should be shown. This can be done by overridding the DataManager dependency so that
-    // its initial data does not properly decode into a collection of standups.
-    StandupsList(
-      model: withDependencies {
-        $0.dataManager = .mock(
-          initialData: Data("!@#$% bad data ^&*()".utf8)
-        )
-      } operation: {
-        StandupsListModel()
-      }
-    )
+    Preview(
+      message: "This preview demonstrates how to test the flow of loading bad data from disk, in which case an alert should be shown. This can be done by overridding the DataManager dependency so that its initial data does not properly decode into a collection of standups."
+    ) {
+      StandupsList(
+        model: withDependencies {
+          $0.dataManager = .mock(
+            initialData: Data("!@#$% bad data ^&*()".utf8)
+          )
+        } operation: {
+          StandupsListModel()
+        }
+      )
+    }
     .previewDisplayName("Load data failure")
 
-    // The preview demonstrates how you can start the application navigated to a very specific
-    // screen just by constructing a piece of state. In particular we will start the app drilled
-    // down to the detail screen of a standup, and then further drilled down to the record screen
-    // for a new meeting.
-    StandupsList(
-      model: withDependencies {
-        $0.dataManager = .mock(
-          initialData: try! JSONEncoder().encode([
-            Standup.mock,
-            .engineeringMock,
-            .designMock
-          ])
-        )
-      } operation: {
-        StandupsListModel(
-          destination: .detail(
-            StandupDetailModel(
-              destination: .record(
-                RecordMeetingModel(standup: .mock)
-              ),
-              standup: .mock
+    Preview(
+      message: "The preview demonstrates how you can start the application navigated to a very specific screen just by constructing a piece of state. In particular we will start the app drilled down to the detail screen of a standup, and then further drilled down to the record screen for a new meeting."
+    ) {
+      StandupsList(
+        model: withDependencies {
+          $0.dataManager = .mock(
+            initialData: try! JSONEncoder().encode([
+              Standup.mock,
+              .engineeringMock,
+              .designMock
+            ])
+          )
+        } operation: {
+          StandupsListModel(
+            destination: .detail(
+              StandupDetailModel(
+                destination: .record(
+                  RecordMeetingModel(standup: .mock)
+                ),
+                standup: .mock
+              )
             )
           )
-        )
-      }
-    )
+        }
+      )
+    }
     .previewDisplayName("Deep link record flow")
 
-    // The preview demonstrates how you can start the application navigated to a very specific
-    // screen just by constructing a piece of state. In particular we will start the app with the
-    // "Add standup" screen opened and with the last attendee text field focused.
-    StandupsList(
-      model: withDependencies {
-        $0.dataManager = .mock()
-      } operation: {
-        var standup = Standup.mock
-        let lastAttendee = Attendee(id: Attendee.ID())
-        let _ = standup.attendees.append(lastAttendee)
-        return StandupsListModel(
-          destination: .add(
-            EditStandupModel(
-              focus: .attendee(lastAttendee.id),
-              standup: standup
+    Preview(
+      message: "The preview demonstrates how you can start the application navigated to a very specific screen just by constructing a piece of state. In particular we will start the app with the \"Add standup\" screen opened and with the last attendee text field focused."
+    ) {
+      StandupsList(
+        model: withDependencies {
+          $0.dataManager = .mock()
+        } operation: {
+          var standup = Standup.mock
+          let lastAttendee = Attendee(id: Attendee.ID())
+          let _ = standup.attendees.append(lastAttendee)
+          return StandupsListModel(
+            destination: .add(
+              EditStandupModel(
+                focus: .attendee(lastAttendee.id),
+                standup: standup
+              )
             )
           )
-        )
-      }
-    )
+        }
+      )
+    }
     .previewDisplayName("Deep link add flow")
   }
 }
