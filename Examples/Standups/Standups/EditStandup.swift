@@ -114,5 +114,18 @@ struct EditStandup_Previews: PreviewProvider {
     NavigationStack {
       EditStandupView(model: EditStandupModel(standup: .mock))
     }
+    .previewDisplayName("Edit")
+
+    // This preview shows how we can start the screen if a very specific state, where the 4th
+    // attendee is already focused.
+    NavigationStack {
+      EditStandupView(
+        model: EditStandupModel(
+          focus: .attendee(Standup.mock.attendees[3].id),
+          standup: .mock
+        )
+      )
+    }
+    .previewDisplayName("4th attendee focused")
   }
 }

@@ -23,14 +23,17 @@ indicate when and how long each attendee should speak. The app also displays a p
 shows the time remaining in the meeting and creates a transcript that users can refer to later.
 
 The Scrumdinger app is one of Apple's most interesting code samples as it deals with many real
-world problems that one faces in application development. However, it is not necessarily built in
-the most ideal way. It uses mostly fire-and-forget style navigation, which means you can't easily
-deep link into any screen of the app, which is handy for push notifications and opening URLs. It 
-also uses uncontrolled dependencies, including file system access, timers and a speech recognizer, 
-which makes it nearly impossible to write automated tests and even hinders the ability to preview 
-the app in Xcode previews.
+world problems that one faces in application development. It shows off many types of navigation,
+it deals with complex effects such as timers and speech recognition, and it persists application
+to disk.
 
-However, the simplicity of Apple's Scrumdinger codebase is not a defect. In fact, it's a feature!
+However, it is not necessarily built in the most ideal way. It uses mostly fire-and-forget style 
+navigation, which means you can't easily deep link into any screen of the app, which is handy for 
+push notifications and opening URLs. It also uses uncontrolled dependencies, including file system 
+access, timers and a speech recognizer, which makes it nearly impossible to write automated tests 
+and even hinders the ability to preview the app in Xcode previews.
+
+But, the simplicity of Apple's Scrumdinger codebase is not a defect. In fact, it's a feature!
 Apple's sample code is viewed by hundreds of thousands of developers across the world, and so its 
 goal is to be as approachable as possible in order to teach the basics of SwiftUI. But, that doesn't
 mean there isn't room for improvement.
@@ -63,7 +66,7 @@ is very useful in tests and Xcode previews. We accomplish this using our
 because we controlled all dependencies, we can write very comprehensive and nuanced tests. For 
 example, we can write a unit test that proves that when a standup meeting's timer runs out the 
 screen pops off the stack and a new transcript is added to the standup. Such a test would be very 
-difficult, if not impossible, without controlling dependencies or as a UI test.
+difficult, if not impossible, without controlling dependencies.
 
 [modern-swiftui-collection]: https://www.pointfree.co/collections/swiftui/modern-swiftui
 [scrumdinger]: https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger

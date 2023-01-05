@@ -27,6 +27,14 @@ class RecordMeetingModel: ObservableObject {
     case dismissErrorAlert
   }
 
+  init(
+    destination: Destination? = nil,
+    standup: Standup
+  ) {
+    self.destination = destination
+    self.standup = standup
+  }
+
   var onMeetingFinished: (String) async -> Void = unimplemented(
     "RecordMeetingModel.onMeetingFinished")
 
@@ -41,14 +49,6 @@ class RecordMeetingModel: ObservableObject {
     case .none:
       return false
     }
-  }
-
-  init(
-    destination: Destination? = nil,
-    standup: Standup
-  ) {
-    self.destination = destination
-    self.standup = standup
   }
 
   func nextButtonTapped() {
@@ -81,25 +81,20 @@ class RecordMeetingModel: ObservableObject {
   }
 
   func task() async {
-    do {
-      let authorization =
-        await self.speechClient.authorizationStatus() == .notDetermined
-        ? self.speechClient.requestAuthorization()
-        : self.speechClient.authorizationStatus()
+    let authorization =
+      await self.speechClient.authorizationStatus() == .notDetermined
+      ? self.speechClient.requestAuthorization()
+      : self.speechClient.authorizationStatus()
 
-      try await withThrowingTaskGroup(of: Void.self) { group in
-        if authorization == .authorized {
-          group.addTask {
-            await self.startSpeechRecognition()
-          }
-        }
+    await withTaskGroup(of: Void.self) { group in
+      if authorization == .authorized {
         group.addTask {
-          try await self.startTimer()
+          await self.startSpeechRecognition()
         }
-        try await group.waitForAll()
       }
-    } catch {
-
+      group.addTask {
+        await self.startTimer()
+      }
     }
   }
 
@@ -120,7 +115,7 @@ class RecordMeetingModel: ObservableObject {
     }
   }
 
-  private func startTimer() async throws {
+  private func startTimer() async {
     for await _ in self.clock.timer(interval: .seconds(1)) where !self.isAlertOpen {
       guard !self.dismiss
       else { break }
@@ -164,14 +159,15 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
   static let speechRecognizerFailed = Self {
     TextState("Speech recognition failure")
   } actions: {
-    ButtonState (role: .cancel) {
+    ButtonState(role: .cancel) {
       TextState("Continue meeting")
     }
     ButtonState(role: .destructive, action: .confirmDiscard) {
       TextState("Discard meeting")
     }
   } message: {
-    TextState("""
+    TextState(
+      """
       The speech recognizer has failed for some reason and so your meeting will no longer be \
       recorded. What do you want to do?
       """)

@@ -76,7 +76,7 @@ extension SpeechClient: DependencyKey {
   )
 
   static func fail(after duration: Duration) -> Self {
-    Self(
+    return Self(
       authorizationStatus: { .authorized },
       requestAuthorization: { .authorized },
       startTask: { request in
