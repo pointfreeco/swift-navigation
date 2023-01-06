@@ -17,6 +17,9 @@ class RecordMeetingModel: ObservableObject {
   @Dependency(\.continuousClock) var clock
   @Dependency(\.speechClient) var speechClient
 
+  var onMeetingFinished: (String) async -> Void = unimplemented(
+    "RecordMeetingModel.onMeetingFinished")
+
   enum Destination {
     case alert(AlertState<AlertAction>)
   }
@@ -24,7 +27,6 @@ class RecordMeetingModel: ObservableObject {
   enum AlertAction {
     case confirmSave
     case confirmDiscard
-    case dismissErrorAlert
   }
 
   init(
@@ -34,9 +36,6 @@ class RecordMeetingModel: ObservableObject {
     self.destination = destination
     self.standup = standup
   }
-
-  var onMeetingFinished: (String) async -> Void = unimplemented(
-    "RecordMeetingModel.onMeetingFinished")
 
   var durationRemaining: Duration {
     self.standup.duration - .seconds(self.secondsElapsed)
@@ -74,9 +73,6 @@ class RecordMeetingModel: ObservableObject {
 
     case .confirmDiscard:
       self.isDismissed = true
-
-    case .dismissErrorAlert:
-      await self.finishMeeting()
     }
   }
 
