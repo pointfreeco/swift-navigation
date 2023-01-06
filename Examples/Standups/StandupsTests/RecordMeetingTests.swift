@@ -74,7 +74,6 @@ final class RecordMeetingTests: XCTestCase {
             bestTranscription: Transcription(formattedString: "I completed the project"),
             isFinal: true
           )
-          // TODO: add to swift-deps
         ].async.eraseToThrowingStream()
       }
     } operation: {
