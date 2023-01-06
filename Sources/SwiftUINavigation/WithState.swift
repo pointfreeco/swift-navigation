@@ -19,7 +19,6 @@ import SwiftUI
 ///
 /// So, instead you can use ``WithState``:
 ///
-///
 /// ```swift
 /// struct TextField_Previews: PreviewProvider {
 ///   static var previews: some View {

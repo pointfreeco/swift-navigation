@@ -25,7 +25,7 @@ class FeatureModel: ObservableObject {
 }
 ```
 
-Then, when you need to show an alert you can hydate the alert state with a title, message and
+Then, when you need to show an alert you can update the alert state with a title, message and
 buttons:
 
 ```swift
@@ -107,7 +107,7 @@ This works because all of the types for describing an alert are `Equatable`, inc
 Sometimes it is not optimal to model the alert as an optional. In particular, if a feature can
 navigate to multiple, mutually exclusive screens, then an enum is more appropriate.
 
-In such a case 
+In such a case:
 
 
 ```swift
