@@ -174,7 +174,7 @@ extension View {
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
-            Button($0) {
+            Button($0) { action in
               Task {
                 await handler(action)
               }
