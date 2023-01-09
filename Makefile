@@ -22,6 +22,11 @@ test:
 		-workspace SwiftUINavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_WATCHOS)"
+test-examples:
+	xcodebuild test \
+		-workspace SwiftUINavigation.xcworkspace \
+		-scheme Standups \
+		-destination platform="$(PLATFORM_IOS)"
 
 DOC_WARNINGS := $(shell xcodebuild clean docbuild \
 	-scheme SwiftUINavigation \

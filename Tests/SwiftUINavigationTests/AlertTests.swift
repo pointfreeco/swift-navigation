@@ -87,3 +87,32 @@ final class AlertTests: XCTestCase {
     }
   }
 }
+
+import SwiftUI
+
+// NB: This is a compile time test to make sure that async action closures can be used in
+//     Swift <5.7.
+@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+private struct TestView: View {
+  @State var alert: AlertState<AlertAction>?
+  enum AlertAction {
+    case confirm
+    case deny
+  }
+
+  var body: some View {
+    Text("")
+      .alert(unwrapping: self.$alert) {
+        await self.alertButtonTapped($0)
+      }
+  }
+
+  private func alertButtonTapped(_ action: AlertAction) async {
+    switch action {
+    case .confirm:
+      break
+    case .deny:
+      break
+    }
+  }
+}
