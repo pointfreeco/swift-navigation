@@ -47,15 +47,6 @@
         }
       },
       {
-        "package": "swift-dependencies",
-        "repositoryURL": "https://github.com/pointfreeco/swift-dependencies.git",
-        "state": {
-          "branch": "main",
-          "revision": "a1d5f68471fe14558c3cdf1771861b57c7d1191e",
-          "version": null
-        }
-      },
-      {
         "package": "SwiftDocCPlugin",
         "repositoryURL": "https://github.com/apple/swift-docc-plugin",
         "state": {
