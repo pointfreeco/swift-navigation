@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/apple/swift-async-algorithms",
         "state": {
           "branch": null,
-          "revision": "cca423ff03ab657062f3781847e65a867b51bb01",
-          "version": "0.0.3"
+          "revision": "aed5422380244498344a036b8d94e27f370d9a22",
+          "version": "0.0.4"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "http://github.com/pointfreeco/swift-dependencies",
         "state": {
           "branch": null,
-          "revision": "0deebf4e0aebc72b0d93ff1ffac9558a6785f9f4",
-          "version": "0.1.0"
+          "revision": "e49dfe4d9e4c5c06f3334361360b801aef41631c",
+          "version": "0.1.1"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections.git",
         "state": {
           "branch": null,
-          "revision": "a08887de589e3829d488e0b4b707b2ca804b1060",
-          "version": "0.5.0"
+          "revision": "fd34c544ad27f3ba6b19142b348005bfa85b6005",
+          "version": "0.6.0"
         }
       },
       {
