@@ -11,7 +11,7 @@ class RecordMeetingModel: ObservableObject {
   @Published var isDismissed = false
   @Published var secondsElapsed = 0
   @Published var speakerIndex = 0
-  let standup: Standup
+  private let standup: Standup
   private var transcript = ""
 
   @Dependency(\.continuousClock) var clock
