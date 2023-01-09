@@ -366,7 +366,7 @@ struct StandupDetail_Previews: PreviewProvider {
         )
       }
     }
-    .previewDisplayName("Speech recongition failed")
+    .previewDisplayName("Speech recognition failed")
 
     Preview(
       message: """
@@ -385,7 +385,7 @@ struct StandupDetail_Previews: PreviewProvider {
         )
       }
     }
-    .previewDisplayName("Speech recongition denied")
+    .previewDisplayName("Speech recognition denied")
 
     Preview(
       message: """
@@ -404,6 +404,6 @@ struct StandupDetail_Previews: PreviewProvider {
         )
       }
     }
-    .previewDisplayName("Speech recongition restricted")
+    .previewDisplayName("Speech recognition restricted")
   }
 }
