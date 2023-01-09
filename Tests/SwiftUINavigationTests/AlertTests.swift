@@ -1,4 +1,5 @@
 import CustomDump
+import SwiftUI
 import SwiftUINavigation
 import XCTest
 
@@ -87,8 +88,6 @@ final class AlertTests: XCTestCase {
     }
   }
 }
-
-import SwiftUI
 
 // NB: This is a compile time test to make sure that async action closures can be used in
 //     Swift <5.7.

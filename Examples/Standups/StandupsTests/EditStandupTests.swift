@@ -1,6 +1,7 @@
+import CustomDump
 import Dependencies
 import XCTest
-import CustomDump
+
 @testable import Standups
 
 @MainActor
@@ -21,7 +22,7 @@ final class EditStandupTests: XCTestCase {
     XCTAssertNoDifference(
       model.standup.attendees,
       [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!),
+        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!)
       ]
     )
 
@@ -117,7 +118,7 @@ final class EditStandupTests: XCTestCase {
     XCTAssertNoDifference(
       model.standup.attendees,
       [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
+        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
       ]
     )
 
@@ -130,7 +131,7 @@ final class EditStandupTests: XCTestCase {
     XCTAssertNoDifference(
       model.standup.attendees,
       [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000004")!),
+        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000004")!)
       ]
     )
   }

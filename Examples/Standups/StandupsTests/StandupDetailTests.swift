@@ -35,7 +35,7 @@ final class StandupDetailTests: XCTestCase {
 
     XCTAssertNoDifference(alert, .speechRecognitionDenied)
   }
- 
+
   func testOpenSettings() async {
     let settingsOpened = LockIsolated(false)
     let model = withDependencies {

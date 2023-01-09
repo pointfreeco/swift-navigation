@@ -117,7 +117,7 @@ final class StandupsListModel: ObservableObject {
         self.standups = [
           .mock,
           .designMock,
-          .engineeringMock
+          .engineeringMock,
         ]
       }
 
@@ -138,7 +138,8 @@ extension AlertState where Action == StandupsListModel.AlertAction {
       TextState("No")
     }
   } message: {
-    TextState("""
+    TextState(
+      """
       Unfortunately your past data failed to load. Would you like to load some mock data to play \
       around with?
       """)
@@ -259,7 +260,7 @@ struct StandupsList_Previews: PreviewProvider {
             initialData: try! JSONEncoder().encode([
               Standup.mock,
               .engineeringMock,
-              .designMock
+              .designMock,
             ])
           )
         } operation: {
@@ -302,7 +303,7 @@ struct StandupsList_Previews: PreviewProvider {
             initialData: try! JSONEncoder().encode([
               Standup.mock,
               .engineeringMock,
-              .designMock
+              .designMock,
             ])
           )
         } operation: {

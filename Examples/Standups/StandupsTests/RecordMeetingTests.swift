@@ -1,15 +1,16 @@
 import AsyncAlgorithms
 import CasePaths
+import CustomDump
 import Dependencies
 import XCTest
-import CustomDump
+
 @testable import Standups
 
 @MainActor
 final class RecordMeetingTests: XCTestCase {
   func testTimer() async throws {
     let clock = TestClock()
-    
+
     let model = withDependencies {
       $0.continuousClock = clock
       $0.speechClient.authorizationStatus = { .denied }
@@ -320,4 +321,3 @@ final class RecordMeetingTests: XCTestCase {
     await task.value
   }
 }
-
