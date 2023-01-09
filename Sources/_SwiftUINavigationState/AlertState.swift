@@ -221,8 +221,8 @@ extension AlertState {
   @available(*, deprecated, message: "Use 'ButtonState<Action>.ButtonAction' instead.")
   public typealias ButtonAction = ButtonState<Action>.ButtonAction
 
-  @available(*, deprecated, message: "Use 'ButtonState<Action>.Role' instead.")
-  public typealias ButtonRole = ButtonState<Action>.Role
+  @available(*, deprecated, message: "Use 'ButtonStateRole' instead.")
+  public typealias ButtonRole = ButtonStateRole
 
   @available(
     iOS, introduced: 15, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."

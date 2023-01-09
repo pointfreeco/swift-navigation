@@ -20,25 +20,13 @@ public struct ButtonState<Action>: Identifiable {
     }
   }
 
-  /// A value that describes the purpose of a button.
-  ///
-  /// See `SwiftUI.ButtonRole` for more information.
-  public enum Role {
-    /// A role that indicates a cancel button.
-    ///
-    /// See `SwiftUI.ButtonRole.cancel` for more information.
-    case cancel
-
-    /// A role that indicates a destructive button.
-    ///
-    /// See `SwiftUI.ButtonRole.destructive` for more information.
-    case destructive
-  }
+  @available(*, deprecated)
+  public typealias ButtonRole = ButtonStateRole
 
   public let id = UUID()
   public let action: Handler?
   public let label: TextState
-  public let role: Role?
+  public let role: ButtonStateRole?
 
   /// Creates button state.
   ///
@@ -48,7 +36,7 @@ public struct ButtonState<Action>: Identifiable {
   ///   - action: The action to send when the user interacts with the button.
   ///   - label: A view that describes the purpose of the button's `action`.
   public init(
-    role: Role? = nil,
+    role: ButtonStateRole? = nil,
     action: Handler? = nil,
     label: () -> TextState
   ) {
@@ -65,7 +53,7 @@ public struct ButtonState<Action>: Identifiable {
   ///   - action: The action to send when the user interacts with the button.
   ///   - label: A view that describes the purpose of the button's `action`.
   public init(
-    role: Role? = nil,
+    role: ButtonStateRole? = nil,
     action: Action,
     label: () -> TextState
   ) {
@@ -136,7 +124,7 @@ extension ButtonState.Handler: CustomDumpReflectable {
 
 extension ButtonState.Handler: Equatable where Action: Equatable {}
 extension ButtonState.Handler._ActionType: Equatable where Action: Equatable {}
-extension ButtonState.Role: Equatable {}
+extension ButtonStateRole: Equatable {}
 extension ButtonState: Equatable where Action: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.action == rhs.action
@@ -154,7 +142,7 @@ extension ButtonState.Handler._ActionType: Hashable where Action: Hashable {
     }
   }
 }
-extension ButtonState.Role: Hashable {}
+extension ButtonStateRole: Hashable {}
 extension ButtonState: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(self.action)
@@ -181,7 +169,7 @@ extension Alert.Button {
 
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension ButtonRole {
-  public init<Action>(_ role: ButtonState<Action>.Role) {
+  public init(_ role: ButtonStateRole) {
     switch role {
     case .cancel:
       self = .cancel
@@ -256,4 +244,19 @@ extension ButtonState {
       label
     }
   }
+}
+
+/// A value that describes the purpose of a button.
+///
+/// See `SwiftUI.ButtonRole` for more information.
+public enum ButtonStateRole {
+  /// A role that indicates a cancel button.
+  ///
+  /// See `SwiftUI.ButtonRole.cancel` for more information.
+  case cancel
+
+  /// A role that indicates a destructive button.
+  ///
+  /// See `SwiftUI.ButtonRole.destructive` for more information.
+  case destructive
 }
