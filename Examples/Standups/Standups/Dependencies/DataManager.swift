@@ -11,6 +11,11 @@ extension DataManager: DependencyKey {
     load: { url in try Data(contentsOf: url) },
     save: { data, url in try data.write(to: url) }
   )
+
+  static let testValue = DataManager(
+    load: unimplemented("DataManager.load"),
+    save: unimplemented("DataManager.save")
+  )
 }
 
 extension DependencyValues {

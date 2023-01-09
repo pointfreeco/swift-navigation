@@ -10,7 +10,7 @@ class StandupDetailModel: ObservableObject {
   @Published var destination: Destination? {
     didSet { self.bind() }
   }
-  @Published var dismiss = false
+  @Published var isDismissed = false
   @Published var standup: Standup
 
   @Dependency(\.continuousClock) var clock
@@ -58,7 +58,7 @@ class StandupDetailModel: ObservableObject {
     switch action {
     case .confirmDeletion:
       self.onConfirmDeletion()
-      self.dismiss = true
+      self.isDismissed = true
 
     case .continueWithoutRecording:
       self.destination = .record(
@@ -253,9 +253,7 @@ struct StandupDetailView: View {
           }
       }
     }
-    .onChange(of: self.model.dismiss) { _ in
-      self.dismiss()
-    }
+    .onChange(of: self.model.isDismissed) { _ in self.dismiss() }
   }
 }
 

@@ -240,8 +240,7 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
 }
 
 extension URL {
-  fileprivate static let standups = Self.documentsDirectory
-    .appending(component: "standups.json")
+  fileprivate static let standups = Self.documentsDirectory.appending(component: "standups.json")
 }
 
 struct StandupsList_Previews: PreviewProvider {
