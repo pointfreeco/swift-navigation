@@ -26,7 +26,7 @@ The inspiration for this application comes Apple's [Scrumdinger][scrumdinger] tu
 The Scrumdinger app is one of Apple's most interesting code samples as it deals with many real world
 world problems that one faces in application development. It shows off many types of navigation,
 it deals with complex effects such as timers and speech recognition, and it persists application
-to disk.
+data to disk.
 
 However, it is not necessarily built in the most ideal way. It uses mostly fire-and-forget style
 navigation, which means you can't easily deep link into any screen of the app, which is handy for
