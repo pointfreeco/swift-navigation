@@ -104,7 +104,7 @@ struct EditView: View {
       } else: {
         Text("\(self.string)")
         Button("Edit") {
-          self.editableString = self.string
+          self.editableString = .active(self.string)
         }
       }
       .buttonStyle(.borderless)
