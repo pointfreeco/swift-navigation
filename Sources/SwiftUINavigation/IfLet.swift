@@ -11,7 +11,7 @@ import SwiftUI
 /// optional binding.
 ///
 /// ```swift
-/// struct InventoryItemView {
+/// struct InventoryItemView: View {
 ///   @State var quantity: Int?
 ///
 ///   var body: some View {

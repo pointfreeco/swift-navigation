@@ -15,7 +15,7 @@ import SwiftUI
 ///   case outOfStock(isOnBackOrder: Bool)
 /// }
 ///
-/// struct InventoryItemView {
+/// struct InventoryItemView: View {
 ///   @State var status: ItemStatus
 ///
 ///   var body: some View {
