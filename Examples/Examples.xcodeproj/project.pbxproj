@@ -883,6 +883,7 @@
 				DEVELOPMENT_TEAM = VFRXY8HC3H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "To transcribe meeting notes.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "To transcribe meeting notes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -915,6 +916,7 @@
 				DEVELOPMENT_TEAM = VFRXY8HC3H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "To transcribe meeting notes.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "To transcribe meeting notes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
