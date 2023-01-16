@@ -25,7 +25,6 @@ final class StandupsListModel: ObservableObject {
   }
   enum AlertAction {
     case confirmLoadMockData
-    case dismissFailedAlert
   }
 
   init(
@@ -120,9 +119,6 @@ final class StandupsListModel: ObservableObject {
           .engineeringMock,
         ]
       }
-
-    case .dismissFailedAlert:
-      self.standups = []
     }
   }
 }

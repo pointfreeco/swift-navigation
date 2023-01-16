@@ -5,6 +5,8 @@ import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
 
+// TODO: sound client
+
 @MainActor
 class RecordMeetingModel: ObservableObject {
   @Published var destination: Destination?
@@ -230,13 +232,16 @@ struct MeetingHeaderView: View {
         .progressViewStyle(MeetingProgressViewStyle(theme: self.theme))
       HStack {
         VStack(alignment: .leading) {
-          Text("Seconds Elapsed")
+          Text("Time Elapsed")
             .font(.caption)
-          Label("\(self.secondsElapsed)", systemImage: "hourglass.bottomhalf.fill")
+          Label(
+            Duration.seconds(self.secondsElapsed).formatted(.units()),
+            systemImage: "hourglass.bottomhalf.fill"
+          )
         }
         Spacer()
         VStack(alignment: .trailing) {
-          Text("Seconds Remaining")
+          Text("Time Remaining")
             .font(.caption)
           Label(self.durationRemaining.formatted(.units()), systemImage: "hourglass.tophalf.fill")
             .font(.body.monospacedDigit())

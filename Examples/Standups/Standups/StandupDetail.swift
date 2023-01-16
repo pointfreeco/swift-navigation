@@ -46,7 +46,7 @@ class StandupDetailModel: ObservableObject {
     self.standup.meetings.remove(atOffsets: indices)
   }
 
-  func meetingTapping(_ meeting: Meeting) {
+  func meetingTapped(_ meeting: Meeting) {
     self.destination = .meeting(meeting)
   }
 
@@ -175,7 +175,7 @@ struct StandupDetailView: View {
         Section {
           ForEach(self.model.standup.meetings) { meeting in
             Button {
-              self.model.meetingTapping(meeting)
+              self.model.meetingTapped(meeting)
             } label: {
               HStack {
                 Image(systemName: "calendar")
@@ -310,6 +310,7 @@ extension AlertState where Action == StandupDetailModel.AlertAction {
 struct MeetingView: View {
   let meeting: Meeting
   let standup: Standup
+  @Environment(\.dismiss) var dismiss
 
   var body: some View {
     ScrollView {
@@ -329,6 +330,7 @@ struct MeetingView: View {
     }
     .navigationTitle(Text(self.meeting.date, style: .date))
     .padding()
+    .onDisappear { self.dismiss() }
   }
 }
 
