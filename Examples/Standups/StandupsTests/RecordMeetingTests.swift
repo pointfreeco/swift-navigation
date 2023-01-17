@@ -1,4 +1,3 @@
-import AsyncAlgorithms
 import CasePaths
 import CustomDump
 import Dependencies
@@ -70,12 +69,15 @@ final class RecordMeetingTests: XCTestCase {
       $0.continuousClock = ImmediateClock()
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
-        [
-          SpeechRecognitionResult(
-            bestTranscription: Transcription(formattedString: "I completed the project"),
-            isFinal: true
+        AsyncThrowingStream { continuation in
+          continuation.yield(
+            SpeechRecognitionResult(
+              bestTranscription: Transcription(formattedString: "I completed the project"),
+              isFinal: true
+            )
           )
-        ].async.eraseToThrowingStream()
+          continuation.finish()
+        }
       }
     } operation: {
       RecordMeetingModel(

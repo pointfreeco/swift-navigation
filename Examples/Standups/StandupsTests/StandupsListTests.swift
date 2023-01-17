@@ -106,14 +106,7 @@ final class StandupsListTests: XCTestCase {
   func testDelete() async throws {
     let model = try withDependencies { dependencies in
       dependencies.dataManager = .mock(
-        initialData: try JSONEncoder().encode([
-          Standup(
-            id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-            attendees: [
-              Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-            ]
-          )
-        ])
+        initialData: try JSONEncoder().encode([Standup.mock])
       )
       dependencies.mainQueue = mainQueue.eraseToAnyScheduler()
     } operation: {
