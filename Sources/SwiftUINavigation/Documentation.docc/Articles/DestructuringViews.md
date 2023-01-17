@@ -24,14 +24,14 @@ struct EditView: View {
 
   var body: some View {
     Form {
-      IfLet(self.$editableString) { $tempString in
-        TextField("Edit string", text: $tempString)
+      IfLet(self.$editableString) { $string in
+        TextField("Edit string", text: $string)
         HStack {
           Button("Cancel") {
             self.editableString = nil
           }
           Button("Save") {
-            self.string = tempString
+            self.string = string
             self.editableString = nil
           }
         }
@@ -90,14 +90,14 @@ struct EditView: View {
 
   var body: some View {
     Form {
-      IfCaseLet(self.$editableString, pattern: /EditableString.active) { $tempString in
-        TextField("Edit string", text: $tempString)
+      IfCaseLet(self.$editableString, pattern: /EditableString.active) { $string in
+        TextField("Edit string", text: $string)
         HStack {
           Button("Cancel") {
             self.editableString = .inactive
           }
           Button("Save") {
-            self.string = tempString
+            self.string = string
             self.editableString = .inactive
           }
         }
