@@ -69,7 +69,7 @@ final class StandupsListTests: XCTestCase {
     } operation: {
       StandupsListModel(
         destination: .add(
-          EditStandupModel(
+          StandupFormModel(
             standup: Standup(
               id: Standup.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
               attendees: [

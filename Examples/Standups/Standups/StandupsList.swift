@@ -19,7 +19,7 @@ final class StandupsListModel: ObservableObject {
   @Dependency(\.uuid) var uuid
 
   enum Destination {
-    case add(EditStandupModel)
+    case add(StandupFormModel)
     case alert(AlertState<AlertAction>)
     case detail(StandupDetailModel)
   }
@@ -56,7 +56,7 @@ final class StandupsListModel: ObservableObject {
   func addStandupButtonTapped() {
     self.destination = .add(
       withDependencies(from: self) {
-        EditStandupModel(standup: Standup(id: Standup.ID(self.uuid())))
+        StandupFormModel(standup: Standup(id: Standup.ID(self.uuid())))
       }
     )
   }
@@ -68,9 +68,9 @@ final class StandupsListModel: ObservableObject {
   func confirmAddStandupButtonTapped() {
     defer { self.destination = nil }
 
-    guard case let .add(editStandupModel) = self.destination
+    guard case let .add(standupFormModel) = self.destination
     else { return }
-    var standup = editStandupModel.standup
+    var standup = standupFormModel.standup
 
     standup.attendees.removeAll { attendee in
       attendee.name.allSatisfy(\.isWhitespace)
@@ -170,7 +170,7 @@ struct StandupsList: View {
         case: /StandupsListModel.Destination.add
       ) { $model in
         NavigationStack {
-          EditStandupView(model: model)
+          StandupFormView(model: model)
             .navigationTitle("New standup")
             .toolbar {
               ToolbarItem(placement: .cancellationAction) {
@@ -334,7 +334,7 @@ struct StandupsList_Previews: PreviewProvider {
           let _ = standup.attendees.append(lastAttendee)
           return StandupsListModel(
             destination: .add(
-              EditStandupModel(
+              StandupFormModel(
                 focus: .attendee(lastAttendee.id),
                 standup: standup
               )

@@ -23,7 +23,7 @@ class StandupDetailModel: ObservableObject {
 
   enum Destination {
     case alert(AlertState<AlertAction>)
-    case edit(EditStandupModel)
+    case edit(StandupFormModel)
     case meeting(Meeting)
     case record(RecordMeetingModel)
   }
@@ -75,7 +75,7 @@ class StandupDetailModel: ObservableObject {
   func editButtonTapped() {
     self.destination = .edit(
       withDependencies(from: self) {
-        EditStandupModel(standup: self.standup)
+        StandupFormModel(standup: self.standup)
       }
     )
   }
@@ -237,7 +237,7 @@ struct StandupDetailView: View {
       case: /StandupDetailModel.Destination.edit
     ) { $editModel in
       NavigationStack {
-        EditStandupView(model: editModel)
+        StandupFormView(model: editModel)
           .navigationTitle(self.model.standup.title)
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {
