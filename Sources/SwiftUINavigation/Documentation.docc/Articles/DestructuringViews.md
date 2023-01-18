@@ -36,7 +36,7 @@ struct EditView: View {
           }
         }
       } else: {
-        Text("\(self.string)")
+        Text(self.string)
         Button("Edit") {
           self.editableString = self.string
         }
@@ -47,7 +47,7 @@ struct EditView: View {
 }
 ```
 
-This is the most optimal way to model this domain. Without the ability to deriving a 
+This is the most optimal way to model this domain. Without the ability to derive a 
 `Binding<String>` from a `Binding<String?>` we would have had to hold onto extra state to represent
 whether or not we are in editing mode:
 
@@ -94,15 +94,15 @@ struct EditView: View {
         TextField("Edit string", text: $string)
         HStack {
           Button("Cancel") {
-            self.editableString = nil
+            self.editableString = .inactive
           }
           Button("Save") {
             self.string = string
-            self.editableString = nil
+            self.editableString = .inactive
           }
         }
       } else: {
-        Text("\(self.string)")
+        Text(self.string)
         Button("Edit") {
           self.editableString = .active(self.string)
         }
@@ -136,7 +136,7 @@ enum ItemStatus {
   case outOfStock(isOnBackOrder: Bool)
 }
 
-struct InventoryItemView {
+struct InventoryItemView: View {
   @State var status: ItemStatus
 
   var body: some View {

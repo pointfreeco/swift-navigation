@@ -14,7 +14,7 @@ object and synchronizing it to view state with the `bind` view modifier that shi
 library.
 
 For example, suppose you have a sign in flow where if the API request to sign in fails, you want
-to refocus the email field. The model can be implement like so:
+to refocus the email field. The model can be implemented like so:
 
 ```swift
 class SignInModel: ObservableObject {
