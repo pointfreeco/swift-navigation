@@ -17,6 +17,7 @@ class RecordMeetingModel: ObservableObject {
   private var transcript = ""
 
   @Dependency(\.continuousClock) var clock
+  @Dependency(\.soundEffectClient) var soundEffectClient
   @Dependency(\.speechClient) var speechClient
 
   var onMeetingFinished: (String) async -> Void = unimplemented(
@@ -52,7 +53,7 @@ class RecordMeetingModel: ObservableObject {
     }
   }
 
-  func nextButtonTapped() {
+  func nextButtonTapped() async {
     guard self.speakerIndex < self.standup.attendees.count - 1
     else {
       self.destination = .alert(.endMeeting(isDiscardable: false))
@@ -60,6 +61,7 @@ class RecordMeetingModel: ObservableObject {
     }
 
     self.speakerIndex += 1
+    await self.soundEffectClient.play()
     self.secondsElapsed =
       self.speakerIndex * Int(self.standup.durationPerAttendee.components.seconds)
   }
@@ -79,6 +81,8 @@ class RecordMeetingModel: ObservableObject {
   }
 
   func task() async {
+    await self.soundEffectClient.load("ding.wav")
+
     let authorization =
       await self.speechClient.authorizationStatus() == .notDetermined
       ? self.speechClient.requestAuthorization()
@@ -129,6 +133,7 @@ class RecordMeetingModel: ObservableObject {
           break
         }
         self.speakerIndex += 1
+        await self.soundEffectClient.play()
       }
     }
   }
@@ -194,7 +199,7 @@ struct RecordMeetingView: View {
         )
         MeetingFooterView(
           standup: self.model.standup,
-          nextButtonTapped: { self.model.nextButtonTapped() },
+          nextButtonTapped: { Task { await self.model.nextButtonTapped() } },
           speakerIndex: self.model.speakerIndex
         )
       }

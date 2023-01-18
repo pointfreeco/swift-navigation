@@ -82,6 +82,7 @@ final class StandupDetailTests: XCTestCase {
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
+      $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
         AsyncThrowingStream { continuation in
