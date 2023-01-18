@@ -5,12 +5,12 @@ import XCTest
 @testable import Standups
 
 @MainActor
-final class EditStandupTests: XCTestCase {
+final class StandupFormTests: XCTestCase {
   func testAddAttendee() {
     let model = withDependencies {
       $0.uuid = .incrementing
     } operation: {
-      EditStandupModel(
+      StandupFormModel(
         standup: Standup(
           id: Standup.ID(),
           attendees: [],
@@ -41,7 +41,7 @@ final class EditStandupTests: XCTestCase {
     let model = withDependencies {
       $0.uuid = .incrementing
     } operation: {
-      EditStandupModel(
+      StandupFormModel(
         standup: Standup(
           id: Standup.ID(),
           attendees: [],
@@ -66,7 +66,7 @@ final class EditStandupTests: XCTestCase {
     } operation: {
       @Dependency(\.uuid) var uuid
 
-      return EditStandupModel(
+      return StandupFormModel(
         standup: Standup(
           id: Standup.ID(),
           attendees: [

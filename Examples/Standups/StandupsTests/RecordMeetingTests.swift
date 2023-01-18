@@ -1,4 +1,3 @@
-import AsyncAlgorithms
 import CasePaths
 import CustomDump
 import Dependencies
@@ -10,9 +9,12 @@ import XCTest
 final class RecordMeetingTests: XCTestCase {
   func testTimer() async throws {
     let clock = TestClock()
+    let soundEffectPlayCount = LockIsolated(0)
 
     let model = withDependencies {
       $0.continuousClock = clock
+      $0.soundEffectClient = .noop
+      $0.soundEffectClient.play = { soundEffectPlayCount.withValue { $0 += 1 } }
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
       RecordMeetingModel(
@@ -50,32 +52,40 @@ final class RecordMeetingTests: XCTestCase {
     await clock.advance(by: .seconds(1))
     XCTAssertEqual(model.speakerIndex, 1)
     XCTAssertEqual(model.durationRemaining, .seconds(2))
+    XCTAssertEqual(soundEffectPlayCount.value, 1)
 
     await clock.advance(by: .seconds(1))
     XCTAssertEqual(model.speakerIndex, 2)
     XCTAssertEqual(model.durationRemaining, .seconds(1))
+    XCTAssertEqual(soundEffectPlayCount.value, 2)
 
     await clock.advance(by: .seconds(1))
     XCTAssertEqual(model.speakerIndex, 2)
     XCTAssertEqual(model.durationRemaining, .seconds(0))
+    XCTAssertEqual(soundEffectPlayCount.value, 2)
 
     await task.value
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
     XCTAssertEqual(model.isDismissed, true)
+    XCTAssertEqual(soundEffectPlayCount.value, 2)
   }
 
   func testRecordTranscript() async throws {
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
+      $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
-        [
-          SpeechRecognitionResult(
-            bestTranscription: Transcription(formattedString: "I completed the project"),
-            isFinal: true
+        AsyncThrowingStream { continuation in
+          continuation.yield(
+            SpeechRecognitionResult(
+              bestTranscription: Transcription(formattedString: "I completed the project"),
+              isFinal: true
+            )
           )
-        ].async.eraseToThrowingStream()
+          continuation.finish()
+        }
       }
     } operation: {
       RecordMeetingModel(
@@ -104,6 +114,7 @@ final class RecordMeetingTests: XCTestCase {
 
     let model = withDependencies {
       $0.continuousClock = clock
+      $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
       RecordMeetingModel(standup: .mock)
@@ -144,6 +155,7 @@ final class RecordMeetingTests: XCTestCase {
 
     let model = withDependencies {
       $0.continuousClock = clock
+      $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
       RecordMeetingModel(standup: .mock)
@@ -171,8 +183,12 @@ final class RecordMeetingTests: XCTestCase {
 
   func testNextSpeaker() async throws {
     let clock = TestClock()
+    let soundEffectPlayCount = LockIsolated(0)
+
     let model = withDependencies {
       $0.continuousClock = clock
+      $0.soundEffectClient = .noop
+      $0.soundEffectClient.play = { soundEffectPlayCount.withValue { $0 += 1 } }
       $0.speechClient.authorizationStatus = { .denied }
 
     } operation: {
@@ -203,11 +219,13 @@ final class RecordMeetingTests: XCTestCase {
 
     XCTAssertEqual(model.speakerIndex, 1)
     XCTAssertEqual(model.durationRemaining, .seconds(2))
+    XCTAssertEqual(soundEffectPlayCount.value, 1)
 
     model.nextButtonTapped()
 
     XCTAssertEqual(model.speakerIndex, 2)
     XCTAssertEqual(model.durationRemaining, .seconds(1))
+    XCTAssertEqual(soundEffectPlayCount.value, 2)
 
     model.nextButtonTapped()
 
@@ -219,11 +237,13 @@ final class RecordMeetingTests: XCTestCase {
 
     XCTAssertEqual(model.speakerIndex, 2)
     XCTAssertEqual(model.durationRemaining, .seconds(1))
+    XCTAssertEqual(soundEffectPlayCount.value, 2)
 
     await model.alertButtonTapped(.confirmSave)
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
     XCTAssertEqual(model.isDismissed, true)
+    XCTAssertEqual(soundEffectPlayCount.value, 2)
 
     task.cancel()
     await task.value
@@ -232,6 +252,7 @@ final class RecordMeetingTests: XCTestCase {
   func testSpeechRecognitionFailure_Continue() async throws {
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
+      $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
         AsyncThrowingStream {
@@ -286,6 +307,7 @@ final class RecordMeetingTests: XCTestCase {
   func testSpeechRecognitionFailure_Discard() async throws {
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
+      $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
         struct SpeechRecognitionFailure: Error {}

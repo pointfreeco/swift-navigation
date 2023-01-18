@@ -25,7 +25,6 @@
 		CA47383E272F0F9B0012CAC3 /* 10-CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */; };
 		CA53F7F1295BBDB700DE68FE /* EditStandupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA53F7F0295BBDB700DE68FE /* EditStandupTests.swift */; };
 		CA53F806295BEE4F00DE68FE /* StandupsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA53F805295BEE4F00DE68FE /* StandupsListUITests.swift */; };
-		CA53F80C295F8BE600DE68FE /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = CA53F80B295F8BE600DE68FE /* AsyncAlgorithms */; };
 		CA64539A2968A06E00802931 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = CA6453992968A06E00802931 /* Dependencies */; };
 		CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */; };
 		CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */; };
@@ -35,11 +34,13 @@
 		CAAA74E82956A658009A25CA /* StandupDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAA74E72956A658009A25CA /* StandupDetailTests.swift */; };
 		CAAC0072292BDE660083F2FF /* 12-IfLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAC0071292BDE660083F2FF /* 12-IfLet.swift */; };
 		CABE9FC1272F2C0000AFC150 /* 09-Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */; };
+		CADF861E2977652500B7695B /* SoundEffectClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADF861D2977652500B7695B /* SoundEffectClient.swift */; };
+		CADF8621297765F000B7695B /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CADF8620297765F000B7695B /* ding.wav */; };
 		DC5E07772947CCD700293F45 /* StandupsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07762947CCD700293F45 /* StandupsApp.swift */; };
 		DC5E07792947CCD700293F45 /* StandupDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07782947CCD700293F45 /* StandupDetail.swift */; };
 		DC5E077B2947CCD800293F45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC5E077A2947CCD800293F45 /* Assets.xcassets */; };
 		DC5E077E2947CCD800293F45 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC5E077D2947CCD800293F45 /* Preview Assets.xcassets */; };
-		DC5E07A52947CFA000293F45 /* EditStandup.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07A42947CFA000293F45 /* EditStandup.swift */; };
+		DC5E07A52947CFA000293F45 /* StandupForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07A42947CFA000293F45 /* StandupForm.swift */; };
 		DC5E07A72947CFA600293F45 /* StandupsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07A62947CFA600293F45 /* StandupsList.swift */; };
 		DC5E07A92947CFB700293F45 /* SpeechClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07A82947CFB700293F45 /* SpeechClient.swift */; };
 		DC5E07AB2947CFCA00293F45 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5E07AA2947CFCA00293F45 /* Models.swift */; };
@@ -104,13 +105,15 @@
 		CAAA74E72956A658009A25CA /* StandupDetailTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupDetailTests.swift; sourceTree = "<group>"; };
 		CAAC0071292BDE660083F2FF /* 12-IfLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "12-IfLet.swift"; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "09-Routing.swift"; sourceTree = "<group>"; };
+		CADF861D2977652500B7695B /* SoundEffectClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectClient.swift; sourceTree = "<group>"; };
+		CADF8620297765F000B7695B /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
 		DC5E07742947CCD700293F45 /* Standups.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Standups.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC5E07762947CCD700293F45 /* StandupsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupsApp.swift; sourceTree = "<group>"; };
 		DC5E07782947CCD700293F45 /* StandupDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupDetail.swift; sourceTree = "<group>"; };
 		DC5E077A2947CCD800293F45 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DC5E077D2947CCD800293F45 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DC5E07832947CCD800293F45 /* StandupsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StandupsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DC5E07A42947CFA000293F45 /* EditStandup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditStandup.swift; sourceTree = "<group>"; };
+		DC5E07A42947CFA000293F45 /* StandupForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupForm.swift; sourceTree = "<group>"; };
 		DC5E07A62947CFA600293F45 /* StandupsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupsList.swift; sourceTree = "<group>"; };
 		DC5E07A82947CFB700293F45 /* SpeechClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechClient.swift; sourceTree = "<group>"; };
 		DC5E07AA2947CFCA00293F45 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -163,7 +166,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA53F80C295F8BE600DE68FE /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +252,7 @@
 			isa = PBXGroup;
 			children = (
 				CA53F808295CCA2E00DE68FE /* Readme.md */,
+				CADF861F297765F000B7695B /* Resources */,
 				DC5E07752947CCD700293F45 /* Standups */,
 				DC5E07862947CCD800293F45 /* StandupsTests */,
 				CA53F7FB295BEDBE00DE68FE /* StandupsUITests */,
@@ -262,15 +265,24 @@
 			children = (
 				DCE73E0B2947D163004EE92E /* DataManager.swift */,
 				CAAA74DF2956956B009A25CA /* OpenSettings.swift */,
+				CADF861D2977652500B7695B /* SoundEffectClient.swift */,
 				DC5E07A82947CFB700293F45 /* SpeechClient.swift */,
 			);
 			path = Dependencies;
 			sourceTree = "<group>";
 		};
+		CADF861F297765F000B7695B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CADF8620297765F000B7695B /* ding.wav */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		DC5E07752947CCD700293F45 /* Standups */ = {
 			isa = PBXGroup;
 			children = (
-				DC5E07A42947CFA000293F45 /* EditStandup.swift */,
+				DC5E07A42947CFA000293F45 /* StandupForm.swift */,
 				DC5E07AA2947CFCA00293F45 /* Models.swift */,
 				DC5E07AC2947CFD300293F45 /* RecordMeeting.swift */,
 				DC5E07782947CCD700293F45 /* StandupDetail.swift */,
@@ -403,7 +415,6 @@
 			);
 			name = StandupsTests;
 			packageProductDependencies = (
-				CA53F80B295F8BE600DE68FE /* AsyncAlgorithms */,
 			);
 			productName = StandupsTests;
 			productReference = DC5E07832947CCD800293F45 /* StandupsTests.xctest */;
@@ -452,7 +463,6 @@
 			packageReferences = (
 				DCE73E032947D063004EE92E /* XCRemoteSwiftPackageReference "swift-tagged" */,
 				DCE73E062947D082004EE92E /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
-				CA53F80A295F8BE600DE68FE /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 				CA6453982968A06E00802931 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 			);
 			productRefGroup = CA473795272F08EF0012CAC3 /* Products */;
@@ -496,6 +506,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CADF8621297765F000B7695B /* ding.wav in Resources */,
 				DC5E077E2947CCD800293F45 /* Preview Assets.xcassets in Resources */,
 				DC5E077B2947CCD800293F45 /* Assets.xcassets in Resources */,
 			);
@@ -560,8 +571,9 @@
 				DC5E07792947CCD700293F45 /* StandupDetail.swift in Sources */,
 				DCE73E0C2947D163004EE92E /* DataManager.swift in Sources */,
 				DC5E07772947CCD700293F45 /* StandupsApp.swift in Sources */,
+				CADF861E2977652500B7695B /* SoundEffectClient.swift in Sources */,
 				CA22CCC22967799600F52F6D /* Helpers.swift in Sources */,
-				DC5E07A52947CFA000293F45 /* EditStandup.swift in Sources */,
+				DC5E07A52947CFA000293F45 /* StandupForm.swift in Sources */,
 				DC5E07AB2947CFCA00293F45 /* Models.swift in Sources */,
 				DC5E07AD2947CFD300293F45 /* RecordMeeting.swift in Sources */,
 				DC5E07A92947CFB700293F45 /* SpeechClient.swift in Sources */,
@@ -1039,14 +1051,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CA53F80A295F8BE600DE68FE /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-async-algorithms";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.0.3;
-			};
-		};
 		CA6453982968A06E00802931 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "http://github.com/pointfreeco/swift-dependencies";
@@ -1081,11 +1085,6 @@
 		CA47383A272F0DD60012CAC3 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftUINavigation;
-		};
-		CA53F80B295F8BE600DE68FE /* AsyncAlgorithms */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CA53F80A295F8BE600DE68FE /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
-			productName = AsyncAlgorithms;
 		};
 		CA6453992968A06E00802931 /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;

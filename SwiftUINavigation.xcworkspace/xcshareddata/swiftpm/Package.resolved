@@ -11,15 +11,6 @@
         }
       },
       {
-        "package": "AsyncAlgorithms",
-        "repositoryURL": "https://github.com/apple/swift-async-algorithms",
-        "state": {
-          "branch": null,
-          "revision": "aed5422380244498344a036b8d94e27f370d9a22",
-          "version": "0.0.4"
-        }
-      },
-      {
         "package": "swift-case-paths",
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
