@@ -33,7 +33,7 @@ extension SoundEffectClient: DependencyKey {
 
   static let noop = Self(
     load: { _ in },
-    play: { }
+    play: {}
   )
 }
 

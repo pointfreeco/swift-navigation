@@ -44,7 +44,7 @@ final class StandupDetailTests: XCTestCase {
         destination: .alert(.speechRecognitionDenied),
         standup: .mock
       )
-    } 
+    }
 
     await model.alertButtonTapped(.openSettings)
 
