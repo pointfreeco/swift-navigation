@@ -310,7 +310,6 @@ extension AlertState where Action == StandupDetailModel.AlertAction {
 struct MeetingView: View {
   let meeting: Meeting
   let standup: Standup
-  @Environment(\.dismiss) var dismiss
 
   var body: some View {
     ScrollView {
@@ -330,7 +329,6 @@ struct MeetingView: View {
     }
     .navigationTitle(Text(self.meeting.date, style: .date))
     .padding()
-    .onDisappear { self.dismiss() }
   }
 }
 
