@@ -215,19 +215,19 @@ final class RecordMeetingTests: XCTestCase {
       await model.task()
     }
 
-    await model.nextButtonTapped()
+    model.nextButtonTapped()
 
     XCTAssertEqual(model.speakerIndex, 1)
     XCTAssertEqual(model.durationRemaining, .seconds(2))
     XCTAssertEqual(soundEffectPlayCount.value, 1)
 
-    await model.nextButtonTapped()
+    model.nextButtonTapped()
 
     XCTAssertEqual(model.speakerIndex, 2)
     XCTAssertEqual(model.durationRemaining, .seconds(1))
     XCTAssertEqual(soundEffectPlayCount.value, 2)
 
-    await model.nextButtonTapped()
+    model.nextButtonTapped()
 
     let alert = try XCTUnwrap(model.destination, case: /RecordMeetingModel.Destination.alert)
 

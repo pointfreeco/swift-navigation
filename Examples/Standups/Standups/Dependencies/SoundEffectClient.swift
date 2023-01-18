@@ -2,23 +2,23 @@ import AVFoundation
 import Dependencies
 
 struct SoundEffectClient {
-  var load: @Sendable (String) async -> Void
-  var play: @Sendable () async -> Void
+  var load: @Sendable (String) -> Void
+  var play: @Sendable () -> Void
 }
 
 extension SoundEffectClient: DependencyKey {
   static var liveValue: Self {
-    let player = ActorIsolated(AVPlayer())
+    let player = LockIsolated(AVPlayer())
     return Self(
       load: { fileName in
-        await player.withValue {
+        player.withValue {
           guard let url = Bundle.main.url(forResource: fileName, withExtension: "")
           else { return }
           $0.replaceCurrentItem(with: AVPlayerItem(url: url))
         }
       },
       play: {
-        await player.withValue {
+        player.withValue {
           $0.seek(to: .zero)
           $0.play()
         }
