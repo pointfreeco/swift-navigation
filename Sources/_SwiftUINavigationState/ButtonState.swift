@@ -18,27 +18,35 @@ public struct ButtonState<Action>: Identifiable {
       case send(Action)
       case animatedSend(Action, animation: Animation?)
     }
+
+    public func map<NewAction>(
+      _ transform: (Action) -> NewAction
+    ) -> ButtonState<NewAction>.Handler {
+      switch self.type {
+      case let .animatedSend(action, animation: animation):
+        return .send(transform(action), animation: animation)
+      case let .send(action):
+        return .send(transform(action))
+      }
+    }
   }
 
-  /// A value that describes the purpose of a button.
-  ///
-  /// See `SwiftUI.ButtonRole` for more information.
-  public enum Role {
-    /// A role that indicates a cancel button.
-    ///
-    /// See `SwiftUI.ButtonRole.cancel` for more information.
-    case cancel
-
-    /// A role that indicates a destructive button.
-    ///
-    /// See `SwiftUI.ButtonRole.destructive` for more information.
-    case destructive
-  }
-
-  public let id = UUID()
+  public let id: UUID
   public let action: Handler?
   public let label: TextState
-  public let role: Role?
+  public let role: ButtonStateRole?
+
+  init(
+    id: UUID,
+    action: Handler?,
+    label: TextState,
+    role: ButtonStateRole?
+  ) {
+    self.id = id
+    self.action = action
+    self.label = label
+    self.role = role
+  }
 
   /// Creates button state.
   ///
@@ -48,13 +56,11 @@ public struct ButtonState<Action>: Identifiable {
   ///   - action: The action to send when the user interacts with the button.
   ///   - label: A view that describes the purpose of the button's `action`.
   public init(
-    role: Role? = nil,
+    role: ButtonStateRole? = nil,
     action: Handler? = nil,
     label: () -> TextState
   ) {
-    self.role = role
-    self.action = action
-    self.label = label()
+    self.init(id: UUID(), action: action, label: label(), role: role)
   }
 
   /// Creates button state.
@@ -65,13 +71,11 @@ public struct ButtonState<Action>: Identifiable {
   ///   - action: The action to send when the user interacts with the button.
   ///   - label: A view that describes the purpose of the button's `action`.
   public init(
-    role: Role? = nil,
+    role: ButtonStateRole? = nil,
     action: Action,
     label: () -> TextState
   ) {
-    self.role = role
-    self.action = .send(action)
-    self.label = label()
+    self.init(id: UUID(), action: .send(action), label: label(), role: role)
   }
 
   /// Handle the button's action in a closure.
@@ -91,6 +95,30 @@ public struct ButtonState<Action>: Identifiable {
       return
     }
   }
+
+  public func map<NewAction>(_ transform: (Action) -> NewAction) -> ButtonState<NewAction> {
+    ButtonState<NewAction>(
+      id: self.id,
+      action: self.action?.map(transform),
+      label: self.label,
+      role: self.role
+    )
+  }
+}
+
+/// A value that describes the purpose of a button.
+///
+/// See `SwiftUI.ButtonRole` for more information.
+public enum ButtonStateRole {
+  /// A role that indicates a cancel button.
+  ///
+  /// See `SwiftUI.ButtonRole.cancel` for more information.
+  case cancel
+
+  /// A role that indicates a destructive button.
+  ///
+  /// See `SwiftUI.ButtonRole.destructive` for more information.
+  case destructive
 }
 
 extension ButtonState: CustomDumpReflectable {
@@ -136,7 +164,7 @@ extension ButtonState.Handler: CustomDumpReflectable {
 
 extension ButtonState.Handler: Equatable where Action: Equatable {}
 extension ButtonState.Handler._ActionType: Equatable where Action: Equatable {}
-extension ButtonState.Role: Equatable {}
+extension ButtonStateRole: Equatable {}
 extension ButtonState: Equatable where Action: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.action == rhs.action
@@ -154,7 +182,7 @@ extension ButtonState.Handler._ActionType: Hashable where Action: Hashable {
     }
   }
 }
-extension ButtonState.Role: Hashable {}
+extension ButtonStateRole: Hashable {}
 extension ButtonState: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(self.action)
@@ -181,7 +209,7 @@ extension Alert.Button {
 
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension ButtonRole {
-  public init<Action>(_ role: ButtonState<Action>.Role) {
+  public init(_ role: ButtonStateRole) {
     switch role {
     case .cancel:
       self = .cancel
@@ -208,6 +236,9 @@ extension Button where Label == Text {
 extension ButtonState {
   @available(*, deprecated, renamed: "Handler")
   public typealias ButtonAction = Handler
+
+  @available(*, deprecated, renamed: "ButtonStateRole")
+  public typealias Role = ButtonStateRole
 }
 
 extension ButtonState.Handler {

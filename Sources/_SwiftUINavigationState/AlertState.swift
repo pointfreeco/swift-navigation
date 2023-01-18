@@ -127,10 +127,22 @@ import SwiftUI
 /// model.alert = nil
 /// ```
 public struct AlertState<Action>: Identifiable {
-  public let id = UUID()
+  public let id: UUID
   public var buttons: [ButtonState<Action>]
   public var message: TextState?
   public var title: TextState
+
+  init(
+    id: UUID,
+    buttons: [ButtonState<Action>],
+    message: TextState?,
+    title: TextState
+  ) {
+    self.id = id
+    self.buttons = buttons
+    self.message = message
+    self.title = title
+  }
 
   /// Creates alert state.
   ///
@@ -144,9 +156,21 @@ public struct AlertState<Action>: Identifiable {
     @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] },
     message: (() -> TextState)? = nil
   ) {
-    self.title = title()
-    self.message = message?()
-    self.buttons = actions()
+    self.init(
+      id: UUID(),
+      buttons: actions(),
+      message: message?(),
+      title: title()
+    )
+  }
+
+  public func map<NewAction>(_ transform: (Action) -> NewAction) -> AlertState<NewAction> {
+    AlertState<NewAction>(
+      id: self.id,
+      buttons: self.buttons.map { $0.map(transform) },
+      message: self.message,
+      title: self.title
+    )
   }
 }
 
@@ -247,9 +271,12 @@ extension AlertState {
     message: TextState? = nil,
     buttons: [ButtonState<Action>]
   ) {
-    self.title = title
-    self.message = message
-    self.buttons = buttons
+    self.init(
+      id: UUID(),
+      buttons: buttons,
+      message: message,
+      title: title
+    )
   }
 
   @available(
@@ -275,9 +302,12 @@ extension AlertState {
     message: TextState? = nil,
     dismissButton: ButtonState<Action>? = nil
   ) {
-    self.title = title
-    self.message = message
-    self.buttons = dismissButton.map { [$0] } ?? []
+    self.init(
+      id: UUID(),
+      buttons: dismissButton.map { [$0] } ?? [],
+      message: message,
+      title: title
+    )
   }
 
   @available(
@@ -304,8 +334,11 @@ extension AlertState {
     primaryButton: ButtonState<Action>,
     secondaryButton: ButtonState<Action>
   ) {
-    self.title = title
-    self.message = message
-    self.buttons = [primaryButton, secondaryButton]
+    self.init(
+      id: UUID(),
+      buttons: [primaryButton, secondaryButton],
+      message: message,
+      title: title
+    )
   }
 }
