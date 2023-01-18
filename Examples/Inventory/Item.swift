@@ -23,7 +23,7 @@ struct Item: Equatable, Identifiable {
     var green: CGFloat = 0
     var blue: CGFloat = 0
 
-    static var defaults: [Self] = [
+    static let defaults: [Self] = [
       .red,
       .green,
       .blue,

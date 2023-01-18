@@ -164,7 +164,7 @@ public struct AlertState<Action>: Identifiable {
     )
   }
 
-  public func map<NewAction>(_ transform: (Action) -> NewAction) -> AlertState<NewAction> {
+  public func map<NewAction>(_ transform: (Action?) -> NewAction?) -> AlertState<NewAction> {
     AlertState<NewAction>(
       id: self.id,
       buttons: self.buttons.map { $0.map(transform) },
@@ -218,7 +218,7 @@ extension Alert {
   ///   - state: Alert state used to populate the alert.
   ///   - action: An action handler, called when a button with an action is tapped, by passing the
   ///     action to the closure.
-  public init<Action>(_ state: AlertState<Action>, action: @escaping (Action) -> Void) {
+  public init<Action>(_ state: AlertState<Action>, action: @escaping (Action?) -> Void) {
     if state.buttons.count == 2 {
       self.init(
         title: Text(state.title),

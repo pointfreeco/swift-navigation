@@ -54,21 +54,24 @@ class StandupDetailModel: ObservableObject {
     self.destination = .alert(.deleteStandup)
   }
 
-  func alertButtonTapped(_ action: AlertAction) async {
+  func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirmDeletion:
+    case .confirmDeletion?:
       self.onConfirmDeletion()
       self.isDismissed = true
 
-    case .continueWithoutRecording:
+    case .continueWithoutRecording?:
       self.destination = .record(
         withDependencies(from: self) {
           RecordMeetingModel(standup: self.standup)
         }
       )
 
-    case .openSettings:
+    case .openSettings?:
       await self.openSettings()
+
+    case nil:
+      break
     }
   }
 

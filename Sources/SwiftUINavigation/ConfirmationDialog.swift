@@ -126,7 +126,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
@@ -135,7 +135,11 @@ extension View {
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
-            Button($0, action: action)
+            Button($0) { action in
+              Task {
+                await handler(action)
+              }
+            }
           }
         },
         message: { $0.message.map { Text($0) } }
@@ -161,18 +165,18 @@ extension View {
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       self.confirmationDialog(
         unwrapping: `enum`.case(casePath),
-        action: action
+        action: handler
       )
     }
   #else
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action: @escaping (Value) -> Void
+      action handler: @escaping (Value?) async -> Void
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
@@ -181,41 +185,42 @@ extension View {
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
-            Button($0, action: action)
+            Button($0) { action in
+              Task {
+                await handler(action)
+              }
+            }
           }
         },
         message: { $0.message.map { Text($0) } }
       )
     }
+
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog(
       unwrapping value: Binding<ConfirmationDialogState<Never>?>
     ) -> some View {
-      self.confirmationDialog(
-        unwrapping: value,
-        action: { (_: Never) in fatalError() }
-      )
+      self.confirmationDialog(unwrapping: value) { _ in }
     }
+
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action: @escaping (Value) -> Void
+      action handler: @escaping (Value?) async -> Void
     ) -> some View {
       self.confirmationDialog(
         unwrapping: `enum`.case(casePath),
-        action: action
+        action: handler
       )
     }
+
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Enum>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Never>>
     ) -> some View {
-      self.confirmationDialog(
-        unwrapping: `enum`.case(casePath),
-        action: { (_: Never) in fatalError() }
-      )
+      self.confirmationDialog(unwrapping: `enum`.case(casePath)) { _ in }
     }
   #endif
 

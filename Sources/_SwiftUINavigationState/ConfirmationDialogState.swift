@@ -183,7 +183,7 @@ public struct ConfirmationDialogState<Action>: Identifiable {
   }
 
   public func map<NewAction>(
-    _ transform: (Action) -> NewAction
+    _ transform: (Action?) -> NewAction?
   ) -> ConfirmationDialogState<NewAction> {
     ConfirmationDialogState<NewAction>(
       id: self.id,
@@ -407,7 +407,7 @@ public typealias ActionSheetState<Action> = ConfirmationDialogState<Action>
 extension ActionSheet {
   public init<Action>(
     _ state: ConfirmationDialogState<Action>,
-    action: @escaping (Action) -> Void
+    action: @escaping (Action?) -> Void
   ) {
     self.init(
       title: Text(state.title),

@@ -6,21 +6,28 @@ public struct ButtonState<Action>: Identifiable {
   public struct Handler {
     public let type: _ActionType
 
-    public static func send(_ action: Action) -> Self {
+    public static func send(_ action: Action?) -> Self {
       .init(type: .send(action))
     }
 
-    public static func send(_ action: Action, animation: Animation?) -> Self {
+    public static func send(_ action: Action?, animation: Animation?) -> Self {
       .init(type: .animatedSend(action, animation: animation))
     }
 
     public enum _ActionType {
-      case send(Action)
-      case animatedSend(Action, animation: Animation?)
+      case send(Action?)
+      case animatedSend(Action?, animation: Animation?)
+    }
+
+    public var action: Action? {
+      switch self.type {
+      case let .animatedSend(action, animation: _), let .send(action):
+        return action
+      }
     }
 
     public func map<NewAction>(
-      _ transform: (Action) -> NewAction
+      _ transform: (Action?) -> NewAction?
     ) -> ButtonState<NewAction>.Handler {
       switch self.type {
       case let .animatedSend(action, animation: animation):
@@ -32,13 +39,13 @@ public struct ButtonState<Action>: Identifiable {
   }
 
   public let id: UUID
-  public let action: Handler?
+  public let action: Handler
   public let label: TextState
   public let role: ButtonStateRole?
 
   init(
     id: UUID,
-    action: Handler?,
+    action: Handler,
     label: TextState,
     role: ButtonStateRole?
   ) {
@@ -57,7 +64,7 @@ public struct ButtonState<Action>: Identifiable {
   ///   - label: A view that describes the purpose of the button's `action`.
   public init(
     role: ButtonStateRole? = nil,
-    action: Handler? = nil,
+    action: Handler = .send(nil),
     label: () -> TextState
   ) {
     self.init(id: UUID(), action: action, label: label(), role: role)
@@ -83,23 +90,21 @@ public struct ButtonState<Action>: Identifiable {
   /// - Parameter perform: Unwraps and passes a button's action to a closure to be performed. If the
   ///   action has an associated animation, the context will be wrapped using SwiftUI's
   ///   `withAnimation`.
-  public func withAction(_ perform: (Action) -> Void) {
-    switch self.action?.type {
+  public func withAction(_ perform: (Action?) -> Void) {
+    switch self.action.type {
     case let .send(action):
       perform(action)
     case let .animatedSend(action, animation: animation):
       withAnimation(animation) {
         perform(action)
       }
-    case .none:
-      return
     }
   }
 
-  public func map<NewAction>(_ transform: (Action) -> NewAction) -> ButtonState<NewAction> {
+  public func map<NewAction>(_ transform: (Action?) -> NewAction?) -> ButtonState<NewAction> {
     ButtonState<NewAction>(
       id: self.id,
-      action: self.action?.map(transform),
+      action: self.action.map(transform),
       label: self.label,
       role: self.role
     )
@@ -127,9 +132,7 @@ extension ButtonState: CustomDumpReflectable {
     if let role = self.role {
       children.append(("role", role))
     }
-    if let action = self.action {
-      children.append(("action", action))
-    }
+    children.append(("action", self.action))
     children.append(("label", self.label))
     return Mirror(
       self,
@@ -146,7 +149,7 @@ extension ButtonState.Handler: CustomDumpReflectable {
       return Mirror(
         self,
         children: [
-          "send": action
+          "send": action as Any
         ],
         displayStyle: .enum
       )
@@ -194,7 +197,7 @@ extension ButtonState: Hashable where Action: Hashable {
 // MARK: - SwiftUI bridging
 
 extension Alert.Button {
-  public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) -> Void) {
+  public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action?) -> Void) {
     let action = { button.withAction(action) }
     switch button.role {
     case .cancel:
@@ -221,7 +224,7 @@ extension ButtonRole {
 
 extension Button where Label == Text {
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) -> Void) {
+  public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action?) -> Void) {
     self.init(
       role: button.role.map(ButtonRole.init),
       action: { button.withAction(action) }
@@ -270,19 +273,19 @@ extension ButtonState.Handler {
   message: "Use 'ButtonState.init(role:action:label:)' instead."
 )
 extension ButtonState {
-  public static func cancel(_ label: TextState, action: Handler? = nil) -> Self {
+  public static func cancel(_ label: TextState, action: Handler = .send(nil)) -> Self {
     Self(role: .cancel, action: action) {
       label
     }
   }
 
-  public static func `default`(_ label: TextState, action: Handler? = nil) -> Self {
+  public static func `default`(_ label: TextState, action: Handler = .send(nil)) -> Self {
     Self(action: action) {
       label
     }
   }
 
-  public static func destructive(_ label: TextState, action: Handler? = nil) -> Self {
+  public static func destructive(_ label: TextState, action: Handler = .send(nil)) -> Self {
     Self(role: .destructive, action: action) {
       label
     }

@@ -39,10 +39,12 @@ class ItemRowModel: Identifiable, ObservableObject {
     )
   }
 
-  func alertButtonTapped(_ action: AlertAction) {
+  func alertButtonTapped(_ action: AlertAction?) {
     switch action {
-    case .deleteConfirmation:
+    case .deleteConfirmation?:
       self.onDelete()
+    case nil:
+      break
     }
   }
 

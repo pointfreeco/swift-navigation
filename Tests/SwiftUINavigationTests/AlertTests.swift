@@ -39,7 +39,9 @@ final class AlertTests: XCTestCase {
           ),
           [1]: ButtonState(
             role: ButtonStateRole.cancel,
-            action: ButtonState.Handler.send(false),
+            action: ButtonState.Handler.send(
+              false
+            ),
             label: "Cancel"
           )
         ],
@@ -77,7 +79,9 @@ final class AlertTests: XCTestCase {
             ),
             [1]: ButtonState(
               role: ButtonStateRole.cancel,
-              action: ButtonState.Handler.send(false),
+              action: ButtonState.Handler.send(
+                false
+              ),
               label: "Cancel"
             )
           ],
@@ -106,11 +110,9 @@ private struct TestView: View {
       }
   }
 
-  private func alertButtonTapped(_ action: AlertAction) async {
+  private func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirm:
-      break
-    case .deny:
+    case .some(.confirm), .some(.deny), .none:
       break
     }
   }

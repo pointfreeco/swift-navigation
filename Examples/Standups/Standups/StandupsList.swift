@@ -110,9 +110,9 @@ final class StandupsListModel: ObservableObject {
     }
   }
 
-  func alertButtonTapped(_ action: AlertAction) {
+  func alertButtonTapped(_ action: AlertAction?) {
     switch action {
-    case .confirmLoadMockData:
+    case .confirmLoadMockData?:
       withAnimation {
         self.standups = [
           .mock,
@@ -121,8 +121,11 @@ final class StandupsListModel: ObservableObject {
         ]
       }
 
-    case .dismissFailedAlert:
+    case .dismissFailedAlert?:
       self.standups = []
+
+    case nil:
+      break
     }
   }
 }
