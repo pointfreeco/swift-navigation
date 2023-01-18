@@ -5,8 +5,6 @@ import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
 
-// TODO: sound client
-
 @MainActor
 class RecordMeetingModel: ObservableObject {
   @Published var destination: Destination?
