@@ -121,12 +121,12 @@ extension View {
     ///     to populate the fields of a dialog that the system displays to the user. When the user
     ///     presses or taps one of the dialog's actions, the system sets this value to `nil` and
     ///     dismisses the dialog, and the action is fed to the `action` closure.
-    ///   - action: A closure that is called with an action from a particular dialog button when
+    ///   - handler: A closure that is called with an action from a particular dialog button when
     ///     tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
@@ -135,7 +135,11 @@ extension View {
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
-            Button($0, action: action)
+            Button($0) { action in
+              Task {
+                await handler(action)
+              }
+            }
           }
         },
         message: { $0.message.map { Text($0) } }
@@ -155,24 +159,24 @@ extension View {
     ///     When the user presses or taps one of the dialog's actions, the system sets this value to
     ///     `nil` and dismisses the dialog, and the action is fed to the `action` closure.
     ///   - casePath: A case path that identifies a particular case that holds dialog state.
-    ///   - action: A closure that is called with an action from a particular dialog button when
+    ///   - handler: A closure that is called with an action from a particular dialog button when
     ///     tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action: @escaping (Value) -> Void = { (_: Never) in fatalError() }
+      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       self.confirmationDialog(
         unwrapping: `enum`.case(casePath),
-        action: action
+        action: handler
       )
     }
   #else
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action: @escaping (Value) -> Void
+      action handler: @escaping (Value) async -> Void
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
@@ -181,12 +185,17 @@ extension View {
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
-            Button($0, action: action)
+            Button($0) { action in
+              Task {
+                await handler(action)
+              }
+            }
           }
         },
         message: { $0.message.map { Text($0) } }
       )
     }
+
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog(
       unwrapping value: Binding<ConfirmationDialogState<Never>?>
@@ -196,17 +205,19 @@ extension View {
         action: { (_: Never) in fatalError() }
       )
     }
+
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action: @escaping (Value) -> Void
+      action handler: @escaping (Value) async -> Void
     ) -> some View {
       self.confirmationDialog(
         unwrapping: `enum`.case(casePath),
-        action: action
+        action: handler
       )
     }
+
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Enum>(
       unwrapping `enum`: Binding<Enum?>,
