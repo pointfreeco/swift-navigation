@@ -113,7 +113,7 @@ extension View {
     ///     populate the fields of an alert that the system displays to the user. When the user
     ///     presses or taps one of the alert's actions, the system sets this value to `nil` and
     ///     dismisses the alert, and the action is fed to the `action` closure.
-    ///   - action: A closure that is called with an action from a particular alert button when
+    ///   - handler: A closure that is called with an action from a particular alert button when
     ///     tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func alert<Value>(
@@ -152,15 +152,15 @@ extension View {
     ///     When the user presses or taps one of the alert's actions, the system sets this value to
     ///     `nil` and dismisses the alert, and the action is fed to the `action` closure.
     ///   - casePath: A case path that identifies a particular case that holds alert state.
-    ///   - action: A closure that is called with an action from a particular alert button when
+    ///   - handler: A closure that is called with an action from a particular alert button when
     ///     tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func alert<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Value>>,
-      action: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
-      self.alert(unwrapping: `enum`.case(casePath), action: action)
+      self.alert(unwrapping: `enum`.case(casePath), action: handler)
     }
   #else
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
@@ -206,9 +206,9 @@ extension View {
     public func alert<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Value>>,
-      action: @escaping (Value) async -> Void
+      action handler: @escaping (Value) async -> Void
     ) -> some View {
-      self.alert(unwrapping: `enum`.case(casePath), action: action)
+      self.alert(unwrapping: `enum`.case(casePath), action: handler)
     }
 
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)

@@ -78,10 +78,9 @@ struct ContentView: View {
     List {
       // ...
     }
-    .alert(
-      unwrapping: self.$model.alert,
-      action: self.alertButtonTapped
-    )
+    .alert(unwrapping: self.$model.alert) { action in
+      self.model.alertButtonTapped(action)
+    }
   }
 }
 ```
@@ -129,11 +128,9 @@ With this kind of set up you can use an alternative `alert` view modifier that t
 argument for specifying which case of the enum drives the presentation of the alert:
 
 ```swift
-.alert(
-  unwrapping: self.$model.destination,
-  case: /Destination.alert,
-  action: self.alertButtonTapped
-)
+.alert(unwrapping: self.$model.destination, case: /Destination.alert) { action in
+  self.model.alertButtonTapped(action)
+}
 ```
 
 Note that the `case` argument is specified via a concept known as "case paths", which are like
@@ -185,10 +182,9 @@ struct ContentView: View {
     List {
       // ...
     }
-    .confirmationDialog(
-      unwrapping: self.$model.dialog,
-      action: self.dialogButtonTapped
-    )
+    .confirmationDialog(unwrapping: self.$model.dialog) { action in
+      self.dialogButtonTapped(action)
+    }
   }
 }
 ```
