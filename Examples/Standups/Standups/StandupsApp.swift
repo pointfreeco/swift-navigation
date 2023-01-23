@@ -12,7 +12,7 @@ struct StandupsApp: App {
       if ProcessInfo.processInfo.environment["UITesting"] == "true" {
         UITestingView()
       } else {
-        StandupsList(model: StandupsListModel())
+        AppView(model: AppModel(standupsList: StandupsListModel()))
       }
     }
   }
@@ -23,7 +23,7 @@ struct UITestingView: View {
     withDependencies {
       $0.dataManager = .mock()
     } operation: {
-      StandupsList(model: StandupsListModel())
+      AppView(model: AppModel(standupsList: StandupsListModel()))
     }
   }
 }

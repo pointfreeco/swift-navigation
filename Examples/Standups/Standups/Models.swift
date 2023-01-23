@@ -20,7 +20,7 @@ struct Attendee: Equatable, Identifiable, Codable {
   var name = ""
 }
 
-struct Meeting: Equatable, Identifiable, Codable {
+struct Meeting: Equatable, Hashable, Identifiable, Codable {
   let id: Tagged<Self, UUID>
   let date: Date
   var transcript: String

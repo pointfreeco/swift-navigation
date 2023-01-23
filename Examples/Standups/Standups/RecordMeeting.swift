@@ -5,10 +5,8 @@ import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
 
-@MainActor
-class RecordMeetingModel: ObservableObject {
+class RecordMeetingModel: Hashable, ObservableObject {
   @Published var destination: Destination?
-  @Published var isDismissed = false
   @Published var secondsElapsed = 0
   @Published var speakerIndex = 0
   let standup: Standup
@@ -18,6 +16,8 @@ class RecordMeetingModel: ObservableObject {
   @Dependency(\.soundEffectClient) var soundEffectClient
   @Dependency(\.speechClient) var speechClient
 
+  var onDiscardMeeting: () -> Void = unimplemented(
+    "RecordMeetingModel.onDiscardMeeting")
   var onMeetingFinished: (String) async -> Void = unimplemented(
     "RecordMeetingModel.onMeetingFinished")
 
@@ -36,6 +36,13 @@ class RecordMeetingModel: ObservableObject {
   ) {
     self.destination = destination
     self.standup = standup
+  }
+
+  static func == (lhs: RecordMeetingModel, rhs: RecordMeetingModel) -> Bool {
+    lhs === rhs
+  }
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
   }
 
   var durationRemaining: Duration {
@@ -74,10 +81,11 @@ class RecordMeetingModel: ObservableObject {
       await self.finishMeeting()
 
     case .confirmDiscard:
-      self.isDismissed = true
+      self.onDiscardMeeting()
     }
   }
 
+  @MainActor
   func task() async {
     self.soundEffectClient.load("ding.wav")
 
@@ -88,18 +96,17 @@ class RecordMeetingModel: ObservableObject {
 
     await withTaskGroup(of: Void.self) { group in
       if authorization == .authorized {
-        group.addTask {
+        group.addTask { @MainActor in
           await self.startSpeechRecognition()
         }
       }
-      group.addTask {
+      group.addTask { @MainActor in
         await self.startTimer()
       }
     }
   }
 
   private func finishMeeting() async {
-    self.isDismissed = true
     await self.onMeetingFinished(self.transcript)
   }
 
@@ -119,9 +126,6 @@ class RecordMeetingModel: ObservableObject {
 
   private func startTimer() async {
     for await _ in self.clock.timer(interval: .seconds(1)) where !self.isAlertOpen {
-      guard !self.isDismissed
-      else { break }
-
       self.secondsElapsed += 1
 
       let secondsPerAttendee = Int(self.standup.durationPerAttendee.components.seconds)
@@ -177,7 +181,6 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 }
 
 struct RecordMeetingView: View {
-  @Environment(\.dismiss) var dismiss
   @ObservedObject var model: RecordMeetingModel
 
   var body: some View {
@@ -220,7 +223,6 @@ struct RecordMeetingView: View {
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }
-    .onChange(of: self.model.isDismissed) { _ in self.dismiss() }
   }
 }
 

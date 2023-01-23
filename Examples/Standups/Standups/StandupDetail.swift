@@ -5,12 +5,8 @@ import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
 
-@MainActor
-class StandupDetailModel: ObservableObject {
-  @Published var destination: Destination? {
-    didSet { self.bind() }
-  }
-  @Published var isDismissed = false
+class StandupDetailModel: Hashable, ObservableObject {
+  @Published var destination: Destination?
   @Published var standup: Standup
 
   @Dependency(\.continuousClock) var clock
@@ -20,12 +16,12 @@ class StandupDetailModel: ObservableObject {
   @Dependency(\.uuid) var uuid
 
   var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
+  var onStartMeeting: () -> Void =
+    unimplemented("StandupDetailModel.onStartMeeting")
 
   enum Destination {
     case alert(AlertState<AlertAction>)
     case edit(StandupFormModel)
-    case meeting(Meeting)
-    case record(RecordMeetingModel)
   }
   enum AlertAction {
     case confirmDeletion
@@ -39,33 +35,31 @@ class StandupDetailModel: ObservableObject {
   ) {
     self.destination = destination
     self.standup = standup
-    self.bind()
+  }
+
+  static func == (lhs: StandupDetailModel, rhs: StandupDetailModel) -> Bool {
+    lhs === rhs
+  }
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
     self.standup.meetings.remove(atOffsets: indices)
   }
 
-  func meetingTapped(_ meeting: Meeting) {
-    self.destination = .meeting(meeting)
-  }
-
   func deleteButtonTapped() {
     self.destination = .alert(.deleteStandup)
   }
 
+  @MainActor
   func alertButtonTapped(_ action: AlertAction) async {
     switch action {
     case .confirmDeletion:
       self.onConfirmDeletion()
-      self.isDismissed = true
 
     case .continueWithoutRecording:
-      self.destination = .record(
-        withDependencies(from: self) {
-          RecordMeetingModel(standup: self.standup)
-        }
-      )
+      self.onStartMeeting()
 
     case .openSettings:
       await self.openSettings()
@@ -95,11 +89,7 @@ class StandupDetailModel: ObservableObject {
   func startMeetingButtonTapped() {
     switch self.authorizationStatus() {
     case .notDetermined, .authorized:
-      self.destination = .record(
-        withDependencies(from: self) {
-          RecordMeetingModel(standup: self.standup)
-        }
-      )
+      self.onStartMeeting()
 
     case .denied:
       self.destination = .alert(.speechRecognitionDenied)
@@ -111,40 +101,16 @@ class StandupDetailModel: ObservableObject {
       break
     }
   }
-
-  private func bind() {
-    switch destination {
-    case let .record(recordMeetingModel):
-      recordMeetingModel.onMeetingFinished = { [weak self] transcript async in
-        guard let self else { return }
-
-        let didCancel = nil == (try? await self.clock.sleep(for: .milliseconds(400)))
-        withAnimation(didCancel ? nil : .default) {
-          self.standup.meetings.insert(
-            Meeting(
-              id: Meeting.ID(self.uuid()),
-              date: self.now,
-              transcript: transcript
-            ),
-            at: 0
-          )
-          self.destination = nil
-        }
-      }
-
-    case .edit, .meeting, .alert, .none:
-      break
-    }
-  }
 }
 
 struct StandupDetailView: View {
-  @Environment(\.dismiss) var dismiss
+  @Environment(\.allowsTightening) var allowsTightening
   @ObservedObject var model: StandupDetailModel
 
   var body: some View {
     List {
       Section {
+        // NB: Can't use here because we need logic around the button
         Button {
           self.model.startMeetingButtonTapped()
         } label: {
@@ -174,9 +140,7 @@ struct StandupDetailView: View {
       if !self.model.standup.meetings.isEmpty {
         Section {
           ForEach(self.model.standup.meetings) { meeting in
-            Button {
-              self.model.meetingTapped(meeting)
-            } label: {
+            NavigationLink(value: AppModel.Destination.meeting(meeting)) {
               HStack {
                 Image(systemName: "calendar")
                 Text(meeting.date, style: .date)
@@ -214,18 +178,6 @@ struct StandupDetailView: View {
         self.model.editButtonTapped()
       }
     }
-    .navigationDestination(
-      unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.meeting
-    ) { $meeting in
-      MeetingView(meeting: meeting, standup: self.model.standup)
-    }
-    .navigationDestination(
-      unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.record
-    ) { $model in
-      RecordMeetingView(model: model)
-    }
     .alert(
       unwrapping: self.$model.destination,
       case: /StandupDetailModel.Destination.alert
@@ -253,7 +205,6 @@ struct StandupDetailView: View {
           }
       }
     }
-    .onChange(of: self.model.isDismissed) { _ in self.dismiss() }
   }
 }
 

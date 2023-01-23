@@ -4,16 +4,14 @@ import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
 
-@MainActor
 final class StandupsListModel: ObservableObject {
-  @Published var destination: Destination? {
-    didSet { self.bind() }
-  }
+  @Published var destination: Destination?
   @Published var standups: IdentifiedArrayOf<Standup>
 
-  private var destinationCancellable: AnyCancellable?
   private var cancellables: Set<AnyCancellable> = []
 
+  @Dependency(\.continuousClock) var clock
+  @Dependency(\.date.now) var now
   @Dependency(\.dataManager) var dataManager
   @Dependency(\.mainQueue) var mainQueue
   @Dependency(\.uuid) var uuid
@@ -21,7 +19,6 @@ final class StandupsListModel: ObservableObject {
   enum Destination {
     case add(StandupFormModel)
     case alert(AlertState<AlertAction>)
-    case detail(StandupDetailModel)
   }
   enum AlertAction {
     case confirmLoadMockData
@@ -30,7 +27,6 @@ final class StandupsListModel: ObservableObject {
   init(
     destination: Destination? = nil
   ) {
-    defer { self.bind() }
     self.destination = destination
     self.standups = []
 
@@ -81,34 +77,6 @@ final class StandupsListModel: ObservableObject {
     self.standups.append(standup)
   }
 
-  func standupTapped(standup: Standup) {
-    self.destination = .detail(
-      withDependencies(from: self) {
-        StandupDetailModel(standup: standup)
-      }
-    )
-  }
-
-  private func bind() {
-    switch self.destination {
-    case let .detail(standupDetailModel):
-      standupDetailModel.onConfirmDeletion = { [weak self, id = standupDetailModel.standup.id] in
-        withAnimation {
-          self?.standups.remove(id: id)
-          self?.destination = nil
-        }
-      }
-
-      self.destinationCancellable = standupDetailModel.$standup
-        .sink { [weak self] standup in
-          self?.standups[id: standup.id] = standup
-        }
-
-    case .add, .alert, .none:
-      break
-    }
-  }
-
   func alertButtonTapped(_ action: AlertAction) {
     switch action {
     case .confirmLoadMockData:
@@ -146,51 +114,41 @@ struct StandupsList: View {
   @ObservedObject var model: StandupsListModel
 
   var body: some View {
-    NavigationStack {
-      List {
-        ForEach(self.model.standups) { standup in
-          Button {
-            self.model.standupTapped(standup: standup)
-          } label: {
-            CardView(standup: standup)
-          }
-          .listRowBackground(standup.theme.mainColor)
+    List {
+      ForEach(self.model.standups) { standup in
+        NavigationLink(value: AppModel.Destination.detail(StandupDetailModel(standup: standup))) {
+          CardView(standup: standup)
         }
+        .listRowBackground(standup.theme.mainColor)
       }
-      .toolbar {
-        Button {
-          self.model.addStandupButtonTapped()
-        } label: {
-          Image(systemName: "plus")
-        }
+    }
+    .toolbar {
+      Button {
+        self.model.addStandupButtonTapped()
+      } label: {
+        Image(systemName: "plus")
       }
-      .navigationTitle("Daily Standups")
-      .sheet(
-        unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.add
-      ) { $model in
-        NavigationStack {
-          StandupFormView(model: model)
-            .navigationTitle("New standup")
-            .toolbar {
-              ToolbarItem(placement: .cancellationAction) {
-                Button("Dismiss") {
-                  self.model.dismissAddStandupButtonTapped()
-                }
-              }
-              ToolbarItem(placement: .confirmationAction) {
-                Button("Add") {
-                  self.model.confirmAddStandupButtonTapped()
-                }
+    }
+    .navigationTitle("Daily Standups")
+    .sheet(
+      unwrapping: self.$model.destination,
+      case: /StandupsListModel.Destination.add
+    ) { $model in
+      NavigationStack {
+        StandupFormView(model: model)
+          .navigationTitle("New standup")
+          .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+              Button("Dismiss") {
+                self.model.dismissAddStandupButtonTapped()
               }
             }
-        }
-      }
-      .navigationDestination(
-        unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.detail
-      ) { $detailModel in
-        StandupDetailView(model: detailModel)
+            ToolbarItem(placement: .confirmationAction) {
+              Button("Add") {
+                self.model.confirmAddStandupButtonTapped()
+              }
+            }
+          }
       }
       .alert(
         unwrapping: self.$model.destination,
@@ -303,16 +261,7 @@ struct StandupsList_Previews: PreviewProvider {
             ])
           )
         } operation: {
-          StandupsListModel(
-            destination: .detail(
-              StandupDetailModel(
-                destination: .record(
-                  RecordMeetingModel(standup: .mock)
-                ),
-                standup: .mock
-              )
-            )
-          )
+          StandupsListModel()
         }
       )
     }

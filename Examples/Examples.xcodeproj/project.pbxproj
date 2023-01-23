@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CA22CCC22967799600F52F6D /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA22CCC12967799600F52F6D /* Helpers.swift */; };
+		CA274D79297ED6F0004EC444 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA274D78297ED6F0004EC444 /* App.swift */; };
 		CA4737CF272F09600012CAC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA4737CE272F09600012CAC3 /* Assets.xcassets */; };
 		CA4737F4272F09780012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA4737F3272F09780012CAC3 /* SwiftUINavigation */; };
 		CA4737F9272F09D00012CAC3 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4737F5272F09D00012CAC3 /* ItemRow.swift */; };
@@ -76,6 +77,7 @@
 
 /* Begin PBXFileReference section */
 		CA22CCC12967799600F52F6D /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		CA274D78297ED6F0004EC444 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		CA4737C3272F090F0012CAC3 /* swiftui-navigation */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "swiftui-navigation"; path = ..; sourceTree = "<group>"; };
 		CA4737C8272F095F0012CAC3 /* Inventory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inventory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA4737CE272F09600012CAC3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -282,11 +284,12 @@
 		DC5E07752947CCD700293F45 /* Standups */ = {
 			isa = PBXGroup;
 			children = (
-				DC5E07A42947CFA000293F45 /* StandupForm.swift */,
+				CA274D78297ED6F0004EC444 /* App.swift */,
+				CA22CCC12967799600F52F6D /* Helpers.swift */,
 				DC5E07AA2947CFCA00293F45 /* Models.swift */,
 				DC5E07AC2947CFD300293F45 /* RecordMeeting.swift */,
 				DC5E07782947CCD700293F45 /* StandupDetail.swift */,
-				CA22CCC12967799600F52F6D /* Helpers.swift */,
+				DC5E07A42947CFA000293F45 /* StandupForm.swift */,
 				DC5E07762947CCD700293F45 /* StandupsApp.swift */,
 				DC5E07A62947CFA600293F45 /* StandupsList.swift */,
 				DC5E077A2947CCD800293F45 /* Assets.xcassets */,
@@ -577,6 +580,7 @@
 				DC5E07AB2947CFCA00293F45 /* Models.swift in Sources */,
 				DC5E07AD2947CFD300293F45 /* RecordMeeting.swift in Sources */,
 				DC5E07A92947CFB700293F45 /* SpeechClient.swift in Sources */,
+				CA274D79297ED6F0004EC444 /* App.swift in Sources */,
 				CAAA74E02956956B009A25CA /* OpenSettings.swift in Sources */,
 				DC5E07A72947CFA600293F45 /* StandupsList.swift in Sources */,
 			);
