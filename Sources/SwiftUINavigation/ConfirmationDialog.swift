@@ -211,7 +211,7 @@ extension View {
     ///
     /// > Warning: Async closures cannot be performed with animation. If the underlying action is
     /// > animated, a runtime warning will be emitted.
-    /// 
+    ///
     /// - Parameters:
     ///   - enum: A binding to an optional enum that holds dialog state at a particular case. When
     ///     the binding is updated with a non-`nil` enum, the case path will attempt to extract this
