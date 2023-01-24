@@ -31,7 +31,7 @@ final class AlertTests: XCTestCase {
         actions: [
           [0]: ButtonState(
             role: ButtonStateRole.destructive,
-            action: ButtonState.Handler.send(
+            action: ButtonStateAction.send(
               true,
               animation: Animation.easeInOut
             ),
@@ -39,7 +39,7 @@ final class AlertTests: XCTestCase {
           ),
           [1]: ButtonState(
             role: ButtonStateRole.cancel,
-            action: ButtonState.Handler.send(
+            action: ButtonStateAction.send(
               false
             ),
             label: "Cancel"
@@ -71,7 +71,7 @@ final class AlertTests: XCTestCase {
           actions: [
             [0]: ButtonState(
               role: ButtonStateRole.destructive,
-              action: ButtonState.Handler.send(
+              action: ButtonStateAction.send(
                 true,
                 animation: Animation.easeInOut
               ),
@@ -79,7 +79,7 @@ final class AlertTests: XCTestCase {
             ),
             [1]: ButtonState(
               role: ButtonStateRole.cancel,
-              action: ButtonState.Handler.send(
+              action: ButtonStateAction.send(
                 false
               ),
               label: "Cancel"

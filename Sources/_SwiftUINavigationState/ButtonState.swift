@@ -2,50 +2,14 @@ import CustomDump
 import SwiftUI
 
 public struct ButtonState<Action>: Identifiable {
-  /// A type that wraps an action with additional context, _e.g._ for animation.
-  public struct Handler {
-    public let type: _ActionType
-
-    public static func send(_ action: Action?) -> Self {
-      .init(type: .send(action))
-    }
-
-    public static func send(_ action: Action?, animation: Animation?) -> Self {
-      .init(type: .animatedSend(action, animation: animation))
-    }
-
-    public enum _ActionType {
-      case send(Action?)
-      case animatedSend(Action?, animation: Animation?)
-    }
-
-    public var action: Action? {
-      switch self.type {
-      case let .animatedSend(action, animation: _), let .send(action):
-        return action
-      }
-    }
-
-    public func map<NewAction>(
-      _ transform: (Action?) -> NewAction?
-    ) -> ButtonState<NewAction>.Handler {
-      switch self.type {
-      case let .animatedSend(action, animation: animation):
-        return .send(transform(action), animation: animation)
-      case let .send(action):
-        return .send(transform(action))
-      }
-    }
-  }
-
   public let id: UUID
-  public let action: Handler
+  public let action: ButtonStateAction<Action>
   public let label: TextState
   public let role: ButtonStateRole?
 
   init(
     id: UUID,
-    action: Handler,
+    action: ButtonStateAction<Action>,
     label: TextState,
     role: ButtonStateRole?
   ) {
@@ -64,7 +28,7 @@ public struct ButtonState<Action>: Identifiable {
   ///   - label: A view that describes the purpose of the button's `action`.
   public init(
     role: ButtonStateRole? = nil,
-    action: Handler = .send(nil),
+    action: ButtonStateAction<Action> = .send(nil),
     label: () -> TextState
   ) {
     self.init(id: UUID(), action: action, label: label(), role: role)
@@ -144,6 +108,42 @@ public struct ButtonState<Action>: Identifiable {
   }
 }
 
+/// A type that wraps an action with additional context, _e.g._ for animation.
+public struct ButtonStateAction<Action> {
+  public let type: _ActionType
+
+  public static func send(_ action: Action?) -> Self {
+    .init(type: .send(action))
+  }
+
+  public static func send(_ action: Action?, animation: Animation?) -> Self {
+    .init(type: .animatedSend(action, animation: animation))
+  }
+
+  public var action: Action? {
+    switch self.type {
+    case let .animatedSend(action, animation: _), let .send(action):
+      return action
+    }
+  }
+
+  public func map<NewAction>(
+    _ transform: (Action?) -> NewAction?
+  ) -> ButtonStateAction<NewAction> {
+    switch self.type {
+    case let .animatedSend(action, animation: animation):
+      return .send(transform(action), animation: animation)
+    case let .send(action):
+      return .send(transform(action))
+    }
+  }
+
+  public enum _ActionType {
+    case send(Action?)
+    case animatedSend(Action?, animation: Animation?)
+  }
+}
+
 /// A value that describes the purpose of a button.
 ///
 /// See `SwiftUI.ButtonRole` for more information.
@@ -175,7 +175,7 @@ extension ButtonState: CustomDumpReflectable {
   }
 }
 
-extension ButtonState.Handler: CustomDumpReflectable {
+extension ButtonStateAction: CustomDumpReflectable {
   public var customDumpMirror: Mirror {
     switch self.type {
     case let .send(action):
@@ -198,8 +198,8 @@ extension ButtonState.Handler: CustomDumpReflectable {
   }
 }
 
-extension ButtonState.Handler: Equatable where Action: Equatable {}
-extension ButtonState.Handler._ActionType: Equatable where Action: Equatable {}
+extension ButtonStateAction: Equatable where Action: Equatable {}
+extension ButtonStateAction._ActionType: Equatable where Action: Equatable {}
 extension ButtonStateRole: Equatable {}
 extension ButtonState: Equatable where Action: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -209,8 +209,8 @@ extension ButtonState: Equatable where Action: Equatable {
   }
 }
 
-extension ButtonState.Handler: Hashable where Action: Hashable {}
-extension ButtonState.Handler._ActionType: Hashable where Action: Hashable {
+extension ButtonStateAction: Hashable where Action: Hashable {}
+extension ButtonStateAction._ActionType: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     switch self {
     case let .send(action), let .animatedSend(action, animation: _):
@@ -318,14 +318,14 @@ extension Button where Label == Text {
 // MARK: - Deprecations
 
 extension ButtonState {
-  @available(*, deprecated, renamed: "Handler")
-  public typealias ButtonAction = Handler
+  @available(*, deprecated, renamed: "ButtonStateAction")
+  public typealias ButtonAction = ButtonStateAction<Action>
 
   @available(*, deprecated, renamed: "ButtonStateRole")
   public typealias Role = ButtonStateRole
 }
 
-extension ButtonState.Handler {
+extension ButtonStateAction {
   @available(*, deprecated, message: "Use 'ButtonState.withAction' instead.")
   public typealias ActionType = _ActionType
 }
@@ -354,19 +354,25 @@ extension ButtonState.Handler {
   message: "Use 'ButtonState.init(role:action:label:)' instead."
 )
 extension ButtonState {
-  public static func cancel(_ label: TextState, action: Handler = .send(nil)) -> Self {
+  public static func cancel(
+    _ label: TextState, action: ButtonStateAction<Action> = .send(nil)
+  ) -> Self {
     Self(role: .cancel, action: action) {
       label
     }
   }
 
-  public static func `default`(_ label: TextState, action: Handler = .send(nil)) -> Self {
+  public static func `default`(
+    _ label: TextState, action: ButtonStateAction<Action> = .send(nil)
+  ) -> Self {
     Self(action: action) {
       label
     }
   }
 
-  public static func destructive(_ label: TextState, action: Handler = .send(nil)) -> Self {
+  public static func destructive(
+    _ label: TextState, action: ButtonStateAction<Action> = .send(nil)
+  ) -> Self {
     Self(role: .destructive, action: action) {
       label
     }

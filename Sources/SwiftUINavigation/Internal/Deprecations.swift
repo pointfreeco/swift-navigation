@@ -2,6 +2,11 @@ import SwiftUI
 
 // NB: Deprecated after 0.5.0
 
+extension ButtonState {
+  @available(*, deprecated, renamed: "ButtonStateAction")
+  public typealias Handler = ButtonStateAction<Action>
+}
+
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension View {
   #if swift(>=5.7)
@@ -44,7 +49,7 @@ extension View {
       }
     }
 
-//    @_disfavoredOverload
+    @_disfavoredOverload
     @available(
       *,
       deprecated,
@@ -52,7 +57,7 @@ extension View {
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
-    public func _confirmationDialog<Value>(
+    public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
@@ -63,7 +68,7 @@ extension View {
       }
     }
 
-//    @_disfavoredOverload
+    @_disfavoredOverload
     @available(
       *,
       deprecated,
@@ -71,7 +76,7 @@ extension View {
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
-    public func _confirmationDialog<Enum, Value>(
+    public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
