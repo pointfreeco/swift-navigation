@@ -1,7 +1,7 @@
+@_spi(RuntimeWarn)
 @_transparent
 @inline(__always)
-@usableFromInline
-func runtimeWarn(
+public func runtimeWarn(
   _ message: @autoclosure () -> String,
   category: String? = "SwiftUINavigation",
   file: StaticString? = nil,
