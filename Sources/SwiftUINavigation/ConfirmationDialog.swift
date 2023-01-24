@@ -126,6 +126,40 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
+      action handler: @escaping (Value) -> Void = { (_: Void) in }
+    ) -> some View {
+      self.confirmationDialog(
+        value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
+        isPresented: value.isPresent(),
+        titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: handler)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
+
+    /// Presents a confirmation dialog from a binding to optional ``ConfirmationDialogState``.
+    ///
+    /// See <doc:AlertsDialogs> for more information on how to use this API.
+    ///
+    /// > Warning: Async closures cannot be performed with animation. If the underlying action is
+    /// > animated, a runtime warning will be emitted.
+    ///
+    /// - Parameters:
+    ///   - value: A binding to an optional value that determines whether a confirmation dialog should
+    ///     be presented. When the binding is updated with non-`nil` value, it is unwrapped and used
+    ///     to populate the fields of a dialog that the system displays to the user. When the user
+    ///     presses or taps one of the dialog's actions, the system sets this value to `nil` and
+    ///     dismisses the dialog, and the action is fed to the `action` closure.
+    ///   - handler: A closure that is called with an action from a particular dialog button when
+    ///     tapped.
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func confirmationDialog<Value>(
+      unwrapping value: Binding<ConfirmationDialogState<Value>?>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       self.confirmationDialog(
@@ -135,11 +169,7 @@ extension View {
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
-            Button($0) { action in
-              Task {
-                await handler(action)
-              }
-            }
+            Button($0, action: handler)
           }
         },
         message: { $0.message.map { Text($0) } }
@@ -165,6 +195,36 @@ extension View {
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
+      action handler: @escaping (Value) -> Void = { (_: Void) in }
+    ) -> some View {
+      self.confirmationDialog(
+        unwrapping: `enum`.case(casePath),
+        action: handler
+      )
+    }
+
+    /// Presents a confirmation dialog from a binding to an optional enum, and a case path to a
+    /// specific case of ``ConfirmationDialogState``.
+    ///
+    /// A version of `confirmationDialog(unwrapping:)` that works with enum state. See
+    /// <doc:AlertsDialogs> for more information on how to use this API.
+    ///
+    /// > Warning: Async closures cannot be performed with animation. If the underlying action is
+    /// > animated, a runtime warning will be emitted.
+    /// 
+    /// - Parameters:
+    ///   - enum: A binding to an optional enum that holds dialog state at a particular case. When
+    ///     the binding is updated with a non-`nil` enum, the case path will attempt to extract this
+    ///     state and use it to populate the fields of an dialog that the system displays to the user.
+    ///     When the user presses or taps one of the dialog's actions, the system sets this value to
+    ///     `nil` and dismisses the dialog, and the action is fed to the `action` closure.
+    ///   - casePath: A case path that identifies a particular case that holds dialog state.
+    ///   - handler: A closure that is called with an action from a particular dialog button when
+    ///     tapped.
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func confirmationDialog<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       self.confirmationDialog(
@@ -173,6 +233,25 @@ extension View {
       )
     }
   #else
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func confirmationDialog<Value>(
+      unwrapping value: Binding<ConfirmationDialogState<Value>?>,
+      action handler: @escaping (Value) -> Void
+    ) -> some View {
+      self.confirmationDialog(
+        value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
+        isPresented: value.isPresent(),
+        titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: handler)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
+
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
@@ -185,11 +264,7 @@ extension View {
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
-            Button($0) { action in
-              Task {
-                await handler(action)
-              }
-            }
+            Button($0, action: handler)
           }
         },
         message: { $0.message.map { Text($0) } }
@@ -203,6 +278,18 @@ extension View {
       self.confirmationDialog(
         unwrapping: value,
         action: { (_: Never) in fatalError() }
+      )
+    }
+
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func confirmationDialog<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
+      action handler: @escaping (Value) -> Void
+    ) -> some View {
+      self.confirmationDialog(
+        unwrapping: `enum`.case(casePath),
+        action: handler
       )
     }
 

@@ -83,10 +83,38 @@ public struct ButtonState<Action>: Identifiable {
     switch self.action?.type {
     case let .send(action):
       perform(action)
-    case let .animatedSend(action, animation: animation):
+    case let .animatedSend(action, animation):
       withAnimation(animation) {
         perform(action)
       }
+    case .none:
+      return
+    }
+  }
+
+  /// Handle the button's action in an async closure.
+  ///
+  /// > Warning: Async closures cannot be performed with animation. If the underlying action is
+  /// > animated, a runtime warning will be emitted.
+  ///
+  /// - Parameter perform: Unwraps and passes a button's action to a closure to be performed.
+  public func withAction(_ perform: (Action) async -> Void) async {
+    switch self.action?.type {
+    case let .send(action):
+      await perform(action)
+    case let .animatedSend(action, _):
+      runtimeWarn(
+        """
+        An animated action was performed asynchronously: …
+
+          Action:
+            \(debugCaseOutput(action))
+
+        Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, or \
+        use 'SwiftUI.withAnimation' explicitly.
+        """
+      )
+      await perform(action)
     case .none:
       return
     }
@@ -166,8 +194,33 @@ extension ButtonState: Hashable where Action: Hashable {
 // MARK: - SwiftUI bridging
 
 extension Alert.Button {
+  /// Initializes a `SwiftUI.Alert.Button` from `ButtonState` and an action handler.
+  ///
+  /// - Parameters:
+  ///   - button: Button state.
+  ///   - action: An action closure that is invoked when the button is tapped.
   public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) -> Void) {
     let action = { button.withAction(action) }
+    switch button.role {
+    case .cancel:
+      self = .cancel(Text(button.label), action: action)
+    case .destructive:
+      self = .destructive(Text(button.label), action: action)
+    case .none:
+      self = .default(Text(button.label), action: action)
+    }
+  }
+
+  /// Initializes a `SwiftUI.Alert.Button` from `ButtonState` and an async action handler.
+  ///
+  /// > Warning: Async closures cannot be performed with animation. If the underlying action is
+  /// > animated, a runtime warning will be emitted.
+  ///
+  /// - Parameters:
+  ///   - button: Button state.
+  ///   - action: An action closure that is invoked when the button is tapped.
+  public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) async -> Void) {
+    let action = { _ = Task { await button.withAction(action) } }
     switch button.role {
     case .cancel:
       self = .cancel(Text(button.label), action: action)
@@ -192,11 +245,34 @@ extension ButtonRole {
 }
 
 extension Button where Label == Text {
+  /// Initializes a `SwiftUI.Button` from `ButtonState` and an async action handler.
+  ///
+  /// - Parameters:
+  ///   - button: Button state.
+  ///   - action: An action closure that is invoked when the button is tapped.
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) -> Void) {
     self.init(
       role: button.role.map(ButtonRole.init),
       action: { button.withAction(action) }
+    ) {
+      Text(button.label)
+    }
+  }
+
+  /// Initializes a `SwiftUI.Button` from `ButtonState` and an action handler.
+  ///
+  /// > Warning: Async closures cannot be performed with animation. If the underlying action is
+  /// > animated, a runtime warning will be emitted.
+  ///
+  /// - Parameters:
+  ///   - button: Button state.
+  ///   - action: An action closure that is invoked when the button is tapped.
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+  public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action) async -> Void) {
+    self.init(
+      role: button.role.map(ButtonRole.init),
+      action: { Task { await button.withAction(action) } }
     ) {
       Text(button.label)
     }
@@ -256,4 +332,52 @@ extension ButtonState {
       label
     }
   }
+}
+
+@usableFromInline
+func debugCaseOutput(_ value: Any) -> String {
+  func debugCaseOutputHelp(_ value: Any) -> String {
+    let mirror = Mirror(reflecting: value)
+    switch mirror.displayStyle {
+    case .enum:
+      guard let child = mirror.children.first else {
+        let childOutput = "\(value)"
+        return childOutput == "\(type(of: value))" ? "" : ".\(childOutput)"
+      }
+      let childOutput = debugCaseOutputHelp(child.value)
+      return ".\(child.label ?? "")\(childOutput.isEmpty ? "" : "(\(childOutput))")"
+    case .tuple:
+      return mirror.children.map { label, value in
+        let childOutput = debugCaseOutputHelp(value)
+        return
+          "\(label.map { isUnlabeledArgument($0) ? "_:" : "\($0):" } ?? "")\(childOutput.isEmpty ? "" : " \(childOutput)")"
+      }
+      .joined(separator: ", ")
+    default:
+      return ""
+    }
+  }
+
+  return (value as? CustomDebugStringConvertible)?.debugDescription
+    ?? "\(typeName(type(of: value)))\(debugCaseOutputHelp(value))"
+}
+
+private func isUnlabeledArgument(_ label: String) -> Bool {
+  label.firstIndex(where: { $0 != "." && !$0.isNumber }) == nil
+}
+
+@usableFromInline
+func typeName(_ type: Any.Type) -> String {
+  var name = _typeName(type, qualified: true)
+  if let index = name.firstIndex(of: ".") {
+    name.removeSubrange(...index)
+  }
+  let sanitizedName =
+    name
+    .replacingOccurrences(
+      of: #"<.+>|\(unknown context at \$[[:xdigit:]]+\)\."#,
+      with: "",
+      options: .regularExpression
+    )
+  return sanitizedName
 }
