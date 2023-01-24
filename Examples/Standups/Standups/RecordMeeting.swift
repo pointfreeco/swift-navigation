@@ -15,6 +15,7 @@ class RecordMeetingModel: ObservableObject {
   private var transcript = ""
 
   @Dependency(\.continuousClock) var clock
+  @Dependency(\.soundEffectClient) var soundEffectClient
   @Dependency(\.speechClient) var speechClient
 
   var onMeetingFinished: (String) async -> Void = unimplemented(
@@ -58,6 +59,7 @@ class RecordMeetingModel: ObservableObject {
     }
 
     self.speakerIndex += 1
+    self.soundEffectClient.play()
     self.secondsElapsed =
       self.speakerIndex * Int(self.standup.durationPerAttendee.components.seconds)
   }
@@ -70,16 +72,16 @@ class RecordMeetingModel: ObservableObject {
     switch action {
     case .confirmSave?:
       await self.finishMeeting()
-
     case .confirmDiscard?:
       self.isDismissed = true
-
     case nil:
       break
     }
   }
 
   func task() async {
+    self.soundEffectClient.load("ding.wav")
+
     let authorization =
       await self.speechClient.authorizationStatus() == .notDetermined
       ? self.speechClient.requestAuthorization()
@@ -130,6 +132,7 @@ class RecordMeetingModel: ObservableObject {
           break
         }
         self.speakerIndex += 1
+        self.soundEffectClient.play()
       }
     }
   }
@@ -233,13 +236,16 @@ struct MeetingHeaderView: View {
         .progressViewStyle(MeetingProgressViewStyle(theme: self.theme))
       HStack {
         VStack(alignment: .leading) {
-          Text("Seconds Elapsed")
+          Text("Time Elapsed")
             .font(.caption)
-          Label("\(self.secondsElapsed)", systemImage: "hourglass.bottomhalf.fill")
+          Label(
+            Duration.seconds(self.secondsElapsed).formatted(.units()),
+            systemImage: "hourglass.bottomhalf.fill"
+          )
         }
         Spacer()
         VStack(alignment: .trailing) {
-          Text("Seconds Remaining")
+          Text("Time Remaining")
             .font(.caption)
           Label(self.durationRemaining.formatted(.units()), systemImage: "hourglass.tophalf.fill")
             .font(.body.monospacedDigit())

@@ -234,6 +234,29 @@ extension Alert {
       )
     }
   }
+
+  /// Creates an alert from alert state.
+  ///
+  /// - Parameters:
+  ///   - state: Alert state used to populate the alert.
+  ///   - action: An action handler, called when a button with an action is tapped, by passing the
+  ///     action to the closure.
+  public init<Action>(_ state: AlertState<Action>, action: @escaping (Action?) async -> Void) {
+    if state.buttons.count == 2 {
+      self.init(
+        title: Text(state.title),
+        message: state.message.map { Text($0) },
+        primaryButton: .init(state.buttons[0], action: action),
+        secondaryButton: .init(state.buttons[1], action: action)
+      )
+    } else {
+      self.init(
+        title: Text(state.title),
+        message: state.message.map { Text($0) },
+        dismissButton: state.buttons.first.map { .init($0, action: action) }
+      )
+    }
+  }
 }
 
 // MARK: - Deprecations

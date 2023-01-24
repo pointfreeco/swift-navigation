@@ -2,7 +2,7 @@ import Dependencies
 import SwiftUI
 import SwiftUINavigation
 
-class EditStandupModel: ObservableObject {
+class StandupFormModel: ObservableObject {
   @Published var focus: Field?
   @Published var standup: Standup
 
@@ -42,9 +42,9 @@ class EditStandupModel: ObservableObject {
   }
 }
 
-struct EditStandupView: View {
-  @FocusState var focus: EditStandupModel.Field?
-  @ObservedObject var model: EditStandupModel
+struct StandupFormView: View {
+  @FocusState var focus: StandupFormModel.Field?
+  @ObservedObject var model: StandupFormModel
 
   var body: some View {
     Form {
@@ -109,10 +109,10 @@ extension Duration {
   }
 }
 
-struct EditStandup_Previews: PreviewProvider {
+struct StandupForm_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      EditStandupView(model: EditStandupModel(standup: .mock))
+      StandupFormView(model: StandupFormModel(standup: .mock))
     }
     .previewDisplayName("Edit")
 
@@ -123,8 +123,8 @@ struct EditStandup_Previews: PreviewProvider {
         """
     ) {
       NavigationStack {
-        EditStandupView(
-          model: EditStandupModel(
+        StandupFormView(
+          model: StandupFormModel(
             focus: .attendee(Standup.mock.attendees[3].id),
             standup: .mock
           )

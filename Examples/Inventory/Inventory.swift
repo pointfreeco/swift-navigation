@@ -23,9 +23,7 @@ class InventoryModel: ObservableObject {
   }
 
   func delete(item: Item) {
-    withAnimation {
-      _ = self.inventory.remove(id: item.id)
-    }
+    _ = self.inventory.remove(id: item.id)
   }
 
   func add(item: Item) {
@@ -56,15 +54,11 @@ class InventoryModel: ObservableObject {
     for itemRowModel in self.inventory {
       itemRowModel.onDelete = { [weak self, weak itemRowModel] in
         guard let self, let itemRowModel else { return }
-        withAnimation {
-          self.delete(item: itemRowModel.item)
-        }
+        self.delete(item: itemRowModel.item)
       }
       itemRowModel.onDuplicate = { [weak self] item in
         guard let self else { return }
-        withAnimation {
-          self.add(item: item)
-        }
+        self.add(item: item)
       }
       itemRowModel.onTap = { [weak self, weak itemRowModel] in
         guard let self, let itemRowModel else { return }
