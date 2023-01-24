@@ -11,7 +11,10 @@ final class ButtonStateTests: XCTestCase {
         An animated action was performed asynchronously: …
 
           Action:
-            ()
+            ButtonState.Handler.send(
+              (),
+              animation: Animation.easeInOut
+            )
 
         Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, or \
         use 'SwiftUI.withAnimation' explicitly.

@@ -99,24 +99,25 @@ public struct ButtonState<Action>: Identifiable {
   ///
   /// - Parameter perform: Unwraps and passes a button's action to a closure to be performed.
   public func withAction(_ perform: (Action) async -> Void) async {
-    switch self.action?.type {
+    guard let handler = self.action else { return }
+    switch handler.type {
     case let .send(action):
       await perform(action)
     case let .animatedSend(action, _):
+      var output = ""
+      customDump(handler, to: &output, indent: 4)
       runtimeWarn(
         """
         An animated action was performed asynchronously: …
 
           Action:
-            \(debugCaseOutput(action))
+        \((output))
 
         Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, or \
         use 'SwiftUI.withAnimation' explicitly.
         """
       )
       await perform(action)
-    case .none:
-      return
     }
   }
 }
