@@ -2,11 +2,6 @@ import SwiftUI
 
 // NB: Deprecated after 0.5.0
 
-extension ButtonState {
-  @available(*, deprecated, renamed: "ButtonStateAction")
-  public typealias Handler = ButtonStateAction<Action>
-}
-
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension View {
   #if swift(>=5.7)
