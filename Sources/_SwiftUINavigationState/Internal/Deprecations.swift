@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 // NB: Deprecated after 0.5.0
 
