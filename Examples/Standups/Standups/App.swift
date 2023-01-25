@@ -1,3 +1,4 @@
+import Combine
 import Dependencies
 import SwiftUI
 
@@ -11,6 +12,8 @@ class AppModel: ObservableObject {
   @Dependency(\.date.now) var now
   @Dependency(\.uuid) var uuid
 
+  private var detailCancellable: AnyCancellable?
+
   init(
     path: [Destination] = [],
     standupsList: StandupsListModel
@@ -22,7 +25,7 @@ class AppModel: ObservableObject {
 
   enum Destination: Hashable {
     case detail(StandupDetailModel)
-    case meeting(Meeting)
+    case meeting(Meeting, standup: Standup)
     case record(RecordMeetingModel)
   }
 
@@ -36,10 +39,7 @@ class AppModel: ObservableObject {
             let model
           else { return }
 
-          print(self.standupsList.standups)
-          print(model.standup.id)
           self.standupsList.standups.remove(id: model.standup.id)
-          print(self.standupsList.standups)
           _ = self.path.popLast()
         }
         model.onStartMeeting = { [weak self, weak model] in
@@ -56,6 +56,10 @@ class AppModel: ObservableObject {
             )
           )
         }
+        self.detailCancellable = model.$standup
+          .sink { [weak self] standup in
+            self?.standupsList.standups[id: standup.id] = standup
+          }
 
       case .meeting:
         break
@@ -64,7 +68,7 @@ class AppModel: ObservableObject {
         model.onDiscardMeeting = { [weak self] in
           _ = self?.path.popLast()
         }
-        model.onMeetingFinished = { [weak self] transcript in
+        model.onMeetingFinished = { @MainActor [weak self] transcript in
           guard
             let self,
             case .some(.record) = self.path.popLast(),
@@ -98,8 +102,8 @@ struct AppView: View {
           switch path {
           case let .detail(model):
             StandupDetailView(model: model)
-          case let .meeting(meeting):
-            MeetingView(meeting: meeting, standup: .mock /* TODO */)
+          case let .meeting(meeting, standup: standup):
+            MeetingView(meeting: meeting, standup: standup)
           case let .record(model):
             RecordMeetingView(model: model)
           }

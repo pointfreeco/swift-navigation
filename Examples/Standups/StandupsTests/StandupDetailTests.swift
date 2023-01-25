@@ -57,11 +57,13 @@ final class StandupDetailTests: XCTestCase {
       standup: .mock
     )
 
+    let onStartMeetingExpectation = self.expectation(description: "onStartMeeting")
+    model.onStartMeeting = {
+      onStartMeetingExpectation.fulfill()
+    }
+
     await model.alertButtonTapped(.continueWithoutRecording)
-
-    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
-
-    XCTAssertEqual(recordModel.standup, model.standup)
+    self.wait(for: [onStartMeetingExpectation], timeout: 0)
   }
 
   func testSpeechAuthorized() async throws {
@@ -71,61 +73,14 @@ final class StandupDetailTests: XCTestCase {
       StandupDetailModel(standup: .mock)
     }
 
-    model.startMeetingButtonTapped()
-
-    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
-
-    XCTAssertEqual(recordModel.standup, model.standup)
-  }
-
-  func testRecordWithTranscript() async throws {
-    let model = withDependencies {
-      $0.continuousClock = ImmediateClock()
-      $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
-      $0.soundEffectClient = .noop
-      $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { _ in
-        AsyncThrowingStream { continuation in
-          continuation.yield(
-            SpeechRecognitionResult(
-              bestTranscription: Transcription(formattedString: "I completed the project"),
-              isFinal: true
-            )
-          )
-          continuation.finish()
-        }
-      }
-      $0.uuid = .incrementing
-    } operation: {
-      StandupDetailModel(
-        destination: .record(RecordMeetingModel(standup: .mock)),
-        standup: Standup(
-          id: Standup.ID(),
-          attendees: [
-            .init(id: Attendee.ID()),
-            .init(id: Attendee.ID()),
-          ],
-          duration: .seconds(10),
-          title: "Engineering"
-        )
-      )
+    let onStartMeetingExpectation = self.expectation(description: "onStartMeeting")
+    model.onStartMeeting = {
+      onStartMeetingExpectation.fulfill()
     }
 
-    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
+    model.startMeetingButtonTapped()
 
-    await recordModel.task()
-
-    XCTAssertNil(model.destination)
-    XCTAssertNoDifference(
-      model.standup.meetings,
-      [
-        Meeting(
-          id: Meeting.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-          date: Date(timeIntervalSince1970: 1_234_567_890),
-          transcript: "I completed the project"
-        )
-      ]
-    )
+    self.wait(for: [onStartMeetingExpectation], timeout: 0)
   }
 
   func testEdit() throws {

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CA22CCC22967799600F52F6D /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA22CCC12967799600F52F6D /* Helpers.swift */; };
 		CA274D79297ED6F0004EC444 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA274D78297ED6F0004EC444 /* App.swift */; };
+		CA274D7C297EF26E004EC444 /* AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA274D7A297EF153004EC444 /* AppTests.swift */; };
 		CA4737CF272F09600012CAC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA4737CE272F09600012CAC3 /* Assets.xcassets */; };
 		CA4737F4272F09780012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA4737F3272F09780012CAC3 /* SwiftUINavigation */; };
 		CA4737F9272F09D00012CAC3 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4737F5272F09D00012CAC3 /* ItemRow.swift */; };
@@ -78,6 +79,7 @@
 /* Begin PBXFileReference section */
 		CA22CCC12967799600F52F6D /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		CA274D78297ED6F0004EC444 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		CA274D7A297EF153004EC444 /* AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTests.swift; sourceTree = "<group>"; };
 		CA4737C3272F090F0012CAC3 /* swiftui-navigation */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "swiftui-navigation"; path = ..; sourceTree = "<group>"; };
 		CA4737C8272F095F0012CAC3 /* Inventory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inventory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA4737CE272F09600012CAC3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -310,6 +312,7 @@
 		DC5E07862947CCD800293F45 /* StandupsTests */ = {
 			isa = PBXGroup;
 			children = (
+				CA274D7A297EF153004EC444 /* AppTests.swift */,
 				CA53F7F0295BBDB700DE68FE /* EditStandupTests.swift */,
 				CAAA74E52956A60A009A25CA /* RecordMeetingTests.swift */,
 				CAAA74E72956A658009A25CA /* StandupDetailTests.swift */,
@@ -593,6 +596,7 @@
 				CAAA74E82956A658009A25CA /* StandupDetailTests.swift in Sources */,
 				CAAA74E62956A60A009A25CA /* RecordMeetingTests.swift in Sources */,
 				CA53F7F1295BBDB700DE68FE /* EditStandupTests.swift in Sources */,
+				CA274D7C297EF26E004EC444 /* AppTests.swift in Sources */,
 				CAAA74E429569F6C009A25CA /* StandupsListTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -78,7 +78,7 @@ class RecordMeetingModel: Hashable, ObservableObject {
   func alertButtonTapped(_ action: AlertAction) async {
     switch action {
     case .confirmSave:
-      await self.finishMeeting()
+      await self.onMeetingFinished(self.transcript)
 
     case .confirmDiscard:
       self.onDiscardMeeting()
@@ -106,10 +106,7 @@ class RecordMeetingModel: Hashable, ObservableObject {
     }
   }
 
-  private func finishMeeting() async {
-    await self.onMeetingFinished(self.transcript)
-  }
-
+  @MainActor
   private func startSpeechRecognition() async {
     do {
       let speechTask = await self.speechClient.startTask(SFSpeechAudioBufferRecognitionRequest())
@@ -124,6 +121,7 @@ class RecordMeetingModel: Hashable, ObservableObject {
     }
   }
 
+  @MainActor
   private func startTimer() async {
     for await _ in self.clock.timer(interval: .seconds(1)) where !self.isAlertOpen {
       self.secondsElapsed += 1
@@ -131,7 +129,7 @@ class RecordMeetingModel: Hashable, ObservableObject {
       let secondsPerAttendee = Int(self.standup.durationPerAttendee.components.seconds)
       if self.secondsElapsed.isMultiple(of: secondsPerAttendee) {
         if self.speakerIndex == self.standup.attendees.count - 1 {
-          await self.finishMeeting()
+          await self.onMeetingFinished(self.transcript)
           break
         }
         self.speakerIndex += 1

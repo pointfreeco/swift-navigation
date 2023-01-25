@@ -125,8 +125,8 @@ extension View {
         isPresented: value.isPresent(),
         presenting: value.wrappedValue,
         actions: {
-          ForEach($0.buttons) {
-            Button($0) { action in
+          ForEach($0.buttons) { buttonState in
+            Button(buttonState) { action in
               Task {
                 await handler(action)
               }

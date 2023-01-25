@@ -140,7 +140,9 @@ struct StandupDetailView: View {
       if !self.model.standup.meetings.isEmpty {
         Section {
           ForEach(self.model.standup.meetings) { meeting in
-            NavigationLink(value: AppModel.Destination.meeting(meeting)) {
+            NavigationLink(
+              value: AppModel.Destination.meeting(meeting, standup: self.model.standup)
+            ) {
               HStack {
                 Image(systemName: "calendar")
                 Text(meeting.date, style: .date)

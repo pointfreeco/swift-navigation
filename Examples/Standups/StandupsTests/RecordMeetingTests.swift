@@ -67,7 +67,6 @@ final class RecordMeetingTests: XCTestCase {
     await task.value
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
-    XCTAssertEqual(model.isDismissed, true)
     XCTAssertEqual(soundEffectPlayCount.value, 2)
   }
 
@@ -106,7 +105,6 @@ final class RecordMeetingTests: XCTestCase {
     await model.task()
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
-    XCTAssertEqual(model.isDismissed, true)
   }
 
   func testEndMeetingSave() async throws {
@@ -144,7 +142,6 @@ final class RecordMeetingTests: XCTestCase {
     await model.alertButtonTapped(.confirmSave)
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
-    XCTAssertEqual(model.isDismissed, true)
 
     task.cancel()
     await task.value
@@ -161,7 +158,10 @@ final class RecordMeetingTests: XCTestCase {
       RecordMeetingModel(standup: .mock)
     }
 
-    model.onMeetingFinished = { _ in XCTFail() }
+    let onDiscardExpectation = self.expectation(description: "onDiscardMeeting")
+    model.onDiscardMeeting = {
+      onDiscardExpectation.fulfill()
+    }
 
     let task = Task {
       await model.task()
@@ -174,8 +174,7 @@ final class RecordMeetingTests: XCTestCase {
     XCTAssertNoDifference(alert, .endMeeting(isDiscardable: true))
 
     await model.alertButtonTapped(.confirmDiscard)
-
-    XCTAssertEqual(model.isDismissed, true)
+    self.wait(for: [onDiscardExpectation], timeout: 0)
 
     task.cancel()
     await task.value
@@ -242,7 +241,6 @@ final class RecordMeetingTests: XCTestCase {
     await model.alertButtonTapped(.confirmSave)
 
     self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
-    XCTAssertEqual(model.isDismissed, true)
     XCTAssertEqual(soundEffectPlayCount.value, 2)
 
     task.cancel()
@@ -296,7 +294,6 @@ final class RecordMeetingTests: XCTestCase {
     XCTAssertEqual(alert, .speechRecognizerFailed)
 
     model.destination = nil  // NB: Simulate SwiftUI closing alert.
-    XCTAssertEqual(model.isDismissed, false)
 
     await task.value
 
@@ -305,8 +302,10 @@ final class RecordMeetingTests: XCTestCase {
   }
 
   func testSpeechRecognitionFailure_Discard() async throws {
+    let clock = TestClock()
+
     let model = withDependencies {
-      $0.continuousClock = ImmediateClock()
+      $0.continuousClock = clock
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
@@ -321,6 +320,11 @@ final class RecordMeetingTests: XCTestCase {
           duration: .seconds(3)
         )
       )
+    }
+
+    let onDiscardExpectation = self.expectation(description: "onDiscardMeeting")
+    model.onDiscardMeeting = {
+      onDiscardExpectation.fulfill()
     }
 
     let task = Task {
@@ -338,8 +342,9 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.alertButtonTapped(.confirmDiscard)
     model.destination = nil  // NB: Simulate SwiftUI closing alert.
-    XCTAssertEqual(model.isDismissed, true)
+    self.wait(for: [onDiscardExpectation], timeout: 0)
 
+    task.cancel()
     await task.value
   }
 }
