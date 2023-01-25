@@ -9,7 +9,8 @@ extension View {
     @available(
       *,
       deprecated,
-      message: """
+      message:
+        """
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
@@ -28,7 +29,8 @@ extension View {
     @available(
       *,
       deprecated,
-      message: """
+      message:
+        """
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
@@ -48,7 +50,8 @@ extension View {
     @available(
       *,
       deprecated,
-      message: """
+      message:
+        """
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
@@ -67,7 +70,8 @@ extension View {
     @available(
       *,
       deprecated,
-      message: """
+      message:
+        """
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
@@ -87,7 +91,8 @@ extension View {
     @available(
       *,
       deprecated,
-      message: """
+      message:
+        """
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
@@ -106,7 +111,8 @@ extension View {
     @available(
       *,
       deprecated,
-      message: """
+      message:
+        """
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
@@ -126,7 +132,8 @@ extension View {
     @available(
       *,
       deprecated,
-      message: """
+      message:
+        """
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
@@ -145,7 +152,8 @@ extension View {
     @available(
       *,
       deprecated,
-      message: """
+      message:
+        """
         'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
         """
     )
