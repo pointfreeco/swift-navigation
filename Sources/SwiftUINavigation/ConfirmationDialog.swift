@@ -126,7 +126,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action handler: @escaping (Value) -> Void = { (_: Void) in }
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
@@ -160,7 +160,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
@@ -195,7 +195,7 @@ extension View {
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action handler: @escaping (Value) -> Void = { (_: Void) in }
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
       self.confirmationDialog(
         unwrapping: `enum`.case(casePath),
@@ -225,7 +225,7 @@ extension View {
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       self.confirmationDialog(
         unwrapping: `enum`.case(casePath),
@@ -236,7 +236,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action handler: @escaping (Value) -> Void
+      action handler: @escaping (Value?) -> Void
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
@@ -255,7 +255,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action handler: @escaping (Value) async -> Void
+      action handler: @escaping (Value?) async -> Void
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
@@ -275,17 +275,14 @@ extension View {
     public func confirmationDialog(
       unwrapping value: Binding<ConfirmationDialogState<Never>?>
     ) -> some View {
-      self.confirmationDialog(
-        unwrapping: value,
-        action: { (_: Never) in fatalError() }
-      )
+      self.confirmationDialog(unwrapping: value) { _ in }
     }
 
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action handler: @escaping (Value) -> Void
+      action handler: @escaping (Value?) -> Void
     ) -> some View {
       self.confirmationDialog(
         unwrapping: `enum`.case(casePath),
@@ -297,7 +294,7 @@ extension View {
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action handler: @escaping (Value) async -> Void
+      action handler: @escaping (Value?) async -> Void
     ) -> some View {
       self.confirmationDialog(
         unwrapping: `enum`.case(casePath),
@@ -310,10 +307,7 @@ extension View {
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Never>>
     ) -> some View {
-      self.confirmationDialog(
-        unwrapping: `enum`.case(casePath),
-        action: { (_: Never) in fatalError() }
-      )
+      self.confirmationDialog(unwrapping: `enum`.case(casePath)) { _ in }
     }
   #endif
 

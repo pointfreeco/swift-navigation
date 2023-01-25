@@ -11,7 +11,7 @@ final class ButtonStateTests: XCTestCase {
         An animated action was performed asynchronously: …
 
           Action:
-            ButtonState.Handler.send(
+            ButtonStateAction.send(
               (),
               animation: Animation.easeInOut
             )
@@ -25,7 +25,7 @@ final class ButtonStateTests: XCTestCase {
       TextState("Animate!")
     }
 
-    await button.withAction {
+    await button.withAction { _ in
       await Task.yield()
     }
   }

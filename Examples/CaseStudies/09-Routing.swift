@@ -91,10 +91,12 @@ struct Routing: View {
     .navigationTitle("Routing")
     .alert(unwrapping: self.$destination, case: /Destination.alert) { action in
       switch action {
-      case .randomize:
+      case .randomize?:
         self.count = .random(in: 0...1_000)
-      case .reset:
+      case .reset?:
         self.count = 0
+      case nil:
+        break
       }
     }
     .confirmationDialog(
@@ -102,10 +104,12 @@ struct Routing: View {
       case: /Destination.confirmationDialog
     ) { action in
       switch action {
-      case .decrement:
+      case .decrement?:
         self.count -= 1
-      case .increment:
+      case .increment?:
         self.count += 1
+      case nil:
+        break
       }
     }
     .sheet(unwrapping: self.$destination, case: /Destination.sheet) { $count in

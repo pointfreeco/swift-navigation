@@ -116,11 +116,25 @@ import SwiftUI
 @available(tvOS 13, *)
 @available(watchOS 6, *)
 public struct ConfirmationDialogState<Action>: Identifiable {
-  public let id = UUID()
+  public let id: UUID
   public var buttons: [ButtonState<Action>]
   public var message: TextState?
   public var title: TextState
-  public var titleVisibility: Visibility
+  public var titleVisibility: ConfirmationDialogStateTitleVisibility
+
+  init(
+    id: UUID,
+    buttons: [ButtonState<Action>],
+    message: TextState?,
+    title: TextState,
+    titleVisibility: ConfirmationDialogStateTitleVisibility
+  ) {
+    self.id = id
+    self.buttons = buttons
+    self.message = message
+    self.title = title
+    self.titleVisibility = titleVisibility
+  }
 
   /// Creates confirmation dialog state.
   ///
@@ -134,15 +148,18 @@ public struct ConfirmationDialogState<Action>: Identifiable {
   @available(tvOS 15, *)
   @available(watchOS 8, *)
   public init(
-    titleVisibility: Visibility,
+    titleVisibility: ConfirmationDialogStateTitleVisibility,
     title: () -> TextState,
     @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>],
     message: (() -> TextState)? = nil
   ) {
-    self.buttons = actions()
-    self.message = message?()
-    self.title = title()
-    self.titleVisibility = titleVisibility
+    self.init(
+      id: UUID(),
+      buttons: actions(),
+      message: message?(),
+      title: title(),
+      titleVisibility: titleVisibility
+    )
   }
 
   /// Creates confirmation dialog state.
@@ -156,17 +173,47 @@ public struct ConfirmationDialogState<Action>: Identifiable {
     @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>],
     message: (() -> TextState)? = nil
   ) {
-    self.buttons = actions()
-    self.message = message?()
-    self.title = title()
-    self.titleVisibility = .automatic
+    self.init(
+      id: UUID(),
+      buttons: actions(),
+      message: message?(),
+      title: title(),
+      titleVisibility: .automatic
+    )
   }
 
-  public enum Visibility {
-    case automatic
-    case hidden
-    case visible
+  public func map<NewAction>(
+    _ transform: (Action?) -> NewAction?
+  ) -> ConfirmationDialogState<NewAction> {
+    ConfirmationDialogState<NewAction>(
+      id: self.id,
+      buttons: self.buttons.map { $0.map(transform) },
+      message: self.message,
+      title: self.title,
+      titleVisibility: self.titleVisibility
+    )
   }
+}
+
+/// The visibility of a confirmation dialog title element, chosen automatically based on the
+/// platform, current context, and other factors.
+///
+/// See `SwiftUI.Visibility` for more information.
+public enum ConfirmationDialogStateTitleVisibility {
+  /// The element may be visible or hidden depending on the policies of the
+  /// component accepting the visibility configuration.
+  ///
+  /// See `SwiftUI.Visibility.automatic` for more information.
+  case automatic
+
+  /// The element may be hidden.
+  ///
+  /// See `SwiftUI.Visibility.hidden` for more information.
+  case hidden
+  /// The element may be visible.
+  ///
+  /// See `SwiftUI.Visibility.visible` for more information.
+  case visible
 }
 
 @available(iOS 13, *)
@@ -222,7 +269,7 @@ extension ConfirmationDialogState: Hashable where Action: Hashable {
 
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension Visibility {
-  public init<Action>(_ visibility: ConfirmationDialogState<Action>.Visibility) {
+  public init(_ visibility: ConfirmationDialogStateTitleVisibility) {
     switch visibility {
     case .automatic:
       self = .automatic
@@ -231,132 +278,5 @@ extension Visibility {
     case .visible:
       self = .visible
     }
-  }
-}
-
-// MARK: - Deprecations
-
-@available(iOS 13, *)
-@available(macOS 12, *)
-@available(tvOS 13, *)
-@available(watchOS 6, *)
-extension ConfirmationDialogState {
-  @available(*, deprecated, message: "Use 'ButtonState<Action>' instead.")
-  public typealias Button = ButtonState<Action>
-
-  @available(
-    iOS,
-    introduced: 13,
-    deprecated: 100000,
-    message: "Use 'init(titleVisibility:title:actions:message:)' instead."
-  )
-  @available(
-    macOS,
-    introduced: 12,
-    deprecated: 100000,
-    message: "Use 'init(titleVisibility:title:actions:message:)' instead."
-  )
-  @available(
-    tvOS,
-    introduced: 13,
-    deprecated: 100000,
-    message: "Use 'init(titleVisibility:title:actions:message:)' instead."
-  )
-  @available(
-    watchOS,
-    introduced: 6,
-    deprecated: 100000,
-    message: "Use 'init(titleVisibility:title:actions:message:)' instead."
-  )
-  public init(
-    title: TextState,
-    titleVisibility: Visibility,
-    message: TextState? = nil,
-    buttons: [ButtonState<Action>] = []
-  ) {
-    self.buttons = buttons
-    self.message = message
-    self.title = title
-    self.titleVisibility = titleVisibility
-  }
-
-  @available(
-    iOS,
-    introduced: 13,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    macOS,
-    introduced: 12,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    tvOS,
-    introduced: 13,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    watchOS,
-    introduced: 6,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  public init(
-    title: TextState,
-    message: TextState? = nil,
-    buttons: [ButtonState<Action>] = []
-  ) {
-    self.buttons = buttons
-    self.message = message
-    self.title = title
-    self.titleVisibility = .automatic
-  }
-}
-
-@available(iOS, introduced: 13, deprecated: 100000, renamed: "ConfirmationDialogState")
-@available(macOS, introduced: 12, unavailable)
-@available(tvOS, introduced: 13, deprecated: 100000, renamed: "ConfirmationDialogState")
-@available(watchOS, introduced: 6, deprecated: 100000, renamed: "ConfirmationDialogState")
-public typealias ActionSheetState<Action> = ConfirmationDialogState<Action>
-
-@available(
-  iOS,
-  introduced: 13,
-  deprecated: 100000,
-  message:
-    "use 'View.confirmationDialog(title:isPresented:titleVisibility:presenting::actions:)' instead."
-)
-@available(
-  macOS,
-  introduced: 12,
-  unavailable
-)
-@available(
-  tvOS,
-  introduced: 13,
-  deprecated: 100000,
-  message:
-    "use 'View.confirmationDialog(title:isPresented:titleVisibility:presenting::actions:)' instead."
-)
-@available(
-  watchOS,
-  introduced: 6,
-  deprecated: 100000,
-  message:
-    "use 'View.confirmationDialog(title:isPresented:titleVisibility:presenting::actions:)' instead."
-)
-extension ActionSheet {
-  public init<Action>(
-    _ state: ConfirmationDialogState<Action>,
-    action: @escaping (Action) -> Void
-  ) {
-    self.init(
-      title: Text(state.title),
-      message: state.message.map { Text($0) },
-      buttons: state.buttons.map { .init($0, action: action) }
-    )
   }
 }

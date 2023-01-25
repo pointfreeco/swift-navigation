@@ -118,7 +118,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func alert<Value>(
       unwrapping value: Binding<AlertState<Value>?>,
-      action handler: @escaping (Value) -> Void = { (_: Void) in }
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
       self.alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(""),
@@ -151,7 +151,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func alert<Value>(
       unwrapping value: Binding<AlertState<Value>?>,
-      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       self.alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(""),
@@ -187,7 +187,7 @@ extension View {
     public func alert<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Value>>,
-      action handler: @escaping (Value) -> Void = { (_: Void) in }
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
       self.alert(unwrapping: `enum`.case(casePath), action: handler)
     }
@@ -216,7 +216,7 @@ extension View {
     public func alert<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Value>>,
-      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       self.alert(unwrapping: `enum`.case(casePath), action: handler)
     }
@@ -224,7 +224,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func alert<Value>(
       unwrapping value: Binding<AlertState<Value>?>,
-      action handler: @escaping (Value) -> Void
+      action handler: @escaping (Value?) -> Void
     ) -> some View {
       self.alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(""),
@@ -242,7 +242,7 @@ extension View {
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func alert<Value>(
       unwrapping value: Binding<AlertState<Value>?>,
-      action handler: @escaping (Value) async -> Void
+      action handler: @escaping (Value?) async -> Void
     ) -> some View {
       self.alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(""),
@@ -267,7 +267,7 @@ extension View {
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
-            Button($0, action: { (_: Never) in fatalError() })
+            Button($0) { _ in }
           }
         },
         message: { $0.message.map { Text($0) } }
@@ -278,7 +278,7 @@ extension View {
     public func alert<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Value>>,
-      action handler: @escaping (Value) -> Void
+      action handler: @escaping (Value?) -> Void
     ) -> some View {
       self.alert(unwrapping: `enum`.case(casePath), action: handler)
     }
@@ -287,7 +287,7 @@ extension View {
     public func alert<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Value>>,
-      action handler: @escaping (Value) async -> Void
+      action handler: @escaping (Value?) async -> Void
     ) -> some View {
       self.alert(unwrapping: `enum`.case(casePath), action: handler)
     }
@@ -297,7 +297,7 @@ extension View {
       unwrapping `enum`: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Never>>
     ) -> some View {
-      self.alert(unwrapping: `enum`.case(casePath), action: { (_: Never) in fatalError() })
+      self.alert(unwrapping: `enum`.case(casePath)) { (_: Never?) in }
     }
   #endif
 

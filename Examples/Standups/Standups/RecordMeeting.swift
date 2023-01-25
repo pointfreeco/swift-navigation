@@ -68,13 +68,14 @@ class RecordMeetingModel: ObservableObject {
     self.destination = .alert(.endMeeting(isDiscardable: true))
   }
 
-  func alertButtonTapped(_ action: AlertAction) async {
+  func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirmSave:
+    case .confirmSave?:
       await self.finishMeeting()
-
-    case .confirmDiscard:
+    case .confirmDiscard?:
       self.isDismissed = true
+    case nil:
+      break
     }
   }
 
