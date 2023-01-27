@@ -150,12 +150,12 @@ struct StandupsList: View {
             }
           }
       }
-      .alert(
-        unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.alert
-      ) {
-        self.model.alertButtonTapped($0)
-      }
+    }
+    .alert(
+      unwrapping: self.$model.destination,
+      case: /StandupsListModel.Destination.alert
+    ) {
+      self.model.alertButtonTapped($0)
     }
   }
 }
@@ -202,7 +202,7 @@ struct StandupsList_Previews: PreviewProvider {
   static var previews: some View {
     Preview(
       message: """
-        This preview demonstrates how to start the app in a state with a few standups \
+        This preview demonstrates how to start this screen in a state with a few standups \
         pre-populated. Since the initial standups are loaded from disk we cannot simply pass some \
         data to the StandupsList model. But, we can override the DataManager dependency so that \
         when its load endpoint is called it will load whatever data we want.
@@ -224,6 +224,7 @@ struct StandupsList_Previews: PreviewProvider {
     }
     .previewDisplayName("Mocking initial standups")
 
+    // TODO: why doesnt this preview show an alert?
     Preview(
       message: """
         This preview demonstrates how to test the flow of loading bad data from disk, in which \
@@ -233,65 +234,12 @@ struct StandupsList_Previews: PreviewProvider {
     ) {
       StandupsList(
         model: withDependencies {
-          $0.dataManager = .mock(
-            initialData: Data("!@#$% bad data ^&*()".utf8)
-          )
+          $0.dataManager = .mock(initialData: Data("!@#$% bad data ^&*()".utf8))
         } operation: {
           StandupsListModel()
         }
       )
     }
     .previewDisplayName("Load data failure")
-
-    Preview(
-      message: """
-        The preview demonstrates how you can start the application navigated to a very specific \
-        screen just by constructing a piece of state. In particular we will start the app drilled \
-        down to the detail screen of a standup, and then further drilled down to the record screen \
-        for a new meeting.
-        """
-    ) {
-      StandupsList(
-        model: withDependencies {
-          $0.dataManager = .mock(
-            initialData: try! JSONEncoder().encode([
-              Standup.mock,
-              .engineeringMock,
-              .designMock,
-            ])
-          )
-        } operation: {
-          StandupsListModel()
-        }
-      )
-    }
-    .previewDisplayName("Deep link record flow")
-
-    Preview(
-      message: """
-        The preview demonstrates how you can start the application navigated to a very specific \
-        screen just by constructing a piece of state. In particular we will start the app with the \
-        "Add standup" screen opened and with the last attendee text field focused.
-        """
-    ) {
-      StandupsList(
-        model: withDependencies {
-          $0.dataManager = .mock()
-        } operation: {
-          var standup = Standup.mock
-          let lastAttendee = Attendee(id: Attendee.ID())
-          let _ = standup.attendees.append(lastAttendee)
-          return StandupsListModel(
-            destination: .add(
-              StandupFormModel(
-                focus: .attendee(lastAttendee.id),
-                standup: standup
-              )
-            )
-          )
-        }
-      )
-    }
-    .previewDisplayName("Deep link add flow")
   }
 }

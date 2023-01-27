@@ -81,7 +81,7 @@ struct StandupFormView: View {
     .bind(self.$model.focus, to: self.$focus)
   }
 }
-
+ 
 struct ThemePicker: View {
   @Binding var selection: Theme
 

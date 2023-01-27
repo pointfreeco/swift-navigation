@@ -303,26 +303,6 @@ struct StandupDetail_Previews: PreviewProvider {
 
     Preview(
       message: """
-        This preview demonstrates an "unhappy path" of the application where the speech \
-        recognizer mysteriously fails after 2 seconds of recording. This gives us an opportunity \
-        to see how the application deals with this rare occurence. To see the behavior, run the \
-        preview, tap the "Start Meeting" button and wait 2 seconds.
-        """
-    ) {
-      NavigationStack {
-        StandupDetailView(
-          model: withDependencies {
-            $0.speechClient = .fail(after: .seconds(2))
-          } operation: {
-            StandupDetailModel(standup: .mock)
-          }
-        )
-      }
-    }
-    .previewDisplayName("Speech recognition failed")
-
-    Preview(
-      message: """
         This preview demonstrates how the feature behaves when access to speech recognition has \
         been previously denied by the user. Tap the "Start Meeting" button to see how we handle \
         that situation.
