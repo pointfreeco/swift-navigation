@@ -77,7 +77,39 @@ final class StandupsListModel: ObservableObject {
     self.standups.append(standup)
   }
 
+<<<<<<< HEAD
+  func alertButtonTapped(_ action: AlertAction) {
+=======
+  func standupTapped(standup: Standup) {
+    self.destination = .detail(
+      withDependencies(from: self) {
+        StandupDetailModel(standup: standup)
+      }
+    )
+  }
+
+  private func bind() {
+    switch self.destination {
+    case let .detail(standupDetailModel):
+      standupDetailModel.onConfirmDeletion = { [weak self, id = standupDetailModel.standup.id] in
+        withAnimation {
+          self?.standups.remove(id: id)
+          self?.destination = nil
+        }
+      }
+
+      self.destinationCancellable = standupDetailModel.$standup
+        .sink { [weak self] standup in
+          self?.standups[id: standup.id] = standup
+        }
+
+    case .add, .alert, .none:
+      break
+    }
+  }
+
   func alertButtonTapped(_ action: AlertAction?) {
+>>>>>>> origin/main
     switch action {
     case .confirmLoadMockData?:
       withAnimation {

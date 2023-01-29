@@ -30,16 +30,18 @@ final class AlertTests: XCTestCase {
         title: "Alert!",
         actions: [
           [0]: ButtonState(
-            role: ButtonState.Role.destructive,
-            action: ButtonState.Handler.send(
+            role: ButtonStateRole.destructive,
+            action: ButtonStateAction.send(
               true,
               animation: Animation.easeInOut
             ),
             label: "Destroy"
           ),
           [1]: ButtonState(
-            role: ButtonState.Role.cancel,
-            action: ButtonState.Handler.send(false),
+            role: ButtonStateRole.cancel,
+            action: ButtonStateAction.send(
+              false
+            ),
             label: "Cancel"
           )
         ],
@@ -68,16 +70,18 @@ final class AlertTests: XCTestCase {
           title: "Alert!",
           actions: [
             [0]: ButtonState(
-              role: ButtonState.Role.destructive,
-              action: ButtonState.Handler.send(
+              role: ButtonStateRole.destructive,
+              action: ButtonStateAction.send(
                 true,
                 animation: Animation.easeInOut
               ),
               label: "Destroy"
             ),
             [1]: ButtonState(
-              role: ButtonState.Role.cancel,
-              action: ButtonState.Handler.send(false),
+              role: ButtonStateRole.cancel,
+              action: ButtonStateAction.send(
+                false
+              ),
               label: "Cancel"
             )
           ],
@@ -106,11 +110,9 @@ private struct TestView: View {
       }
   }
 
-  private func alertButtonTapped(_ action: AlertAction) async {
+  private func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirm:
-      break
-    case .deny:
+    case .some(.confirm), .some(.deny), .none:
       break
     }
   }

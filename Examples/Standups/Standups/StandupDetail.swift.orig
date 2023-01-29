@@ -52,14 +52,27 @@ class StandupDetailModel: Hashable, ObservableObject {
     self.destination = .alert(.deleteStandup)
   }
 
+<<<<<<< HEAD
   @MainActor
+  func alertButtonTapped(_ action: AlertAction) async {
+=======
   func alertButtonTapped(_ action: AlertAction?) async {
+>>>>>>> origin/main
     switch action {
     case .confirmDeletion?:
       self.onConfirmDeletion()
 
-    case .continueWithoutRecording?:
+<<<<<<< HEAD
+    case .continueWithoutRecording:
       self.onStartMeeting()
+=======
+    case .continueWithoutRecording?:
+      self.destination = .record(
+        withDependencies(from: self) {
+          RecordMeetingModel(standup: self.standup)
+        }
+      )
+>>>>>>> origin/main
 
     case .openSettings?:
       await self.openSettings()
@@ -113,8 +126,7 @@ struct StandupDetailView: View {
   var body: some View {
     List {
       Section {
-        // NB: Can't use NavigationLink here because we need to execute logic
-        //     before navigating.
+        // NB: Can't use here because we need logic around the button
         Button {
           self.model.startMeetingButtonTapped()
         } label: {

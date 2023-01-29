@@ -127,10 +127,22 @@ import SwiftUI
 /// model.alert = nil
 /// ```
 public struct AlertState<Action>: Identifiable {
-  public let id = UUID()
+  public let id: UUID
   public var buttons: [ButtonState<Action>]
   public var message: TextState?
   public var title: TextState
+
+  init(
+    id: UUID,
+    buttons: [ButtonState<Action>],
+    message: TextState?,
+    title: TextState
+  ) {
+    self.id = id
+    self.buttons = buttons
+    self.message = message
+    self.title = title
+  }
 
   /// Creates alert state.
   ///
@@ -144,9 +156,21 @@ public struct AlertState<Action>: Identifiable {
     @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] },
     message: (() -> TextState)? = nil
   ) {
-    self.title = title()
-    self.message = message?()
-    self.buttons = actions()
+    self.init(
+      id: UUID(),
+      buttons: actions(),
+      message: message?(),
+      title: title()
+    )
+  }
+
+  public func map<NewAction>(_ transform: (Action?) -> NewAction?) -> AlertState<NewAction> {
+    AlertState<NewAction>(
+      id: self.id,
+      buttons: self.buttons.map { $0.map(transform) },
+      message: self.message,
+      title: self.title
+    )
   }
 }
 
@@ -194,7 +218,7 @@ extension Alert {
   ///   - state: Alert state used to populate the alert.
   ///   - action: An action handler, called when a button with an action is tapped, by passing the
   ///     action to the closure.
-  public init<Action>(_ state: AlertState<Action>, action: @escaping (Action) -> Void) {
+  public init<Action>(_ state: AlertState<Action>, action: @escaping (Action?) -> Void) {
     if state.buttons.count == 2 {
       self.init(
         title: Text(state.title),
@@ -210,102 +234,27 @@ extension Alert {
       )
     }
   }
-}
 
-// MARK: - Deprecations
-
-extension AlertState {
-  @available(*, deprecated, message: "Use 'ButtonState<Action>' instead.")
-  public typealias Button = ButtonState<Action>
-
-  @available(*, deprecated, message: "Use 'ButtonState<Action>.ButtonAction' instead.")
-  public typealias ButtonAction = ButtonState<Action>.ButtonAction
-
-  @available(*, deprecated, message: "Use 'ButtonState<Action>.Role' instead.")
-  public typealias ButtonRole = ButtonState<Action>.Role
-
-  @available(
-    iOS, introduced: 15, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    macOS,
-    introduced: 12,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    tvOS, introduced: 15, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    watchOS,
-    introduced: 8,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  public init(
-    title: TextState,
-    message: TextState? = nil,
-    buttons: [ButtonState<Action>]
-  ) {
-    self.title = title
-    self.message = message
-    self.buttons = buttons
-  }
-
-  @available(
-    iOS, introduced: 13, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    macOS,
-    introduced: 10.15,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    tvOS, introduced: 13, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    watchOS,
-    introduced: 6,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  public init(
-    title: TextState,
-    message: TextState? = nil,
-    dismissButton: ButtonState<Action>? = nil
-  ) {
-    self.title = title
-    self.message = message
-    self.buttons = dismissButton.map { [$0] } ?? []
-  }
-
-  @available(
-    iOS, introduced: 13, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    macOS,
-    introduced: 10.15,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    tvOS, introduced: 13, deprecated: 100000, message: "Use 'init(title:actions:message:)' instead."
-  )
-  @available(
-    watchOS,
-    introduced: 6,
-    deprecated: 100000,
-    message: "Use 'init(title:actions:message:)' instead."
-  )
-  public init(
-    title: TextState,
-    message: TextState? = nil,
-    primaryButton: ButtonState<Action>,
-    secondaryButton: ButtonState<Action>
-  ) {
-    self.title = title
-    self.message = message
-    self.buttons = [primaryButton, secondaryButton]
+  /// Creates an alert from alert state.
+  ///
+  /// - Parameters:
+  ///   - state: Alert state used to populate the alert.
+  ///   - action: An action handler, called when a button with an action is tapped, by passing the
+  ///     action to the closure.
+  public init<Action>(_ state: AlertState<Action>, action: @escaping (Action?) async -> Void) {
+    if state.buttons.count == 2 {
+      self.init(
+        title: Text(state.title),
+        message: state.message.map { Text($0) },
+        primaryButton: .init(state.buttons[0], action: action),
+        secondaryButton: .init(state.buttons[1], action: action)
+      )
+    } else {
+      self.init(
+        title: Text(state.title),
+        message: state.message.map { Text($0) },
+        dismissButton: state.buttons.first.map { .init($0, action: action) }
+      )
+    }
   }
 }

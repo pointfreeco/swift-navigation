@@ -34,18 +34,14 @@ class AppModel: ObservableObject {
       switch destination {
       case let .detail(model):
         model.onConfirmDeletion = { [weak self, weak model] in
-          guard
-            let self,
-            let model
+          guard let self, let model
           else { return }
 
           self.standupsList.standups.remove(id: model.standup.id)
           _ = self.path.popLast()
         }
         model.onStartMeeting = { [weak self, weak model] in
-          guard
-            let self,
-            let model
+          guard let self, let model
           else { return }
 
           self.path.append(
