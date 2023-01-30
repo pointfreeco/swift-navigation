@@ -30,8 +30,8 @@ let package = Package(
     .target(
       name: "_SwiftUINavigationState",
       dependencies: [
-        .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .target(
@@ -39,8 +39,6 @@ let package = Package(
       dependencies: [
         "_SwiftUINavigationState",
         .product(name: "CasePaths", package: "swift-case-paths"),
-        .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
