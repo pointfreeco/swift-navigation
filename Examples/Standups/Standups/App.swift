@@ -67,9 +67,11 @@ class AppModel: ObservableObject {
         model.onMeetingFinished = { @MainActor [weak self] transcript in
           guard
             let self,
-            case .some(.record) = self.path.popLast(),
-            case let .some(.detail(detailModel)) = self.path.last
+            case .some(.record) = self.path.last,
+            case let .some(.detail(detailModel)) = self.path.dropLast().last
           else { return }
+
+          _ = self.path.popLast()
 
           let didCancel = nil == (try? await self.clock.sleep(for: .milliseconds(400)))
           withAnimation(didCancel ? nil : .default) {
