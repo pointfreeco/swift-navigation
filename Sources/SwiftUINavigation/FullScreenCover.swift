@@ -51,9 +51,9 @@ extension View {
   ) -> some View
   where Content: View {
     self.fullScreenCover(
-      isPresented: value.isPresent(),
+      item: value.identified,
       onDismiss: onDismiss
-    ) {
+    ) { _ in
       Binding(unwrapping: value).map(content)
     }
   }

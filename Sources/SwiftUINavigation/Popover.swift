@@ -53,10 +53,10 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View where Content: View {
     self.popover(
-      isPresented: value.isPresent(),
+      item: value.identified,
       attachmentAnchor: attachmentAnchor,
       arrowEdge: arrowEdge
-    ) {
+    ) { _ in
       Binding(unwrapping: value).map(content)
     }
   }
