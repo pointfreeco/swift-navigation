@@ -51,7 +51,7 @@ extension Identifiable {
 private func enumTag<Case>(_ `case`: Case) -> UInt32? {
   let metadataPtr = unsafeBitCast(type(of: `case`), to: UnsafeRawPointer.self)
   let kind = metadataPtr.load(as: Int.self)
-  let isEnumOrOptional = kind == 0x201
+  let isEnumOrOptional = kind == 0x201 || kind == 0x202
   guard isEnumOrOptional else { return nil }
   let vwtPtr = (metadataPtr - MemoryLayout<UnsafeRawPointer>.size).load(as: UnsafeRawPointer.self)
   let vwt = vwtPtr.load(as: EnumValueWitnessTable.self)
