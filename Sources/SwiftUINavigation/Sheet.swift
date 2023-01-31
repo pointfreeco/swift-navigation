@@ -48,16 +48,13 @@ extension View {
   ///     dismissed.
   ///   - onDismiss: The closure to execute when dismissing the sheet.
   ///   - content: A closure returning the content of the sheet.
-  @MainActor
   public func sheet<Value, Content>(
     unwrapping value: Binding<Value?>,
     onDismiss: (() -> Void)? = nil,
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
-    self.sheet(item: value.identified, onDismiss: onDismiss) { _ in
-      Binding(unwrapping: value).map(content)
-    }
+    self.sheet(unwrapping: value.identified, onDismiss: onDismiss, content: content)
   }
 
   /// Presents a sheet using a binding and case path as the data source for the sheet's content.
@@ -76,7 +73,6 @@ extension View {
   ///     the sheet.
   ///   - onDismiss: The closure to execute when dismissing the sheet.
   ///   - content: A closure returning the content of the sheet.
-  @MainActor
   public func sheet<Enum, Case, Content>(
     unwrapping enum: Binding<Enum?>,
     case casePath: CasePath<Enum, Case>,
@@ -84,6 +80,19 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Case>) -> Content
   ) -> some View
   where Content: View {
-    self.sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
+    self.sheet(unwrapping: `enum`.identified.case(casePath), onDismiss: onDismiss, content: content)
+  }
+}
+
+extension View {
+  func sheet<Value, Content>(
+    unwrapping value: Binding<_Identified<Value>?>,
+    onDismiss: (() -> Void)? = nil,
+    @ViewBuilder content: @escaping (Binding<Value>) -> Content
+  ) -> some View
+  where Content: View {
+    self.sheet(item: value, onDismiss: onDismiss) { _ in
+      Binding(unwrapping: value).map(\.rawValue).map(content)
+    }
   }
 }

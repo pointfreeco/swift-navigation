@@ -1,20 +1,36 @@
+import SwiftUI
+
+enum _IdentifiedID: Hashable {
+  case id(AnyHashable)
+  case inferred(ObjectIdentifier, UInt32?)
+}
+
 struct _Identified<Value>: Identifiable {
-  enum ID: Hashable {
-    case id(AnyHashable)
-    case inferred(ObjectIdentifier, UInt32?)
+  static func id(_ rawValue: Value) -> _IdentifiedID {
+    if let identifiable = rawValue as? any Identifiable {
+      return .id(AnyHashable(identifiable._id))
+    } else {
+      return .inferred(ObjectIdentifier(Value.self), enumTag(rawValue))
+    }
   }
 
-  let id: ID
-  let wrappedValue: Value
+  var id: _IdentifiedID
+  var rawValue: Value {
+    didSet {
+      self.id = Self.id(rawValue)
+    }
+  }
 
   init?<Optional: OptionalProtocol>(_ optional: Optional) where Optional.Wrapped == Value {
-    guard let value = optional.wrappedValue else { return nil }
-    if let identifiable = value as? any Identifiable {
-      self.id = .id(AnyHashable(identifiable._id))
-    } else {
-      self.id = .inferred(ObjectIdentifier(Value.self), enumTag(value))
-    }
-    self.wrappedValue = value
+    guard let rawValue = optional.wrappedValue else { return nil }
+    self.id = Self.id(rawValue)
+    self.rawValue = rawValue
+  }
+  
+  init?(rawValue: Value?, id: ID) {
+    guard let rawValue else { return nil }
+    self.rawValue = rawValue
+    self.id = id
   }
 }
 
@@ -28,7 +44,7 @@ extension OptionalProtocol {
   // Used to derive a `Binding<_Identified<Wrapped>?> from `Binding<Wrapped?>`
   var identified: _Identified<Wrapped>? {
     get { _Identified(self.wrappedValue) }
-    set { self = .init(wrappedValue: newValue?.wrappedValue) }
+    set { self = .init(wrappedValue: newValue?.rawValue) }
   }
 }
 
@@ -45,6 +61,27 @@ extension Optional: OptionalProtocol {
 extension Identifiable {
   // The compiler is lost with `(any Identifiable).id`.
   var _id: ID { self.id }
+}
+
+extension Binding {
+  func `case`<Enum, Case>(_ casePath: CasePath<Enum, Case>) -> Binding<_Identified<Case>?>
+  where Value == _Identified<Enum>? {
+    return .init(
+      get: {
+        self.wrappedValue.flatMap { identified in
+          casePath.extract(from: identified.rawValue).flatMap {
+            _Identified(rawValue: $0, id: identified.id)
+          }
+        }
+      },
+      set: { newValue, transaction in
+        self.transaction(transaction).wrappedValue = newValue
+          .map(\.rawValue)
+          .flatMap(casePath.embed(_:))
+          .identified
+      }
+    )
+  }
 }
 
 // TODO: Should we restrict to non-optional only?

@@ -51,11 +51,10 @@ extension View {
   ) -> some View
   where Content: View {
     self.fullScreenCover(
-      item: value.identified,
-      onDismiss: onDismiss
-    ) { _ in
-      Binding(unwrapping: value).map(content)
-    }
+      unwrapping: value.identified,
+      onDismiss: onDismiss,
+      content: content
+    )
   }
 
   /// Presents a full-screen cover using a binding and case path as a data source for the sheet's
@@ -84,6 +83,23 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Case>) -> Content
   ) -> some View
   where Content: View {
-    self.fullScreenCover(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
+    self.fullScreenCover(
+      unwrapping: `enum`.identified.case(casePath),
+      onDismiss: onDismiss,
+      content: content
+    )
+  }
+}
+
+extension View {
+  func fullScreenCover<Value, Content>(
+    unwrapping value: Binding<_Identified<Value>?>,
+    onDismiss: (() -> Void)? = nil,
+    @ViewBuilder content: @escaping (Binding<Value>) -> Content
+  ) -> some View
+  where Content: View {
+    self.sheet(item: value, onDismiss: onDismiss) { _ in
+      Binding(unwrapping: value).map(\.rawValue).map(content)
+    }
   }
 }
