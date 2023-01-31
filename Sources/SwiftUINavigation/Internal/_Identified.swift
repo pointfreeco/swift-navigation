@@ -7,8 +7,8 @@ enum _IdentifiedID: Hashable {
 
 struct _Identified<Value>: Identifiable {
   static func id(_ rawValue: Value) -> _IdentifiedID {
-    if let identifiable = rawValue as? any Identifiable {
-      return .id(AnyHashable(identifiable._id))
+    if let id = identifiableID(value: rawValue) {
+      return .id(id)
     } else {
       return .inferred(ObjectIdentifier(Value.self), enumTag(rawValue))
     }
@@ -28,7 +28,7 @@ struct _Identified<Value>: Identifiable {
   }
   
   init?(rawValue: Value?, id: ID) {
-    guard let rawValue else { return nil }
+    guard let rawValue = rawValue else { return nil }
     self.rawValue = rawValue
     self.id = id
   }
@@ -102,3 +102,19 @@ private struct EnumValueWitnessTable {
   let getEnumTag: @convention(c) (UnsafeRawPointer, UnsafeRawPointer) -> UInt32
   let f13, f14: UnsafeRawPointer
 }
+
+func identifiableID(value: Any) -> AnyHashable? {
+  #if swift(>=5.7)
+  if let value = value as? any Identifiable {
+    return AnyHashable(value._id)
+  }
+  #else
+  guard let value = value as? any Identifiable else { return nil }
+  return _openExistential(value) {
+    AnyHashable($0.id)
+  }
+  #endif
+  return nil
+}
+
+
