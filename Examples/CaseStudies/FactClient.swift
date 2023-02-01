@@ -1,4 +1,5 @@
 import Foundation
+import Tagged
 
 struct Fact: Identifiable {
   var description: String
@@ -6,6 +7,16 @@ struct Fact: Identifiable {
 
   var id: Int {
     self.number
+  }
+}
+
+struct SavedFact: Identifiable {
+  let id: Tagged<Self, UUID>
+  let fact: Fact
+  
+  init(id: UUID, fact: Fact) {
+    self.id = .init(id)
+    self.fact = fact
   }
 }
 
