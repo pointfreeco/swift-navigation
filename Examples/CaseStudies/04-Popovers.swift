@@ -1,3 +1,4 @@
+import Dependencies
 import SwiftUI
 import SwiftUINavigation
 
@@ -39,7 +40,7 @@ struct OptionalPopovers: View {
       }
 
       Section {
-        ForEach(self.model.savedFacts) { fact in
+        ForEach(self.model.savedFacts, id: \.self) { fact in
           Text(fact.description)
         }
         .onDelete { self.model.removeSavedFacts(atOffsets: $0) }

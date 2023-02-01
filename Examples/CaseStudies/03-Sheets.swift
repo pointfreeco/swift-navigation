@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftUINavigation
-import Dependencies
 
 struct OptionalSheets: View {
   @ObservedObject private var model = FeatureModel()
@@ -25,8 +24,8 @@ struct OptionalSheets: View {
       }
 
       Section {
-        ForEach(self.model.savedFacts) { savedFact in
-          Text(savedFact.fact.description)
+        ForEach(self.model.savedFacts, id: \.self) { fact in
+          Text(fact.description)
         }
         .onDelete { self.model.removeSavedFacts(atOffsets: $0) }
       } header: {
@@ -72,10 +71,7 @@ private class FeatureModel: ObservableObject {
   @Published var count = 0
   @Published var fact: Fact?
   @Published var isLoading = false
-  @Published var savedFacts: [SavedFact] = []
-  
-  @Dependency(\.uuid) var uuid
-  
+  @Published var savedFacts: [Fact] = []
   private var task: Task<Void, Error>?
 
   deinit {
@@ -102,7 +98,7 @@ private class FeatureModel: ObservableObject {
   func saveButtonTapped(fact: Fact) {
     self.task?.cancel()
     self.task = nil
-    self.savedFacts.append(SavedFact(id: uuid(), fact: fact))
+    self.savedFacts.append(fact)
     self.fact = nil
   }
 

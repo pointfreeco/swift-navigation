@@ -55,8 +55,6 @@
 		DCE73E082947D082004EE92E /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DCE73E072947D082004EE92E /* IdentifiedCollections */; };
 		DCE73E0A2947D090004EE92E /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DCE73E092947D090004EE92E /* IdentifiedCollections */; };
 		DCE73E0C2947D163004EE92E /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE73E0B2947D163004EE92E /* DataManager.swift */; };
-		E9E26BF6298A891A00202042 /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = E9E26BF5298A891A00202042 /* Tagged */; };
-		E9E26BF8298A891A00202042 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = E9E26BF7298A891A00202042 /* Dependencies */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -142,8 +140,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9E26BF8298A891A00202042 /* Dependencies in Frameworks */,
-				E9E26BF6298A891A00202042 /* Tagged in Frameworks */,
 				CA47383B272F0DD60012CAC3 /* SwiftUINavigation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -358,8 +354,6 @@
 			name = CaseStudies;
 			packageProductDependencies = (
 				CA47383A272F0DD60012CAC3 /* SwiftUINavigation */,
-				E9E26BF5298A891A00202042 /* Tagged */,
-				E9E26BF7298A891A00202042 /* Dependencies */,
 			);
 			productName = CaseStudies;
 			productReference = CA473804272F0D330012CAC3 /* CaseStudies.app */;
@@ -1115,16 +1109,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DCE73E062947D082004EE92E /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
 			productName = IdentifiedCollections;
-		};
-		E9E26BF5298A891A00202042 /* Tagged */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DCE73E032947D063004EE92E /* XCRemoteSwiftPackageReference "swift-tagged" */;
-			productName = Tagged;
-		};
-		E9E26BF7298A891A00202042 /* Dependencies */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CA6453982968A06E00802931 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
-			productName = Dependencies;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

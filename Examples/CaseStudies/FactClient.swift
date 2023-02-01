@@ -1,22 +1,12 @@
 import Foundation
 import Tagged
 
-struct Fact: Identifiable {
+struct Fact: Hashable, Identifiable {
   var description: String
   let number: Int
 
   var id: Int {
     self.number
-  }
-}
-
-struct SavedFact: Identifiable {
-  let id: Tagged<Self, UUID>
-  let fact: Fact
-  
-  init(id: UUID, fact: Fact) {
-    self.id = .init(id)
-    self.fact = fact
   }
 }
 
