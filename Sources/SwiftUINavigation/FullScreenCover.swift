@@ -50,11 +50,7 @@ extension View {
     @ViewBuilder content: @escaping (Binding<Value>) -> Content
   ) -> some View
   where Content: View {
-    self.fullScreenCover(
-      unwrapping: value.identified,
-      onDismiss: onDismiss,
-      content: content
-    )
+    self.fullScreenCover(unwrapping: value.identified, onDismiss: onDismiss, content: content)
   }
 
   /// Presents a full-screen cover using a binding and case path as a data source for the sheet's
