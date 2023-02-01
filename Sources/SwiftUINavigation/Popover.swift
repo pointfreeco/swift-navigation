@@ -97,6 +97,8 @@ extension View {
 }
 
 extension View {
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
   func popover<Value, Content>(
     unwrapping value: Binding<_Identified<Value>?>,
     attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),

@@ -92,6 +92,8 @@ extension View {
 }
 
 extension View {
+  @available(iOS 14, tvOS 14, watchOS 7, *)
+  @available(macOS, unavailable)
   func fullScreenCover<Value, Content>(
     unwrapping value: Binding<_Identified<Value>?>,
     onDismiss: (() -> Void)? = nil,
