@@ -103,18 +103,34 @@ private struct EnumValueWitnessTable {
   let f13, f14: UnsafeRawPointer
 }
 
+#if swift(>=5.7)
 func identifiableID(value: Any) -> AnyHashable? {
-  #if swift(>=5.7)
   if let value = value as? any Identifiable {
     return AnyHashable(value._id)
   }
-  #else
-  guard let value = value as? any Identifiable else { return nil }
-  return _openExistential(value) {
-    AnyHashable($0.id)
-  }
-  #endif
   return nil
 }
+#else
+private enum Witness<T> {}
+
+private protocol AnyIdentifiable {
+  static func id(_ lhs: Any) -> AnyHashable?
+}
+
+extension Witness: AnyIdentifiable where T: Identifiable {
+  static func id(_ lhs: Any) -> AnyHashable? {
+    guard let lhs = lhs as? T else { return nil }
+    return AnyHashable(lhs.id)
+  }
+}
+
+func identifiableID(value: Any) -> AnyHashable? {
+  func open<T>(_: T.Type) -> AnyHashable? {
+    (Witness<T>.self as? AnyIdentifiable.Type)?.id(value)
+  }
+  return _openExistential(type(of: value), do: open)
+}
+#endif
+
 
 
