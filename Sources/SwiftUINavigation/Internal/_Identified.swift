@@ -2,18 +2,10 @@ import SwiftUI
 
 enum _IdentifiedID: Hashable {
   case id(AnyHashable)
-  case inferred(ObjectIdentifier, UInt32?)
+  case intrinsic(ObjectIdentifier, UInt32?)
 }
 
 struct _Identified<Value>: Identifiable {
-  static func id(_ rawValue: Value) -> _IdentifiedID {
-    if let id = identifiableID(value: rawValue) {
-      return .id(id)
-    } else {
-      return .inferred(ObjectIdentifier(Value.self), enumTag(rawValue))
-    }
-  }
-
   var id: _IdentifiedID
   var rawValue: Value {
     didSet {
@@ -31,6 +23,14 @@ struct _Identified<Value>: Identifiable {
     guard let rawValue = rawValue else { return nil }
     self.rawValue = rawValue
     self.id = id
+  }
+  
+  static func id(_ rawValue: Value) -> _IdentifiedID {
+    if let id = identifiableID(value: rawValue) {
+      return .id(id)
+    } else {
+      return .intrinsic(ObjectIdentifier(Value.self), enumTag(rawValue))
+    }
   }
 }
 
@@ -58,11 +58,6 @@ extension Optional: OptionalProtocol {
   }
 }
 
-extension Identifiable {
-  // The compiler is lost with `(any Identifiable).id`.
-  var _id: ID { self.id }
-}
-
 extension Binding {
   func `case`<Enum, Case>(_ casePath: CasePath<Enum, Case>) -> Binding<_Identified<Case>?>
   where Value == _Identified<Enum>? {
@@ -84,6 +79,40 @@ extension Binding {
   }
 }
 
+#if swift(>=5.7)
+private func identifiableID(value: Any) -> AnyHashable? {
+  if let value = value as? any Identifiable {
+    return AnyHashable(value._id)
+  }
+  return nil
+}
+
+extension Identifiable {
+  // The compiler is lost with `(any Identifiable).id`.
+  var _id: ID { self.id }
+}
+#else
+private enum Witness<T> {}
+
+private protocol AnyIdentifiable {
+  static func id(_ lhs: Any) -> AnyHashable?
+}
+
+extension Witness: AnyIdentifiable where T: Identifiable {
+  static func id(_ lhs: Any) -> AnyHashable? {
+    guard let lhs = lhs as? T else { return nil }
+    return AnyHashable(lhs.id)
+  }
+}
+
+private func identifiableID(value: Any) -> AnyHashable? {
+  func open<T>(_: T.Type) -> AnyHashable? {
+    (Witness<T>.self as? AnyIdentifiable.Type)?.id(value)
+  }
+  return _openExistential(type(of: value), do: open)
+}
+#endif
+
 // TODO: Should we restrict to non-optional only?
 private func enumTag<Case>(_ `case`: Case) -> UInt32? {
   let metadataPtr = unsafeBitCast(type(of: `case`), to: UnsafeRawPointer.self)
@@ -102,35 +131,5 @@ private struct EnumValueWitnessTable {
   let getEnumTag: @convention(c) (UnsafeRawPointer, UnsafeRawPointer) -> UInt32
   let f13, f14: UnsafeRawPointer
 }
-
-#if swift(>=5.7)
-func identifiableID(value: Any) -> AnyHashable? {
-  if let value = value as? any Identifiable {
-    return AnyHashable(value._id)
-  }
-  return nil
-}
-#else
-private enum Witness<T> {}
-
-private protocol AnyIdentifiable {
-  static func id(_ lhs: Any) -> AnyHashable?
-}
-
-extension Witness: AnyIdentifiable where T: Identifiable {
-  static func id(_ lhs: Any) -> AnyHashable? {
-    guard let lhs = lhs as? T else { return nil }
-    return AnyHashable(lhs.id)
-  }
-}
-
-func identifiableID(value: Any) -> AnyHashable? {
-  func open<T>(_: T.Type) -> AnyHashable? {
-    (Witness<T>.self as? AnyIdentifiable.Type)?.id(value)
-  }
-  return _openExistential(type(of: value), do: open)
-}
-#endif
-
 
 
