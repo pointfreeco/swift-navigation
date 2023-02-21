@@ -34,10 +34,7 @@ fall in two categories:
   piece of data, handing it to a SwiftUI view, and letting SwiftUI handle the rest.
 
 Navigation that is "state-driven" is the more powerful form of navigation, albeit slightly more 
-complicated, but unfortunately SwiftUI does not ship with all the tools necessary to model our 
-domains as concisely as possible and use these navigation APIs.
-
-Unfortunately, SwiftUI does not ship with all of the tools necessary to model our domains with 
+complicated. Unfortunately, SwiftUI does not ship with all of the tools necessary to model our domains with 
 enums and make use of navigation APIs. This library bridges that gap by providing APIs that allow
 you to model your navigation destinations as an enum, and then drive navigation by a binding
 to that enum.
