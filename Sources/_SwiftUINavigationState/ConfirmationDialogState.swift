@@ -150,7 +150,7 @@ public struct ConfirmationDialogState<Action>: Identifiable {
   public init(
     titleVisibility: ConfirmationDialogStateTitleVisibility,
     title: () -> TextState,
-    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>],
+    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] },
     message: (() -> TextState)? = nil
   ) {
     self.init(
@@ -170,7 +170,7 @@ public struct ConfirmationDialogState<Action>: Identifiable {
   ///   - message: The message for the dialog.
   public init(
     title: () -> TextState,
-    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>],
+    @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] },
     message: (() -> TextState)? = nil
   ) {
     self.init(
@@ -200,8 +200,8 @@ public struct ConfirmationDialogState<Action>: Identifiable {
 ///
 /// See `SwiftUI.Visibility` for more information.
 public enum ConfirmationDialogStateTitleVisibility {
-  /// The element may be visible or hidden depending on the policies of the
-  /// component accepting the visibility configuration.
+  /// The element may be visible or hidden depending on the policies of the component accepting the
+  /// visibility configuration.
   ///
   /// See `SwiftUI.Visibility.automatic` for more information.
   case automatic
