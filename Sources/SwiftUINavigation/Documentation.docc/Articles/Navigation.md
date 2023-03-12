@@ -105,7 +105,7 @@ Button {
 .navigationDestination(
   unwrapping: self.$model.destination,
   case: /Destination.counter
-) { $item in 
+) { $number in 
   CounterView(number: $number)
 }
 ```
