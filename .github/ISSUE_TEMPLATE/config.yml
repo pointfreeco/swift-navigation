@@ -1,0 +1,15 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Project Discussion
+    url: https://github.com/pointfreeco/swiftui-navigation/discussions
+    about: SwiftUI Navigation Q&A, ideas, and more
+  - name: Documentation
+    url: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/
+    about: Read SwiftUI Navigation's documentation
+  - name: Videos
+    url: https://www.pointfree.co/collections/swiftui-navigation
+    about: Watch videos to get a behind-the-scenes look at how SwiftUI Navigation was motivated and built
+  - name: Slack
+    url: https://www.pointfree.co/slack-invite
+    about: Community chat
