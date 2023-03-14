@@ -1,4 +1,4 @@
-#if swift(>=5.7)
+#if swift(>=5.7) && (os(iOS) || os(macOS) || os(tvOS) || os(watchOS))
   import SwiftUI
 
   @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
@@ -38,16 +38,23 @@
     ///     the source of truth. Likewise, changes to `value` are instantly reflected in the
     ///     destination. If `value` becomes `nil`, the destination is popped.
     ///   - destination: A closure returning the content of the destination.
+    @ViewBuilder
     public func navigationDestination<Value, Destination: View>(
       unwrapping value: Binding<Value?>,
       @ViewBuilder destination: (Binding<Value>) -> Destination
     ) -> some View {
-      self.modifier(
-        _NavigationDestination(
-          isPresented: value.isPresent(),
-          destination: Binding(unwrapping: value).map(destination)
+      if requiresBindWorkaround {
+        self.modifier(
+          _NavigationDestinationBindWorkaround(
+            isPresented: value.isPresent(),
+            destination: Binding(unwrapping: value).map(destination)
+          )
         )
-      )
+      } else {
+        self.navigationDestination(isPresented: value.isPresent()) {
+          Binding(unwrapping: value).map(destination)
+        }
+      }
     }
 
     /// Pushes a view onto a `NavigationStack` using a binding and case path as a data source for
@@ -79,7 +86,7 @@
   // NB: This view modifier works around a bug in SwiftUI's built-in modifier:
   // https://gist.github.com/mbrandonw/f8b94957031160336cac6898a919cbb7#file-fb11056434-md
   @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-  private struct _NavigationDestination<Destination: View>: ViewModifier {
+  private struct _NavigationDestinationBindWorkaround<Destination: View>: ViewModifier {
     @Binding var isPresented: Bool
     let destination: Destination
 
@@ -91,4 +98,18 @@
         .bind(self.$isPresented, to: self.$isPresentedState)
     }
   }
+
+  #if os(iOS) || os(tvOS)
+    private let requiresBindWorkaround = !ProcessInfo.processInfo.isOperatingSystemAtLeast(
+      OperatingSystemVersion(majorVersion: 16, minorVersion: 4, patchVersion: 0)
+    )
+  #elseif os(macOS)
+    private let requiresBindWorkaround = !ProcessInfo.processInfo.isOperatingSystemAtLeast(
+      OperatingSystemVersion(majorVersion: 13, minorVersion: 3, patchVersion: 0)
+    )
+  #elseif os(watchOS)
+    private let requiresBindWorkaround = !ProcessInfo.processInfo.isOperatingSystemAtLeast(
+      OperatingSystemVersion(majorVersion: 9, minorVersion: 4, patchVersion: 0)
+    )
+  #endif
 #endif
