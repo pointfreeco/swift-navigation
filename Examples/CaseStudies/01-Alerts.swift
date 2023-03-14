@@ -36,13 +36,14 @@ struct OptionalAlerts: View {
   }
 }
 
+@MainActor
 private class FeatureModel: ObservableObject {
   @Published var count = 0
   @Published var isLoading = false
   @Published var fact: Fact?
 
   func numberFactButtonTapped() {
-    Task { @MainActor in
+    Task {
       self.isLoading = true
       defer { self.isLoading = false }
       self.fact = await getNumberFact(self.count)
