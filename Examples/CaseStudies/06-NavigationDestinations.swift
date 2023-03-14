@@ -71,6 +71,7 @@ private struct FactEditor: View {
   }
 }
 
+@MainActor
 private class FeatureModel: ObservableObject {
   @Published var count = 0
   @Published var fact: Fact?
@@ -86,7 +87,7 @@ private class FeatureModel: ObservableObject {
     if isActive {
       self.isLoading = true
       self.fact = Fact(description: "\(self.count) is still loading...", number: self.count)
-      self.task = Task { @MainActor in
+      self.task = Task {
         let fact = await getNumberFact(self.count)
         self.isLoading = false
         try Task.checkCancellation()
