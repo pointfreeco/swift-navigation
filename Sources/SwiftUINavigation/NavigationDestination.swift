@@ -99,17 +99,9 @@
     }
   }
 
-  #if os(iOS) || os(tvOS)
-    private let requiresBindWorkaround = !ProcessInfo.processInfo.isOperatingSystemAtLeast(
-      OperatingSystemVersion(majorVersion: 16, minorVersion: 4, patchVersion: 0)
-    )
-  #elseif os(macOS)
-    private let requiresBindWorkaround = !ProcessInfo.processInfo.isOperatingSystemAtLeast(
-      OperatingSystemVersion(majorVersion: 13, minorVersion: 3, patchVersion: 0)
-    )
-  #elseif os(watchOS)
-    private let requiresBindWorkaround = !ProcessInfo.processInfo.isOperatingSystemAtLeast(
-      OperatingSystemVersion(majorVersion: 9, minorVersion: 4, patchVersion: 0)
-    )
-  #endif
+  private let requiresBindWorkaround = {
+    guard #available(iOS 16.4, macOS 13.3, tvOS 16.4, watchOS 9.4, *)
+    else { return true }
+    return false
+  }()
 #endif
