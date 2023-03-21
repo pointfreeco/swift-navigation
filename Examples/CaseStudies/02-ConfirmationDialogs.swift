@@ -43,8 +43,8 @@ private class FeatureModel: ObservableObject {
   func numberFactButtonTapped() {
     Task {
       self.isLoading = true
-      defer { self.isLoading = false }
       self.fact = await getNumberFact(self.count)
+      self.isLoading = false
     }
   }
 }
