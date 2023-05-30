@@ -1,5 +1,3 @@
-import Foundation
-
 @_spi(RuntimeWarn)
 @_transparent
 @inline(__always)
