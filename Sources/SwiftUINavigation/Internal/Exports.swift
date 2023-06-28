@@ -1,2 +1,2 @@
 @_exported import CasePaths
-@_exported import _SwiftUINavigationState
+@_exported import SwiftUINavigationCore
