@@ -19,10 +19,6 @@ let package = Package(
       name: "SwiftUINavigationCore",
       targets: ["SwiftUINavigationCore"]
     ),
-    .library(
-      name: "_SwiftUINavigationState",
-      targets: ["_SwiftUINavigationState"]
-    ),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
@@ -31,13 +27,6 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "0.8.0"),
   ],
   targets: [
-    .target(
-      name: "_SwiftUINavigationState",
-      dependencies: [
-        .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
-      ]
-    ),
     .target(
       name: "SwiftUINavigation",
       dependencies: [
