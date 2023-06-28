@@ -2,7 +2,6 @@ import SwiftUI
 
 // NB: Deprecated after 0.5.0
 
-@available(*, deprecated)
 extension ButtonState {
   @available(*, deprecated, message: "Use 'ButtonStateAction<Action>' instead.")
   public typealias Handler = ButtonStateAction<Action>
@@ -14,7 +13,6 @@ extension ButtonState {
   public typealias Role = ButtonStateRole
 }
 
-@available(*, deprecated)
 extension ButtonStateAction {
   @available(*, deprecated, message: "Use 'ButtonState.withAction' instead.")
   public typealias ActionType = _ActionType
@@ -22,7 +20,6 @@ extension ButtonStateAction {
 
 // NB: Deprecated after 0.3.0
 
-@available(*, deprecated)
 extension AlertState {
   @available(*, deprecated, message: "Use 'ButtonState<Action>' instead.")
   public typealias Button = ButtonState<Action>
@@ -128,7 +125,6 @@ extension AlertState {
   }
 }
 
-@available(*, deprecated)
 @available(
   iOS,
   introduced: 13,
@@ -178,7 +174,6 @@ extension ButtonState {
   }
 }
 
-@available(*, deprecated)
 @available(iOS 13, *)
 @available(macOS 12, *)
 @available(tvOS 13, *)
@@ -268,14 +263,12 @@ extension ConfirmationDialogState {
   }
 }
 
-@available(*, deprecated)
 @available(iOS, introduced: 13, deprecated: 100000, renamed: "ConfirmationDialogState")
 @available(macOS, introduced: 12, unavailable)
 @available(tvOS, introduced: 13, deprecated: 100000, renamed: "ConfirmationDialogState")
 @available(watchOS, introduced: 6, deprecated: 100000, renamed: "ConfirmationDialogState")
 public typealias ActionSheetState<Action> = ConfirmationDialogState<Action>
 
-@available(*, deprecated)
 @available(
   iOS,
   introduced: 13,

@@ -43,7 +43,6 @@ import SwiftUI
 /// - Note: ``TextState`` does not support _all_ `LocalizedStringKey` permutations at this time
 ///   (interpolated `SwiftUI.Image`s, for example). ``TextState`` also uses reflection to determine
 ///   `LocalizedStringKey` equatability, so be mindful of edge cases.
-@available(*, deprecated)
 public struct TextState: Equatable, Hashable {
   fileprivate var modifiers: [Modifier] = []
   fileprivate let storage: Storage
@@ -163,7 +162,6 @@ public struct TextState: Equatable, Hashable {
 
 // MARK: - API
 
-@available(*, deprecated)
 extension TextState {
   public init(verbatim content: String) {
     self.storage = .verbatim(content)
@@ -306,7 +304,6 @@ extension TextState {
 
 // MARK: Accessibility
 
-@available(*, deprecated)
 extension TextState {
   public enum AccessibilityTextContentType: String, Equatable, Hashable {
     case console, fileSystem, messaging, narrative, plain, sourceCode, spreadsheet, wordProcessing
@@ -348,7 +345,6 @@ extension TextState {
   }
 }
 
-@available(*, deprecated)
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension TextState {
   public func accessibilityHeading(_ headingLevel: AccessibilityHeadingLevel) -> Self {
@@ -416,7 +412,6 @@ extension TextState {
   }
 }
 
-@available(*, deprecated)
 extension Text {
   public init(_ state: TextState) {
     let text: Text
@@ -577,7 +572,6 @@ extension Text {
   }
 }
 
-@available(*, deprecated)
 extension String {
   public init(state: TextState, locale: Locale? = nil) {
     switch state.storage {
@@ -598,7 +592,6 @@ extension String {
   }
 }
 
-@available(*, deprecated)
 extension LocalizedStringKey {
   // NB: `LocalizedStringKey` conforms to `Equatable` but returns false for equivalent format
   //     strings. To account for this we reflect on it to extract and string-format its storage.
@@ -639,7 +632,6 @@ extension LocalizedStringKey {
 
 // MARK: - CustomDumpRepresentable
 
-@available(*, deprecated)
 extension TextState: CustomDumpRepresentable {
   public var customDumpValue: Any {
     func dumpHelp(_ textState: Self) -> String {

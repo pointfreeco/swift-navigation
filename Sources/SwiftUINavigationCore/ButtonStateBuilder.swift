@@ -1,4 +1,3 @@
-@available(*, deprecated)
 @resultBuilder
 public enum ButtonStateBuilder<Action> {
   public static func buildArray(_ components: [[ButtonState<Action>]]) -> [ButtonState<Action>] {

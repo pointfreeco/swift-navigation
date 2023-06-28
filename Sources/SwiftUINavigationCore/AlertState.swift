@@ -126,7 +126,6 @@ import SwiftUI
 /// }
 /// model.alert = nil
 /// ```
-@available(*, deprecated)
 public struct AlertState<Action>: Identifiable {
   public let id: UUID
   public var buttons: [ButtonState<Action>]
@@ -175,7 +174,6 @@ public struct AlertState<Action>: Identifiable {
   }
 }
 
-@available(*, deprecated)
 extension AlertState: CustomDumpReflectable {
   public var customDumpMirror: Mirror {
     var children: [(label: String?, value: Any)] = [
@@ -195,7 +193,6 @@ extension AlertState: CustomDumpReflectable {
   }
 }
 
-@available(*, deprecated)
 extension AlertState: Equatable where Action: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.title == rhs.title
@@ -204,7 +201,6 @@ extension AlertState: Equatable where Action: Equatable {
   }
 }
 
-@available(*, deprecated)
 extension AlertState: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(self.title)
@@ -215,7 +211,6 @@ extension AlertState: Hashable where Action: Hashable {
 
 // MARK: - SwiftUI bridging
 
-@available(*, deprecated)
 extension Alert {
   /// Creates an alert from alert state.
   ///

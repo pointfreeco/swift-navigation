@@ -111,7 +111,6 @@ import SwiftUI
 /// // Verify that favorite logic executed correctly
 /// model.dialog = nil
 /// ```
-@available(*, deprecated)
 @available(iOS 13, *)
 @available(macOS 12, *)
 @available(tvOS 13, *)
@@ -200,7 +199,6 @@ public struct ConfirmationDialogState<Action>: Identifiable {
 /// platform, current context, and other factors.
 ///
 /// See `SwiftUI.Visibility` for more information.
-@available(*, deprecated)
 public enum ConfirmationDialogStateTitleVisibility {
   /// The element may be visible or hidden depending on the policies of the component accepting the
   /// visibility configuration.
@@ -218,7 +216,6 @@ public enum ConfirmationDialogStateTitleVisibility {
   case visible
 }
 
-@available(*, deprecated)
 @available(iOS 13, *)
 @available(macOS 12, *)
 @available(tvOS 13, *)
@@ -244,7 +241,6 @@ extension ConfirmationDialogState: CustomDumpReflectable {
   }
 }
 
-@available(*, deprecated)
 @available(iOS 13, *)
 @available(macOS 12, *)
 @available(tvOS 13, *)
@@ -257,7 +253,6 @@ extension ConfirmationDialogState: Equatable where Action: Equatable {
   }
 }
 
-@available(*, deprecated)
 @available(iOS 13, *)
 @available(macOS 12, *)
 @available(tvOS 13, *)
@@ -272,7 +267,6 @@ extension ConfirmationDialogState: Hashable where Action: Hashable {
 
 // MARK: - SwiftUI bridging
 
-@available(*, deprecated)
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension Visibility {
   public init(_ visibility: ConfirmationDialogStateTitleVisibility) {

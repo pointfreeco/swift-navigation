@@ -1,5 +1,5 @@
 import SwiftUI
-@_spi(RuntimeWarn) import _SwiftUINavigationState
+@_spi(RuntimeWarn) import SwiftUINavigationCore
 
 /// A view that can switch over a binding of enum state and exhaustively handle each case.
 ///
