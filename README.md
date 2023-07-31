@@ -104,7 +104,7 @@ it's as simple as adding it to a `dependencies` clause in your `Package.swift`:
 
 ``` swift
 dependencies: [
-  .package(url: "https://github.com/pointfreeco/swiftui-navigation", from: "0.7.1")
+  .package(url: "https://github.com/pointfreeco/swiftui-navigation", from: "1.0.0")
 ]
 ```
 
