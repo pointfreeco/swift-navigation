@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/pointfreeco/combine-schedulers",
         "state": {
           "branch": null,
-          "revision": "882ac01eb7ef9e36d4467eb4b1151e74fcef85ab",
-          "version": "0.9.1"
+          "revision": "9dc9cbe4bc45c65164fa653a563d8d8db61b09bb",
+          "version": "1.0.0"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "c3a42e8d1a76ff557cf565ed6d8b0aee0e6e75af",
-          "version": "0.11.0"
+          "revision": "5da6989aae464f324eef5c5b52bdb7974725ab81",
+          "version": "1.0.0"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-clocks",
         "state": {
           "branch": null,
-          "revision": "20b25ca0dd88ebfb9111ec937814ddc5a8880172",
-          "version": "0.2.0"
+          "revision": "d1fd837326aa719bee979bdde1f53cd5797443eb",
+          "version": "1.0.0"
         }
       },
       {
@@ -38,12 +38,30 @@
         }
       },
       {
+        "package": "swift-concurrency-extras",
+        "repositoryURL": "https://github.com/pointfreeco/swift-concurrency-extras",
+        "state": {
+          "branch": null,
+          "revision": "ea631ce892687f5432a833312292b80db238186a",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "swift-custom-dump",
         "repositoryURL": "https://github.com/pointfreeco/swift-custom-dump",
         "state": {
           "branch": null,
-          "revision": "819d9d370cd721c9d87671e29d947279292e4541",
-          "version": "0.6.0"
+          "revision": "edd66cace818e1b1c6f1b3349bb1d8e00d6f8b01",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "swift-dependencies",
+        "repositoryURL": "http://github.com/pointfreeco/swift-dependencies",
+        "state": {
+          "branch": null,
+          "revision": "4e1eb6e28afe723286d8cc60611237ffbddba7c5",
+          "version": "1.0.0"
         }
       },
       {
@@ -60,8 +78,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections.git",
         "state": {
           "branch": null,
-          "revision": "a08887de589e3829d488e0b4b707b2ca804b1060",
-          "version": "0.5.0"
+          "revision": "d1e45f3e1eee2c9193f5369fa9d70a6ddad635e8",
+          "version": "1.0.0"
         }
       },
       {
@@ -78,8 +96,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "a9daebf0bf65981fd159c885d504481a65a75f02",
-          "version": "0.8.0"
+          "revision": "23cbf2294e350076ea4dbd7d5d047c1e76b03631",
+          "version": "1.0.2"
         }
       }
     ]

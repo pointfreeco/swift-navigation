@@ -24,7 +24,16 @@
         "repositoryURL": "https://github.com/apple/swift-docc-plugin",
         "state": {
           "branch": null,
-          "revision": "3303b164430d9a7055ba484c8ead67a52f7b74f6",
+          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "SymbolKit",
+        "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
+        "state": {
+          "branch": null,
+          "revision": "b45d1f2ed151d057b54504d653e0da5552844e34",
           "version": "1.0.0"
         }
       },
@@ -33,8 +42,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "302891700c7fa3b92ebde9fe7b42933f8349f3c7",
-          "version": "1.0.0"
+          "revision": "23cbf2294e350076ea4dbd7d5d047c1e76b03631",
+          "version": "1.0.2"
         }
       }
     ]
