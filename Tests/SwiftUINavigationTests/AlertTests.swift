@@ -8,7 +8,7 @@ final class AlertTests: XCTestCase {
     let alert = AlertState(
       title: .init("Alert!"),
       message: .init("Something went wrong..."),
-      primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .default)),
+      primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .easeInOut)),
       secondaryButton: .cancel(.init("Cancel"), action: .send(false))
     )
     XCTAssertNoDifference(
@@ -16,7 +16,7 @@ final class AlertTests: XCTestCase {
       AlertState(
         title: .init("Alert!"),
         message: .init("Something went wrong..."),
-        primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .default)),
+        primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .easeInOut)),
         secondaryButton: .cancel(.init("Cancel"), action: .send(false))
       )
     )
@@ -30,16 +30,16 @@ final class AlertTests: XCTestCase {
         title: "Alert!",
         actions: [
           [0]: ButtonState(
-            role: ButtonStateRole.destructive,
-            action: ButtonStateAction.send(
+            role: .destructive,
+            action: .send(
               true,
               animation: Animation.easeInOut
             ),
             label: "Destroy"
           ),
           [1]: ButtonState(
-            role: ButtonStateRole.cancel,
-            action: ButtonStateAction.send(
+            role: .cancel,
+            action: .send(
               false
             ),
             label: "Cancel"
@@ -57,7 +57,7 @@ final class AlertTests: XCTestCase {
           title: .init("Alert!"),
           message: .init("Something went wrong..."),
           buttons: [
-            .destructive(.init("Destroy"), action: .send(true, animation: .default)),
+            .destructive(.init("Destroy"), action: .send(true, animation: .easeInOut)),
             .cancel(.init("Cancel"), action: .send(false)),
           ]
         ),
@@ -70,16 +70,16 @@ final class AlertTests: XCTestCase {
           title: "Alert!",
           actions: [
             [0]: ButtonState(
-              role: ButtonStateRole.destructive,
-              action: ButtonStateAction.send(
+              role: .destructive,
+              action: .send(
                 true,
                 animation: Animation.easeInOut
               ),
               label: "Destroy"
             ),
             [1]: ButtonState(
-              role: ButtonStateRole.cancel,
-              action: ButtonStateAction.send(
+              role: .cancel,
+              action: .send(
                 false
               ),
               label: "Cancel"

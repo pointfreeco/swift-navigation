@@ -21,7 +21,7 @@ final class ButtonStateTests: XCTestCase {
         """
     }
 
-    let button = ButtonState(action: .send((), animation: .default)) {
+    let button = ButtonState(action: .send((), animation: .easeInOut)) {
       TextState("Animate!")
     }
 
