@@ -43,11 +43,11 @@ import SwiftUI
 /// - Note: ``TextState`` does not support _all_ `LocalizedStringKey` permutations at this time
 ///   (interpolated `SwiftUI.Image`s, for example). ``TextState`` also uses reflection to determine
 ///   `LocalizedStringKey` equatability, so be mindful of edge cases.
-public struct TextState: Equatable, Hashable {
+public struct TextState: Equatable, Hashable, Sendable {
   fileprivate var modifiers: [Modifier] = []
   fileprivate let storage: Storage
 
-  fileprivate enum Modifier: Equatable, Hashable {
+  fileprivate enum Modifier: Equatable, Hashable, Sendable {
     case accessibilityHeading(AccessibilityHeadingLevel)
     case accessibilityLabel(TextState)
     case accessibilityTextContentType(AccessibilityTextContentType)
@@ -70,7 +70,7 @@ public struct TextState: Equatable, Hashable {
     case underline(isActive: Bool, pattern: LineStylePattern?, color: Color?)
   }
 
-  public enum FontWidth: String, Equatable, Hashable {
+  public enum FontWidth: String, Equatable, Hashable, Sendable {
     case compressed
     case condensed
     case expanded
@@ -89,7 +89,7 @@ public struct TextState: Equatable, Hashable {
     #endif
   }
 
-  public enum LineStylePattern: String, Equatable, Hashable {
+  public enum LineStylePattern: String, Equatable, Hashable, Sendable {
     case dash
     case dashDot
     case dashDotDot
@@ -305,7 +305,7 @@ extension TextState {
 // MARK: Accessibility
 
 extension TextState {
-  public enum AccessibilityTextContentType: String, Equatable, Hashable {
+  public enum AccessibilityTextContentType: String, Equatable, Hashable, Sendable {
     case console, fileSystem, messaging, narrative, plain, sourceCode, spreadsheet, wordProcessing
 
     #if compiler(>=5.5.1)
@@ -325,7 +325,7 @@ extension TextState {
     #endif
   }
 
-  public enum AccessibilityHeadingLevel: String, Equatable, Hashable {
+  public enum AccessibilityHeadingLevel: String, Equatable, Hashable, Sendable {
     case h1, h2, h3, h4, h5, h6, unspecified
 
     #if compiler(>=5.5.1)
