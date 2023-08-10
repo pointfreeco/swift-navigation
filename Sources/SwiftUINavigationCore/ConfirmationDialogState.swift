@@ -199,7 +199,7 @@ public struct ConfirmationDialogState<Action>: Identifiable {
 /// platform, current context, and other factors.
 ///
 /// See `SwiftUI.Visibility` for more information.
-public enum ConfirmationDialogStateTitleVisibility {
+public enum ConfirmationDialogStateTitleVisibility: Sendable {
   /// The element may be visible or hidden depending on the policies of the component accepting the
   /// visibility configuration.
   ///
@@ -264,6 +264,8 @@ extension ConfirmationDialogState: Hashable where Action: Hashable {
     hasher.combine(self.buttons)
   }
 }
+
+extension ConfirmationDialogState: Sendable where Action: Sendable {}
 
 // MARK: - SwiftUI bridging
 
