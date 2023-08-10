@@ -43,11 +43,11 @@ import SwiftUI
 /// - Note: ``TextState`` does not support _all_ `LocalizedStringKey` permutations at this time
 ///   (interpolated `SwiftUI.Image`s, for example). ``TextState`` also uses reflection to determine
 ///   `LocalizedStringKey` equatability, so be mindful of edge cases.
-public struct TextState: Equatable, Hashable, Sendable {
+public struct TextState: Equatable, Hashable {
   fileprivate var modifiers: [Modifier] = []
   fileprivate let storage: Storage
 
-  fileprivate enum Modifier: Equatable, Hashable, Sendable {
+  fileprivate enum Modifier: Equatable, Hashable {
     case accessibilityHeading(AccessibilityHeadingLevel)
     case accessibilityLabel(TextState)
     case accessibilityTextContentType(AccessibilityTextContentType)
@@ -629,6 +629,11 @@ extension LocalizedStringKey {
     return String(format: format, locale: locale, arguments: arguments)
   }
 }
+
+#if swift(>=5.7.1)
+extension TextState: Sendable {}
+extension TextState.Modifier: Sendable {}
+#endif
 
 // MARK: - CustomDumpRepresentable
 

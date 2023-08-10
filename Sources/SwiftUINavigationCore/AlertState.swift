@@ -209,7 +209,9 @@ extension AlertState: Hashable where Action: Hashable {
   }
 }
 
+#if swift(>=5.7.1)
 extension AlertState: Sendable where Action: Sendable {}
+#endif
 
 // MARK: - SwiftUI bridging
 

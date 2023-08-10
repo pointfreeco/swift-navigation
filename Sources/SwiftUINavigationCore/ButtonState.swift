@@ -227,11 +227,12 @@ extension ButtonState: Hashable where Action: Hashable {
   }
 }
 
+#if swift(>=5.7.1)
 extension ButtonStateAction: Sendable where Action: Sendable {}
 extension ButtonStateAction._ActionType: Sendable where Action: Sendable {}
 extension ButtonStateRole: Sendable {}
 extension ButtonState: Sendable where Action: Sendable {}
-
+#endif
 
 // MARK: - SwiftUI bridging
 

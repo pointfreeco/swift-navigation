@@ -265,7 +265,9 @@ extension ConfirmationDialogState: Hashable where Action: Hashable {
   }
 }
 
+#if swift(>=5.7.1)
 extension ConfirmationDialogState: Sendable where Action: Sendable {}
+#endif
 
 // MARK: - SwiftUI bridging
 
