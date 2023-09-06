@@ -147,7 +147,7 @@ public struct ButtonStateAction<Action> {
 /// A value that describes the purpose of a button.
 ///
 /// See `SwiftUI.ButtonRole` for more information.
-public enum ButtonStateRole {
+public enum ButtonStateRole: Sendable {
   /// A role that indicates a cancel button.
   ///
   /// See `SwiftUI.ButtonRole.cancel` for more information.
@@ -226,6 +226,12 @@ extension ButtonState: Hashable where Action: Hashable {
     hasher.combine(self.role)
   }
 }
+
+#if swift(>=5.7)
+extension ButtonStateAction: Sendable where Action: Sendable {}
+extension ButtonStateAction._ActionType: Sendable where Action: Sendable {}
+extension ButtonState: Sendable where Action: Sendable {}
+#endif
 
 // MARK: - SwiftUI bridging
 
