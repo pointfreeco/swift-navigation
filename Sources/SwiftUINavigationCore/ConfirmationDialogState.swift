@@ -266,11 +266,11 @@ extension ConfirmationDialogState: Hashable where Action: Hashable {
 }
 
 #if swift(>=5.7)
-@available(iOS 13, *)
-@available(macOS 12, *)
-@available(tvOS 13, *)
-@available(watchOS 6, *)
-extension ConfirmationDialogState: Sendable where Action: Sendable {}
+  @available(iOS 13, *)
+  @available(macOS 12, *)
+  @available(tvOS 13, *)
+  @available(watchOS 6, *)
+  extension ConfirmationDialogState: Sendable where Action: Sendable {}
 #endif
 
 // MARK: - SwiftUI bridging
