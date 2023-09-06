@@ -739,3 +739,14 @@ extension TextState: CustomDumpRepresentable {
     return dumpHelp(self)
   }
 }
+
+// MARK: - Sendable Annotations
+
+#if swift(>=5.9)
+extension TextState: Sendable {}
+extension TextState.AccessibilityHeadingLevel: Sendable {}
+extension TextState.AccessibilityTextContentType: Sendable {}
+extension TextState.FontWidth: Sendable {}
+extension TextState.LineStylePattern: Sendable {}
+extension TextState.Modifier: Sendable {}
+#endif

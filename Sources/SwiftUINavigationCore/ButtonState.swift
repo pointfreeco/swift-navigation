@@ -227,6 +227,15 @@ extension ButtonState: Hashable where Action: Hashable {
   }
 }
 
+// MARK: - Sendable Annotations
+
+#if swift(>=5.9)
+extension ButtonStateAction: Sendable where Action: Sendable {}
+extension ButtonStateAction._ActionType: Sendable where Action: Sendable {}
+extension ButtonStateRole: Sendable {}
+extension ButtonState: Sendable where Action: Sendable {}
+#endif
+
 // MARK: - SwiftUI bridging
 
 extension Alert.Button {
