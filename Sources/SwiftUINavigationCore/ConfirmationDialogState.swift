@@ -265,9 +265,7 @@ extension ConfirmationDialogState: Hashable where Action: Hashable {
   }
 }
 
-// MARK: - Sendable Annotations
-
-#if swift(>=5.9)
+#if swift(>=5.7)
 @available(iOS 13, *)
 @available(macOS 12, *)
 @available(tvOS 13, *)
