@@ -100,7 +100,7 @@
   }
 
   private let requiresBindWorkaround = {
-    if #available(iOS 17, *) {
+    if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
       return true
     }
     guard #available(iOS 16.4, macOS 13.3, tvOS 16.4, watchOS 9.4, *)
