@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import CustomDump
 import SwiftUI
 
@@ -368,3 +369,4 @@ func typeName(_ type: Any.Type) -> String {
     )
   return sanitizedName
 }
+#endif // canImport(SwiftUI)

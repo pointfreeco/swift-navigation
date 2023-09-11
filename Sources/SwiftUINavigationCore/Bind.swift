@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 extension View {
@@ -82,3 +83,4 @@ extension FocusState.Binding: _Bindable {}
 extension SceneStorage: _Bindable {}
 
 extension State: _Bindable {}
+#endif // canImport(SwiftUI)

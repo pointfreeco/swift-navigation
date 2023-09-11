@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 import XCTest
 
@@ -60,3 +61,4 @@ final class SwiftUINavigationTests: XCTestCase {
     XCTAssertEqual(failure.wrappedValue, nil)
   }
 }
+#endif // canImport(SwiftUI)

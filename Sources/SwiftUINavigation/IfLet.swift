@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 /// A view that computes content by unwrapping a binding to an optional and passing a non-optional
@@ -84,3 +85,4 @@ extension IfLet where ElseContent == EmptyView {
     self.init(value, then: ifContent, else: { EmptyView() })
   }
 }
+#endif // canImport(SwiftUI)

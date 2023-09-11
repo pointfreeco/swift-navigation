@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 @_spi(RuntimeWarn)
 @_transparent
 @inline(__always)
@@ -70,3 +71,4 @@ public func runtimeWarn(
     }()
   #endif
 #endif
+#endif // canImport(SwiftUI)

@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 extension NavigationLink {
@@ -133,3 +134,4 @@ extension NavigationLink {
     )
   }
 }
+#endif // canImport(SwiftUI)

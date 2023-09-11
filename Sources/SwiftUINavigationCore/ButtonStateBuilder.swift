@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 @resultBuilder
 public enum ButtonStateBuilder<Action> {
   public static func buildArray(_ components: [[ButtonState<Action>]]) -> [ButtonState<Action>] {
@@ -30,3 +31,4 @@ public enum ButtonStateBuilder<Action> {
     component ?? []
   }
 }
+#endif // canImport(SwiftUI)

@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import CustomDump
 import SwiftUI
 import SwiftUINavigation
@@ -117,3 +118,4 @@ private struct TestView: View {
     }
   }
 }
+#endif // canImport(SwiftUI)

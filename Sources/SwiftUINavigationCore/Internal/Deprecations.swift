@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 // NB: Deprecated after 0.5.0
@@ -307,3 +308,5 @@ extension ActionSheet {
     )
   }
 }
+
+#endif // canImport(SwiftUI)

@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 /// A view that computes content by extracting a case from a binding to an enum and passing a
@@ -90,3 +91,4 @@ extension IfCaseLet where ElseContent == EmptyView {
     self.ifContent = ifContent
   }
 }
+#endif // canImport(SwiftUI)
