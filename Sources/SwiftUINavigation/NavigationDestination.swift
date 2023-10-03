@@ -107,4 +107,4 @@
     else { return true }
     return false
   }()
-#endif // swift(>=5.7) && canImport(SwiftUI)
+#endif  // swift(>=5.7) && canImport(SwiftUI)
