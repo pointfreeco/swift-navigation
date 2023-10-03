@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 extension View {
@@ -87,3 +88,4 @@ extension View {
     self.fullScreenCover(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
   }
 }
+#endif // canImport(SwiftUI)

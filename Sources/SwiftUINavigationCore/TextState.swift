@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import CustomDump
 import SwiftUI
 
@@ -741,3 +742,4 @@ extension TextState: CustomDumpRepresentable {
     return dumpHelp(self)
   }
 }
+#endif // canImport(SwiftUI)

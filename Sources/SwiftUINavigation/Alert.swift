@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 extension View {
@@ -303,3 +304,4 @@ extension View {
 
   // TODO: support iOS <15?
 }
+#endif // canImport(SwiftUI)

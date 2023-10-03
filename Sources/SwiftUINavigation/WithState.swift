@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 /// A container view that provides a binding to another view.
@@ -44,3 +45,4 @@ public struct WithState<Value, Content: View>: View {
     self.content(self.$value)
   }
 }
+#endif // canImport(SwiftUI)

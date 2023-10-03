@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import CustomDump
 import SwiftUI
 
@@ -260,3 +261,4 @@ extension Alert {
     }
   }
 }
+#endif // canImport(SwiftUI)

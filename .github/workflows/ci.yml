@@ -26,3 +26,27 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
       - name: Run tests
         run: make test
+
+  windows:
+    name: Windows
+    strategy:
+      matrix:
+        os: [windows-latest]
+        config: ['debug', 'release']
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: compnerd/gha-setup-swift@main
+        with:
+          branch: swift-5.8.1-release
+          tag: 5.8.1-RELEASE
+      - uses: actions/checkout@v3
+      - name: Build
+        run: swift build -c ${{ matrix.config }}
+      - name: Run tests (debug only)
+        # There is an issue that exists in the 5.8.1 toolchain
+        # which fails on release configuration testing, but
+        # this issue is fixed 5.9 so we can remove the if once
+        # that is generally available.
+        if: ${{ matrix.config == 'debug' }}
+        run: swift test

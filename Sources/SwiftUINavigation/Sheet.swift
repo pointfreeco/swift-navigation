@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 #if canImport(UIKit)
@@ -87,3 +88,4 @@ extension View {
     self.sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
   }
 }
+#endif // canImport(SwiftUI)

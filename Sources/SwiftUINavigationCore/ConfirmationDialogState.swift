@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import CustomDump
 import SwiftUI
 
@@ -288,3 +289,4 @@ extension Visibility {
     }
   }
 }
+#endif // canImport(SwiftUI)

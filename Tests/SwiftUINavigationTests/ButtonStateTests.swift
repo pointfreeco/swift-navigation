@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import CustomDump
 import SwiftUI
 import SwiftUINavigation
@@ -30,3 +31,4 @@ final class ButtonStateTests: XCTestCase {
     }
   }
 }
+#endif // canImport(SwiftUI)

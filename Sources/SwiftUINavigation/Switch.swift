@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 @_spi(RuntimeWarn) import SwiftUINavigationCore
 
@@ -1114,3 +1115,4 @@ private func describeCase<Enum>(_ enum: Enum) -> String {
   }
   return "\(type).\(`case`)"
 }
+#endif // canImport(SwiftUI)
