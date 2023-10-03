@@ -36,11 +36,13 @@ import SwiftUI
 /// ```swift
 /// class HomeScreenModel: ObservableObject {
 ///   // ...
-///   func alertButtonTapped(_ action: AlertAction) {
+///   func alertButtonTapped(_ action: AlertAction?) {
 ///     switch action {
 ///     case .delete:
 ///       // ...
 ///     case .removeFromHomeScreen:
+///       // ...
+///     case .none:
 ///       // ...
 ///     }
 ///   }
