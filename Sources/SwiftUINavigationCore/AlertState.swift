@@ -212,6 +212,8 @@
     }
   }
 
+  extension AlertState: Sendable where Action: Sendable {}
+
   // MARK: - SwiftUI bridging
 
   extension Alert {
