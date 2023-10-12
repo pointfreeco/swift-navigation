@@ -14,6 +14,7 @@ struct IfCaseLetCaseStudy: View {
   @State var string: String = "Hello"
   @State var editableString: EditableString = .inactive
 
+  @CasePathable
   enum EditableString {
     case active(String)
     case inactive
@@ -24,25 +25,29 @@ struct IfCaseLetCaseStudy: View {
       Section {
         Text(readMe)
       }
-      IfCaseLet(self.$editableString, pattern: /EditableString.active) { $string in
-        TextField("Edit string", text: $string)
-        HStack {
-          Button("Discard") {
-            self.editableString = .inactive
-          }
-          Button("Save") {
-            self.string = string
-            self.editableString = .inactive
+      Binding(unwrapping: self.$editableString.active).map { $string in
+        VStack {
+          TextField("Edit string", text: $string)
+          HStack {
+            Button("Discard", role: .cancel) {
+              self.editableString = .inactive
+            }
+            Spacer()
+            Button("Save") {
+              self.string = string
+              self.editableString = .inactive
+            }
           }
         }
-      } else: {
+      }
+      if self.editableString.active == nil {
         Text("\(self.string)")
         Button("Edit") {
           self.editableString = .active(self.string)
         }
       }
-      .buttonStyle(.borderless)
     }
+    .buttonStyle(.borderless)
   }
 }
 

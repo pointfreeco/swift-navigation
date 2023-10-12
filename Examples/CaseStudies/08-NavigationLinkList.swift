@@ -58,10 +58,7 @@ private struct RowView: View {
   @ObservedObject var model: ListOfNavigationLinksRowModel
 
   var body: some View {
-    NavigationLink(
-      unwrapping: self.$model.destination,
-      case: /ListOfNavigationLinksRowModel.Destination.edit
-    ) { isActive in
+    NavigationLink(unwrapping: self.$model.destination.edit) { isActive in
       self.model.setEditNavigation(isActive: isActive)
     } destination: { $counter in
       EditView(counter: $counter)
@@ -85,6 +82,7 @@ class ListOfNavigationLinksRowModel: Identifiable, ObservableObject {
   @Published var counter: Int
   @Published var destination: Destination?
 
+  @CasePathable
   enum Destination {
     case edit(Int)
   }

@@ -121,7 +121,7 @@
     @available(watchOS, introduced: 6, deprecated: 9)
     public init<Enum, Case, WrappedDestination>(
       unwrapping enum: Binding<Enum?>,
-      case casePath: CasePath<Enum, Case>,
+      case casePath: AnyCasePath<Enum, Case>,
       onNavigate: @escaping (Bool) -> Void,
       @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
       @ViewBuilder label: () -> Label

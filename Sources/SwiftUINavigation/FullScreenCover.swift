@@ -80,7 +80,7 @@
     @available(macOS, unavailable)
     public func fullScreenCover<Enum, Case, Content>(
       unwrapping enum: Binding<Enum?>,
-      case casePath: CasePath<Enum, Case>,
+      case casePath: AnyCasePath<Enum, Case>,
       onDismiss: (() -> Void)? = nil,
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
     ) -> some View

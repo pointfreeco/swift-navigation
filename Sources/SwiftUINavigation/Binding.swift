@@ -1,7 +1,15 @@
 #if canImport(SwiftUI)
+  import CasePaths
   import SwiftUI
 
   extension Binding {
+    public subscript<Enum, AssociatedValue>(
+      dynamicMember keyPath: CaseKeyPath<Enum, AssociatedValue>
+    ) -> Binding<AssociatedValue?>
+    where Value == Enum? {
+      self[dynamicMember: (\Enum?.Cases.some).appending(path: keyPath)]
+    }
+
     /// Creates a binding by projecting the base value to an unwrapped value.
     ///
     /// Useful for producing non-optional bindings from optional ones.
@@ -17,7 +25,7 @@
     /// - Parameter base: A value to project to an unwrapped value.
     /// - Returns: A new binding or `nil` when `base` is `nil`.
     public init?(unwrapping base: Binding<Value?>) {
-      self.init(unwrapping: base, case: /Optional.some)
+      self.init(unwrapping: base, case: AnyCasePath(\.some))
     }
 
     /// Creates a binding by projecting the base enum value to an unwrapped case.
@@ -30,7 +38,7 @@
     ///   - enum: An enum to project to a particular case.
     ///   - casePath: A case path that identifies a particular case to unwrap.
     /// - Returns: A new binding or `nil` when `base` is `nil`.
-    public init?<Enum>(unwrapping enum: Binding<Enum>, case casePath: CasePath<Enum, Value>) {
+    public init?<Enum>(unwrapping enum: Binding<Enum>, case casePath: AnyCasePath<Enum, Value>) {
       guard var `case` = casePath.extract(from: `enum`.wrappedValue)
       else { return nil }
 
@@ -55,7 +63,7 @@
     ///
     /// - Parameter casePath: A case path that identifies a particular case to unwrap.
     /// - Returns: A binding to an enum case.
-    public func `case`<Enum, Case>(_ casePath: CasePath<Enum, Case>) -> Binding<Case?>
+    public func `case`<Enum, Case>(_ casePath: AnyCasePath<Enum, Case>) -> Binding<Case?>
     where Value == Enum? {
       .init(
         get: { self.wrappedValue.flatMap(casePath.extract(from:)) },
@@ -133,7 +141,7 @@
     ///
     /// - Parameter casePath: A case path that identifies a particular case to match.
     /// - Returns: A binding to a boolean.
-    public func isPresent<Enum, Case>(_ casePath: CasePath<Enum, Case>) -> Binding<Bool>
+    public func isPresent<Enum, Case>(_ casePath: AnyCasePath<Enum, Case>) -> Binding<Bool>
     where Value == Enum? {
       self.case(casePath).isPresent()
     }

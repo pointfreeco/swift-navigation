@@ -37,10 +37,20 @@
   ///
   /// To exhaustively handle every case of a binding to an enum, see ``Switch``. Or, to unwrap a
   /// binding to an optional, see ``IfLet``.
+  #if swift(>=5.9)
+    @available(
+      *,
+      deprecated,
+      message:
+        """
+        Use 'Binding(unwrapping: $enum.case).map { $case in … }' (and 'if enum.case == nil { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
+        """
+    )
+  #endif
   public struct IfCaseLet<Enum, Case, IfContent, ElseContent>: View
   where IfContent: View, ElseContent: View {
     public let `enum`: Binding<Enum>
-    public let casePath: CasePath<Enum, Case>
+    public let casePath: AnyCasePath<Enum, Case>
     public let ifContent: (Binding<Case>) -> IfContent
     public let elseContent: ElseContent
 
@@ -60,7 +70,7 @@
     ///   - elseContent: A closure for computing content when `enum` does not match the case.
     public init(
       _ `enum`: Binding<Enum>,
-      pattern casePath: CasePath<Enum, Case>,
+      pattern casePath: AnyCasePath<Enum, Case>,
       @ViewBuilder then ifContent: @escaping (Binding<Case>) -> IfContent,
       @ViewBuilder else elseContent: () -> ElseContent
     ) {
@@ -79,10 +89,20 @@
     }
   }
 
+  #if swift(>=5.9)
+    @available(
+      *,
+      deprecated,
+      message:
+        """
+        Use 'Binding(unwrapping: $enum.case).map { $case in … }' with a '@CasePathable' enum, instead.
+        """
+    )
+  #endif
   extension IfCaseLet where ElseContent == EmptyView {
     public init(
       _ `enum`: Binding<Enum>,
-      pattern casePath: CasePath<Enum, Case>,
+      pattern casePath: AnyCasePath<Enum, Case>,
       @ViewBuilder ifContent: @escaping (Binding<Case>) -> IfContent
     ) {
       self.casePath = casePath

@@ -18,25 +18,29 @@ struct IfLetCaseStudy: View {
       Section {
         Text(readMe)
       }
-      IfLet(self.$editableString) { $string in
-        TextField("Edit string", text: $string)
-        HStack {
-          Button("Discard") {
-            self.editableString = nil
-          }
-          Button("Save") {
-            self.string = string
-            self.editableString = nil
+      Binding(unwrapping: self.$editableString).map { $string in
+        VStack {
+          TextField("Edit string", text: $string)
+          HStack {
+            Button("Discard") {
+              self.editableString = nil
+            }
+            Spacer()
+            Button("Save") {
+              self.string = string
+              self.editableString = nil
+            }
           }
         }
-      } else: {
+      }
+      if self.editableString == nil {
         Text("\(self.string)")
         Button("Edit") {
           self.editableString = self.string
         }
       }
-      .buttonStyle(.borderless)
     }
+    .buttonStyle(.borderless)
   }
 }
 

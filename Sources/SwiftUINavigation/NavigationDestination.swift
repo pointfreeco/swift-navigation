@@ -76,7 +76,7 @@
     ///   - destination: A closure returning the content of the destination.
     public func navigationDestination<Enum, Case, Destination: View>(
       unwrapping enum: Binding<Enum?>,
-      case casePath: CasePath<Enum, Case>,
+      case casePath: AnyCasePath<Enum, Case>,
       @ViewBuilder destination: (Binding<Case>) -> Destination
     ) -> some View {
       self.navigationDestination(unwrapping: `enum`.case(casePath), destination: destination)

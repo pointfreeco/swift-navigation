@@ -91,7 +91,7 @@
     public func alert<Enum, Case, A: View, M: View>(
       title: (Case) -> Text,
       unwrapping enum: Binding<Enum?>,
-      case casePath: CasePath<Enum, Case>,
+      case casePath: AnyCasePath<Enum, Case>,
       @ViewBuilder actions: (Case) -> A,
       @ViewBuilder message: (Case) -> M
     ) -> some View {
@@ -187,7 +187,7 @@
       @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
       public func alert<Enum, Value>(
         unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, AlertState<Value>>,
+        case casePath: AnyCasePath<Enum, AlertState<Value>>,
         action handler: @escaping (Value?) -> Void = { (_: Never?) in }
       ) -> some View {
         self.alert(unwrapping: `enum`.case(casePath), action: handler)
@@ -216,7 +216,7 @@
       @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
       public func alert<Enum, Value>(
         unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, AlertState<Value>>,
+        case casePath: AnyCasePath<Enum, AlertState<Value>>,
         action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
       ) -> some View {
         self.alert(unwrapping: `enum`.case(casePath), action: handler)

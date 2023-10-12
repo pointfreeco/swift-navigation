@@ -84,7 +84,7 @@
     @available(watchOS, unavailable)
     public func popover<Enum, Case, Content>(
       unwrapping enum: Binding<Enum?>,
-      case casePath: CasePath<Enum, Case>,
+      case casePath: AnyCasePath<Enum, Case>,
       attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
       arrowEdge: Edge = .top,
       @ViewBuilder content: @escaping (Binding<Case>) -> Content

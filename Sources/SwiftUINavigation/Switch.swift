@@ -44,6 +44,16 @@
   /// > Note: In debug builds, exhaustivity is handled at runtime: if the `Switch` encounters an
   /// > unhandled case, and no ``Default`` view is present, a runtime warning is issued and a warning
   /// > view is presented.
+  #if swift(>=5.9)
+    @available(
+      *,
+      deprecated,
+      message:
+        """
+        Switch over a '@CasePathable' enum and derive bindings from each case using 'Binding(unwrapping: $enum.case).map { $case in … }', instead.
+        """
+    )
+  #endif
   public struct Switch<Enum, Content: View>: View {
     public let `enum`: Binding<Enum>
     public let content: Content
@@ -63,10 +73,20 @@
   }
 
   /// A view that handles a specific case of enum state in a ``Switch``.
+  #if swift(>=5.9)
+    @available(
+      *,
+      deprecated,
+      message:
+        """
+        Switch over a '@CasePathable' enum and derive bindings from each case using 'Binding(unwrapping: $enum.case).map { $case in … }', instead.
+        """
+    )
+  #endif
   public struct CaseLet<Enum, Case, Content>: View
   where Content: View {
     @EnvironmentObject private var `enum`: BindingObject<Enum>
-    public let casePath: CasePath<Enum, Case>
+    public let casePath: AnyCasePath<Enum, Case>
     public let content: (Binding<Case>) -> Content
 
     /// Computes content for a particular case of an enum handled by a ``Switch``.
@@ -76,7 +96,7 @@
     ///     of truth for the content.
     ///   - content: A closure returning the content to be computed from a binding to an enum case.
     public init(
-      _ casePath: CasePath<Enum, Case>,
+      _ casePath: AnyCasePath<Enum, Case>,
       @ViewBuilder then content: @escaping (Binding<Case>) -> Content
     ) {
       self.casePath = casePath
@@ -93,6 +113,16 @@
   /// If you wish to use ``Switch`` in a non-exhaustive manner (_i.e._, you do not want to provide a
   /// ``CaseLet`` for every case of the enum), then you must insert a ``Default`` view at the end of
   /// the ``Switch``'s body, or use ``IfCaseLet`` instead.
+  #if swift(>=5.9)
+    @available(
+      *,
+      deprecated,
+      message:
+        """
+        Switch over a '@CasePathable' enum and derive bindings from each case using 'Binding(unwrapping: $enum.case).map { $case in … }', instead.
+        """
+    )
+  #endif
   public struct Default<Content: View>: View {
     private let content: Content
 
@@ -110,6 +140,16 @@
     }
   }
 
+  #if swift(>=5.9)
+    @available(
+      *,
+      deprecated,
+      message:
+        """
+        Switch over a '@CasePathable' enum and derive bindings from each case using 'Binding(unwrapping: $enum.case).map { $case in … }', instead.
+        """
+    )
+  #endif
   extension Switch {
     public init<Case1, Content1, DefaultContent>(
       _ enum: Binding<Enum>,

@@ -14,9 +14,9 @@
         "package": "swift-case-paths",
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
-          "branch": null,
-          "revision": "5da6989aae464f324eef5c5b52bdb7974725ab81",
-          "version": "1.0.0"
+          "branch": "case-key-paths",
+          "revision": "547a2b9ef5f67e348fc09c2e9540353650407dbd",
+          "version": null
         }
       },
       {
@@ -89,6 +89,15 @@
           "branch": null,
           "revision": "d1e45f3e1eee2c9193f5369fa9d70a6ddad635e8",
           "version": "1.0.0"
+        }
+      },
+      {
+        "package": "swift-syntax",
+        "repositoryURL": "https://github.com/apple/swift-syntax.git",
+        "state": {
+          "branch": null,
+          "revision": "74203046135342e4a4a627476dd6caf8b28fe11b",
+          "version": "509.0.0"
         }
       },
       {
