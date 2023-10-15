@@ -5,12 +5,12 @@ private let readMe = """
   This case study demonstrates how to model a list of navigation links. Tap a row to drill down \
   and edit a counter. Edit screen allows cancelling or saving the edits.
 
-  The domain for a row in the list has its own ObservableObject and Destination enum, and it uses \
+  The domain for a row in the list has its own @Observable class and Destination enum, and it uses \
   the library's NavigationLink initializer to drive navigation from the destination enum.
   """
 
 struct ListOfNavigationLinks: View {
-  @ObservedObject var model: ListOfNavigationLinksModel
+  @State var model: ListOfNavigationLinksModel
 
   var body: some View {
     Form {
@@ -36,8 +36,9 @@ struct ListOfNavigationLinks: View {
   }
 }
 
-class ListOfNavigationLinksModel: ObservableObject {
-  @Published var rows: [ListOfNavigationLinksRowModel]
+@Observable
+class ListOfNavigationLinksModel {
+  var rows: [ListOfNavigationLinksRowModel]
 
   init(rows: [ListOfNavigationLinksRowModel] = []) {
     self.rows = rows
@@ -55,7 +56,7 @@ class ListOfNavigationLinksModel: ObservableObject {
 }
 
 private struct RowView: View {
-  @ObservedObject var model: ListOfNavigationLinksRowModel
+  @State var model: ListOfNavigationLinksRowModel
 
   var body: some View {
     NavigationLink(
@@ -80,10 +81,11 @@ private struct RowView: View {
   }
 }
 
-class ListOfNavigationLinksRowModel: Identifiable, ObservableObject {
+@Observable
+class ListOfNavigationLinksRowModel: Identifiable {
   let id = UUID()
-  @Published var counter: Int
-  @Published var destination: Destination?
+  var counter: Int
+  var destination: Destination?
 
   enum Destination {
     case edit(Int)
@@ -127,20 +129,18 @@ private struct EditView: View {
   }
 }
 
-struct ListOfNavigationLinks_Previews: PreviewProvider {
-  static var previews: some View {
-    NavigationView {
-      ListOfNavigationLinks(
-        model: .init(
-          rows: [
-            .init(counter: 0),
-            .init(counter: 0),
-            .init(counter: 0),
-            .init(counter: 0),
-            .init(counter: 0),
-          ]
-        )
+#Preview {
+  NavigationView {
+    ListOfNavigationLinks(
+      model: ListOfNavigationLinksModel(
+        rows: [
+          ListOfNavigationLinksRowModel(counter: 0),
+          ListOfNavigationLinksRowModel(counter: 0),
+          ListOfNavigationLinksRowModel(counter: 0),
+          ListOfNavigationLinksRowModel(counter: 0),
+          ListOfNavigationLinksRowModel(counter: 0),
+        ]
       )
-    }
+    )
   }
 }

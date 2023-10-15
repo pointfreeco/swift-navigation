@@ -123,10 +123,8 @@ struct Routing: View {
   }
 }
 
-struct Routing_Previews: PreviewProvider {
-  static var previews: some View {
-    NavigationView {
-      Routing()
-    }
+#Preview {
+  NavigationView {
+    Routing()
   }
 }

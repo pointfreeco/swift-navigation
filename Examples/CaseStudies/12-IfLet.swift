@@ -40,8 +40,6 @@ struct IfLetCaseStudy: View {
   }
 }
 
-struct IfLetCaseStudy_EditStringView_Previews: PreviewProvider {
-  static var previews: some View {
-    IfLetCaseStudy()
-  }
+#Preview {
+  IfLetCaseStudy()
 }
