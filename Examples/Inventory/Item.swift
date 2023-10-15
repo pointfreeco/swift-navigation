@@ -61,25 +61,29 @@ struct ItemView: View {
       switch self.item.status {
       case .inStock:
         self.$item.status.inStock.map { $quantity in
-          Section(header: Text("In stock")) {
+          Section {
             Stepper("Quantity: \(quantity)", value: $quantity)
             Button("Mark as sold out") {
               withAnimation {
                 self.item.status = .outOfStock(isOnBackOrder: false)
               }
             }
+          } header: {
+            Text("In stock")
           }
           .transition(.opacity)
         }
       case .outOfStock:
         self.$item.status.outOfStock.map { $isOnBackOrder in
-          Section(header: Text("Out of stock")) {
+          Section {
             Toggle("Is on back order?", isOn: $isOnBackOrder)
             Button("Is back in stock!") {
               withAnimation {
                 self.item.status = .inStock(quantity: 1)
               }
             }
+          } header: {
+            Text("Out of stock")
           }
           .transition(.opacity)
         }

@@ -59,10 +59,12 @@ equatability. This makes it possible to write tests against these values.
 Next you can provide an endpoint that will be called when the alert is interacted with:
 
 ```swift
-func alertButtonTapped(_ action: AlertAction) {
+func alertButtonTapped(_ action: AlertAction?) {
   switch action {
   case .deletionConfirmed:
     // NB: Perform deletion logic here
+  case nil:
+    // NB: Perform cancel button logic here
   }
 }
 ```
@@ -107,7 +109,6 @@ Sometimes it is not optimal to model the alert as an optional. In particular, if
 navigate to multiple, mutually exclusive screens, then an enum is more appropriate.
 
 In such a case:
-
 
 ```swift
 class FeatureModel: ObservableObject {
@@ -163,10 +164,12 @@ class FeatureModel: ObservableObject {
     )
   }
 
-  func dialogButtonTapped(_ action: DialogAction) {
+  func dialogButtonTapped(_ action: DialogAction?) {
     switch action {
     case .deletionConfirmed:
       // NB: Perform deletion logic here
+    case nil:
+      // NB: Perform cancel button logic here
     }
   }
 }
@@ -188,3 +191,17 @@ struct ContentView: View {
   }
 }
 ```
+
+## Topics
+
+### Alert and dialog modifiers
+
+- ``SwiftUI/View/alert(title:unwrapping:actions:message:)``
+- ``SwiftUI/View/confirmationDialog(title:titleVisibility:unwrapping:actions:message:)``
+
+### Alert state and dialog state
+
+- ``SwiftUI/View/alert(unwrapping:action:)-7da26``
+- ``SwiftUI/View/alert(unwrapping:action:)-6y2fk``
+- ``SwiftUI/View/confirmationDialog(unwrapping:action:)-4f8ze``
+- ``SwiftUI/View/confirmationDialog(unwrapping:action:)-29s77``

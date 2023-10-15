@@ -46,11 +46,12 @@ Sometimes it is not optimal to model presentation destinations as optionals. In 
 feature can navigate to multiple, mutually exclusive screens, then an enum is more appropriate.
 
 There is an additional overload of the `sheet` for this situation. If you model your destinations
-as an enum:
+as a "case-pathable" enum:
 
 ```swift
 @State var destination: Destination?
 
+@CasePathable
 enum Destination {
   var counter(Int)
   // More destinations
@@ -64,10 +65,7 @@ var body: some View {
   List {
     // ...
   }
-  .sheet(
-    unwrapping: self.$destination,
-    case: /Destination.counter
-  ) { $number in 
+  .sheet(unwrapping: self.$destination.counter) { $number in 
     CounterView(number: $number)
   }
 }
@@ -93,11 +91,13 @@ struct ContentView: View {
 }
 ```
 
-And if the popover state is represented as an enum, then you can do the following:
+And if the popover state is represented as a "case-pathable" enum, then you can do the following:
 
 ```swift
 struct ContentView: View {
   @State var destination: Destination?
+
+  @CasePathable
   enum Destination {
     case counter(Int)
     // More destinations
@@ -107,10 +107,7 @@ struct ContentView: View {
     List {
       // ...
     }
-    .popover(
-      unwrapping: self.$destination,
-      case: /Destination.counter
-    ) { $number in 
+    .popover(unwrapping: self.$destination.counter) { $number in 
       CounterView(number: $number)
     }
   }
@@ -137,11 +134,13 @@ struct ContentView: View {
 }
 ```
 
-And if the cover's' state is represented as an enum, then you can do the following:
+And if the covers' state is represented as a "case-pathable" enum, then you can do the following:
 
 ```swift
 struct ContentView: View {
   @State var destination: Destination?
+
+  @CasePathable
   enum Destination {
     case counter(Int)
     // More destinations
@@ -151,12 +150,17 @@ struct ContentView: View {
     List {
       // ...
     }
-    .fullscreenCover(
-      unwrapping: self.$destination,
-      case: /Destination.counter
-    ) { $number in 
+    .fullscreenCover(unwrapping: self.$destination.counter) { $number in 
       CounterView(number: $number)
     }
   }
 }
 ```
+
+## Topics
+
+### Presentation modifiers
+
+- ``SwiftUI/View/fullScreenCover(unwrapping:onDismiss:content:)``
+- ``SwiftUI/View/popover(unwrapping:attachmentAnchor:arrowEdge:content:)``
+- ``SwiftUI/View/sheet(unwrapping:onDismiss:content:)``

@@ -50,7 +50,7 @@
   /// }
   /// ```
   ///
-  /// Then, whenever you need to show an alert you can simply construct an ``AlertState`` value to
+  /// Then, whenever you need to show an alert you can simply construct an `AlertState` value to
   /// represent the alert:
   ///
   /// ```swift
