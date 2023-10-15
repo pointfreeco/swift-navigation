@@ -1,5 +1,5 @@
 > [!IMPORTANT] 
-> This demo application has be moved to a dedicate GitHub repository.
+> This demo application has been moved to a dedicated GitHub repository.
 >
 > [http://github.com/pointfreeco/standups](http://github.com/pointfreeco/standups)
 
