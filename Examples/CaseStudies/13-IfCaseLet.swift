@@ -25,7 +25,7 @@ struct IfCaseLetCaseStudy: View {
       Section {
         Text(readMe)
       }
-      Binding(unwrapping: self.$editableString.active).map { $string in
+      self.$editableString.active.map { $string in
         VStack {
           TextField("Edit string", text: $string)
           HStack {
@@ -40,7 +40,7 @@ struct IfCaseLetCaseStudy: View {
           }
         }
       }
-      if self.editableString.active == nil {
+      if !self.editableString.is(\.active) {
         Text("\(self.string)")
         Button("Edit") {
           self.editableString = .active(self.string)

@@ -3,11 +3,46 @@
   import SwiftUI
 
   extension Binding {
+    /// Returns a binding to the associated value of a given case key path.
+    ///
+    /// Useful for producing bindings to values held in enum state.
+    ///
+    /// - Parameter keyPath: A case key path to a specific associated value.
+    /// - Returns: A new binding.
+    public subscript<Member>(
+      dynamicMember keyPath: CaseKeyPath<Value, Member>
+    ) -> Binding<Member>?
+    where Value: CasePathable {
+      Binding<Member>(
+        unwrapping: Binding<Member?>(
+          get: { self.wrappedValue[keyPath: keyPath] },
+          set: { newValue, transaction in
+            guard let newValue else { return }
+            self.transaction(transaction).wrappedValue[keyPath: keyPath] = newValue
+          }
+        )
+      )
+    }
+
+    /// Returns a binding to the associated value of a given case key path.
+    ///
+    /// Useful for driving navigation off an optional enumeration of destinations.
+    ///
+    /// - Parameter keyPath: A case key path to a specific associated value.
+    /// - Returns: A new binding.
     public subscript<Enum, AssociatedValue>(
       dynamicMember keyPath: CaseKeyPath<Enum, AssociatedValue>
     ) -> Binding<AssociatedValue?>
     where Value == Enum? {
-      self[dynamicMember: (\Enum?.Cases.some).appending(path: keyPath)]
+      return Binding<AssociatedValue?>(
+        get: { self.wrappedValue[keyPath: (\Enum?.Cases.some).appending(path: keyPath)] },
+        set: { newValue, transaction in
+          guard let newValue else { return }
+          self.transaction(transaction).wrappedValue[
+            keyPath: (\Enum?.Cases.some).appending(path: keyPath)
+          ] = newValue
+        }
+      )
     }
 
     /// Creates a binding by projecting the base value to an unwrapped value.
