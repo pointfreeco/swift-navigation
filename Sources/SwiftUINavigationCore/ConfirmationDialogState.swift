@@ -12,7 +12,8 @@
   /// To use this API, you describe all of a dialog's actions as cases in an enum:
   ///
   /// ```swift
-  /// class FeatureModel: ObservableObject {
+  /// @Observable
+  /// class FeatureModel {
   ///   enum ConfirmationDialogAction {
   ///     case delete
   ///     case favorite
@@ -24,9 +25,10 @@
   /// You model the state for showing the alert in as a published field, which can start off `nil`:
   ///
   /// ```swift
-  /// class FeatureModel: ObservableObject {
+  /// @Observable
+  /// class FeatureModel {
   ///   // ...
-  ///   @Published var dialog: ConfirmationDialogState<ConfirmationDialogAction>?
+  ///   var dialog: ConfirmationDialogState<ConfirmationDialogAction>?
   ///   // ...
   /// }
   /// ```
@@ -34,7 +36,8 @@
   /// And you define an endpoint for handling each alert action:
   ///
   /// ```swift
-  /// class FeatureModel: ObservableObject {
+  /// @Observable
+  /// class FeatureModel {
   ///   // ...
   ///   func dialogButtonTapped(_ action: ConfirmationDialogAction) {
   ///     switch action {
@@ -51,7 +54,8 @@
   /// ``ConfirmationDialogState`` value to represent it:
   ///
   /// ```swift
-  /// class FeatureModel: ObservableObject {
+  /// @Observable
+  /// class FeatureModel {
   ///   // ...
   ///   func infoButtonTapped() {
   ///     self.dialog = ConfirmationDialogState(
