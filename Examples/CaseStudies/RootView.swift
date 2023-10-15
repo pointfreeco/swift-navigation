@@ -57,10 +57,10 @@ struct RootView: View {
           NavigationLink("Synchronized bindings") {
             SynchronizedBindings()
           }
-          NavigationLink("IfLet view") {
+          NavigationLink("Optional bindings") {
             IfLetCaseStudy()
           }
-          NavigationLink("IfCaseLet view") {
+          NavigationLink("Enum bindings") {
             IfCaseLetCaseStudy()
           }
         } header: {
