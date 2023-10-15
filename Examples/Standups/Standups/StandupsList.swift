@@ -18,6 +18,7 @@ final class StandupsListModel: ObservableObject {
   @Dependency(\.mainQueue) var mainQueue
   @Dependency(\.uuid) var uuid
 
+  @CasePathable
   enum Destination {
     case add(StandupFormModel)
     case alert(AlertState<AlertAction>)
@@ -167,10 +168,7 @@ struct StandupsList: View {
         }
       }
       .navigationTitle("Daily Standups")
-      .sheet(
-        unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.add
-      ) { $model in
+      .sheet(unwrapping: self.$model.destination.add) { $model in
         NavigationStack {
           StandupFormView(model: model)
             .navigationTitle("New standup")
@@ -188,16 +186,10 @@ struct StandupsList: View {
             }
         }
       }
-      .navigationDestination(
-        unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.detail
-      ) { $detailModel in
+      .navigationDestination(unwrapping: self.$model.destination.detail) { $detailModel in
         StandupDetailView(model: detailModel)
       }
-      .alert(
-        unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.alert
-      ) {
+      .alert(unwrapping: self.$model.destination.alert) {
         self.model.alertButtonTapped($0)
       }
     }

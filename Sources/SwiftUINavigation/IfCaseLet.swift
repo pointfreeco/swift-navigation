@@ -43,7 +43,7 @@
       deprecated,
       message:
         """
-        Use 'Binding(unwrapping: $enum.case).map { $case in … }' (and 'if enum.case == nil { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
+        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
         """
     )
   #endif
@@ -95,7 +95,7 @@
       deprecated,
       message:
         """
-        Use 'Binding(unwrapping: $enum.case).map { $case in … }' with a '@CasePathable' enum, instead.
+        Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
         """
     )
   #endif

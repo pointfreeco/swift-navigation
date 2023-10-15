@@ -21,6 +21,7 @@ class StandupDetailModel: ObservableObject {
 
   var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
 
+  @CasePathable
   enum Destination {
     case alert(AlertState<AlertAction>)
     case edit(StandupFormModel)
@@ -217,28 +218,16 @@ struct StandupDetailView: View {
         self.model.editButtonTapped()
       }
     }
-    .navigationDestination(
-      unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.meeting
-    ) { $meeting in
+    .navigationDestination(unwrapping: self.$model.destination.meeting) { $meeting in
       MeetingView(meeting: meeting, standup: self.model.standup)
     }
-    .navigationDestination(
-      unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.record
-    ) { $model in
+    .navigationDestination(unwrapping: self.$model.destination.record) { $model in
       RecordMeetingView(model: model)
     }
-    .alert(
-      unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.alert
-    ) { action in
+    .alert(unwrapping: self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
-    .sheet(
-      unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.edit
-    ) { $editModel in
+    .sheet(unwrapping: self.$model.destination.edit) { $editModel in
       NavigationStack {
         StandupFormView(model: editModel)
           .navigationTitle(self.model.standup.title)

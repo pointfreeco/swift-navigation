@@ -50,7 +50,7 @@
       deprecated,
       message:
         """
-        Switch over a '@CasePathable' enum and derive bindings from each case using 'Binding(unwrapping: $enum.case).map { $case in … }', instead.
+        Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
         """
     )
   #endif
@@ -79,7 +79,7 @@
       deprecated,
       message:
         """
-        Switch over a '@CasePathable' enum and derive bindings from each case using 'Binding(unwrapping: $enum.case).map { $case in … }', instead.
+        Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
         """
     )
   #endif
@@ -119,7 +119,7 @@
       deprecated,
       message:
         """
-        Switch over a '@CasePathable' enum and derive bindings from each case using 'Binding(unwrapping: $enum.case).map { $case in … }', instead.
+        Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
         """
     )
   #endif
@@ -146,7 +146,7 @@
       deprecated,
       message:
         """
-        Switch over a '@CasePathable' enum and derive bindings from each case using 'Binding(unwrapping: $enum.case).map { $case in … }', instead.
+        Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
         """
     )
   #endif

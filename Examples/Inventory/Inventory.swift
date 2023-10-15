@@ -8,6 +8,7 @@ class InventoryModel: ObservableObject {
   }
   @Published var destination: Destination?
 
+  @CasePathable
   enum Destination: Equatable {
     case add(Item)
     case edit(Item)
@@ -83,10 +84,7 @@ struct InventoryView: View {
       }
     }
     .navigationTitle("Inventory")
-    .navigationDestination(
-      unwrapping: self.$model.destination,
-      case: /InventoryModel.Destination.edit
-    ) { $item in
+    .navigationDestination(unwrapping: self.$model.destination.edit) { $item in
       ItemView(item: $item)
         .navigationBarTitle("Edit")
         .navigationBarBackButtonHidden(true)
@@ -103,10 +101,7 @@ struct InventoryView: View {
           }
         }
     }
-    .sheet(
-      unwrapping: self.$model.destination,
-      case: /InventoryModel.Destination.add
-    ) { $itemToAdd in
+    .sheet(unwrapping: self.$model.destination.add) { $itemToAdd in
       NavigationStack {
         ItemView(item: $itemToAdd)
           .navigationTitle("Add")
