@@ -2,7 +2,7 @@
   import SwiftUI
   @_spi(RuntimeWarn) import SwiftUINavigationCore
 
-  // NB: Deprecated after 1.0.0
+  // NB: Deprecated after 1.0.2
 
   extension View {
     @available(
