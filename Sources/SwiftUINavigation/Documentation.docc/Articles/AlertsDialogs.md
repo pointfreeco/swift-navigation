@@ -115,10 +115,13 @@ In such a case:
 @Observable
 class FeatureModel {
   var destination: Destination?
+
+  @CasePathable
   enum Destination {
     case alert(AlertState<AlertAction>)
     // NB: Other destinations
   }
+
   enum AlertAction {
     case deletionConfirmed
   }
@@ -131,7 +134,7 @@ With this kind of set up you can use an alternative `alert` view modifier that t
 argument for specifying which case of the enum drives the presentation of the alert:
 
 ```swift
-.alert(unwrapping: self.$model.destination, case: /Destination.alert) { action in
+.alert(unwrapping: self.$model.destination.alert) { action in
   self.model.alertButtonTapped(action)
 }
 ```
