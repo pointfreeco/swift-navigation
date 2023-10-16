@@ -52,7 +52,6 @@
 		CA473833272F0D860012CAC3 /* 01-Alerts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "01-Alerts.swift"; sourceTree = "<group>"; };
 		CA47383C272F0F0D0012CAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "10-CustomComponents.swift"; sourceTree = "<group>"; };
-		CA53F808295CCA2E00DE68FE /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
 		CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-NavigationLinkList.swift"; sourceTree = "<group>"; };
 		CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "13-IfCaseLet.swift"; sourceTree = "<group>"; };
 		CAAC0071292BDE660083F2FF /* 12-IfLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "12-IfLet.swift"; sourceTree = "<group>"; };
@@ -93,7 +92,6 @@
 				CA4737F2272F09780012CAC3 /* Frameworks */,
 				CA4737C9272F095F0012CAC3 /* Inventory */,
 				CA473795272F08EF0012CAC3 /* Products */,
-				CA53F807295CC9A900DE68FE /* Standups */,
 			);
 			sourceTree = "<group>";
 		};
@@ -148,14 +146,6 @@
 				CA47380A272F0D340012CAC3 /* Assets.xcassets */,
 			);
 			path = CaseStudies;
-			sourceTree = "<group>";
-		};
-		CA53F807295CC9A900DE68FE /* Standups */ = {
-			isa = PBXGroup;
-			children = (
-				CA53F808295CCA2E00DE68FE /* Readme.md */,
-			);
-			path = Standups;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
