@@ -4,7 +4,7 @@
   extension View {
     /// Synchronizes model state to view state via two-way bindings.
     ///
-    /// SwiftUI comes with many property wrappers that can be used in views to drive view state, 
+    /// SwiftUI comes with many property wrappers that can be used in views to drive view state,
     /// like field focus. Unfortunately, these property wrappers _must_ be used in views. It's not
     /// possible to extract this logic to an `@Observable` class and integrate it with the rest of
     /// the model's business logic, and be in a better position to test this state.
