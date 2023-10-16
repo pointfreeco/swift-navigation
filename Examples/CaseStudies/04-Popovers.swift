@@ -14,7 +14,7 @@ struct OptionalPopovers: View {
             Task { await self.model.numberFactButtonTapped() }
           }
           .popover(unwrapping: self.$model.fact, arrowEdge: .bottom) { $fact in
-            NavigationView {
+            NavigationStack {
               FactEditor(fact: $fact.description)
                 .disabled(self.model.isLoading)
                 .foregroundColor(self.model.isLoading ? .gray : nil)

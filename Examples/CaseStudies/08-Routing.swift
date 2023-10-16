@@ -71,17 +71,8 @@ struct Routing: View {
         )
       }
 
-      NavigationLink(unwrapping: self.$destination, case: /Destination.link) { isActive in
-        if isActive {
-          self.destination = .link(self.count)
-        }
-      } destination: { $count in
-        Form {
-          Stepper("Count: \(count)", value: $count)
-        }
-        .navigationTitle("Routing link")
-      } label: {
-        Text("Link")
+      Button("Link") {
+        self.destination = .link(self.count)
       }
 
       Button("Sheet") {
@@ -112,8 +103,14 @@ struct Routing: View {
         break
       }
     }
+    .navigationDestination(unwrapping: self.$destination, case: /Destination.link) { $count in
+      Form {
+        Stepper("Count: \(count)", value: $count)
+      }
+      .navigationTitle("Routing link")
+    }
     .sheet(unwrapping: self.$destination, case: /Destination.sheet) { $count in
-      NavigationView {
+      NavigationStack {
         Form {
           Stepper("Count: \(count)", value: $count)
         }
@@ -124,7 +121,7 @@ struct Routing: View {
 }
 
 #Preview {
-  NavigationView {
+  NavigationStack {
     Routing()
   }
 }

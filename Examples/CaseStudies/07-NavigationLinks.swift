@@ -10,27 +10,8 @@ struct OptionalNavigationLinks: View {
         Stepper("Number: \(self.model.count)", value: self.$model.count)
 
         HStack {
-          NavigationLink(unwrapping: self.$model.fact) { isActive in
-            Task { await self.model.setFactNavigation(isActive: isActive) }
-          } destination: { $fact in
-            FactEditor(fact: $fact.description)
-              .disabled(self.model.isLoading)
-              .foregroundColor(self.model.isLoading ? .gray : nil)
-              .navigationBarBackButtonHidden(true)
-              .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                  Button("Cancel") {
-                    Task { await self.model.cancelButtonTapped() }
-                  }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                  Button("Save") {
-                    Task { await self.model.saveButtonTapped(fact: fact) }
-                  }
-                }
-              }
-          } label: {
-            Text("Get number fact")
+          Button("Get number fact") {
+            Task { await self.model.setFactNavigation(isActive: true) }
           }
 
           if self.model.isLoading {
@@ -50,6 +31,24 @@ struct OptionalNavigationLinks: View {
       } header: {
         Text("Saved Facts")
       }
+    }
+    .navigationDestination(unwrapping: self.$model.fact) { $fact in
+      FactEditor(fact: $fact.description)
+        .disabled(self.model.isLoading)
+        .foregroundColor(self.model.isLoading ? .gray : nil)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+          ToolbarItem(placement: .cancellationAction) {
+            Button("Cancel") {
+              Task { await self.model.cancelButtonTapped() }
+            }
+          }
+          ToolbarItem(placement: .confirmationAction) {
+            Button("Save") {
+              Task { await self.model.saveButtonTapped(fact: fact) }
+            }
+          }
+        }
     }
     .navigationTitle("Links")
   }
@@ -117,7 +116,7 @@ private class FeatureModel {
 }
 
 #Preview {
-  NavigationView {
+  NavigationStack {
     OptionalNavigationLinks()
   }
 }

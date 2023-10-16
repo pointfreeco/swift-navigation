@@ -33,7 +33,7 @@ struct OptionalFullScreenCovers: View {
       }
     }
     .fullScreenCover(unwrapping: self.$model.fact) { $fact in
-      NavigationView {
+      NavigationStack {
         FactEditor(fact: $fact.description)
           .disabled(self.model.isLoading)
           .foregroundColor(self.model.isLoading ? .gray : nil)

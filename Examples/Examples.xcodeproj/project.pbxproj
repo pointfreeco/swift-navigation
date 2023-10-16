@@ -21,13 +21,12 @@
 		CA473838272F0D860012CAC3 /* 03-Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473832272F0D860012CAC3 /* 03-Sheets.swift */; };
 		CA473839272F0D860012CAC3 /* 01-Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473833272F0D860012CAC3 /* 01-Alerts.swift */; };
 		CA47383B272F0DD60012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA47383A272F0DD60012CAC3 /* SwiftUINavigation */; };
-		CA47383E272F0F9B0012CAC3 /* 10-CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */; };
-		CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */; };
-		CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */; };
-		CAAC0072292BDE660083F2FF /* 12-IfLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAC0071292BDE660083F2FF /* 12-IfLet.swift */; };
-		CABE9FC1272F2C0000AFC150 /* 09-Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */; };
+		CA47383E272F0F9B0012CAC3 /* 09-CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47383D272F0F9B0012CAC3 /* 09-CustomComponents.swift */; };
+		CA93236B292BE733004B1130 /* 12-IfCaseLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93236A292BE733004B1130 /* 12-IfCaseLet.swift */; };
+		CAAC0072292BDE660083F2FF /* 11-IfLet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAC0071292BDE660083F2FF /* 11-IfLet.swift */; };
+		CABE9FC1272F2C0000AFC150 /* 08-Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* 08-Routing.swift */; };
 		DC609AD6291D76150052647F /* 06-NavigationDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */; };
-		DC6A8411291F227400B3F6C9 /* 11-SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */; };
+		DC6A8411291F227400B3F6C9 /* 10-SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* 10-SynchronizedBindings.swift */; };
 		DCD4E685273B300F00CDF3BD /* 05-FullScreenCovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */; };
 		DCD4E687273B30DA00CDF3BD /* 04-Popovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E686273B30DA00CDF3BD /* 04-Popovers.swift */; };
 		DCD4E68B274180F500CDF3BD /* 07-NavigationLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E68A274180F500CDF3BD /* 07-NavigationLinks.swift */; };
@@ -51,13 +50,12 @@
 		CA473832272F0D860012CAC3 /* 03-Sheets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "03-Sheets.swift"; sourceTree = "<group>"; };
 		CA473833272F0D860012CAC3 /* 01-Alerts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "01-Alerts.swift"; sourceTree = "<group>"; };
 		CA47383C272F0F0D0012CAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "10-CustomComponents.swift"; sourceTree = "<group>"; };
-		CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-NavigationLinkList.swift"; sourceTree = "<group>"; };
-		CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "13-IfCaseLet.swift"; sourceTree = "<group>"; };
-		CAAC0071292BDE660083F2FF /* 12-IfLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "12-IfLet.swift"; sourceTree = "<group>"; };
-		CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "09-Routing.swift"; sourceTree = "<group>"; };
+		CA47383D272F0F9B0012CAC3 /* 09-CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "09-CustomComponents.swift"; sourceTree = "<group>"; };
+		CA93236A292BE733004B1130 /* 12-IfCaseLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "12-IfCaseLet.swift"; sourceTree = "<group>"; };
+		CAAC0071292BDE660083F2FF /* 11-IfLet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "11-IfLet.swift"; sourceTree = "<group>"; };
+		CABE9FC0272F2C0000AFC150 /* 08-Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-Routing.swift"; sourceTree = "<group>"; };
 		DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "06-NavigationDestinations.swift"; sourceTree = "<group>"; };
-		DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "11-SynchronizedBindings.swift"; sourceTree = "<group>"; };
+		DC6A8410291F227400B3F6C9 /* 10-SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "10-SynchronizedBindings.swift"; sourceTree = "<group>"; };
 		DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-FullScreenCovers.swift"; sourceTree = "<group>"; };
 		DCD4E686273B30DA00CDF3BD /* 04-Popovers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Popovers.swift"; sourceTree = "<group>"; };
 		DCD4E68A274180F500CDF3BD /* 07-NavigationLinks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "07-NavigationLinks.swift"; sourceTree = "<group>"; };
@@ -134,12 +132,11 @@
 				DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */,
 				DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */,
 				DCD4E68A274180F500CDF3BD /* 07-NavigationLinks.swift */,
-				CA70FED6274B1907005A0D53 /* 08-NavigationLinkList.swift */,
-				CABE9FC0272F2C0000AFC150 /* 09-Routing.swift */,
-				CA47383D272F0F9B0012CAC3 /* 10-CustomComponents.swift */,
-				DC6A8410291F227400B3F6C9 /* 11-SynchronizedBindings.swift */,
-				CAAC0071292BDE660083F2FF /* 12-IfLet.swift */,
-				CA93236A292BE733004B1130 /* 13-IfCaseLet.swift */,
+				CABE9FC0272F2C0000AFC150 /* 08-Routing.swift */,
+				CA47383D272F0F9B0012CAC3 /* 09-CustomComponents.swift */,
+				DC6A8410291F227400B3F6C9 /* 10-SynchronizedBindings.swift */,
+				CAAC0071292BDE660083F2FF /* 11-IfLet.swift */,
+				CA93236A292BE733004B1130 /* 12-IfCaseLet.swift */,
 				CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */,
 				CA473831272F0D860012CAC3 /* FactClient.swift */,
 				CA47382E272F0D860012CAC3 /* RootView.swift */,
@@ -200,7 +197,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1310;
+				LastUpgradeCheck = 1510;
 				TargetAttributes = {
 					CA4737C7272F095F0012CAC3 = {
 						CreatedOnToolsVersion = 13.1;
@@ -271,21 +268,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CABE9FC1272F2C0000AFC150 /* 09-Routing.swift in Sources */,
-				DC6A8411291F227400B3F6C9 /* 11-SynchronizedBindings.swift in Sources */,
+				CABE9FC1272F2C0000AFC150 /* 08-Routing.swift in Sources */,
+				DC6A8411291F227400B3F6C9 /* 10-SynchronizedBindings.swift in Sources */,
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
 				CA473835272F0D860012CAC3 /* 02-ConfirmationDialogs.swift in Sources */,
-				CA47383E272F0F9B0012CAC3 /* 10-CustomComponents.swift in Sources */,
-				CA70FED7274B1907005A0D53 /* 08-NavigationLinkList.swift in Sources */,
+				CA47383E272F0F9B0012CAC3 /* 09-CustomComponents.swift in Sources */,
 				CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */,
 				DCD4E687273B30DA00CDF3BD /* 04-Popovers.swift in Sources */,
 				DCD4E685273B300F00CDF3BD /* 05-FullScreenCovers.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
 				CA473839272F0D860012CAC3 /* 01-Alerts.swift in Sources */,
 				DCD4E68B274180F500CDF3BD /* 07-NavigationLinks.swift in Sources */,
-				CAAC0072292BDE660083F2FF /* 12-IfLet.swift in Sources */,
+				CAAC0072292BDE660083F2FF /* 11-IfLet.swift in Sources */,
 				DC609AD6291D76150052647F /* 06-NavigationDestinations.swift in Sources */,
-				CA93236B292BE733004B1130 /* 13-IfCaseLet.swift in Sources */,
+				CA93236B292BE733004B1130 /* 12-IfCaseLet.swift in Sources */,
 				CA473838272F0D860012CAC3 /* 03-Sheets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,6 +326,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -391,6 +388,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
