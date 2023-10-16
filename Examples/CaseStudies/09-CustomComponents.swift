@@ -117,8 +117,6 @@ extension View {
   }
 }
 
-struct CustomComponents_Previews: PreviewProvider {
-  static var previews: some View {
-    CustomComponents()
-  }
+#Preview {
+  CustomComponents()
 }

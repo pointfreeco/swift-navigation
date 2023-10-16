@@ -15,7 +15,8 @@ your model, as well as an enum that describes every action that can happen in th
 
 
 ```swift
-class FeatureModel: ObservableObject {
+@Observable
+class FeatureModel {
   var alert: AlertState<AlertAction>?
   enum AlertAction {
     case deletionConfirmed
@@ -111,7 +112,8 @@ navigate to multiple, mutually exclusive screens, then an enum is more appropria
 In such a case:
 
 ```swift
-class FeatureModel: ObservableObject {
+@Observable
+class FeatureModel {
   var destination: Destination?
   enum Destination {
     case alert(AlertState<AlertAction>)
@@ -146,7 +148,8 @@ of alerts.
 For example, the model for a delete confirmation could look like this:
 
 ```swift
-class FeatureModel: ObservableObject {
+@Observable
+class FeatureModel {
   var dialog: ConfirmationDialogState<DialogAction>?
   enum DialogAction {
     case deletionConfirmed

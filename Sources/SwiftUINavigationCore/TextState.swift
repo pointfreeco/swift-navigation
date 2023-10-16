@@ -16,8 +16,9 @@
   /// ``TextState``:
   ///
   /// ```swift
-  /// class Model: Equatable {
-  ///   @Published var label = TextState("")
+  /// @Observable
+  /// class Model {
+  ///   var label = TextState("")
   /// }
   /// ```
   ///
