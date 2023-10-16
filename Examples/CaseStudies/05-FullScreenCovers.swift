@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftUINavigation
 
 struct OptionalFullScreenCovers: View {
-  @ObservedObject private var model = FeatureModel()
+  @State private var model = FeatureModel()
 
   var body: some View {
     List {
@@ -11,7 +11,7 @@ struct OptionalFullScreenCovers: View {
 
         HStack {
           Button("Get number fact") {
-            self.model.numberFactButtonTapped()
+            Task { await self.model.numberFactButtonTapped() }
           }
 
           if self.model.isLoading {
@@ -33,7 +33,7 @@ struct OptionalFullScreenCovers: View {
       }
     }
     .fullScreenCover(unwrapping: self.$model.fact) { $fact in
-      NavigationView {
+      NavigationStack {
         FactEditor(fact: $fact.description)
           .disabled(self.model.isLoading)
           .foregroundColor(self.model.isLoading ? .gray : nil)
@@ -67,31 +67,36 @@ private struct FactEditor: View {
   }
 }
 
-@MainActor
-private class FeatureModel: ObservableObject {
-  @Published var count = 0
-  @Published var fact: Fact?
-  @Published var isLoading = false
-  @Published var savedFacts: [Fact] = []
-  private var task: Task<Void, Error>?
+@Observable
+private class FeatureModel {
+  var count = 0
+  var fact: Fact?
+  var isLoading = false
+  var savedFacts: [Fact] = []
+  private var task: Task<Void, Never>?
 
-  func numberFactButtonTapped() {
+  @MainActor
+  func numberFactButtonTapped() async {
     self.isLoading = true
     self.fact = Fact(description: "\(self.count) is still loading...", number: self.count)
     self.task = Task {
       let fact = await getNumberFact(self.count)
       self.isLoading = false
-      try Task.checkCancellation()
+      guard !Task.isCancelled
+      else { return }
       self.fact = fact
     }
+    await self.task?.value
   }
 
+  @MainActor
   func cancelButtonTapped() {
     self.task?.cancel()
     self.task = nil
     self.fact = nil
   }
 
+  @MainActor
   func saveButtonTapped(fact: Fact) {
     self.task?.cancel()
     self.task = nil
@@ -99,7 +104,12 @@ private class FeatureModel: ObservableObject {
     self.fact = nil
   }
 
+  @MainActor
   func removeSavedFacts(atOffsets offsets: IndexSet) {
     self.savedFacts.remove(atOffsets: offsets)
   }
+}
+
+#Preview {
+  OptionalFullScreenCovers()
 }

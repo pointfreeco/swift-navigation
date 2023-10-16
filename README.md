@@ -57,7 +57,7 @@ reading these articles:
   Learn how to present alerts and confirmation dialogs in a concise and testable manner.
   
 * **[Bindings][bindings]**:
-  Learn how to manage certain view state, such as `@FocusState` directly in your observable object.
+  Learn how to manage certain view state, such as `@FocusState` directly in your observable classes.
   
 ## Examples
 

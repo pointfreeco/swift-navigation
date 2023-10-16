@@ -13,7 +13,8 @@
   /// alerts as an enum:
   ///
   /// ```swift
-  /// class HomeScreenModel: ObservableObject {
+  /// @Observable
+  /// class HomeScreenModel {
   ///   enum AlertAction {
   ///     case delete
   ///     case removeFromHomeScreen
@@ -22,12 +23,13 @@
   /// }
   /// ```
   ///
-  /// Then you hold onto optional `AlertState` as a `@Published` field in your model, which can
+  /// Then you hold onto optional `AlertState` as a field in your model, which can
   /// start off as `nil`:
   ///
   /// ```swift
-  /// class HomeScreenModel: ObservableObject {
-  ///   @Published var alert: AlertState<AlertAction>?
+  /// @Observable
+  /// class HomeScreenModel {
+  ///   var alert: AlertState<AlertAction>?
   ///   // ...
   /// }
   /// ```
@@ -35,7 +37,8 @@
   /// And you define an endpoint for handling each alert action:
   ///
   /// ```swift
-  /// class HomeScreenModel: ObservableObject {
+  /// @Observable
+  /// class HomeScreenModel {
   ///   // ...
   ///   func alertButtonTapped(_ action: AlertAction?) {
   ///     switch action {
@@ -54,7 +57,8 @@
   /// represent the alert:
   ///
   /// ```swift
-  /// class HomeScreenModel: ObservableObject {
+  /// @Observable
+  /// class HomeScreenModel {
   ///   // ...
   ///   func deleteAppButtonTapped() {
   ///     self.alert = AlertState {
