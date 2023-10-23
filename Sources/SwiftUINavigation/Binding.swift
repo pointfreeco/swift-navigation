@@ -37,7 +37,10 @@
       return Binding<AssociatedValue?>(
         get: { self.wrappedValue[keyPath: (\Enum?.Cases.some).appending(path: keyPath)] },
         set: { newValue, transaction in
-          guard let newValue else { return }
+          guard let newValue else {
+            self.transaction(transaction).wrappedValue = nil
+            return
+          }
           self.transaction(transaction).wrappedValue[
             keyPath: (\Enum?.Cases.some).appending(path: keyPath)
           ] = newValue
