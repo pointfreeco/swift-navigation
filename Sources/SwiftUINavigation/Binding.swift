@@ -15,10 +15,10 @@
     where Value: CasePathable {
       Binding<Member>(
         unwrapping: Binding<Member?>(
-          get: { self.wrappedValue[keyPath: keyPath] },
+          get: { self.wrappedValue[case: keyPath] },
           set: { newValue, transaction in
             guard let newValue else { return }
-            self.transaction(transaction).wrappedValue[keyPath: keyPath] = newValue
+            self.transaction(transaction).wrappedValue[case: keyPath] = newValue
           }
         )
       )
@@ -35,14 +35,14 @@
     ) -> Binding<AssociatedValue?>
     where Value == Enum? {
       return Binding<AssociatedValue?>(
-        get: { self.wrappedValue[keyPath: (\Enum?.Cases.some).appending(path: keyPath)] },
+        get: { self.wrappedValue[case: (\Enum?.Cases.some).appending(path: keyPath)] },
         set: { newValue, transaction in
           guard let newValue else {
             self.transaction(transaction).wrappedValue = nil
             return
           }
           self.transaction(transaction).wrappedValue[
-            keyPath: (\Enum?.Cases.some).appending(path: keyPath)
+            case: (\Enum?.Cases.some).appending(path: keyPath)
           ] = newValue
         }
       )
