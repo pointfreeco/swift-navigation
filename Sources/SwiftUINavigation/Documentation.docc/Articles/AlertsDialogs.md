@@ -93,7 +93,7 @@ it:
 
 ```swift
 func testDelete() {
-  let model = FeatureModel(…)
+  let model = FeatureModel(/* ... */)
 
   model.deleteButtonTapped()
   XCTAssertEqual(model.alert?.title, TextState("Are you sure?"))
@@ -107,7 +107,7 @@ This works because all of the types for describing an alert are `Equatable`, inc
 `TextState`, and even the buttons.
 
 Sometimes it is not optimal to model the alert as an optional. In particular, if a feature can
-navigate to multiple, mutually exclusive screens, then an enum is more appropriate.
+navigate to multiple, mutually exclusive screens, then a "case-pathable" enum is more appropriate.
 
 In such a case:
 
