@@ -61,7 +61,7 @@
       @ViewBuilder message: (Value) -> M
     ) -> some View {
       self.alert(
-        value.wrappedValue.map(title) ?? Text(""),
+        value.wrappedValue.map(title) ?? Text(verbatim: ""),
         isPresented: value.isPresent(),
         presenting: value.wrappedValue,
         actions: actions,
@@ -88,7 +88,7 @@
         action handler: @escaping (Value?) -> Void = { (_: Never?) in }
       ) -> some View {
         self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(""),
+          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           presenting: value.wrappedValue,
           actions: {
@@ -121,7 +121,7 @@
         action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
       ) -> some View {
         self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(""),
+          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           presenting: value.wrappedValue,
           actions: {
@@ -139,7 +139,7 @@
         action handler: @escaping (Value?) -> Void
       ) -> some View {
         self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(""),
+          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           presenting: value.wrappedValue,
           actions: {
@@ -157,7 +157,7 @@
         action handler: @escaping (Value?) async -> Void
       ) -> some View {
         self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(""),
+          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           presenting: value.wrappedValue,
           actions: {
@@ -174,7 +174,7 @@
         unwrapping value: Binding<AlertState<Never>?>
       ) -> some View {
         self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(""),
+          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           presenting: value.wrappedValue,
           actions: {

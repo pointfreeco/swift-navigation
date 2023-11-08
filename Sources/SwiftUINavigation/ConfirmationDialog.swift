@@ -66,7 +66,7 @@
       @ViewBuilder message: (Value) -> M
     ) -> some View {
       self.confirmationDialog(
-        value.wrappedValue.map(title) ?? Text(""),
+        value.wrappedValue.map(title) ?? Text(verbatim: ""),
         isPresented: value.isPresent(),
         titleVisibility: titleVisibility,
         presenting: value.wrappedValue,
@@ -94,7 +94,7 @@
         action handler: @escaping (Value?) -> Void = { (_: Never?) in }
       ) -> some View {
         self.confirmationDialog(
-          value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
+          value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
           presenting: value.wrappedValue,
@@ -128,7 +128,7 @@
         action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
       ) -> some View {
         self.confirmationDialog(
-          value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
+          value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
           presenting: value.wrappedValue,
@@ -147,7 +147,7 @@
         action handler: @escaping (Value?) -> Void
       ) -> some View {
         self.confirmationDialog(
-          value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
+          value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
           presenting: value.wrappedValue,
@@ -166,7 +166,7 @@
         action handler: @escaping (Value?) async -> Void
       ) -> some View {
         self.confirmationDialog(
-          value.wrappedValue.flatMap { Text($0.title) } ?? Text(""),
+          value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
           isPresented: value.isPresent(),
           titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
           presenting: value.wrappedValue,
