@@ -69,124 +69,67 @@
       )
     }
 
-    #if swift(>=5.7)
-      /// Presents an alert from a binding to optional alert state.
-      ///
-      /// See <doc:AlertsDialogs> for more information on how to use this API.
-      ///
-      /// - Parameters:
-      ///   - value: A binding to an optional value that determines whether an alert should be
-      ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
-      ///     populate the fields of an alert that the system displays to the user. When the user
-      ///     presses or taps one of the alert's actions, the system sets this value to `nil` and
-      ///     dismisses the alert, and the action is fed to the `action` closure.
-      ///   - handler: A closure that is called with an action from a particular alert button when
-      ///     tapped.
-      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-      public func alert<Value>(
-        unwrapping value: Binding<AlertState<Value>?>,
-        action handler: @escaping (Value?) -> Void = { (_: Never?) in }
-      ) -> some View {
-        self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-          isPresented: value.isPresent(),
-          presenting: value.wrappedValue,
-          actions: {
-            ForEach($0.buttons) {
-              Button($0, action: handler)
-            }
-          },
-          message: { $0.message.map { Text($0) } }
-        )
-      }
+    /// Presents an alert from a binding to optional alert state.
+    ///
+    /// See <doc:AlertsDialogs> for more information on how to use this API.
+    ///
+    /// - Parameters:
+    ///   - value: A binding to an optional value that determines whether an alert should be
+    ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
+    ///     populate the fields of an alert that the system displays to the user. When the user
+    ///     presses or taps one of the alert's actions, the system sets this value to `nil` and
+    ///     dismisses the alert, and the action is fed to the `action` closure.
+    ///   - handler: A closure that is called with an action from a particular alert button when
+    ///     tapped.
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert<Value>(
+      unwrapping value: Binding<AlertState<Value>?>,
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
+    ) -> some View {
+      self.alert(
+        (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
+        isPresented: value.isPresent(),
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: handler)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
 
-      /// Presents an alert from a binding to optional alert state.
-      ///
-      /// See <doc:AlertsDialogs> for more information on how to use this API.
-      ///
-      /// > Warning: Async closures cannot be performed with animation. If the underlying action is
-      /// > animated, a runtime warning will be emitted.
-      ///
-      /// - Parameters:
-      ///   - value: A binding to an optional value that determines whether an alert should be
-      ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
-      ///     populate the fields of an alert that the system displays to the user. When the user
-      ///     presses or taps one of the alert's actions, the system sets this value to `nil` and
-      ///     dismisses the alert, and the action is fed to the `action` closure.
-      ///   - handler: A closure that is called with an action from a particular alert button when
-      ///     tapped.
-      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-      public func alert<Value>(
-        unwrapping value: Binding<AlertState<Value>?>,
-        action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
-      ) -> some View {
-        self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-          isPresented: value.isPresent(),
-          presenting: value.wrappedValue,
-          actions: {
-            ForEach($0.buttons) {
-              Button($0, action: handler)
-            }
-          },
-          message: { $0.message.map { Text($0) } }
-        )
-      }
-    #else
-      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-      public func alert<Value>(
-        unwrapping value: Binding<AlertState<Value>?>,
-        action handler: @escaping (Value?) -> Void
-      ) -> some View {
-        self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-          isPresented: value.isPresent(),
-          presenting: value.wrappedValue,
-          actions: {
-            ForEach($0.buttons) {
-              Button($0, action: handler)
-            }
-          },
-          message: { $0.message.map { Text($0) } }
-        )
-      }
-
-      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-      public func alert<Value>(
-        unwrapping value: Binding<AlertState<Value>?>,
-        action handler: @escaping (Value?) async -> Void
-      ) -> some View {
-        self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-          isPresented: value.isPresent(),
-          presenting: value.wrappedValue,
-          actions: {
-            ForEach($0.buttons) {
-              Button($0, action: handler)
-            }
-          },
-          message: { $0.message.map { Text($0) } }
-        )
-      }
-
-      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-      public func alert(
-        unwrapping value: Binding<AlertState<Never>?>
-      ) -> some View {
-        self.alert(
-          (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-          isPresented: value.isPresent(),
-          presenting: value.wrappedValue,
-          actions: {
-            ForEach($0.buttons) {
-              Button($0) { _ in }
-            }
-          },
-          message: { $0.message.map { Text($0) } }
-        )
-      }
-    #endif
-
-    // TODO: support iOS <15?
+    /// Presents an alert from a binding to optional alert state.
+    ///
+    /// See <doc:AlertsDialogs> for more information on how to use this API.
+    ///
+    /// > Warning: Async closures cannot be performed with animation. If the underlying action is
+    /// > animated, a runtime warning will be emitted.
+    ///
+    /// - Parameters:
+    ///   - value: A binding to an optional value that determines whether an alert should be
+    ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
+    ///     populate the fields of an alert that the system displays to the user. When the user
+    ///     presses or taps one of the alert's actions, the system sets this value to `nil` and
+    ///     dismisses the alert, and the action is fed to the `action` closure.
+    ///   - handler: A closure that is called with an action from a particular alert button when
+    ///     tapped.
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    public func alert<Value>(
+      unwrapping value: Binding<AlertState<Value>?>,
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+    ) -> some View {
+      self.alert(
+        (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
+        isPresented: value.isPresent(),
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: handler)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
   }
 #endif  // canImport(SwiftUI)

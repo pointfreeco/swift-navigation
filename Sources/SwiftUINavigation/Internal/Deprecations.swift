@@ -40,146 +40,62 @@
       )
     }
 
-    #if swift(>=5.7)
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func alert<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: AnyCasePath<Enum, AlertState<Value>>,
-        action handler: @escaping (Value?) -> Void = { (_: Never?) in }
-      ) -> some View {
-        self.alert(unwrapping: `enum`.case(casePath), action: handler)
-      }
+    @available(
+      iOS, introduced: 15, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      macOS, introduced: 12, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      tvOS, introduced: 15, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      watchOS, introduced: 8, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    public func alert<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: AnyCasePath<Enum, AlertState<Value>>,
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
+    ) -> some View {
+      self.alert(unwrapping: `enum`.case(casePath), action: handler)
+    }
 
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func alert<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: AnyCasePath<Enum, AlertState<Value>>,
-        action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
-      ) -> some View {
-        self.alert(unwrapping: `enum`.case(casePath), action: handler)
-      }
-    #else
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func alert<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, AlertState<Value>>,
-        action handler: @escaping (Value?) -> Void
-      ) -> some View {
-        self.alert(unwrapping: `enum`.case(casePath), action: handler)
-      }
+    @available(
+      iOS, introduced: 15, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      macOS, introduced: 12, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      tvOS, introduced: 15, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      watchOS, introduced: 8, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    public func alert<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: AnyCasePath<Enum, AlertState<Value>>,
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+    ) -> some View {
+      self.alert(unwrapping: `enum`.case(casePath), action: handler)
+    }
 
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func alert<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, AlertState<Value>>,
-        action handler: @escaping (Value?) async -> Void
-      ) -> some View {
-        self.alert(unwrapping: `enum`.case(casePath), action: handler)
-      }
-
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func alert<Enum>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, AlertState<Never>>
-      ) -> some View {
-        self.alert(unwrapping: `enum`.case(casePath)) { (_: Never?) in }
-      }
-    #endif
     @available(
       iOS, introduced: 15, deprecated: 9999,
       message:
@@ -217,158 +133,67 @@
       )
     }
 
-    #if swift(>=5.7)
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    @available(
+      iOS, introduced: 15, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      macOS, introduced: 12, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      tvOS, introduced: 15, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      watchOS, introduced: 8, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    public func confirmationDialog<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: AnyCasePath<Enum, ConfirmationDialogState<Value>>,
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
+    ) -> some View {
+      self.confirmationDialog(
+        unwrapping: `enum`.case(casePath),
+        action: handler
       )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func confirmationDialog<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: AnyCasePath<Enum, ConfirmationDialogState<Value>>,
-        action handler: @escaping (Value?) -> Void = { (_: Never?) in }
-      ) -> some View {
-        self.confirmationDialog(
-          unwrapping: `enum`.case(casePath),
-          action: handler
-        )
-      }
+    }
 
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    @available(
+      iOS, introduced: 15, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      macOS, introduced: 12, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      tvOS, introduced: 15, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      watchOS, introduced: 8, deprecated: 9999,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    public func confirmationDialog<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: AnyCasePath<Enum, ConfirmationDialogState<Value>>,
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+    ) -> some View {
+      self.confirmationDialog(
+        unwrapping: `enum`.case(casePath),
+        action: handler
       )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func confirmationDialog<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: AnyCasePath<Enum, ConfirmationDialogState<Value>>,
-        action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
-      ) -> some View {
-        self.confirmationDialog(
-          unwrapping: `enum`.case(casePath),
-          action: handler
-        )
-      }
-    #else
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func confirmationDialog<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-        action handler: @escaping (Value?) -> Void
-      ) -> some View {
-        self.confirmationDialog(
-          unwrapping: `enum`.case(casePath),
-          action: handler
-        )
-      }
-
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func confirmationDialog<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-        action handler: @escaping (Value?) async -> Void
-      ) -> some View {
-        self.confirmationDialog(
-          unwrapping: `enum`.case(casePath),
-          action: handler
-        )
-      }
-
-      @available(
-        iOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        macOS, introduced: 12, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        tvOS, introduced: 15, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      @available(
-        watchOS, introduced: 8, deprecated: 9999,
-        message:
-          "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-      )
-      public func confirmationDialog<Enum>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, ConfirmationDialogState<Never>>
-      ) -> some View {
-        self.confirmationDialog(unwrapping: `enum`.case(casePath)) { _ in }
-      }
-    #endif
+    }
 
     @available(
       iOS, introduced: 14, deprecated: 9999,
@@ -1965,171 +1790,87 @@
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension View {
-    #if swift(>=5.7)
-      @_disfavoredOverload
-      @available(
-        *,
-        deprecated,
-        message:
-          """
-        'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
+    @_disfavoredOverload
+    @available(
+      *,
+      deprecated,
+      message:
         """
-      )
-      public func alert<Value>(
-        unwrapping value: Binding<AlertState<Value>?>,
-        action handler: @escaping (Value) async -> Void = { (_: Void) async in }
-      ) -> some View {
-        self.alert(unwrapping: value) { (value: Value?) in
-          if let value = value {
-            await handler(value)
-          }
+      'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
+      """
+    )
+    public func alert<Value>(
+      unwrapping value: Binding<AlertState<Value>?>,
+      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+    ) -> some View {
+      self.alert(unwrapping: value) { (value: Value?) in
+        if let value = value {
+          await handler(value)
         }
       }
+    }
 
-      @_disfavoredOverload
-      @available(
-        *,
-        deprecated,
-        message:
-          """
-        'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
+    @_disfavoredOverload
+    @available(
+      *,
+      deprecated,
+      message:
         """
-      )
-      public func alert<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, AlertState<Value>>,
-        action handler: @escaping (Value) async -> Void = { (_: Void) async in }
-      ) -> some View {
-        self.alert(unwrapping: `enum`, case: casePath) { (value: Value?) async in
-          if let value = value {
-            await handler(value)
-          }
+      'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
+      """
+    )
+    public func alert<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: CasePath<Enum, AlertState<Value>>,
+      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+    ) -> some View {
+      self.alert(unwrapping: `enum`, case: casePath) { (value: Value?) async in
+        if let value = value {
+          await handler(value)
         }
       }
+    }
 
-      @_disfavoredOverload
-      @available(
-        *,
-        deprecated,
-        message:
-          """
-        'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
+    @_disfavoredOverload
+    @available(
+      *,
+      deprecated,
+      message:
         """
-      )
-      public func confirmationDialog<Value>(
-        unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-        action handler: @escaping (Value) async -> Void = { (_: Void) async in }
-      ) -> some View {
-        self.confirmationDialog(unwrapping: value) { (value: Value?) in
-          if let value = value {
-            await handler(value)
-          }
+      'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
+      """
+    )
+    public func confirmationDialog<Value>(
+      unwrapping value: Binding<ConfirmationDialogState<Value>?>,
+      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+    ) -> some View {
+      self.confirmationDialog(unwrapping: value) { (value: Value?) in
+        if let value = value {
+          await handler(value)
         }
       }
+    }
 
-      @_disfavoredOverload
-      @available(
-        *,
-        deprecated,
-        message:
-          """
-        'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
+    @_disfavoredOverload
+    @available(
+      *,
+      deprecated,
+      message:
         """
-      )
-      public func confirmationDialog<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-        action handler: @escaping (Value) async -> Void = { (_: Void) async in }
-      ) -> some View {
-        self.confirmationDialog(unwrapping: `enum`, case: casePath) { (value: Value?) async in
-          if let value = value {
-            await handler(value)
-          }
+      'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
+      """
+    )
+    public func confirmationDialog<Enum, Value>(
+      unwrapping `enum`: Binding<Enum?>,
+      case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
+      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+    ) -> some View {
+      self.confirmationDialog(unwrapping: `enum`, case: casePath) { (value: Value?) async in
+        if let value = value {
+          await handler(value)
         }
       }
-    #else
-      @_disfavoredOverload
-      @available(
-        *,
-        deprecated,
-        message:
-          """
-        'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
-        """
-      )
-      public func alert<Value>(
-        unwrapping value: Binding<AlertState<Value>?>,
-        action handler: @escaping (Value) async -> Void
-      ) -> some View {
-        self.alert(unwrapping: value) { (value: Value?) in
-          if let value = value {
-            await handler(value)
-          }
-        }
-      }
-
-      @_disfavoredOverload
-      @available(
-        *,
-        deprecated,
-        message:
-          """
-        'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
-        """
-      )
-      public func alert<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, AlertState<Value>>,
-        action handler: @escaping (Value) async -> Void
-      ) -> some View {
-        self.alert(unwrapping: `enum`, case: casePath) { (value: Value?) async in
-          if let value = value {
-            await handler(value)
-          }
-        }
-      }
-
-      @_disfavoredOverload
-      @available(
-        *,
-        deprecated,
-        message:
-          """
-        'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
-        """
-      )
-      public func confirmationDialog<Value>(
-        unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-        action handler: @escaping (Value) async -> Void
-      ) -> some View {
-        self.confirmationDialog(unwrapping: value) { (value: Value?) in
-          if let value = value {
-            await handler(value)
-          }
-        }
-      }
-
-      @_disfavoredOverload
-      @available(
-        *,
-        deprecated,
-        message:
-          """
-        'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
-        """
-      )
-      public func confirmationDialog<Enum, Value>(
-        unwrapping `enum`: Binding<Enum?>,
-        case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-        action handler: @escaping (Value) async -> Void
-      ) -> some View {
-        self.confirmationDialog(unwrapping: `enum`, case: casePath) { (value: Value?) async in
-          if let value = value {
-            await handler(value)
-          }
-        }
-      }
-    #endif
+    }
   }
 
   // NB: Deprecated after 0.3.0
