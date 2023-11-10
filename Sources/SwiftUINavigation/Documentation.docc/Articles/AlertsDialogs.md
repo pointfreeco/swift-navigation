@@ -81,7 +81,7 @@ struct ContentView: View {
     List {
       // ...
     }
-    .alert(unwrapping: self.$model.alert) { action in
+    .alert(self.$model.alert) { action in
       self.model.alertButtonTapped(action)
     }
   }
@@ -134,7 +134,7 @@ With this kind of set up you can use an alternative `alert` view modifier that t
 argument for specifying which case of the enum drives the presentation of the alert:
 
 ```swift
-.alert(unwrapping: self.$model.destination.alert) { action in
+.alert(self.$model.destination.alert) { action in
   self.model.alertButtonTapped(action)
 }
 ```

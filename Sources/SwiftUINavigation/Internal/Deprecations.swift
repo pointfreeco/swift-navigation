@@ -4,6 +4,83 @@
 
   // NB: Deprecated after 1.0.2
 
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+  extension View {
+    @available(*, deprecated, renamed: "alert(_:action:)")
+    public func alert<Value>(
+      unwrapping value: Binding<AlertState<Value>?>,
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
+    ) -> some View {
+      self.alert(
+        (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
+        isPresented: value.isPresent(),
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: handler)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
+
+    @available(*, deprecated, renamed: "alert(_:action:)")
+    public func alert<Value>(
+      unwrapping value: Binding<AlertState<Value>?>,
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+    ) -> some View {
+      self.alert(
+        (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
+        isPresented: value.isPresent(),
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: handler)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
+
+    @available(*, deprecated, renamed: "confirmationDialog(_:action:)")
+    public func confirmationDialog<Value>(
+      unwrapping value: Binding<ConfirmationDialogState<Value>?>,
+      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
+    ) -> some View {
+      self.confirmationDialog(
+        value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
+        isPresented: value.isPresent(),
+        titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: handler)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
+
+    @available(*, deprecated, renamed: "confirmationDialog(_:action:)")
+    public func confirmationDialog<Value>(
+      unwrapping value: Binding<ConfirmationDialogState<Value>?>,
+      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+    ) -> some View {
+      self.confirmationDialog(
+        value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
+        isPresented: value.isPresent(),
+        titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
+        presenting: value.wrappedValue,
+        actions: {
+          ForEach($0.buttons) {
+            Button($0, action: handler)
+          }
+        },
+        message: { $0.message.map { Text($0) } }
+      )
+    }
+  }
+
   extension View {
     @available(
       iOS, introduced: 15, deprecated: 9999,
@@ -65,7 +142,7 @@
       case casePath: AnyCasePath<Enum, AlertState<Value>>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
-      self.alert(unwrapping: `enum`.case(casePath), action: handler)
+      self.alert(`enum`.case(casePath), action: handler)
     }
 
     @available(
@@ -93,7 +170,7 @@
       case casePath: AnyCasePath<Enum, AlertState<Value>>,
       action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
-      self.alert(unwrapping: `enum`.case(casePath), action: handler)
+      self.alert(`enum`.case(casePath), action: handler)
     }
 
     @available(
@@ -159,7 +236,7 @@
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
       self.confirmationDialog(
-        unwrapping: `enum`.case(casePath),
+        `enum`.case(casePath),
         action: handler
       )
     }
@@ -190,7 +267,7 @@
       action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       self.confirmationDialog(
-        unwrapping: `enum`.case(casePath),
+        `enum`.case(casePath),
         action: handler
       )
     }
@@ -1803,7 +1880,7 @@
       unwrapping value: Binding<AlertState<Value>?>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
-      self.alert(unwrapping: value) { (value: Value?) in
+      self.alert(value) { (value: Value?) in
         if let value = value {
           await handler(value)
         }

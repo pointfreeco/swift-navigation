@@ -115,7 +115,7 @@ struct ItemRowView: View {
       }
       .buttonStyle(.plain)
       .foregroundColor(self.model.item.status.is(\.inStock) ? nil : Color.gray)
-      .alert(unwrapping: self.$model.destination.alert) {
+      .alert(self.$model.destination.alert) {
         self.model.alertButtonTapped($0)
       }
       .popover(unwrapping: self.$model.destination.duplicate) { $item in

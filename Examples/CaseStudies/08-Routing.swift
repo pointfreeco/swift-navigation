@@ -81,7 +81,7 @@ struct Routing: View {
       }
     }
     .navigationTitle("Routing")
-    .alert(unwrapping: self.$destination.alert) { action in
+    .alert(self.$destination.alert) { action in
       switch action {
       case .randomize?:
         self.count = .random(in: 0...1_000)
@@ -91,7 +91,7 @@ struct Routing: View {
         break
       }
     }
-    .confirmationDialog(unwrapping: self.$destination.confirmationDialog) { action in
+    .confirmationDialog(self.$destination.confirmationDialog) { action in
       switch action {
       case .decrement?:
         self.count -= 1

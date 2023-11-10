@@ -80,7 +80,7 @@
     /// See <doc:AlertsDialogs> for more information on how to use this API.
     ///
     /// - Parameters:
-    ///   - value: A binding to an optional value that determines whether a confirmation dialog should
+    ///   - state: A binding to optional state that determines whether a confirmation dialog should
     ///     be presented. When the binding is updated with non-`nil` value, it is unwrapped and used
     ///     to populate the fields of a dialog that the system displays to the user. When the user
     ///     presses or taps one of the dialog's actions, the system sets this value to `nil` and
@@ -89,14 +89,14 @@
     ///     tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
-      unwrapping value: Binding<ConfirmationDialogState<Value>?>,
+      _ state: Binding<ConfirmationDialogState<Value>?>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
       self.confirmationDialog(
-        value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
-        titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
-        presenting: value.wrappedValue,
+        state.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
+        isPresented: state.isPresent(),
+        titleVisibility: state.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
+        presenting: state.wrappedValue,
         actions: {
           ForEach($0.buttons) {
             Button($0, action: handler)
@@ -114,7 +114,7 @@
     /// > animated, a runtime warning will be emitted.
     ///
     /// - Parameters:
-    ///   - value: A binding to an optional value that determines whether a confirmation dialog should
+    ///   - state: A binding to optional state that determines whether a confirmation dialog should
     ///     be presented. When the binding is updated with non-`nil` value, it is unwrapped and used
     ///     to populate the fields of a dialog that the system displays to the user. When the user
     ///     presses or taps one of the dialog's actions, the system sets this value to `nil` and
@@ -123,14 +123,14 @@
     ///     tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public func confirmationDialog<Value>(
-      unwrapping value: Binding<ConfirmationDialogState<Value>?>,
+      _ state: Binding<ConfirmationDialogState<Value>?>,
       action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       self.confirmationDialog(
-        value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
-        titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
-        presenting: value.wrappedValue,
+        state.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
+        isPresented: state.isPresent(),
+        titleVisibility: state.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
+        presenting: state.wrappedValue,
         actions: {
           ForEach($0.buttons) {
             Button($0, action: handler)

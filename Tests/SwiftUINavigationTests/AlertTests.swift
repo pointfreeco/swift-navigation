@@ -106,7 +106,7 @@
 
     var body: some View {
       Text("")
-        .alert(unwrapping: self.$alert) {
+        .alert(self.$alert) {
           await self.alertButtonTapped($0)
         }
     }
