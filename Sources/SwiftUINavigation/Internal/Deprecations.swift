@@ -490,30 +490,22 @@
     @available(
       iOS, deprecated: 9999,
       message:
-        """
-        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
-        """
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       macOS, deprecated: 9999,
       message:
-        """
-        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
-        """
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       tvOS, deprecated: 9999,
       message:
-        """
-        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
-        """
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       watchOS, deprecated: 9999,
       message:
-        """
-        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
-        """
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     public init(
       _ `enum`: Binding<Enum>,
@@ -538,31 +530,19 @@
 
   @available(
     iOS, deprecated: 9999,
-    message:
-      """
-      Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
-      """
+    message: "Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead."
   )
   @available(
     macOS, deprecated: 9999,
-    message:
-      """
-      Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
-      """
+    message: "Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead."
   )
   @available(
     tvOS, deprecated: 9999,
-    message:
-      """
-      Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
-      """
+    message: "Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead."
   )
   @available(
     watchOS, deprecated: 9999,
-    message:
-      """
-      Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
-      """
+    message: "Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead."
   )
   extension IfCaseLet where ElseContent == EmptyView {
     public init(
@@ -586,30 +566,22 @@
     @available(
       iOS, deprecated: 9999,
       message:
-        """
-        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
-        """
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       macOS, deprecated: 9999,
       message:
-        """
-        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
-        """
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       tvOS, deprecated: 9999,
       message:
-        """
-        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
-        """
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       watchOS, deprecated: 9999,
       message:
-        """
-        Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead.
-        """
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     public init(
       _ value: Binding<Value?>,
@@ -632,31 +604,19 @@
 
   @available(
     iOS, deprecated: 9999,
-    message:
-      """
-      Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
-      """
+    message: "Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead."
   )
   @available(
     macOS, deprecated: 9999,
-    message:
-      """
-      Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
-      """
+    message: "Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead."
   )
   @available(
     tvOS, deprecated: 9999,
-    message:
-      """
-      Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
-      """
+    message: "Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead."
   )
   @available(
     watchOS, deprecated: 9999,
-    message:
-      """
-      Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead.
-      """
+    message: "Use '$enum.case.map { $case in … }' with a '@CasePathable' enum, instead."
   )
   extension IfLet where ElseContent == EmptyView {
     public init(
@@ -707,30 +667,22 @@
   @available(
     iOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     macOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     tvOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     watchOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   public struct Switch<Enum, Content: View>: View {
     public let `enum`: Binding<Enum>
@@ -753,30 +705,22 @@
   @available(
     iOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     macOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     tvOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     watchOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   public struct CaseLet<Enum, Case, Content>: View
   where Content: View {
@@ -800,30 +744,22 @@
   @available(
     iOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     macOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     tvOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     watchOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   public struct Default<Content: View>: View {
     private let content: Content
@@ -840,30 +776,22 @@
   @available(
     iOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     macOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     tvOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     watchOS, deprecated: 9999,
     message:
-      """
-      Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead.
-      """
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   extension Switch {
     public init<Case1, Content1, DefaultContent>(
@@ -1872,9 +1800,7 @@
       *,
       deprecated,
       message:
-        """
-      'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
-      """
+        "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func alert<Value>(
       unwrapping value: Binding<AlertState<Value>?>,
@@ -1892,9 +1818,7 @@
       *,
       deprecated,
       message:
-        """
-      'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
-      """
+        "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func alert<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,
@@ -1913,9 +1837,7 @@
       *,
       deprecated,
       message:
-        """
-      'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
-      """
+        "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
@@ -1933,9 +1855,7 @@
       *,
       deprecated,
       message:
-        """
-      'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals.
-      """
+        "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func confirmationDialog<Enum, Value>(
       unwrapping `enum`: Binding<Enum?>,

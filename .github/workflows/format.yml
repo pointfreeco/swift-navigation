@@ -8,15 +8,13 @@ on:
 jobs:
   swift_format:
     name: swift-format
-    runs-on: macOS-11
+    runs-on: macOS-13
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Xcode Select
-        run: sudo xcode-select -s /Applications/Xcode_13.0.app
-      - name: Tap
-        run: brew tap pointfreeco/formulae
+        run: sudo xcode-select -s /Applications/Xcode_15.0.app
       - name: Install
-        run: brew install Formulae/swift-format@5.5
+        run: brew install swift-format
       - name: Format
         run: make format
       - uses: stefanzweifel/git-auto-commit-action@v4
