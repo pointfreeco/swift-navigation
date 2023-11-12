@@ -5,7 +5,7 @@ manner.
 
 ## Overview
 
-The library comes with new tools for driving drill-down navigation with optional and enum state.
+The library comes with new tools for driving drill-down navigation with optional and enum values.
 This includes new initializers on `NavigationLink` and new overloads of the `navigationDestination`
 view modifier.
 

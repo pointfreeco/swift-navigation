@@ -191,7 +191,7 @@ struct ContentView: View {
     List {
       // ...
     }
-    .confirmationDialog(unwrapping: self.$model.dialog) { action in
+    .confirmationDialog(self.$model.dialog) { action in
       self.dialogButtonTapped(action)
     }
   }
@@ -207,7 +207,7 @@ struct ContentView: View {
 
 ### Alert state and dialog state
 
-- ``SwiftUI/View/alert(unwrapping:action:)-7da26``
-- ``SwiftUI/View/alert(unwrapping:action:)-6y2fk``
-- ``SwiftUI/View/confirmationDialog(unwrapping:action:)-4f8ze``
-- ``SwiftUI/View/confirmationDialog(unwrapping:action:)-29s77``
+- ``SwiftUI/View/alert(_:action:)-sgyk``
+- ``SwiftUI/View/alert(_:action:)-1gtsa``
+- ``SwiftUI/View/confirmationDialog(_:action:)-9alh7``
+- ``SwiftUI/View/confirmationDialog(_:action:)-7mxx7``
