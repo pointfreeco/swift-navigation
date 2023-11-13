@@ -78,17 +78,15 @@
       case expanded
       case standard
 
-      #if swift(>=5.7.1)
-        @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-        var toSwiftUI: SwiftUI.Font.Width {
-          switch self {
-          case .compressed: return .compressed
-          case .condensed: return .condensed
-          case .expanded: return .expanded
-          case .standard: return .standard
-          }
+      @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+      var toSwiftUI: SwiftUI.Font.Width {
+        switch self {
+        case .compressed: return .compressed
+        case .condensed: return .condensed
+        case .expanded: return .expanded
+        case .standard: return .standard
         }
-      #endif
+      }
     }
 
     public enum LineStylePattern: String, Equatable, Hashable, Sendable {
@@ -313,40 +311,36 @@
     public enum AccessibilityTextContentType: String, Equatable, Hashable, Sendable {
       case console, fileSystem, messaging, narrative, plain, sourceCode, spreadsheet, wordProcessing
 
-      #if compiler(>=5.5.1)
-        @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-        var toSwiftUI: SwiftUI.AccessibilityTextContentType {
-          switch self {
-          case .console: return .console
-          case .fileSystem: return .fileSystem
-          case .messaging: return .messaging
-          case .narrative: return .narrative
-          case .plain: return .plain
-          case .sourceCode: return .sourceCode
-          case .spreadsheet: return .spreadsheet
-          case .wordProcessing: return .wordProcessing
-          }
+      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+      var toSwiftUI: SwiftUI.AccessibilityTextContentType {
+        switch self {
+        case .console: return .console
+        case .fileSystem: return .fileSystem
+        case .messaging: return .messaging
+        case .narrative: return .narrative
+        case .plain: return .plain
+        case .sourceCode: return .sourceCode
+        case .spreadsheet: return .spreadsheet
+        case .wordProcessing: return .wordProcessing
         }
-      #endif
+      }
     }
 
     public enum AccessibilityHeadingLevel: String, Equatable, Hashable, Sendable {
       case h1, h2, h3, h4, h5, h6, unspecified
 
-      #if compiler(>=5.5.1)
-        @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-        var toSwiftUI: SwiftUI.AccessibilityHeadingLevel {
-          switch self {
-          case .h1: return .h1
-          case .h2: return .h2
-          case .h3: return .h3
-          case .h4: return .h4
-          case .h5: return .h5
-          case .h6: return .h6
-          case .unspecified: return .unspecified
-          }
+      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+      var toSwiftUI: SwiftUI.AccessibilityHeadingLevel {
+        switch self {
+        case .h1: return .h1
+        case .h2: return .h2
+        case .h3: return .h3
+        case .h4: return .h4
+        case .h5: return .h5
+        case .h6: return .h6
+        case .unspecified: return .unspecified
         }
-      #endif
+      }
     }
   }
 
@@ -430,92 +424,65 @@
       }
       self = state.modifiers.reduce(text) { text, modifier in
         switch modifier {
-        #if compiler(>=5.5.1)
-          case let .accessibilityHeading(level):
-            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-              return text.accessibilityHeading(level.toSwiftUI)
-            } else {
-              return text
-            }
-          case let .accessibilityLabel(value):
-            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-              switch value.storage {
-              case let .verbatim(string):
-                return text.accessibilityLabel(string)
-              case let .localized(key, tableName, bundle, comment):
-                return text.accessibilityLabel(
-                  Text(key, tableName: tableName, bundle: bundle, comment: comment))
-              case .concatenated(_, _):
-                assertionFailure("`.accessibilityLabel` does not support concatenated `TextState`")
-                return text
-              }
-            } else {
-              return text
-            }
-          case let .accessibilityTextContentType(type):
-            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-              return text.accessibilityTextContentType(type.toSwiftUI)
-            } else {
-              return text
-            }
-        #else
-          case .accessibilityHeading,
-            .accessibilityLabel,
-            .accessibilityTextContentType:
+        case let .accessibilityHeading(level):
+          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+            return text.accessibilityHeading(level.toSwiftUI)
+          } else {
             return text
-        #endif
+          }
+        case let .accessibilityLabel(value):
+          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+            switch value.storage {
+            case let .verbatim(string):
+              return text.accessibilityLabel(string)
+            case let .localized(key, tableName, bundle, comment):
+              return text.accessibilityLabel(
+                Text(key, tableName: tableName, bundle: bundle, comment: comment))
+            case .concatenated(_, _):
+              assertionFailure("`.accessibilityLabel` does not support concatenated `TextState`")
+              return text
+            }
+          } else {
+            return text
+          }
+        case let .accessibilityTextContentType(type):
+          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+            return text.accessibilityTextContentType(type.toSwiftUI)
+          } else {
+            return text
+          }
         case let .baselineOffset(baselineOffset):
           return text.baselineOffset(baselineOffset)
         case let .bold(isActive):
-          #if swift(>=5.7.1)
-            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-              return text.bold(isActive)
-            } else {
-              return text.bold()
-            }
-          #else
-            _ = isActive
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+            return text.bold(isActive)
+          } else {
             return text.bold()
-          #endif
+          }
         case let .font(font):
           return text.font(font)
         case let .fontDesign(design):
-          #if swift(>=5.7.1)
-            if #available(iOS 16.1, macOS 13, tvOS 16.1, watchOS 9.1, *) {
-              return text.fontDesign(design)
-            } else {
-              return text
-            }
-          #else
-            _ = design
+          if #available(iOS 16.1, macOS 13, tvOS 16.1, watchOS 9.1, *) {
+            return text.fontDesign(design)
+          } else {
             return text
-          #endif
+          }
         case let .fontWeight(weight):
           return text.fontWeight(weight)
         case let .fontWidth(width):
-          #if swift(>=5.7.1)
-            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-              return text.fontWidth(width?.toSwiftUI)
-            } else {
-              return text
-            }
-          #else
-            _ = width
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+            return text.fontWidth(width?.toSwiftUI)
+          } else {
             return text
-          #endif
+          }
         case let .foregroundColor(color):
           return text.foregroundColor(color)
         case let .italic(isActive):
-          #if swift(>=5.7.1)
-            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-              return text.italic(isActive)
-            } else {
-              return text.italic()
-            }
-          #else
-            _ = isActive
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+            return text.italic(isActive)
+          } else {
             return text.italic()
-          #endif
+          }
         case let .kerning(kerning):
           return text.kerning(kerning)
         case .monospacedDigit:
@@ -549,29 +516,19 @@
             return text
           }
         case let .strikethrough(isActive, pattern, color):
-          #if swift(>=5.7.1)
-            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
-              return text.strikethrough(isActive, pattern: pattern.toSwiftUI, color: color)
-            } else {
-              return text.strikethrough(isActive, color: color)
-            }
-          #else
-            _ = pattern
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
+            return text.strikethrough(isActive, pattern: pattern.toSwiftUI, color: color)
+          } else {
             return text.strikethrough(isActive, color: color)
-          #endif
+          }
         case let .tracking(tracking):
           return text.tracking(tracking)
         case let .underline(isActive, pattern, color):
-          #if swift(>=5.7.1)
-            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
-              return text.underline(isActive, pattern: pattern.toSwiftUI, color: color)
-            } else {
-              return text.underline(isActive, color: color)
-            }
-          #else
-            _ = pattern
-            return text.strikethrough(isActive, color: color)
-          #endif
+          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
+            return text.underline(isActive, pattern: pattern.toSwiftUI, color: color)
+          } else {
+            return text.underline(isActive, color: color)
+          }
         }
       }
     }

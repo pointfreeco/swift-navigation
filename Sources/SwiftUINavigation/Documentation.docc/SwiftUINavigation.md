@@ -46,8 +46,11 @@ to that enum.
 - <doc:Navigation>
 - <doc:SheetsPopoversCovers>
 - <doc:AlertsDialogs>
-- <doc:DestructuringViews>
 - <doc:Bindings>
+
+### Deprecated interfaces
+
+- <doc:Deprecations>
 
 ## See Also
 

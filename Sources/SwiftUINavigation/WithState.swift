@@ -10,7 +10,7 @@
   ///
   /// ```swift
   /// struct TextField_Previews: PreviewProvider {
-  ///   @State static var text = "" // ⚠️ @State static does not work.
+  ///   @State static var text = ""  // ⚠️ @State static does not work.
   ///
   ///   static var previews: some View {
   ///     TextField("Test", text: self.$text)

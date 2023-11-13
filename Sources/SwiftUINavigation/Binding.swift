@@ -1,7 +1,55 @@
 #if canImport(SwiftUI)
+  import CasePaths
   import SwiftUI
 
   extension Binding {
+    #if swift(>=5.9)
+      /// Returns a binding to the associated value of a given case key path.
+      ///
+      /// Useful for producing bindings to values held in enum state.
+      ///
+      /// - Parameter keyPath: A case key path to a specific associated value.
+      /// - Returns: A new binding.
+      public subscript<Member>(
+        dynamicMember keyPath: CaseKeyPath<Value, Member>
+      ) -> Binding<Member>?
+      where Value: CasePathable {
+        Binding<Member>(
+          unwrapping: Binding<Member?>(
+            get: { self.wrappedValue[case: keyPath] },
+            set: { newValue, transaction in
+              guard let newValue else { return }
+              self.transaction(transaction).wrappedValue[case: keyPath] = newValue
+            }
+          )
+        )
+      }
+
+      /// Returns a binding to the associated value of a given case key path.
+      ///
+      /// Useful for driving navigation off an optional enumeration of destinations.
+      ///
+      /// - Parameter keyPath: A case key path to a specific associated value.
+      /// - Returns: A new binding.
+      public subscript<Enum, AssociatedValue>(
+        dynamicMember keyPath: CaseKeyPath<Enum, AssociatedValue>
+      ) -> Binding<AssociatedValue?>
+      where Value == Enum? {
+        return Binding<AssociatedValue?>(
+          get: { self.wrappedValue[case: (\Enum?.Cases.some).appending(path: keyPath)] },
+          set: { newValue, transaction in
+            guard let newValue else {
+              self.transaction(transaction).wrappedValue = nil
+              return
+            }
+            self.transaction(transaction).wrappedValue[
+              case: (\Enum?.Cases.some).appending(path: keyPath)
+            ] = newValue
+          }
+        )
+      }
+    #endif
+
     /// Creates a binding by projecting the base value to an unwrapped value.
     ///
     /// Useful for producing non-optional bindings from optional ones.
@@ -17,52 +65,7 @@
     /// - Parameter base: A value to project to an unwrapped value.
     /// - Returns: A new binding or `nil` when `base` is `nil`.
     public init?(unwrapping base: Binding<Value?>) {
-      self.init(unwrapping: base, case: /Optional.some)
-    }
-
-    /// Creates a binding by projecting the base enum value to an unwrapped case.
-    ///
-    /// Useful for extracting bindings of non-optional state from the case of an enum.
-    ///
-    /// See ``IfCaseLet`` for a view builder-friendly version of this initializer.
-    ///
-    /// - Parameters:
-    ///   - enum: An enum to project to a particular case.
-    ///   - casePath: A case path that identifies a particular case to unwrap.
-    /// - Returns: A new binding or `nil` when `base` is `nil`.
-    public init?<Enum>(unwrapping enum: Binding<Enum>, case casePath: CasePath<Enum, Value>) {
-      guard var `case` = casePath.extract(from: `enum`.wrappedValue)
-      else { return nil }
-
-      self.init(
-        get: {
-          `case` = casePath.extract(from: `enum`.wrappedValue) ?? `case`
-          return `case`
-        },
-        set: {
-          guard casePath.extract(from: `enum`.wrappedValue) != nil else { return }
-          `case` = $0
-          `enum`.transaction($1).wrappedValue = casePath.embed($0)
-        }
-      )
-    }
-
-    /// Creates a binding by projecting the current optional enum value to the value at a particular
-    /// case.
-    ///
-    /// > Note: This method is constrained to optionals so that the projected value can write `nil`
-    /// > back to the parent, which is useful for navigation, particularly dismissal.
-    ///
-    /// - Parameter casePath: A case path that identifies a particular case to unwrap.
-    /// - Returns: A binding to an enum case.
-    public func `case`<Enum, Case>(_ casePath: CasePath<Enum, Case>) -> Binding<Case?>
-    where Value == Enum? {
-      .init(
-        get: { self.wrappedValue.flatMap(casePath.extract(from:)) },
-        set: { newValue, transaction in
-          self.transaction(transaction).wrappedValue = newValue.map(casePath.embed)
-        }
-      )
+      self.init(unwrapping: base, case: AnyCasePath(\.some))
     }
 
     /// Creates a binding by projecting the current optional value to a boolean describing if it's
@@ -81,61 +84,6 @@
           }
         }
       )
-    }
-
-    /// Creates a binding by projecting the current optional enum value to a boolean describing
-    /// whether or not it matches the given case path.
-    ///
-    /// Writing `false` to the binding will `nil` out the base enum value. Writing `true` does
-    /// nothing.
-    ///
-    /// Useful for interacting with APIs that take a binding of a boolean that you want to drive with
-    /// with an enum case that has no associated data.
-    ///
-    /// For example, a view may model all of its presentations in a single destination enum to prevent
-    /// the invalid states that can be introduced by holding onto many booleans and optionals,
-    /// instead. Even the simple case of two booleans driving two alerts introduces a potential
-    /// runtime state where both alerts are presented at the same time. By modeling these alerts
-    /// using a two-case enum instead of two booleans, we can eliminate this invalid state at compile
-    /// time. Then we can transform a binding to the destination enum into a boolean binding using
-    /// `isPresent`, so that it can be passed to various presentation APIs.
-    ///
-    /// ```swift
-    /// enum Destination {
-    ///   case deleteAlert
-    ///   ...
-    /// }
-    ///
-    /// struct ProductView: View {
-    ///   @State var destination: Destination?
-    ///   @State var product: Product
-    ///
-    ///   var body: some View {
-    ///     Button("Delete") {
-    ///       self.model.destination = .deleteAlert
-    ///     }
-    ///     // SwiftUI's vanilla alert modifier
-    ///     .alert(
-    ///       self.product.name
-    ///       isPresented: self.$model.destination.isPresent(/Destination.deleteAlert),
-    ///       actions: {
-    ///         Button("Delete", role: .destructive) {
-    ///           self.model.deleteConfirmationButtonTapped()
-    ///         }
-    ///       },
-    ///       message: {
-    ///         Text("Are you sure you want to delete this product?")
-    ///       }
-    ///     )
-    ///   }
-    /// }
-    /// ```
-    ///
-    /// - Parameter casePath: A case path that identifies a particular case to match.
-    /// - Returns: A binding to a boolean.
-    public func isPresent<Enum, Case>(_ casePath: CasePath<Enum, Case>) -> Binding<Bool>
-    where Value == Enum? {
-      self.case(casePath).isPresent()
     }
 
     /// Creates a binding that ignores writes to its wrapped value when equivalent to the new value.

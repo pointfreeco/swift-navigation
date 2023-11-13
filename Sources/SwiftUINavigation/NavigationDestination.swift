@@ -1,4 +1,4 @@
-#if swift(>=5.7) && canImport(SwiftUI)
+#if canImport(SwiftUI)
   import SwiftUI
 
   @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
@@ -56,31 +56,6 @@
         }
       }
     }
-
-    /// Pushes a view onto a `NavigationStack` using a binding and case path as a data source for
-    /// the destination's content.
-    ///
-    /// A version of `View.navigationDestination(unwrapping:)` that works with enum state.
-    ///
-    /// - Parameters:
-    ///   - enum: A binding to an optional enum that holds the source of truth for the destination
-    ///     at a particular case. When `enum` is non-`nil`, and `casePath` successfully extracts a
-    ///     value, a non-optional binding to the value is passed to the `content` closure. You use
-    ///     this binding to produce content that the system pushes to the user in a navigation
-    ///     stack. Changes made to the destination's binding will be reflected back in the source of
-    ///     truth. Likewise, changes to `enum` at the given case are instantly reflected in the
-    ///     destination. If `enum` becomes `nil`, or becomes a case other than the one identified by
-    ///     `casePath`, the destination is popped.
-    ///   - casePath: A case path that identifies a case of `enum` that holds a source of truth for
-    ///     the destination.
-    ///   - destination: A closure returning the content of the destination.
-    public func navigationDestination<Enum, Case, Destination: View>(
-      unwrapping enum: Binding<Enum?>,
-      case casePath: CasePath<Enum, Case>,
-      @ViewBuilder destination: (Binding<Case>) -> Destination
-    ) -> some View {
-      self.navigationDestination(unwrapping: `enum`.case(casePath), destination: destination)
-    }
   }
 
   // NB: This view modifier works around a bug in SwiftUI's built-in modifier:
@@ -107,4 +82,4 @@
     else { return true }
     return false
   }()
-#endif  // swift(>=5.7) && canImport(SwiftUI)
+#endif  // canImport(SwiftUI)

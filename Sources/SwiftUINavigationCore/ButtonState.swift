@@ -228,11 +228,9 @@
     }
   }
 
-  #if swift(>=5.7)
-    extension ButtonStateAction: Sendable where Action: Sendable {}
-    extension ButtonStateAction._ActionType: Sendable where Action: Sendable {}
-    extension ButtonState: Sendable where Action: Sendable {}
-  #endif
+  extension ButtonStateAction: Sendable where Action: Sendable {}
+  extension ButtonStateAction._ActionType: Sendable where Action: Sendable {}
+  extension ButtonState: Sendable where Action: Sendable {}
 
   // MARK: - SwiftUI bridging
 

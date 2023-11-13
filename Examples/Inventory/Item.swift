@@ -7,14 +7,10 @@ struct Item: Equatable, Identifiable {
   var name: String
   var status: Status
 
+  @CasePathable
   enum Status: Equatable {
     case inStock(quantity: Int)
     case outOfStock(isOnBackOrder: Bool)
-
-    var isInStock: Bool {
-      guard case .inStock = self else { return false }
-      return true
-    }
   }
 
   struct Color: Equatable, Hashable {
@@ -62,26 +58,32 @@ struct ItemView: View {
         }
       }
 
-      Switch(self.$item.status) {
-        CaseLet(/Item.Status.inStock) { $quantity in
-          Section(header: Text("In stock")) {
+      switch self.item.status {
+      case .inStock:
+        self.$item.status.inStock.map { $quantity in
+          Section {
             Stepper("Quantity: \(quantity)", value: $quantity)
             Button("Mark as sold out") {
               withAnimation {
                 self.item.status = .outOfStock(isOnBackOrder: false)
               }
             }
+          } header: {
+            Text("In stock")
           }
           .transition(.opacity)
         }
-        CaseLet(/Item.Status.outOfStock) { $isOnBackOrder in
-          Section(header: Text("Out of stock")) {
+      case .outOfStock:
+        self.$item.status.outOfStock.map { $isOnBackOrder in
+          Section {
             Toggle("Is on back order?", isOn: $isOnBackOrder)
             Button("Is back in stock!") {
               withAnimation {
                 self.item.status = .inStock(quantity: 1)
               }
             }
+          } header: {
+            Text("Out of stock")
           }
           .transition(.opacity)
         }

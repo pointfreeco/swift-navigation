@@ -53,7 +53,7 @@
   /// }
   /// ```
   ///
-  /// Then, whenever you need to show an alert you can simply construct an ``AlertState`` value to
+  /// Then, whenever you need to show an alert you can simply construct an `AlertState` value to
   /// represent the alert:
   ///
   /// ```swift
@@ -79,8 +79,7 @@
   /// }
   /// ```
   ///
-  /// And in your view you can use the `.alert(unwrapping:action:)` view modifier to present the
-  /// alert:
+  /// And in your view you can use the `.alert(_:action:)` view modifier to present the alert:
   ///
   /// ```swift
   /// struct FeatureView: View {
@@ -92,7 +91,7 @@
   ///         self.model.deleteAppButtonTapped()
   ///       }
   ///     }
-  ///     .alert(unwrapping: self.$model.alert) { action in
+  ///     .alert(self.$model.alert) { action in
   ///       self.model.alertButtonTapped(action)
   ///     }
   ///   }

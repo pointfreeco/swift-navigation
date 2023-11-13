@@ -7,6 +7,7 @@ class ItemRowModel: Identifiable {
   var item: Item
   var destination: Destination?
 
+  @CasePathable
   enum Destination: Equatable {
     case alert(AlertState<AlertAction>)
     case duplicate(Item)
@@ -113,17 +114,11 @@ struct ItemRowView: View {
         .padding(.leading)
       }
       .buttonStyle(.plain)
-      .foregroundColor(self.model.item.status.isInStock ? nil : Color.gray)
-      .alert(
-        unwrapping: self.$model.destination,
-        case: /ItemRowModel.Destination.alert
-      ) {
+      .foregroundColor(self.model.item.status.is(\.inStock) ? nil : Color.gray)
+      .alert(self.$model.destination.alert) {
         self.model.alertButtonTapped($0)
       }
-      .popover(
-        unwrapping: self.$model.destination,
-        case: /ItemRowModel.Destination.duplicate
-      ) { $item in
+      .popover(unwrapping: self.$model.destination.duplicate) { $item in
         NavigationStack {
           ItemView(item: $item)
             .navigationBarTitle("Duplicate")

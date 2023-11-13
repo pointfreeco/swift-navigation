@@ -60,10 +60,12 @@ equatability. This makes it possible to write tests against these values.
 Next you can provide an endpoint that will be called when the alert is interacted with:
 
 ```swift
-func alertButtonTapped(_ action: AlertAction) {
+func alertButtonTapped(_ action: AlertAction?) {
   switch action {
   case .deletionConfirmed:
     // NB: Perform deletion logic here
+  case nil:
+    // NB: Perform cancel button logic here
   }
 }
 ```
@@ -79,7 +81,7 @@ struct ContentView: View {
     List {
       // ...
     }
-    .alert(unwrapping: self.$model.alert) { action in
+    .alert(self.$model.alert) { action in
       self.model.alertButtonTapped(action)
     }
   }
@@ -91,7 +93,7 @@ it:
 
 ```swift
 func testDelete() {
-  let model = FeatureModel(…)
+  let model = FeatureModel(/* ... */)
 
   model.deleteButtonTapped()
   XCTAssertEqual(model.alert?.title, TextState("Are you sure?"))
@@ -105,19 +107,21 @@ This works because all of the types for describing an alert are `Equatable`, inc
 `TextState`, and even the buttons.
 
 Sometimes it is not optimal to model the alert as an optional. In particular, if a feature can
-navigate to multiple, mutually exclusive screens, then an enum is more appropriate.
+navigate to multiple, mutually exclusive screens, then a "case-pathable" enum is more appropriate.
 
 In such a case:
-
 
 ```swift
 @Observable
 class FeatureModel {
   var destination: Destination?
+
+  @CasePathable
   enum Destination {
     case alert(AlertState<AlertAction>)
     // NB: Other destinations
   }
+
   enum AlertAction {
     case deletionConfirmed
   }
@@ -130,7 +134,7 @@ With this kind of set up you can use an alternative `alert` view modifier that t
 argument for specifying which case of the enum drives the presentation of the alert:
 
 ```swift
-.alert(unwrapping: self.$model.destination, case: /Destination.alert) { action in
+.alert(self.$model.destination.alert) { action in
   self.model.alertButtonTapped(action)
 }
 ```
@@ -166,10 +170,12 @@ class FeatureModel {
     )
   }
 
-  func dialogButtonTapped(_ action: DialogAction) {
+  func dialogButtonTapped(_ action: DialogAction?) {
     switch action {
     case .deletionConfirmed:
       // NB: Perform deletion logic here
+    case nil:
+      // NB: Perform cancel button logic here
     }
   }
 }
@@ -185,9 +191,23 @@ struct ContentView: View {
     List {
       // ...
     }
-    .confirmationDialog(unwrapping: self.$model.dialog) { action in
+    .confirmationDialog(self.$model.dialog) { action in
       self.dialogButtonTapped(action)
     }
   }
 }
 ```
+
+## Topics
+
+### Alert and dialog modifiers
+
+- ``SwiftUI/View/alert(title:unwrapping:actions:message:)``
+- ``SwiftUI/View/confirmationDialog(title:titleVisibility:unwrapping:actions:message:)``
+
+### Alert state and dialog state
+
+- ``SwiftUI/View/alert(_:action:)-sgyk``
+- ``SwiftUI/View/alert(_:action:)-1gtsa``
+- ``SwiftUI/View/confirmationDialog(_:action:)-9alh7``
+- ``SwiftUI/View/confirmationDialog(_:action:)-7mxx7``

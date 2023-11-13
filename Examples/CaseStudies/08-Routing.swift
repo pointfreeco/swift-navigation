@@ -11,6 +11,7 @@ private let readMe = """
   in this library.
   """
 
+@CasePathable
 enum Destination {
   case alert(AlertState<AlertAction>)
   case confirmationDialog(ConfirmationDialogState<DialogAction>)
@@ -80,7 +81,7 @@ struct Routing: View {
       }
     }
     .navigationTitle("Routing")
-    .alert(unwrapping: self.$destination, case: /Destination.alert) { action in
+    .alert(self.$destination.alert) { action in
       switch action {
       case .randomize?:
         self.count = .random(in: 0...1_000)
@@ -90,10 +91,7 @@ struct Routing: View {
         break
       }
     }
-    .confirmationDialog(
-      unwrapping: self.$destination,
-      case: /Destination.confirmationDialog
-    ) { action in
+    .confirmationDialog(self.$destination.confirmationDialog) { action in
       switch action {
       case .decrement?:
         self.count -= 1
@@ -103,13 +101,13 @@ struct Routing: View {
         break
       }
     }
-    .navigationDestination(unwrapping: self.$destination, case: /Destination.link) { $count in
+    .navigationDestination(unwrapping: self.$destination.link) { $count in
       Form {
         Stepper("Count: \(count)", value: $count)
       }
       .navigationTitle("Routing link")
     }
-    .sheet(unwrapping: self.$destination, case: /Destination.sheet) { $count in
+    .sheet(unwrapping: self.$destination.sheet) { $count in
       NavigationStack {
         Form {
           Stepper("Count: \(count)", value: $count)

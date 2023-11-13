@@ -29,16 +29,16 @@ be dismissed.
 
 Driving navigation from state like this can be incredibly powerful:
 
-* It guarantees that your model will always be in sync with the visual representation of the UI. 
-It shouldn't be possible for a piece of state to be non-`nil` and not have the corresponding view 
-present.
-* It easily enables deep linking capabilities. If all forms of navigation in your application are
-driven off of state, then you can instantly open your application into any state imaginable by 
-simply constructing a piece of state, handing it to SwiftUI, and letting it do its thing.
-* It also allows you to write unit tests for navigation logic without resorting to UI tests, which
-can be slow, flakey and introduce instability into your test suite. If you write a unit test that
-shows when a user performs an action that a piece of state went from `nil` to non-`nil`, then you
-can be assured that the user would be navigated to the next screen.
+  * It guarantees that your model will always be in sync with the visual representation of the UI. 
+    It shouldn't be possible for a piece of state to be non-`nil` and not have the corresponding
+    view present.
+  * It easily enables deep linking capabilities. If all forms of navigation in your application are
+    driven off of state, then you can instantly open your application into any state imaginable by 
+    simply constructing a piece of state, handing it to SwiftUI, and letting it do its thing.
+  * It also allows you to write unit tests for navigation logic without resorting to UI tests, which
+    can be slow, flakey and introduce instability into your test suite. If you write a unit test
+    that shows when a user performs an action that a piece of state went from `nil` to non-`nil`,
+    then you can be assured that the user would be navigated to the next screen.
 
 So, this is why state-driven navigation is so great. So, what tools does SwiftUI gives us to embrace
 this pattern?
@@ -193,27 +193,26 @@ and more from a particular case of that enum.
 ## SwiftUINavigation's tools
 
 The tools that ship with this library aim to solve the problems discussed above, and more. There are 
-new APIs for sheets, popovers, covers, alerts, confirmation dialogs _and_ navigation  links that 
+new APIs for sheets, popovers, covers, alerts, confirmation dialogs _and_ navigation links that 
 allow you to model destinations as an enum and drive navigation by a particular case of the enum.
 
 All of the APIs for these seemingly disparate forms of navigation are unified by a single pattern.
-You first specify a binding to the optional enum driving navigation, and then you specify the case
-of the enum that you want to isolate.
+You first specify a binding to an optional value driving navigation, and then you specify some
+content that takes a binding to a non-optional value.
 
-For example, the new sheet API now takes a binding to an optional enum, and something known as a
-[`CasePath`][case-paths-gh]:
+For example, the new sheet API now takes a binding to an optional:
 
 ```swift
-func sheet<Enum, Case, Content>(
-  unwrapping: Binding<Enum?>,
-  case: CasePath<Enum, Case>,
-  content: @escaping (Binding<Case>) -> Content
-) -> some View where Content : View
+func sheet<Value, Content: View>(
+  unwrapping: Binding<Value?>,
+  content: @escaping (Binding<Value>) -> Content
+) -> some View
 ```
 
-This allows you to drive the presentation and dismiss of a sheet from a particular case of an enum.
+This single API allows you to not only drive the presentation and dismiss of a sheet from an
+optional value, but also from a particular case of an enum.
 
-In order to isolate a specific case of an enum we must make use of our [CasePaths][case-paths-gh]
+In order to isolate a specific case of an enum we make use of our [CasePaths][case-paths-gh]
 library. A case path is like a key path, except it is specifically tuned for abstracting over the
 shape of enums rather than structs. A key path abstractly bundles up the functionality of getting 
 and setting a property on a struct, whereas a case path bundles up the functionality of "extracting"
@@ -230,6 +229,7 @@ class FeatureModel {
   var destination: Destination?
   // ...
 
+  @CasePathable
   enum Destination {
     case add(Item)
     case duplicate(Item)
@@ -238,45 +238,35 @@ class FeatureModel {
 }
 ```
 
+We apply that `@CasePathable` macro to the enum in order to enable "dynamic case lookup" for SwiftUI
+bindings, which will allow an optional binding to an enum chain into a particular case.
+
 Suppose we want the `add` destination to be shown in a sheet, the `duplicate` destination to be
 shown in a popover, and the `edit` destination in a drill-down. We can do so easily using the APIs
 that ship with this library:
 
 ```swift
-.popover(
-  unwrapping: self.$model.destination,
-  case: /FeatureModel.Destination.duplicate
-) { $item in 
+.popover(unwrapping: self.$model.destination.duplicate) { $item in 
   DuplicateItemView(item: $item)
 }
-.sheet(
-  unwrapping: self.$model.destination,
-  case: /FeatureModel.Destination.add
-) { $item in 
+.sheet(unwrapping: self.$model.destination.add) { $item in 
   AddItemView(item: $item)
 }
-.navigationDestination(
-  unwrapping: self.$model.destination,
-  case: /FeatureModel.Destination.edit
-) { $item in 
+.navigationDestination(unwrapping: self.$model.destination.edit) { $item in
   EditItemView(item: $item)
 }
 ```
 
 Even though all 3 forms of navigation are visually quite different, describing how to present them
 is very consistent. You simply provide the binding to the optional enum held in the model, and then
-you construct a case path for a particular case, which can be done by prefixing the case with a 
-forward slash.
+you dot-chain into a particular case.
 
-The above code uses the `navigationDestination` view modifier, which is only available in iOS 16.
-If you must support iOS 15 and earlier, you can use the following initializer on `NavigationLink`,
-which also has a very similar API to the above:
+The above code uses the `navigationDestination` view modifier, which is only available in iOS 16 and
+later. If you must support iOS 15 and earlier, you can use the following initializer on
+`NavigationLink`, which also has a very similar API to the above:
 
 ```swift
-NavigationLink( 
-  unwrapping: self.$model.destination,
-  case: /FeatureModel.Destination.edit
-) { isActive in 
+NavigationLink(unwrapping: self.$model.destination.edit) { isActive in 
   self.model.setEditIsActive(isActive)
 } destination: { $item in 
   EditItemView(item: $item)
@@ -285,8 +275,8 @@ NavigationLink(
 }
 ```
 
-That is the basics of using this library's APIs for driving navigation off of state. Learn more
-by reading the articles below.
+That is the basics of using this library's APIs for driving navigation off of state. Learn more by
+reading the articles below.
 
 ## Topics
 
@@ -298,7 +288,6 @@ alerts, dialogs, sheets, popovers, covers, and navigation links all from binding
 - <doc:Navigation>
 - <doc:SheetsPopoversCovers>
 - <doc:AlertsDialogs>
-- <doc:DestructuringViews>
 - <doc:Bindings>
 
 [case-paths-gh]: http://github.com/pointfreeco/swift-case-paths

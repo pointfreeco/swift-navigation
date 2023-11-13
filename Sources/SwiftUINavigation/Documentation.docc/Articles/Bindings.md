@@ -5,13 +5,13 @@ Learn how to manage certain view state, such as `@FocusState` directly in your o
 ## Overview
 
 SwiftUI comes with many property wrappers that can be used in views to drive view state, such as 
-`@FocusState`. Unfortunately, these property wrappers _must_ be used in views. It's not possible
-to extract this logic to an `@Observable` class and integrate it with the rest of the model's
-business logic, and be in a better position to test this state.
 
-We can work around these limitations by introducing a published field to your observable
-object and synchronizing it to view state with the `bind` view modifier that ships with this 
-library.
+`@FocusState`. Unfortunately, these property wrappers _must_ be used in views. It's not possible to
+extract this logic to an `@Observable` class and integrate it with the rest of the model's business
+logic, and be in a better position to test this state.
+
+We can work around these limitations by introducing a published field to your observable object and
+synchronizing it to view state with the `bind` view modifier that ships with this library.
 
 For example, suppose you have a sign in flow where if the API request to sign in fails, you want
 to refocus the email field. The model can be implemented like so:
@@ -64,3 +64,24 @@ struct SignInView: View {
   }
 }
 ```
+
+## Topics
+
+### Dynamic case lookup
+
+- ``SwiftUI/Binding/subscript(dynamicMember:)-9akk``
+- ``SwiftUI/Binding/subscript(dynamicMember:)-9okch``
+
+### Unwrapping bindings
+
+- ``SwiftUI/Binding/init(unwrapping:)``
+
+### Binding transformations
+
+- ``SwiftUI/Binding/isPresent()``
+- ``SwiftUI/Binding/removeDuplicates()``
+- ``SwiftUI/Binding/removeDuplicates(by:)``
+
+### Supporting views
+
+- ``WithState``

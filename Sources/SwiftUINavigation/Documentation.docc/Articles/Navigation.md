@@ -5,7 +5,7 @@ manner.
 
 ## Overview
 
-The library comes with new tools for driving drill-down navigation with optional and enum state.
+The library comes with new tools for driving drill-down navigation with optional and enum values.
 This includes new initializers on `NavigationLink` and new overloads of the `navigationDestination`
 view modifier.
 
@@ -64,11 +64,16 @@ Suppose that in addition to be able to drill down to a counter view that one can
 sheet with some text. We can model those destinations as an enum:
 
 ```swift
+@CasePathable
 enum Destination {
   case counter(Int)
   case text(String)
 }
 ```
+
+> Note: We have applied the `@CasePathable` macro from
+> [CasePaths](https://github.com/pointfreeco.swift-case-paths), which allows the navigation binding
+> to use "dynamic case lookup" to a particular enum case.
 
 And we can hold an optional destination in state to represent whether or not we are navigated to
 one of these destinations:
@@ -77,15 +82,13 @@ one of these destinations:
 @State var destination: Destination?
 ```
 
-With this set up you can make use of the `init(unwrapping:case:)` initializer on `NavigationLink`
-in order to specify a binding to the optional destination, and further specify which case of the
-enum you want driving navigation:
+With this set up you can make use of the
+``SwiftUI/NavigationLink/init(unwrapping:onNavigate:destination:label:)`` initializer on
+`NavigationLink` in order to specify a binding to the optional destination, and further specify
+which case of the enum you want driving navigation:
 
 ```swift
-NavigationLink(
-  unwrapping: self.$destination,
-  case: /Destination.counter
-) { isActive in
+NavigationLink(unwrapping: self.$destination.counter) { isActive in
   self.destination = isActive ? .counter(42) : nil
 } destination: { $number in 
   CounterView(number: $number)
@@ -94,7 +97,7 @@ NavigationLink(
 }
 ```
 
-And similarly for `navigationDestination`:
+And similarly for ``SwiftUI/View/navigationDestination(unwrapping:destination:)``:
 
 ```swift
 Button {
@@ -102,14 +105,14 @@ Button {
 } label: {
   Text("Go to counter")
 }
-.navigationDestination(
-  unwrapping: self.$model.destination,
-  case: /Destination.counter
-) { $number in 
+.navigationDestination(unwrapping: self.$model.destination.counter) { $number in 
   CounterView(number: $number)
 }
 ```
 
-Note that the `case` argument is specified via a concept known as "case paths", which are like
-key paths except tuned specifically for enums and cases rather than structs and properties. See
-<doc:WhatIsNavigation> for more information.
+## Topics
+
+### Navigation views and modifiers
+
+- ``SwiftUI/View/navigationDestination(unwrapping:destination:)``
+- ``SwiftUI/NavigationLink/init(unwrapping:onNavigate:destination:label:)``

@@ -34,10 +34,10 @@ fall in two categories:
   piece of data, handing it to a SwiftUI view, and letting SwiftUI handle the rest.
 
 Navigation that is "state-driven" is the more powerful form of navigation, albeit slightly more 
-complicated. Unfortunately, SwiftUI does not ship with all of the tools necessary to model our domains with 
-enums and make use of navigation APIs. This library bridges that gap by providing APIs that allow
-you to model your navigation destinations as an enum, and then drive navigation by a binding
-to that enum.
+complicated. Unfortunately, SwiftUI does not ship with all of the tools necessary to model our
+domains with  enums and make use of navigation APIs. This library bridges that gap by providing APIs
+that allow you to model your navigation destinations as an enum, and then drive navigation by a
+binding to that enum.
 
 Explore all of the tools this library comes with by checking out the [documentation][docs], and
 reading these articles:
@@ -75,8 +75,10 @@ alerts, all driven by state and deep-linkable.
 
 ## Learn More
 
-SwiftUI Navigation's tools were motivated and designed over the course of many episodes on [Point-Free](https://www.pointfree.co), a video series exploring functional programming and the 
-Swift language, hosted by [Brandon Williams](https://twitter.com/mbrandonw) and [Stephen Celis](https://twitter.com/stephencelis).
+SwiftUI Navigation's tools were motivated and designed over the course of many episodes on
+[Point-Free](https://www.pointfree.co), a video series exploring functional programming and the 
+Swift language, hosted by [Brandon Williams](https://twitter.com/mbrandonw) and
+[Stephen Celis](https://twitter.com/stephencelis).
 
 You can watch all of the episodes [here](https://www.pointfree.co/collections/swiftui/navigation).
 
@@ -90,8 +92,10 @@ If you want to discuss this library or have a question about how to use it to so
 a particular problem, there are a number of places you can discuss with fellow 
 [Point-Free](http://www.pointfree.co) enthusiasts:
 
-* For long-form discussions, we recommend the [discussions](http://github.com/pointfreeco/swiftui-navigation/discussions) tab of this repo.
-* For casual chat, we recommend the [Point-Free Community slack](http://pointfree.co/slack-invite).
+  * For long-form discussions, we recommend the
+    [discussions](http://github.com/pointfreeco/swiftui-navigation/discussions) tab of this repo.
+  * For casual chat, we recommend the
+    [Point-Free Community slack](http://pointfree.co/slack-invite).
 
 ## Installation
 
@@ -110,7 +114,8 @@ dependencies: [
 
 ## Documentation
 
-The latest documentation for the SwiftUI Navigation APIs is available [here](http://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/).
+The latest documentation for the SwiftUI Navigation APIs is available
+[here](http://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/).
 
 ## License
 
