@@ -47,10 +47,3 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build
         run: swift build -c ${{ matrix.config }}
-      - name: Run tests (debug only)
-        # There is an issue that exists in the 5.8.1 toolchain
-        # which fails on release configuration testing, but
-        # this issue is fixed 5.9 so we can remove the if once
-        # that is generally available.
-        if: ${{ matrix.config == 'debug' }}
-        run: swift test
