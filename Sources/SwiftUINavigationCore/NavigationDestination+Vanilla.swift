@@ -17,13 +17,13 @@
       item: Binding<Item?>,
       @ViewBuilder destination: (Item) -> Destination
     ) -> some View {
-      self._navigationDestination(isPresented: item.isPresent()) {
+      self._navigationDestination_bindWorkaround(isPresented: item.isPresent()) {
         item.wrappedValue.map(destination)
       }
     }
 
     @ViewBuilder
-    public func _navigationDestination<Destination: View>(
+    public func _navigationDestination_bindWorkaround<Destination: View>(
       isPresented: Binding<Bool>,
       @ViewBuilder destination: () -> Destination
     ) -> some View {

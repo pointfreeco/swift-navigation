@@ -42,7 +42,7 @@
       unwrapping value: Binding<Value?>,
       @ViewBuilder destination: (Binding<Value>) -> Destination
     ) -> some View {
-      self._navigationDestination(isPresented: value.isPresent()) {
+      self._navigationDestination_bindWorkaround(isPresented: value.isPresent()) {
         Binding(unwrapping: value).map(destination)
       }
     }
