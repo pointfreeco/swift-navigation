@@ -47,5 +47,4 @@
       }
     }
   }
-
 #endif  // canImport(SwiftUI)
