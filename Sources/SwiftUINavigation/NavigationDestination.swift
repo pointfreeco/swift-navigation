@@ -38,48 +38,14 @@
     ///     the source of truth. Likewise, changes to `value` are instantly reflected in the
     ///     destination. If `value` becomes `nil`, the destination is popped.
     ///   - destination: A closure returning the content of the destination.
-    @ViewBuilder
     public func navigationDestination<Value, Destination: View>(
       unwrapping value: Binding<Value?>,
       @ViewBuilder destination: (Binding<Value>) -> Destination
     ) -> some View {
-      if requiresBindWorkaround {
-        self.modifier(
-          _NavigationDestinationBindWorkaround(
-            isPresented: value.isPresent(),
-            destination: Binding(unwrapping: value).map(destination)
-          )
-        )
-      } else {
-        self.navigationDestination(isPresented: value.isPresent()) {
-          Binding(unwrapping: value).map(destination)
-        }
+      self._navigationDestination(isPresented: value.isPresent()) {
+        Binding(unwrapping: value).map(destination)
       }
     }
   }
 
-  // NB: This view modifier works around a bug in SwiftUI's built-in modifier:
-  // https://gist.github.com/mbrandonw/f8b94957031160336cac6898a919cbb7#file-fb11056434-md
-  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-  private struct _NavigationDestinationBindWorkaround<Destination: View>: ViewModifier {
-    @Binding var isPresented: Bool
-    let destination: Destination
-
-    @State private var isPresentedState = false
-
-    public func body(content: Content) -> some View {
-      content
-        .navigationDestination(isPresented: self.$isPresentedState) { self.destination }
-        .bind(self.$isPresented, to: self.$isPresentedState)
-    }
-  }
-
-  private let requiresBindWorkaround = {
-    if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
-      return true
-    }
-    guard #available(iOS 16.4, macOS 13.3, tvOS 16.4, watchOS 9.4, *)
-    else { return true }
-    return false
-  }()
 #endif  // canImport(SwiftUI)

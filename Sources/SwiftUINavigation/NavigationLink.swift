@@ -1,6 +1,24 @@
 #if canImport(SwiftUI)
   import SwiftUI
 
+  @available(
+    iOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(value:label:), or navigationDestination(isPresented:destination:), inside a NavigationStack or NavigationSplitView"
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 13,
+    message:
+      "use NavigationLink(value:label:), or navigationDestination(isPresented:destination:), inside a NavigationStack or NavigationSplitView")
+  @available(
+    tvOS, introduced: 13, deprecated: 16,
+    message:
+      "use NavigationLink(value:label:), or navigationDestination(isPresented:destination:), inside a NavigationStack or NavigationSplitView")
+  @available(
+    watchOS, introduced: 6, deprecated: 9,
+    message:
+      "use NavigationLink(value:label:), or navigationDestination(isPresented:destination:), inside a NavigationStack or NavigationSplitView"
+  )
   extension NavigationLink {
     /// Creates a navigation link that presents the destination view when a bound value is
     /// non-`nil`.
@@ -50,10 +68,6 @@
     ///     will automatically write `nil` to `value`.
     ///   - destination: A view for the navigation link to present.
     ///   - label: A view builder to produce a label describing the `destination` to present.
-    @available(iOS, introduced: 13, deprecated: 16)
-    @available(macOS, introduced: 10.15, deprecated: 13)
-    @available(tvOS, introduced: 13, deprecated: 16)
-    @available(watchOS, introduced: 6, deprecated: 9)
     public init<Value, WrappedDestination>(
       unwrapping value: Binding<Value?>,
       onNavigate: @escaping (_ isActive: Bool) -> Void,
