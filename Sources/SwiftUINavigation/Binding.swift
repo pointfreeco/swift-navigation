@@ -11,15 +11,16 @@
       /// - Parameter keyPath: A case key path to a specific associated value.
       /// - Returns: A new binding.
       public subscript<Member>(
-        dynamicMember keyPath: CaseKeyPath<Value, Member>
+        dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
       ) -> Binding<Member>?
       where Value: CasePathable {
-        Binding<Member>(
+        let casePath = Value.allCasePaths[keyPath: keyPath]
+        return Binding<Member>(
           unwrapping: Binding<Member?>(
-            get: { self.wrappedValue[case: keyPath] },
+            get: { casePath.extract(from: self.wrappedValue) },
             set: { newValue, transaction in
               guard let newValue else { return }
-              self.transaction(transaction).wrappedValue[case: keyPath] = newValue
+              self.transaction(transaction).wrappedValue = casePath.embed(newValue)
             }
           )
         )
@@ -31,20 +32,22 @@
       ///
       /// - Parameter keyPath: A case key path to a specific associated value.
       /// - Returns: A new binding.
-      public subscript<Enum, AssociatedValue>(
-        dynamicMember keyPath: CaseKeyPath<Enum, AssociatedValue>
-      ) -> Binding<AssociatedValue?>
+      public subscript<Enum: CasePathable, Member>(
+        dynamicMember keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Member>>
+      ) -> Binding<Member?>
       where Value == Enum? {
-        return Binding<AssociatedValue?>(
-          get: { self.wrappedValue[case: (\Enum?.Cases.some).appending(path: keyPath)] },
+        let casePath = Enum.allCasePaths[keyPath: keyPath]
+        return Binding<Member?>(
+          get: {
+            guard let wrappedValue = self.wrappedValue else { return nil }
+            return casePath.extract(from: wrappedValue)
+          },
           set: { newValue, transaction in
             guard let newValue else {
               self.transaction(transaction).wrappedValue = nil
               return
             }
-            self.transaction(transaction).wrappedValue[
-              case: (\Enum?.Cases.some).appending(path: keyPath)
-            ] = newValue
+            self.transaction(transaction).wrappedValue = casePath.embed(newValue)
           }
         )
       }

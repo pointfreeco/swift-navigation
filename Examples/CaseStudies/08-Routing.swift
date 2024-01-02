@@ -5,10 +5,10 @@ private let readMe = """
   This case study demonstrates how to power multiple forms of navigation from a single destination \
   enum that describes all of the possible destinations one can travel to from this screen.
 
-  The screen has four navigation destinations: an alert, a confirmation dialog, a navigation link to a count stepper, \
-  and a modal sheet to a count stepper. The state for each of these destinations is held as \
-  associated data of an enum, and bindings to the cases of that enum are derived using the tools \
-  in this library.
+  The screen has four navigation destinations: an alert, a confirmation dialog, a navigation link \
+  to a count stepper, and a modal sheet to a count stepper. The state for each of these \
+  destinations is held as associated data of an enum, and bindings to the cases of that enum are \
+  derived using the tools in this library.
   """
 
 @CasePathable
