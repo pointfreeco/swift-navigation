@@ -122,7 +122,10 @@
     }
 
     fileprivate subscript(default defaultSubscript: DefaultSubscript<Wrapped>) -> Wrapped {
-      get { self ?? defaultSubscript.value }
+      get {
+        defaultSubscript.value = self ?? defaultSubscript.value
+        return defaultSubscript.value
+      }
       set {
         defaultSubscript.value = newValue
         if self != nil { self = newValue }
