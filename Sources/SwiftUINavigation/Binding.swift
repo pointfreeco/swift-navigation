@@ -14,16 +14,7 @@
         dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
       ) -> Binding<Member>?
       where Value: CasePathable {
-        let casePath = Value.allCasePaths[keyPath: keyPath]
-        return Binding<Member>(
-          unwrapping: Binding<Member?>(
-            get: { casePath.extract(from: self.wrappedValue) },
-            set: { newValue, transaction in
-              guard let newValue else { return }
-              self.transaction(transaction).wrappedValue = casePath.embed(newValue)
-            }
-          )
-        )
+        Binding<Member>(unwrapping: self[keyPath])
       }
 
       /// Returns a binding to the associated value of a given case key path.
@@ -36,20 +27,7 @@
         dynamicMember keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Member>>
       ) -> Binding<Member?>
       where Value == Enum? {
-        let casePath = Enum.allCasePaths[keyPath: keyPath]
-        return Binding<Member?>(
-          get: {
-            guard let wrappedValue = self.wrappedValue else { return nil }
-            return casePath.extract(from: wrappedValue)
-          },
-          set: { newValue, transaction in
-            guard let newValue else {
-              self.transaction(transaction).wrappedValue = nil
-              return
-            }
-            self.transaction(transaction).wrappedValue = casePath.embed(newValue)
-          }
-        )
+        self[keyPath]
       }
     #endif
 
@@ -68,7 +46,8 @@
     /// - Parameter base: A value to project to an unwrapped value.
     /// - Returns: A new binding or `nil` when `base` is `nil`.
     public init?(unwrapping base: Binding<Value?>) {
-      self.init(unwrapping: base, case: AnyCasePath(\.some))
+      guard let value = base.wrappedValue else { return nil }
+      self = base[default: DefaultSubscript(value)]
     }
 
     /// Creates a binding by projecting the current optional value to a boolean describing if it's
@@ -79,14 +58,7 @@
     /// - Returns: A binding to a boolean. Returns `true` if non-`nil`, otherwise `false`.
     public func isPresent<Wrapped>() -> Binding<Bool>
     where Value == Wrapped? {
-      .init(
-        get: { self.wrappedValue != nil },
-        set: { isPresent, transaction in
-          if !isPresent {
-            self.transaction(transaction).wrappedValue = nil
-          }
-        }
-      )
+      self._isPresent
     }
 
     /// Creates a binding that ignores writes to its wrapped value when equivalent to the new value.
@@ -137,6 +109,70 @@
           self.transaction(transaction).wrappedValue = newValue
         }
       )
+    }
+  }
+
+  extension Optional {
+    fileprivate var _isPresent: Bool {
+      get { self != nil }
+      set {
+        guard !newValue else { return }
+        self = nil
+      }
+    }
+
+    fileprivate subscript(default defaultSubscript: DefaultSubscript<Wrapped>) -> Wrapped {
+      get {
+        defaultSubscript.value = self ?? defaultSubscript.value
+        return defaultSubscript.value
+      }
+      set {
+        defaultSubscript.value = newValue
+        if self != nil { self = newValue }
+      }
+    }
+  }
+
+  private final class DefaultSubscript<Value>: Hashable {
+    var value: Value
+    init(_ value: Value) {
+      self.value = value
+    }
+    static func == (lhs: DefaultSubscript, rhs: DefaultSubscript) -> Bool {
+      lhs === rhs
+    }
+    func hash(into hasher: inout Hasher) {
+      hasher.combine(ObjectIdentifier(self))
+    }
+  }
+
+  extension CasePathable {
+    fileprivate subscript<Member>(
+      keyPath: KeyPath<Self.AllCasePaths, AnyCasePath<Self, Member>>
+    ) -> Member? {
+      get { Self.allCasePaths[keyPath: keyPath].extract(from: self) }
+      set {
+        guard let newValue else { return }
+        self = Self.allCasePaths[keyPath: keyPath].embed(newValue)
+      }
+    }
+  }
+
+  extension Optional where Wrapped: CasePathable {
+    fileprivate subscript<Member>(
+      keyPath: KeyPath<Wrapped.AllCasePaths, AnyCasePath<Wrapped, Member>>
+    ) -> Member? {
+      get {
+        guard let wrapped = self else { return nil }
+        return Wrapped.allCasePaths[keyPath: keyPath].extract(from: wrapped)
+      }
+      set {
+        guard let newValue else {
+          self = nil
+          return
+        }
+        self = Wrapped.allCasePaths[keyPath: keyPath].embed(newValue)
+      }
     }
   }
 #endif  // canImport(SwiftUI)
