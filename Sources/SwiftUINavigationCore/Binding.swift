@@ -14,7 +14,7 @@
       .init(
         get: { self.wrappedValue != nil },
         set: { isPresent, transaction in
-          guard isPresent else { return }
+          guard !isPresent else { return }
           self.transaction(transaction).wrappedValue = nil
         }
       )
