@@ -50,17 +50,6 @@
       self = base[default: DefaultSubscript(value)]
     }
 
-    /// Creates a binding by projecting the current optional value to a boolean describing if it's
-    /// non-`nil`.
-    ///
-    /// Writing `false` to the binding will `nil` out the base value. Writing `true` does nothing.
-    ///
-    /// - Returns: A binding to a boolean. Returns `true` if non-`nil`, otherwise `false`.
-    public func isPresent<Wrapped>() -> Binding<Bool>
-    where Value == Wrapped? {
-      self._isPresent
-    }
-
     /// Creates a binding that ignores writes to its wrapped value when equivalent to the new value.
     ///
     /// Useful to minimize writes to bindings passed to SwiftUI APIs. For example, [`NavigationLink`
@@ -113,14 +102,6 @@
   }
 
   extension Optional {
-    fileprivate var _isPresent: Bool {
-      get { self != nil }
-      set {
-        guard !newValue else { return }
-        self = nil
-      }
-    }
-
     fileprivate subscript(default defaultSubscript: DefaultSubscript<Wrapped>) -> Wrapped {
       get {
         defaultSubscript.value = self ?? defaultSubscript.value
@@ -175,4 +156,4 @@
       }
     }
   }
-#endif  // canImport(SwiftUI)
+#endif // canImport(SwiftUI)
