@@ -1,7 +1,7 @@
 #if canImport(SwiftUI)
   import SwiftUI
     
-  @available(macOS 12, tvOS 15, watchOS 8, *)
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     extension View {
 
     /// Presents an alert from a binding to optional alert state.

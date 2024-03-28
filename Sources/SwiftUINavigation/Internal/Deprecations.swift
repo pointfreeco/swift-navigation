@@ -30,7 +30,7 @@
     }
   }
 
-  @available(macOS 12, tvOS 15, watchOS 8, *)
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension View {
     @available(*, deprecated, renamed: "alert(_:title:actions:message:)")
     public func alert<Value, A: View, M: View>(
@@ -39,7 +39,7 @@
       @ViewBuilder actions: (Value) -> A,
       @ViewBuilder message: (Value) -> M
     ) -> some View {
-      alert(value, title: title, actions: actions, message: message)
+      alert(item: value, title: title, actions: actions, message: message)
     }
     
     @available(*, deprecated, renamed: "confirmationDialog(_:title:textVisibility:actions:message:)")
@@ -169,7 +169,7 @@
       @ViewBuilder message: (Case) -> M
     ) -> some View {
       alert(
-        `enum`.case(casePath),
+        item: `enum`.case(casePath),
         title: title,
         actions: actions,
         message: message
@@ -261,7 +261,7 @@
       @ViewBuilder message: (Case) -> M
     ) -> some View {
       confirmationDialog(
-        `enum`.case(casePath),
+        item: `enum`.case(casePath),
         title: title,
         titleVisibility: titleVisibility,
         actions: actions,

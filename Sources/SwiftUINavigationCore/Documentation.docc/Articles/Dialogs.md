@@ -48,16 +48,14 @@ struct ContentView: View {
     List {
       // ...
     }
-    .alert(self.$model.confirmDelete) {
-      "Are you sure?"
-    } actions: {
-      Button("Delete") {
+    .alert("Are you sure?", item: self.$model.confirmDelete) { _ in
+      Button("Delete", role: .destructive) {
         model.deleteConfirmButtonTapped()
       }
-      Button("Nevermind") {
+      Button("Nevermind", role: .cancel) {
         model.deleteCancelButtonPressed()
       }
-    } message: {
+    } message: { _ in
       Text("Deleting this item cannot be undone.")
     }
   }
@@ -85,11 +83,12 @@ struct ContentView: View {
     List {
       // ...
     }
-    .confirmationDialog(self.$model.confirmDelete) {
-      "Are you sure?"
-    } actions: {
-      Button("Delete") {
+    .confirmationDialog("Are you sure?", self.$model.confirmDelete) {
+      Button("Delete", role: .destructive) {
         model.deleteConfirmButtonTapped()
+      }
+      Button("Nevermind", role: .cancel) {
+        model.deleteCancelButtonPressed()
       }
     } message: {
       Text("Deleting this item cannot be undone.")
