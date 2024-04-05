@@ -15,8 +15,10 @@
     ) -> some View {
       alert(item: value, title: title, actions: actions, message: message)
     }
-    
-    @available(*, deprecated, renamed: "confirmationDialog(item:textVisibility:title:actions:message:)")
+
+    @available(
+      *, deprecated, renamed: "confirmationDialog(item:textVisibility:title:actions:message:)"
+    )
     public func confirmationDialog<Value, A: View, M: View>(
       title: (Value) -> Text,
       titleVisibility: Visibility = .automatic,
@@ -118,22 +120,22 @@
     @available(
       iOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 12, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 8, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func alert<Enum, Case, A: View, M: View>(
       title: (Case) -> Text,
@@ -153,22 +155,22 @@
     @available(
       iOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 12, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 8, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func alert<Enum, Value>(
       unwrapping enum: Binding<Enum?>,
@@ -181,22 +183,22 @@
     @available(
       iOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 12, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 8, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func alert<Enum, Value>(
       unwrapping enum: Binding<Enum?>,
@@ -209,22 +211,22 @@
     @available(
       iOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 12, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 8, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func confirmationDialog<Enum, Case, A: View, M: View>(
       title: (Case) -> Text,
@@ -246,22 +248,22 @@
     @available(
       iOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 12, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 8, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func confirmationDialog<Enum, Value>(
       unwrapping enum: Binding<Enum?>,
@@ -277,22 +279,22 @@
     @available(
       iOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 12, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, introduced: 15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 8, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func confirmationDialog<Enum, Value>(
       unwrapping enum: Binding<Enum?>,
@@ -308,18 +310,18 @@
     @available(
       iOS, introduced: 14, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(macOS, unavailable)
     @available(
       tvOS, introduced: 14, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 7, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func fullScreenCover<Enum, Case, Content>(
       unwrapping enum: Binding<Enum?>,
@@ -327,7 +329,7 @@
       onDismiss: (() -> Void)? = nil,
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
     ) -> some View
-      where Content: View {
+    where Content: View {
       fullScreenCover(
         unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
     }
@@ -335,22 +337,22 @@
     @available(
       iOS, introduced: 16, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 13, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, introduced: 16, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 9, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func navigationDestination<Enum, Case, Destination: View>(
       unwrapping enum: Binding<Enum?>,
@@ -363,12 +365,12 @@
     @available(
       iOS, introduced: 13, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 10.15, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
@@ -390,22 +392,22 @@
     @available(
       iOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @MainActor
     public func sheet<Enum, Case, Content>(
@@ -414,7 +416,7 @@
       onDismiss: (() -> Void)? = nil,
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
     ) -> some View
-      where Content: View {
+    where Content: View {
       sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
     }
   }
@@ -423,22 +425,22 @@
     @available(
       iOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public init?<Enum>(unwrapping enum: Binding<Enum>, case casePath: AnyCasePath<Enum, Value>) {
       guard var `case` = casePath.extract(from: `enum`.wrappedValue)
@@ -460,25 +462,25 @@
     @available(
       iOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func `case`<Enum, Case>(_ casePath: AnyCasePath<Enum, Case>) -> Binding<Case?>
-      where Value == Enum? {
+    where Value == Enum? {
       .init(
         get: { self.wrappedValue.flatMap(casePath.extract(from:)) },
         set: { newValue, transaction in
@@ -490,31 +492,31 @@
     @available(
       iOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, deprecated: 9999,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func isPresent<Enum, Case>(_ casePath: AnyCasePath<Enum, Case>) -> Binding<Bool>
-      where Value == Enum? {
+    where Value == Enum? {
       self.case(casePath).isPresent()
     }
   }
 
   public struct IfCaseLet<Enum, Case, IfContent, ElseContent>: View
-    where IfContent: View, ElseContent: View {
+  where IfContent: View, ElseContent: View {
     public let `enum`: Binding<Enum>
     public let casePath: AnyCasePath<Enum, Case>
     public let ifContent: (Binding<Case>) -> IfContent
@@ -523,22 +525,22 @@
     @available(
       iOS, deprecated: 9999,
       message:
-      "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       macOS, deprecated: 9999,
       message:
-      "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       tvOS, deprecated: 9999,
       message:
-      "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       watchOS, deprecated: 9999,
       message:
-      "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     public init(
       _ enum: Binding<Enum>,
@@ -591,7 +593,7 @@
   }
 
   public struct IfLet<Value, IfContent, ElseContent>: View
-    where IfContent: View, ElseContent: View {
+  where IfContent: View, ElseContent: View {
     public let value: Binding<Value?>
     public let ifContent: (Binding<Value>) -> IfContent
     public let elseContent: ElseContent
@@ -599,22 +601,22 @@
     @available(
       iOS, deprecated: 9999,
       message:
-      "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       macOS, deprecated: 9999,
       message:
-      "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       tvOS, deprecated: 9999,
       message:
-      "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     @available(
       watchOS, deprecated: 9999,
       message:
-      "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
+        "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     public init(
       _ value: Binding<Value?>,
@@ -664,22 +666,22 @@
     @available(
       iOS, introduced: 13, deprecated: 16,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       macOS, introduced: 10.15, deprecated: 13,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       tvOS, introduced: 13, deprecated: 16,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @available(
       watchOS, introduced: 6, deprecated: 9,
       message:
-      "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public init<Enum, Case, WrappedDestination>(
       unwrapping enum: Binding<Enum?>,
@@ -700,22 +702,22 @@
   @available(
     iOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     macOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     tvOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     watchOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   public struct Switch<Enum, Content: View>: View {
     public let `enum`: Binding<Enum>
@@ -738,25 +740,25 @@
   @available(
     iOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     macOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     tvOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     watchOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   public struct CaseLet<Enum, Case, Content>: View
-    where Content: View {
+  where Content: View {
     @EnvironmentObject private var `enum`: BindingObject<Enum>
     public let casePath: AnyCasePath<Enum, Case>
     public let content: (Binding<Case>) -> Content
@@ -777,22 +779,22 @@
   @available(
     iOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     macOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     tvOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     watchOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   public struct Default<Content: View>: View {
     private let content: Content
@@ -809,22 +811,22 @@
   @available(
     iOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     macOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     tvOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   @available(
     watchOS, deprecated: 9999,
     message:
-    "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
+      "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   extension Switch {
     public init<Case1, Content1, DefaultContent>(
@@ -836,11 +838,12 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         CaseLet<Enum, Case1, Content1>,
         Default<DefaultContent>
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -857,11 +860,12 @@
       line: UInt = #line,
       @ViewBuilder content: () -> CaseLet<Enum, Case1, Content1>
     )
-      where
+    where
       Content == _ConditionalContent<
         CaseLet<Enum, Case1, Content1>,
         Default<_ExhaustivityCheckView<Enum>>
-      > {
+      >
+    {
       self.init(`enum`) {
         content()
         Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
@@ -878,14 +882,15 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           CaseLet<Enum, Case1, Content1>,
           CaseLet<Enum, Case2, Content2>
         >,
         Default<DefaultContent>
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -909,14 +914,15 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           CaseLet<Enum, Case1, Content1>,
           CaseLet<Enum, Case2, Content2>
         >,
         Default<_ExhaustivityCheckView<Enum>>
-      > {
+      >
+    {
       let content = content()
       self.init(`enum`) {
         content.value.0
@@ -941,7 +947,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           CaseLet<Enum, Case1, Content1>,
@@ -951,7 +957,8 @@
           CaseLet<Enum, Case3, Content3>,
           Default<DefaultContent>
         >
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -978,7 +985,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           CaseLet<Enum, Case1, Content1>,
@@ -988,7 +995,8 @@
           CaseLet<Enum, Case3, Content3>,
           Default<_ExhaustivityCheckView<Enum>>
         >
-      > {
+      >
+    {
       let content = content()
       self.init(`enum`) {
         content.value.0
@@ -1016,7 +1024,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1029,7 +1037,8 @@
           >
         >,
         Default<DefaultContent>
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -1064,7 +1073,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1077,7 +1086,8 @@
           >
         >,
         Default<_ExhaustivityCheckView<Enum>>
-      > {
+      >
+    {
       let content = content()
       self.init(`enum`) {
         content.value.0
@@ -1108,7 +1118,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1124,7 +1134,8 @@
           CaseLet<Enum, Case5, Content5>,
           Default<DefaultContent>
         >
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -1163,7 +1174,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1179,7 +1190,8 @@
           CaseLet<Enum, Case5, Content5>,
           Default<_ExhaustivityCheckView<Enum>>
         >
-      > {
+      >
+    {
       let content = content()
       self.init(`enum`) {
         content.value.0
@@ -1213,7 +1225,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1232,7 +1244,8 @@
           >,
           Default<DefaultContent>
         >
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -1275,7 +1288,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1294,7 +1307,8 @@
           >,
           Default<_ExhaustivityCheckView<Enum>>
         >
-      > {
+      >
+    {
       let content = content()
       self.init(`enum`) {
         content.value.0
@@ -1331,7 +1345,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1353,7 +1367,8 @@
             Default<DefaultContent>
           >
         >
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -1400,7 +1415,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1422,7 +1437,8 @@
             Default<_ExhaustivityCheckView<Enum>>
           >
         >
-      > {
+      >
+    {
       let content = content()
       self.init(`enum`) {
         content.value.0
@@ -1462,7 +1478,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1487,7 +1503,8 @@
           >
         >,
         Default<DefaultContent>
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -1538,7 +1555,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1563,7 +1580,8 @@
           >
         >,
         Default<_ExhaustivityCheckView<Enum>>
-      > {
+      >
+    {
       let content = content()
       self.init(`enum`) {
         content.value.0
@@ -1606,7 +1624,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1634,7 +1652,8 @@
           CaseLet<Enum, Case9, Content9>,
           Default<DefaultContent>
         >
-      > {
+      >
+    {
       self.init(enum: `enum`) {
         let content = content().value
         if content.0.casePath.extract(from: `enum`.wrappedValue) != nil {
@@ -1689,7 +1708,7 @@
         )
       >
     )
-      where
+    where
       Content == _ConditionalContent<
         _ConditionalContent<
           _ConditionalContent<
@@ -1717,7 +1736,8 @@
           CaseLet<Enum, Case9, Content9>,
           Default<_ExhaustivityCheckView<Enum>>
         >
-      > {
+      >
+    {
       let content = content()
       self.init(`enum`) {
         content.value.0
@@ -1742,13 +1762,13 @@
     public var body: some View {
       #if DEBUG
         let message = """
-        Warning: Switch.body@\(self.file):\(self.line)
+          Warning: Switch.body@\(self.file):\(self.line)
 
-        "Switch" did not handle "\(describeCase(self.enum.wrappedValue.wrappedValue))"
+          "Switch" did not handle "\(describeCase(self.enum.wrappedValue.wrappedValue))"
 
-        Make sure that you exhaustively provide a "CaseLet" view for each case in "\(Enum.self)", \
-        provide a "Default" view at the end of the "Switch", or use an "IfCaseLet" view instead.
-        """
+          Make sure that you exhaustively provide a "CaseLet" view for each case in "\(Enum.self)", \
+          provide a "Default" view at the end of the "Switch", or use an "IfCaseLet" view instead.
+          """
         VStack(spacing: 17) {
           self.exclamation()
             .font(.largeTitle)
@@ -1789,13 +1809,13 @@
       let childMirror = Mirror(reflecting: child.value)
       let associatedValuesMirror =
         childMirror.displayStyle == .tuple
-          ? childMirror
-          : Mirror(`enum`, unlabeledChildren: [child.value], displayStyle: .tuple)
+        ? childMirror
+        : Mirror(`enum`, unlabeledChildren: [child.value], displayStyle: .tuple)
       `case` = """
-      \(label)(\
-      \(associatedValuesMirror.children.map { "\($0.label ?? "_"):" }.joined())\
-      )
-      """
+        \(label)(\
+        \(associatedValuesMirror.children.map { "\($0.label ?? "_"):" }.joined())\
+        )
+        """
     } else {
       `case` = "\(`enum`)"
     }
@@ -1815,7 +1835,7 @@
       *,
       deprecated,
       message:
-      "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
+        "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func alert<Value>(
       unwrapping value: Binding<AlertState<Value>?>,
@@ -1833,7 +1853,7 @@
       *,
       deprecated,
       message:
-      "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
+        "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func alert<Enum, Value>(
       unwrapping enum: Binding<Enum?>,
@@ -1852,7 +1872,7 @@
       *,
       deprecated,
       message:
-      "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
+        "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func confirmationDialog<Value>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
@@ -1870,7 +1890,7 @@
       *,
       deprecated,
       message:
-      "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
+        "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func confirmationDialog<Enum, Value>(
       unwrapping enum: Binding<Enum?>,
@@ -1932,4 +1952,4 @@
       )
     }
   }
-#endif // canImport(SwiftUI)
+#endif  // canImport(SwiftUI)

@@ -9,8 +9,8 @@
     ///
     /// - Returns: A binding to a boolean. Returns `true` if non-`nil`, otherwise `false`.
     public func isPresent<Wrapped>() -> Binding<Bool>
-      where Value == Wrapped? {
-        self._isPresent
+    where Value == Wrapped? {
+      self._isPresent
     }
   }
 
