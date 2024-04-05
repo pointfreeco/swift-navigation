@@ -4,32 +4,6 @@
 
   // NB: Deprecated after 1.2.1
 
-  // Moved to SwiftUINavigationCore, made settable
-  extension Binding {
-    @available(iOS, introduced: 13, deprecated: 15)
-    @available(macOS, introduced: 10.15, deprecated: 12)
-    @available(tvOS, introduced: 13, deprecated: 15)
-    @available(watchOS, introduced: 6, deprecated: 8)
-    public func isPresent<Wrapped>() -> Binding<Bool>
-    where Value == Wrapped? {
-      self._isPresent
-    }
-  }
-
-  extension Optional {
-    @available(iOS, introduced: 13, deprecated: 15)
-    @available(macOS, introduced: 10.15, deprecated: 12)
-    @available(tvOS, introduced: 13, deprecated: 15)
-    @available(watchOS, introduced: 6, deprecated: 8)
-    fileprivate var _isPresent: Bool {
-      get { self != nil }
-      set {
-        guard !newValue else { return }
-        self = nil
-      }
-    }
-  }
-
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension View {
     @available(*, deprecated, renamed: "alert(_:title:actions:message:)")
@@ -42,7 +16,7 @@
       alert(item: value, title: title, actions: actions, message: message)
     }
     
-    @available(*, deprecated, renamed: "confirmationDialog(_:title:textVisibility:actions:message:)")
+    @available(*, deprecated, renamed: "confirmationDialog(_:textVisibility:title:actions:message:)")
     public func confirmationDialog<Value, A: View, M: View>(
       title: (Value) -> Text,
       titleVisibility: Visibility = .automatic,

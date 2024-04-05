@@ -1,7 +1,6 @@
 #if canImport(SwiftUI)
   import SwiftUI
 
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension Binding {
     /// Creates a binding by projecting the current optional value to a boolean describing if it's
     /// non-`nil`.
@@ -11,13 +10,18 @@
     /// - Returns: A binding to a boolean. Returns `true` if non-`nil`, otherwise `false`.
     public func isPresent<Wrapped>() -> Binding<Bool>
       where Value == Wrapped? {
-      .init(
-        get: { self.wrappedValue != nil },
-        set: { isPresent, transaction in
-          guard !isPresent else { return }
-          self.transaction(transaction).wrappedValue = nil
-        }
-      )
+        self._isPresent
     }
   }
+
+  extension Optional {
+    fileprivate var _isPresent: Bool {
+      get { self != nil }
+      set {
+        guard !newValue else { return }
+        self = nil
+      }
+    }
+  }
+
 #endif
