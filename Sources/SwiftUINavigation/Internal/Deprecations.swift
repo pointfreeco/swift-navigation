@@ -262,8 +262,8 @@
     ) -> some View {
       confirmationDialog(
         item: `enum`.case(casePath),
-        title: title,
         titleVisibility: titleVisibility,
+        title: title,
         actions: actions,
         message: message
       )
