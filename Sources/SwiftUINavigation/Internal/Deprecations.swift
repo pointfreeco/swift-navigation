@@ -6,7 +6,7 @@
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension View {
-    @available(*, deprecated, renamed: "alert(_:title:actions:message:)")
+    @available(*, deprecated, renamed: "alert(item:title:actions:message:)")
     public func alert<Value, A: View, M: View>(
       title: (Value) -> Text,
       unwrapping value: Binding<Value?>,
