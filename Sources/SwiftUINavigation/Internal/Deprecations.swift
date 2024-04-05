@@ -16,7 +16,7 @@
       alert(item: value, title: title, actions: actions, message: message)
     }
     
-    @available(*, deprecated, renamed: "confirmationDialog(_:textVisibility:title:actions:message:)")
+    @available(*, deprecated, renamed: "confirmationDialog(item:textVisibility:title:actions:message:)")
     public func confirmationDialog<Value, A: View, M: View>(
       title: (Value) -> Text,
       titleVisibility: Visibility = .automatic,
