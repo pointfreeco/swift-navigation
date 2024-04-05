@@ -4,8 +4,8 @@
   import SwiftUINavigation
   import XCTest
 
-  @MainActor
   final class ButtonStateTests: XCTestCase {
+    @MainActor
     func testAsyncAnimationWarning() async {
       XCTExpectFailure {
         $0.compactDescription == """
