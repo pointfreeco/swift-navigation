@@ -53,7 +53,7 @@ as a "case-pathable" enum:
 
 @CasePathable
 enum Destination {
-  var counter(Int)
+  case counter(Int)
   // More destinations
 }
 ```

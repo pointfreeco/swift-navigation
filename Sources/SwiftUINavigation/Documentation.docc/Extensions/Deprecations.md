@@ -21,6 +21,7 @@ instead.
 ### View modifiers
 
 - ``SwiftUI/View/alert(title:unwrapping:case:actions:message:)``
+- ``SwiftUI/View/alert(title:unwrapping:actions:message:)``
 - ``SwiftUI/View/alert(unwrapping:action:)-7da26``
 - ``SwiftUI/View/alert(unwrapping:action:)-6y2fk``
 - ``SwiftUI/View/alert(unwrapping:action:)-867h5``

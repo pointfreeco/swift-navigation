@@ -2,6 +2,41 @@
   import SwiftUI
   @_spi(RuntimeWarn) import SwiftUINavigationCore
 
+  // NB: Deprecated after 1.2.1
+
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+  extension View {
+    @available(*, deprecated, renamed: "alert(item:title:actions:message:)")
+    public func alert<Value, A: View, M: View>(
+      title: (Value) -> Text,
+      unwrapping value: Binding<Value?>,
+      @ViewBuilder actions: (Value) -> A,
+      @ViewBuilder message: (Value) -> M
+    ) -> some View {
+      alert(item: value, title: title, actions: actions, message: message)
+    }
+
+    @available(
+      *, deprecated, renamed: "confirmationDialog(item:textVisibility:title:actions:message:)"
+    )
+    public func confirmationDialog<Value, A: View, M: View>(
+      title: (Value) -> Text,
+      titleVisibility: Visibility = .automatic,
+      unwrapping value: Binding<Value?>,
+      @ViewBuilder actions: (Value) -> A,
+      @ViewBuilder message: (Value) -> M
+    ) -> some View {
+      self.confirmationDialog(
+        value.wrappedValue.map(title) ?? Text(verbatim: ""),
+        isPresented: value.isPresent(),
+        titleVisibility: titleVisibility,
+        presenting: value.wrappedValue,
+        actions: actions,
+        message: message
+      )
+    }
+  }
+
   // NB: Deprecated after 1.0.2
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
@@ -11,7 +46,7 @@
       unwrapping value: Binding<AlertState<Value>?>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
-      self.alert(
+      alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
         isPresented: value.isPresent(),
         presenting: value.wrappedValue,
@@ -29,7 +64,7 @@
       unwrapping value: Binding<AlertState<Value>?>,
       action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
-      self.alert(
+      alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
         isPresented: value.isPresent(),
         presenting: value.wrappedValue,
@@ -47,7 +82,7 @@
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
-      self.confirmationDialog(
+      confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
         isPresented: value.isPresent(),
         titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
@@ -66,7 +101,7 @@
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
       action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
-      self.confirmationDialog(
+      confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
         isPresented: value.isPresent(),
         titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
@@ -109,9 +144,9 @@
       @ViewBuilder actions: (Case) -> A,
       @ViewBuilder message: (Case) -> M
     ) -> some View {
-      self.alert(
+      alert(
+        item: `enum`.case(casePath),
         title: title,
-        unwrapping: `enum`.case(casePath),
         actions: actions,
         message: message
       )
@@ -138,11 +173,11 @@
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func alert<Enum, Value>(
-      unwrapping `enum`: Binding<Enum?>,
+      unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, AlertState<Value>>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
-      self.alert(`enum`.case(casePath), action: handler)
+      alert(`enum`.case(casePath), action: handler)
     }
 
     @available(
@@ -166,11 +201,11 @@
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func alert<Enum, Value>(
-      unwrapping `enum`: Binding<Enum?>,
+      unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, AlertState<Value>>,
       action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
-      self.alert(`enum`.case(casePath), action: handler)
+      alert(`enum`.case(casePath), action: handler)
     }
 
     @available(
@@ -201,10 +236,10 @@
       @ViewBuilder actions: (Case) -> A,
       @ViewBuilder message: (Case) -> M
     ) -> some View {
-      self.confirmationDialog(
-        title: title,
+      confirmationDialog(
+        item: `enum`.case(casePath),
         titleVisibility: titleVisibility,
-        unwrapping: `enum`.case(casePath),
+        title: title,
         actions: actions,
         message: message
       )
@@ -231,11 +266,11 @@
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func confirmationDialog<Enum, Value>(
-      unwrapping `enum`: Binding<Enum?>,
+      unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, ConfirmationDialogState<Value>>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
-      self.confirmationDialog(
+      confirmationDialog(
         `enum`.case(casePath),
         action: handler
       )
@@ -262,11 +297,11 @@
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     public func confirmationDialog<Enum, Value>(
-      unwrapping `enum`: Binding<Enum?>,
+      unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, ConfirmationDialogState<Value>>,
       action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
-      self.confirmationDialog(
+      confirmationDialog(
         `enum`.case(casePath),
         action: handler
       )
@@ -295,7 +330,7 @@
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
     ) -> some View
     where Content: View {
-      self.fullScreenCover(
+      fullScreenCover(
         unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
     }
 
@@ -324,7 +359,7 @@
       case casePath: AnyCasePath<Enum, Case>,
       @ViewBuilder destination: (Binding<Case>) -> Destination
     ) -> some View {
-      self.navigationDestination(unwrapping: `enum`.case(casePath), destination: destination)
+      navigationDestination(unwrapping: `enum`.case(casePath), destination: destination)
     }
 
     @available(
@@ -346,7 +381,7 @@
       arrowEdge: Edge = .top,
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
     ) -> some View where Content: View {
-      self.popover(
+      popover(
         unwrapping: `enum`.case(casePath),
         attachmentAnchor: attachmentAnchor,
         arrowEdge: arrowEdge,
@@ -382,7 +417,7 @@
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
     ) -> some View
     where Content: View {
-      self.sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
+      sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
     }
   }
 
@@ -508,7 +543,7 @@
         "Use '$enum.case.map { $case in … }' (and 'if !enum.is(\\.case) { … }' if you have an 'else' branch) with a '@CasePathable' enum, instead."
     )
     public init(
-      _ `enum`: Binding<Enum>,
+      _ enum: Binding<Enum>,
       pattern casePath: AnyCasePath<Enum, Case>,
       @ViewBuilder then ifContent: @escaping (Binding<Case>) -> IfContent,
       @ViewBuilder else elseContent: () -> ElseContent
@@ -546,12 +581,12 @@
   )
   extension IfCaseLet where ElseContent == EmptyView {
     public init(
-      _ `enum`: Binding<Enum>,
+      _ enum: Binding<Enum>,
       pattern casePath: AnyCasePath<Enum, Case>,
       @ViewBuilder ifContent: @escaping (Binding<Case>) -> IfContent
     ) {
       self.casePath = casePath
-      self.elseContent = EmptyView()
+      elseContent = EmptyView()
       self.enum = `enum`
       self.ifContent = ifContent
     }
@@ -1763,7 +1798,7 @@
     let wrappedValue: Binding<Value>
 
     init(binding: Binding<Value>) {
-      self.wrappedValue = binding
+      wrappedValue = binding
     }
   }
 
@@ -1806,7 +1841,7 @@
       unwrapping value: Binding<AlertState<Value>?>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
-      self.alert(value) { (value: Value?) in
+      alert(value) { (value: Value?) in
         if let value = value {
           await handler(value)
         }
@@ -1821,11 +1856,11 @@
         "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func alert<Enum, Value>(
-      unwrapping `enum`: Binding<Enum?>,
+      unwrapping enum: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Value>>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
-      self.alert(unwrapping: `enum`, case: casePath) { (value: Value?) async in
+      alert(unwrapping: `enum`, case: casePath) { (value: Value?) async in
         if let value = value {
           await handler(value)
         }
@@ -1843,7 +1878,7 @@
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
-      self.confirmationDialog(unwrapping: value) { (value: Value?) in
+      confirmationDialog(unwrapping: value) { (value: Value?) in
         if let value = value {
           await handler(value)
         }
@@ -1858,11 +1893,11 @@
         "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
     public func confirmationDialog<Enum, Value>(
-      unwrapping `enum`: Binding<Enum?>,
+      unwrapping enum: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
       action handler: @escaping (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
-      self.confirmationDialog(unwrapping: `enum`, case: casePath) { (value: Value?) async in
+      confirmationDialog(unwrapping: `enum`, case: casePath) { (value: Value?) async in
         if let value = value {
           await handler(value)
         }
@@ -1875,7 +1910,7 @@
   @available(*, deprecated, renamed: "init(_:pattern:then:else:)")
   extension IfCaseLet {
     public init(
-      _ `enum`: Binding<Enum>,
+      _ enum: Binding<Enum>,
       pattern casePath: CasePath<Enum, Case>,
       @ViewBuilder ifContent: @escaping (Binding<Case>) -> IfContent,
       @ViewBuilder elseContent: () -> ElseContent
