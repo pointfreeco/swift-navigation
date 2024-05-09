@@ -1,4 +1,4 @@
-#if canImport(SwiftUI)
+#if swift(>=5.9) && canImport(SwiftUI)
   import CustomDump
   import SwiftUI
   import SwiftUINavigation
