@@ -47,8 +47,8 @@
     }
   }
 
-  private extension Binding {
-    init(initialValue: Value) {
+  extension Binding {
+    fileprivate init(initialValue: Value) {
       var value = initialValue
       self.init(
         get: { value },
