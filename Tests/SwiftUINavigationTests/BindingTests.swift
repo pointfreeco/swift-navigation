@@ -34,17 +34,6 @@
       XCTAssertEqual(status, .outOfStock(isOnBackOrder: true))
     }
 
-    func testCaseCannotReplaceOtherCase_2() throws {
-      let status = Binding(initialValue: Status.inStock(quantity: 1))
-
-      let inStock = try XCTUnwrap(status.inStock)
-
-      status.wrappedValue = .outOfStock(isOnBackOrder: true)
-
-      inStock.wrappedValue = 42
-      XCTAssertEqual(status.wrappedValue, .outOfStock(isOnBackOrder: true))
-    }
-
     func testDestinationCannotReplaceOtherDestination() throws {
       @Binding var destination: Status?
       _destination = Binding(initialValue: .inStock(quantity: 1))

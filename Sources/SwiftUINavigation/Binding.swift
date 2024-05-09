@@ -141,19 +141,6 @@
     }
   }
 
-//  extension CasePathable {
-//    fileprivate subscript<Member>(
-//      keyPath: KeyPath<Self.AllCasePaths, AnyCasePath<Self, Member>>
-//    ) -> Member? {
-//      get { Self.allCasePaths[keyPath: keyPath].extract(from: self) }
-//      set {
-//        let casePath = Self.allCasePaths[keyPath: keyPath]
-//        guard let newValue, casePath.extract(from: self) != nil else { return }
-//        self = casePath.embed(newValue)
-//      }
-//    }
-//  }
-
   extension Optional where Wrapped: CasePathable {
     fileprivate subscript<Member>(
       keyPath: KeyPath<Wrapped.AllCasePaths, AnyCasePath<Wrapped, Member>>
