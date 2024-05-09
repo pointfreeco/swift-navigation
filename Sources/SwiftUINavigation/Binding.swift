@@ -131,7 +131,9 @@
     fileprivate subscript<Member>(
       keyPath: KeyPath<Self.AllCasePaths, AnyCasePath<Self, Member>>
     ) -> Member? {
-      get { Self.allCasePaths[keyPath: keyPath].extract(from: self) }
+      get {
+        Self.allCasePaths[keyPath: keyPath].extract(from: self)
+      }
       set {
         guard let newValue else { return }
         self = Self.allCasePaths[keyPath: keyPath].embed(newValue)
@@ -139,20 +141,31 @@
     }
   }
 
+//  extension CasePathable {
+//    fileprivate subscript<Member>(
+//      keyPath: KeyPath<Self.AllCasePaths, AnyCasePath<Self, Member>>
+//    ) -> Member? {
+//      get { Self.allCasePaths[keyPath: keyPath].extract(from: self) }
+//      set {
+//        let casePath = Self.allCasePaths[keyPath: keyPath]
+//        guard let newValue, casePath.extract(from: self) != nil else { return }
+//        self = casePath.embed(newValue)
+//      }
+//    }
+//  }
+
   extension Optional where Wrapped: CasePathable {
     fileprivate subscript<Member>(
       keyPath: KeyPath<Wrapped.AllCasePaths, AnyCasePath<Wrapped, Member>>
     ) -> Member? {
       get {
-        guard let wrapped = self else { return nil }
-        return Wrapped.allCasePaths[keyPath: keyPath].extract(from: wrapped)
+        self.flatMap(Wrapped.allCasePaths[keyPath: keyPath].extract(from:))
       }
       set {
-        guard let newValue else {
-          self = nil
-          return
-        }
-        self = Wrapped.allCasePaths[keyPath: keyPath].embed(newValue)
+        let casePath = Wrapped.allCasePaths[keyPath: keyPath]
+        guard self.flatMap(casePath.extract(from:)) != nil
+        else { return }
+        self = newValue.map(casePath.embed)
       }
     }
   }
