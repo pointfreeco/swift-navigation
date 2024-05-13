@@ -15,11 +15,11 @@ concurrency:
 
 jobs:
   library:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
       matrix:
         xcode:
-          - '15.2'
+          - '15.3'
           - '14.3.1'
     steps:
       - uses: actions/checkout@v4
