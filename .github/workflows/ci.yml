@@ -19,9 +19,8 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - '15.0'
+          - '15.2'
           - '14.3.1'
-
     steps:
       - uses: actions/checkout@v4
       - name: Select Xcode ${{ matrix.xcode }}
