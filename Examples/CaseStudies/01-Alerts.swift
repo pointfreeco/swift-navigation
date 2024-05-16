@@ -21,19 +21,18 @@ struct OptionalAlerts: View {
       }
       .disabled(self.model.isLoading)
     }
-    .alert(
-      title: { Text("Fact about \($0.number)") },
-      unwrapping: self.$model.fact,
-      actions: {
-        Button("Get another fact about \($0.number)") {
-          Task { await self.model.numberFactButtonTapped() }
-        }
-        Button("Close", role: .cancel) {
-          self.model.fact = nil
-        }
-      },
-      message: { Text($0.description) }
-    )
+    .alert(item: self.$model.fact) {
+      Text("Fact about \($0.number)")
+    } actions: {
+      Button("Get another fact about \($0.number)") {
+        Task { await self.model.numberFactButtonTapped() }
+      }
+      Button("Close", role: .cancel) {
+        self.model.fact = nil
+      }
+    } message: {
+      Text($0.description)
+    }
     .navigationTitle("Alerts")
   }
 }

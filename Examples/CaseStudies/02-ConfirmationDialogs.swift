@@ -20,17 +20,15 @@ struct OptionalConfirmationDialogs: View {
         }
       }
       .disabled(self.model.isLoading)
-      .confirmationDialog(
-        title: { Text("Fact about \($0.number)") },
-        titleVisibility: .visible,
-        unwrapping: self.$model.fact,
-        actions: {
-          Button("Get another fact about \($0.number)") {
-            Task { await self.model.numberFactButtonTapped() }
-          }
-        },
-        message: { Text($0.description) }
-      )
+      .confirmationDialog(item: self.$model.fact, titleVisibility: .visible) {
+        Text("Fact about \($0.number)")
+      } actions: {
+        Button("Get another fact about \($0.number)") {
+          Task { await self.model.numberFactButtonTapped() }
+        }
+      } message: {
+        Text($0.description)
+      }
     }
     .navigationTitle("Dialogs")
   }
