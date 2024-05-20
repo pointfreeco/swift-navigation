@@ -35,17 +35,19 @@
     }
 
     func testDestinationCannotReplaceOtherDestination() throws {
-      try XCTSkipIf(ProcessInfo.processInfo.environment["CI"] != nil)
+      #if os(iOS) || os(macOS)
+        try XCTSkipIf(ProcessInfo.processInfo.environment["CI"] != nil)
 
-      @Binding var destination: Status?
-      _destination = Binding(initialValue: .inStock(quantity: 1))
+        @Binding var destination: Status?
+        _destination = Binding(initialValue: .inStock(quantity: 1))
 
-      let inStock = try XCTUnwrap($destination.inStock)
+        let inStock = try XCTUnwrap($destination.inStock)
 
-      destination = .outOfStock(isOnBackOrder: true)
+        destination = .outOfStock(isOnBackOrder: true)
 
-      inStock.wrappedValue = 42
-      XCTAssertEqual(destination, .outOfStock(isOnBackOrder: true))
+        inStock.wrappedValue = 42
+        XCTAssertEqual(destination, .outOfStock(isOnBackOrder: true))
+      #endif
     }
   }
 
