@@ -17,7 +17,7 @@
     }
 
     @available(
-      *, deprecated, renamed: "confirmationDialog(item:textVisibility:title:actions:message:)"
+      *, deprecated, renamed: "confirmationDialog(item:titleVisibility:title:actions:message:)"
     )
     public func confirmationDialog<Value, A: View, M: View>(
       title: (Value) -> Text,
