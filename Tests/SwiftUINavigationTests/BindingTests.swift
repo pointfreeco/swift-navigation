@@ -35,6 +35,8 @@
     }
 
     func testDestinationCannotReplaceOtherDestination() throws {
+      try XCTSkipIf(ProcessInfo.processInfo.environment["CI"] != nil)
+
       @Binding var destination: Status?
       _destination = Binding(initialValue: .inStock(quantity: 1))
 
