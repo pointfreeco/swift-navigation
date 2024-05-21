@@ -1,6 +1,8 @@
 #if canImport(SwiftUI)
   import SwiftUI
 
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
   extension View {
     /// Presents a popover using a binding as a data source for the sheet's content based on the
     /// identity of the underlying item.
@@ -77,8 +79,6 @@
     ///   - arrowEdge: The edge of the `attachmentAnchor` that defines the location of the popover's
     ///     arrow.
     ///   - content: A closure returning the content of the popover.
-    @available(tvOS, unavailable)
-    @available(watchOS, unavailable)
     public func popover<Value, Content: View>(
       unwrapping value: Binding<Value?>,
       attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
