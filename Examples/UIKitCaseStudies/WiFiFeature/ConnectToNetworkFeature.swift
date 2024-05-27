@@ -46,12 +46,14 @@ final class ConnectToNetworkViewController: UIViewController {
     passwordTextField.borderStyle = .line
     passwordTextField.isSecureTextEntry = true
     passwordTextField.becomeFirstResponder()
-    let joinButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      guard let self else { return }
-      Task {
-        await self.model.joinButtonTapped()
-      }
-    })
+    let joinButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        guard let self else { return }
+        Task {
+          await self.model.joinButtonTapped()
+        }
+      })
     joinButton.setTitle("Join network", for: .normal)
     let activityIndicator = UIActivityIndicatorView(style: .medium)
     activityIndicator.startAnimating()
@@ -67,7 +69,7 @@ final class ConnectToNetworkViewController: UIViewController {
     NSLayoutConstraint.activate([
       stack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       stack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-      stack.widthAnchor.constraint(equalToConstant: 200)
+      stack.widthAnchor.constraint(equalToConstant: 200),
     ])
 
     observe { [weak self, weak passwordTextField] in
@@ -75,7 +77,7 @@ final class ConnectToNetworkViewController: UIViewController {
         let self,
         let passwordTextField
       else { return }
-      
+
       passwordTextField.isEnabled = !model.isConnecting
       joinButton.isEnabled = !model.isConnecting
       activityIndicator.isHidden = !model.isConnecting

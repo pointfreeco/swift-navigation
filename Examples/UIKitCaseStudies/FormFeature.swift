@@ -56,13 +56,15 @@ final class FormViewController: UIViewController {
     let myTextField = UITextField(text: $model.text)
     myTextField.borderStyle = .roundedRect
 
-    let sheetButton = UIButton(configuration: .plain(), primaryAction: UIAction { [weak self] _ in
-      self?.model.sheet = .init(text: "Blob")
-//      Task {
-//        try await Task.sleep(for: .seconds(2))
-//        self?.model.sheet = .init(text: "Blob, Jr.")
-//      }
-    })
+    let sheetButton = UIButton(
+      configuration: .plain(),
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.sheet = .init(text: "Blob")
+        //      Task {
+        //        try await Task.sleep(for: .seconds(2))
+        //        self?.model.sheet = .init(text: "Blob, Jr.")
+        //      }
+      })
     sheetButton.setTitle("Present sheet", for: .normal)
 
     let drillDownButton = UIButton(
@@ -97,15 +99,15 @@ final class FormViewController: UIViewController {
 
       view.backgroundColor = model.color
       myLabel.text = """
-      MyModel(
-        color: \(String(describing: model.color)),
-        date: \(model.date),
-        isOn: \(model.isOn),
-        sliderValue: \(model.sliderValue)
-        stepperValue: \(model.stepperValue),
-        text: \(model.text)
-      )
-      """
+        MyModel(
+          color: \(String(describing: model.color)),
+          date: \(model.date),
+          isOn: \(model.isOn),
+          sliderValue: \(model.sliderValue)
+          stepperValue: \(model.stepperValue),
+          text: \(model.text)
+        )
+        """
     }
 
     navigationController?.pushViewController(isPresented: $model.isDrillDownPresented) {

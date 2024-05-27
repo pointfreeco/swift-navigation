@@ -1,5 +1,5 @@
-import XCTest
 import UIKitNavigation
+import XCTest
 
 final class PresentationTests: XCTestCase {
   @MainActor
@@ -67,7 +67,8 @@ final class PresentationTests: XCTestCase {
     _ = vc.view
     try await Task.sleep(for: .seconds(0.1))
     try setUp(controller: vc)
-    XCTTODO("""
+    XCTTODO(
+      """
       This does not currently pass because we eagerly present in `viewDidLoad` but really we should
       wait for `viewDidAppear`.
       """)
@@ -185,7 +186,8 @@ final class PresentationTests: XCTestCase {
     try await Task.sleep(for: .seconds(0.2))
     let nav = UINavigationController(rootViewController: vc)
     try setUp(controller: nav)
-    XCTTODO("""
+    XCTTODO(
+      """
       This does not currently pass because we eagerly present in `viewDidLoad` but really we should
       wait for `viewDidAppear`.
       """)
@@ -266,13 +268,13 @@ final class PresentationTests: XCTestCase {
     vc.model.presentedChild = Model()
     await assertEventually {
       (vc.presentedViewController as? BasicViewController)?.model.id
-      == vc.model.presentedChild?.id
+        == vc.model.presentedChild?.id
     }
   }
 }
 
 @Observable
-fileprivate final class Model: Identifiable {
+private final class Model: Identifiable {
   var isPresented: Bool
   var isPushed: Bool
   var presentedChild: Model?
@@ -293,7 +295,7 @@ fileprivate final class Model: Identifiable {
   }
 }
 
-fileprivate class BasicViewController: UIViewController {
+private class BasicViewController: UIViewController {
   @UIBindable var model: Model
   init(model: Model = Model()) {
     self.model = model

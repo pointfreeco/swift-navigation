@@ -1,5 +1,5 @@
-import XCTest
 import UIKitNavigation
+import XCTest
 
 final class NavigationStackTests: XCTestCase {
   @MainActor
@@ -30,7 +30,7 @@ final class NavigationStackTests: XCTestCase {
       nav.viewControllers.count == 1
     }
   }
-  
+
   @MainActor
   func testAppendSameData() async throws {
     @UIBindable var model = Model()
@@ -47,7 +47,8 @@ final class NavigationStackTests: XCTestCase {
       nav.viewControllers.count == 2
     }
     model.path.append(1)
-    XCTTODO("""
+    XCTTODO(
+      """
       This doesn't pass because we pushed the same value onto the stack twice.
       """)
     await assertEventually {
@@ -57,7 +58,7 @@ final class NavigationStackTests: XCTestCase {
 }
 
 @Observable
-fileprivate class Model {
+private class Model {
   var path: [Int]
   init(path: [Int] = []) {
     self.path = path

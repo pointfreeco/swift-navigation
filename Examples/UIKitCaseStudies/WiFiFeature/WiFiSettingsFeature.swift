@@ -4,7 +4,7 @@ import UIKitNavigation
 @Perceptible
 @MainActor
 class WiFiSettingsModel {
-  var destination: Destination? 
+  var destination: Destination?
   var foundNetworks: [Network]
   var isOn: Bool
   var selectedNetworkID: Network.ID?
@@ -69,7 +69,7 @@ class WiFiSettingsViewController: UICollectionViewController {
       )
     )
   }
-  
+
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
@@ -226,7 +226,7 @@ class WiFiSettingsViewController: UICollectionViewController {
 }
 
 extension NSDiffableDataSourceSnapshot<
-  WiFiSettingsViewController.Section, 
+  WiFiSettingsViewController.Section,
   WiFiSettingsViewController.Item
 > {
   @MainActor
@@ -248,14 +248,13 @@ extension NSDiffableDataSourceSnapshot<
       model.foundNetworks
         .sorted { lhs, rhs in
           (lhs.isSecured ? 1 : 0, lhs.connectivity)
-          > (rhs.isSecured ? 1 : 0, rhs.connectivity)
+            > (rhs.isSecured ? 1 : 0, rhs.connectivity)
         }
         .compactMap { network in
           network.id == model.selectedNetworkID
-          ? nil
-          : .foundNetwork(network)
-        }
-      ,
+            ? nil
+            : .foundNetwork(network)
+        },
       toSection: .foundNetworks
     )
   }

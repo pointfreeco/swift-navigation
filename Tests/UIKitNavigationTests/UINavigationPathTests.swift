@@ -1,5 +1,5 @@
-import UIKitNavigation
 import SwiftUI
+import UIKitNavigation
 import XCTest
 
 final class UINavigationPathTests: XCTestCase {
@@ -36,7 +36,7 @@ final class UINavigationPathTests: XCTestCase {
 func _typeByName_Env(_ name: String) -> Any.Type? {
   let nameUTF8 = Array(name.utf8)
   return nameUTF8.withUnsafeBufferPointer { (nameUTF8) in
-    return  _getTypeByMangledNameInEnvironment(
+    return _getTypeByMangledNameInEnvironment(
       nameUTF8.baseAddress!,
       UInt(nameUTF8.endIndex),
       genericEnvironment: nil,
@@ -48,7 +48,7 @@ func _typeByName_Env(_ name: String) -> Any.Type? {
 func _typeByName_Ctx(_ name: String) -> Any.Type? {
   let nameUTF8 = Array(name.utf8)
   return nameUTF8.withUnsafeBufferPointer { (nameUTF8) in
-    return  _getTypeByMangledNameInContext(
+    return _getTypeByMangledNameInContext(
       nameUTF8.baseAddress!,
       UInt(nameUTF8.endIndex),
       genericContext: nil,
@@ -68,7 +68,8 @@ public func _getTypeByMangledNameInEnvironment(
   _ name: UnsafePointer<UInt8>,
   _ nameLength: UInt,
   genericEnvironment: UnsafeRawPointer?,
-  genericArguments: UnsafeRawPointer?)
+  genericArguments: UnsafeRawPointer?
+)
   -> Any.Type?
 
 @_silgen_name("swift_getTypeByMangledNameInContext")
@@ -76,5 +77,6 @@ public func _getTypeByMangledNameInContext(
   _ name: UnsafePointer<UInt8>,
   _ nameLength: UInt,
   genericContext: UnsafeRawPointer?,
-  genericArguments: UnsafeRawPointer?)
+  genericArguments: UnsafeRawPointer?
+)
   -> Any.Type?

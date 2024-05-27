@@ -46,9 +46,11 @@ final class NetworkDetailViewController: UIViewController {
     view.backgroundColor = .systemBackground
     navigationItem.title = model.network.name
 
-    let forgetButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.forgetNetworkButtonTapped()
-    })
+    let forgetButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.forgetNetworkButtonTapped()
+      })
     forgetButton.setTitle("Forget network", for: .normal)
     forgetButton.setTitleColor(.red, for: .normal)
     forgetButton.translatesAutoresizingMaskIntoConstraints = false
@@ -68,9 +70,10 @@ final class NetworkDetailViewController: UIViewController {
         preferredStyle: .alert
       )
       controller.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-      controller.addAction(UIAlertAction(title: "Forget", style: .destructive) { [weak self] _ in
-        self?.model.confirmForgetNetworkButtonTapped()
-      })
+      controller.addAction(
+        UIAlertAction(title: "Forget", style: .destructive) { [weak self] _ in
+          self?.model.confirmForgetNetworkButtonTapped()
+        })
       return controller
     }
   }
@@ -82,7 +85,7 @@ final class NetworkDetailViewController: UIViewController {
       rootViewController: NetworkDetailViewController(
         model: NetworkDetailModel(
           network: Network(name: "Blob's WiFi"),
-          onConfirmForget: { }
+          onConfirmForget: {}
         )
       )
     )

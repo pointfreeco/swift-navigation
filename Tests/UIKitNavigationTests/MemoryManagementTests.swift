@@ -66,7 +66,7 @@ final class MemoryManagementTests: XCTestCase {
 }
 
 @Perceptible
-fileprivate final class Model: Identifiable {
+private final class Model: Identifiable {
   var isPresented = false
   var child: Model? = nil
   var text = ""

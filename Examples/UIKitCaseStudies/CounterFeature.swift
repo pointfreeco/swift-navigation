@@ -40,35 +40,45 @@ final class CounterViewController: UIViewController {
 
     let countLabel = UILabel()
     countLabel.textAlignment = .center
-    let decrementButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      guard let self else { return }
-      model.decrementButtonTapped()
-    })
+    let decrementButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        guard let self else { return }
+        model.decrementButtonTapped()
+      })
     decrementButton.setTitle("Decrement", for: .normal)
-    let incrementButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      guard let self else { return }
-      model.incrementButtonTapped()
-      if #available(iOS 17, *) {
-        traitCollection.dismiss()
-      } else {
-        // Fallback on earlier versions
-      }
-    })
+    let incrementButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        guard let self else { return }
+        model.incrementButtonTapped()
+        if #available(iOS 17, *) {
+          traitCollection.dismiss()
+        } else {
+          // Fallback on earlier versions
+        }
+      })
     incrementButton.setTitle("Increment", for: .normal)
-    let pushCollectionButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      guard let self else { return }
-      navigationController?.push(value: AppModel.Path.collection(CollectionModel()))
-    })
+    let pushCollectionButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        guard let self else { return }
+        navigationController?.push(value: AppModel.Path.collection(CollectionModel()))
+      })
     pushCollectionButton.setTitle("Push collection feature", for: .normal)
-    let pushCounterButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      guard let self else { return }
-      navigationController?.push(value: AppModel.Path.counter(CounterModel()))
-    })
+    let pushCounterButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        guard let self else { return }
+        navigationController?.push(value: AppModel.Path.counter(CounterModel()))
+      })
     pushCounterButton.setTitle("Push counter feature", for: .normal)
-    let pushFormButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      guard let self else { return }
-      navigationController?.push(value: AppModel.Path.form(FormModel()))
-    })
+    let pushFormButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        guard let self else { return }
+        navigationController?.push(value: AppModel.Path.form(FormModel()))
+      })
     pushFormButton.setTitle("Push form feature", for: .normal)
     let counterStack = UIStackView(arrangedSubviews: [
       countLabel,

@@ -116,11 +116,15 @@ public struct UITransaction {
       }
       return try result!._rethrowGet()
     } else if let animation {
-      return try animation.perform(body, completion: animationCompletions.isEmpty ? nil : {
-        for completion in animationCompletions {
-          completion($0)
-        }
-      })
+      return try animation.perform(
+        body,
+        completion: animationCompletions.isEmpty
+          ? nil
+          : {
+            for completion in animationCompletions {
+              completion($0)
+            }
+          })
     } else {
       let result = Swift.Result(catching: body)
       for completion in animationCompletions {

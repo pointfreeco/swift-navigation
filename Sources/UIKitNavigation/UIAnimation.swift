@@ -1,5 +1,5 @@
-import UIKit
 import SwiftUI
+import UIKit
 
 // TODO: Support arbitrary body closures, `CASpringAnimation`?
 // TODO: Should this be `UIKitAnimation`? `UIView.Animation`?

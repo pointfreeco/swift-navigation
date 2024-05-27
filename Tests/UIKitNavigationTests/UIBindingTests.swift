@@ -67,22 +67,22 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(optionalCountBinding.wrappedValue, 2)
   }
 
-//  @MainActor
-//  func testOperationToAnyHashable() {
-//    @UIBinding var count = 0
-//
-//    let optionalCountBinding = UIBinding<AnyHashable>($count)
-//    XCTAssertEqual(count, 0)
-//    XCTAssertEqual(optionalCountBinding.wrappedValue, 0)
-//
-//    count += 1
-//    XCTAssertEqual(count, 1)
-//    XCTAssertEqual(optionalCountBinding.wrappedValue, 1)
-//
-//    optionalCountBinding.wrappedValue = 2
-//    XCTAssertEqual(count, 2)
-//    XCTAssertEqual(optionalCountBinding.wrappedValue, 2)
-//  }
+  //  @MainActor
+  //  func testOperationToAnyHashable() {
+  //    @UIBinding var count = 0
+  //
+  //    let optionalCountBinding = UIBinding<AnyHashable>($count)
+  //    XCTAssertEqual(count, 0)
+  //    XCTAssertEqual(optionalCountBinding.wrappedValue, 0)
+  //
+  //    count += 1
+  //    XCTAssertEqual(count, 1)
+  //    XCTAssertEqual(optionalCountBinding.wrappedValue, 1)
+  //
+  //    optionalCountBinding.wrappedValue = 2
+  //    XCTAssertEqual(count, 2)
+  //    XCTAssertEqual(optionalCountBinding.wrappedValue, 2)
+  //  }
 
   @MainActor
   func testOperationConstant() {

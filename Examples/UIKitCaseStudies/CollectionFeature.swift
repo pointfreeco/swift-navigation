@@ -1,4 +1,5 @@
 import IdentifiedCollections
+import SwiftUI
 import UIKitNavigation
 
 extension UICollectionView {
@@ -15,7 +16,7 @@ extension UICollectionView {
       Cell, UIBinding<Item>
     > { [weak self] cell, indexPath, item in
       guard let self else { return }
-      observe { // TODO: Should this `perceive` be here?
+      observe {  // TODO: Should this `perceive` be here?
         content(cell, indexPath, item)
       }
     }
@@ -45,8 +46,6 @@ private enum Section { case main }
 
 // ...
 
-import SwiftUI
-
 @Perceptible
 final class CollectionModel: Hashable {
   struct Item: Identifiable, Comparable {
@@ -59,7 +58,7 @@ final class CollectionModel: Hashable {
   var items: IdentifiedArrayOf<Item> = [
     Item(count: 1),
     Item(count: 2),
-    Item(count: 3)
+    Item(count: 3),
   ]
 
   nonisolated func hash(into hasher: inout Hasher) {
@@ -77,11 +76,11 @@ final class CollectionViewController: UIViewController {
     self.model = model
     super.init(nibName: nil, bundle: nil)
   }
-  
+
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
 

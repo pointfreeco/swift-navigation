@@ -41,7 +41,7 @@ public func observe(
 }
 
 @MainActor
-fileprivate func onChange(_ apply: @escaping @MainActor @Sendable (UITransaction) -> Void) {
+private func onChange(_ apply: @escaping @MainActor @Sendable (UITransaction) -> Void) {
   withPerceptionTracking {
     apply(UITransaction.current)
   } onChange: {

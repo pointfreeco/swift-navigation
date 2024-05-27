@@ -14,7 +14,7 @@ public struct UIDismissAction: Sendable {
 
 @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
 private enum DismissActionTrait: UITraitDefinition {
-  static let defaultValue = UIDismissAction { 
+  static let defaultValue = UIDismissAction {
     // TODO: Runtime warn that there is no presentation context
   }
 }

@@ -28,7 +28,7 @@ extension UISwitch {
       UIAction { [weak self] _ in
         guard let self else { return }
         isOn.wrappedValue = self.isOn
-      }, 
+      },
       for: .valueChanged
     )
   }

@@ -421,7 +421,9 @@ private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
   }
 }
 
-private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding, @unchecked Sendable {
+private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding, @unchecked
+  Sendable
+{
   let base: Base
   let keyPath: WritableKeyPath<Base.Value, Value>
   init(base: Base, keyPath: WritableKeyPath<Base.Value, Value>) {
@@ -441,7 +443,9 @@ private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding
   }
 }
 
-private final class _UIBindingFromOptional<Base: _UIBinding<Value?>, Value>: _UIBinding, @unchecked Sendable {
+private final class _UIBindingFromOptional<Base: _UIBinding<Value?>, Value>: _UIBinding, @unchecked
+  Sendable
+{
   var value: Value
   let base: Base
   init(initialValue: Value, base: Base) {
@@ -513,7 +517,8 @@ private final class _UIBindingToOptional<Base: _UIBinding>: _UIBinding {
 //  }
 //}
 
-private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding, @unchecked Sendable
+private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding, @unchecked
+  Sendable
 where Base.Value: CasePathable {
   let base: Base
   let keyPath: KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
