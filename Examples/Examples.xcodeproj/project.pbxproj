@@ -44,6 +44,7 @@
 		DC5EB9D52C0525FA0034B757 /* NavigationStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */; };
 		DC5EB9D72C0526330034B757 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DC5EB9D62C0526330034B757 /* IdentifiedCollections */; };
 		DC5EB9D92C0526540034B757 /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = DC5EB9D82C0526540034B757 /* UIKitNavigation */; };
+		DC5EB9DC2C05276F0034B757 /* UIKitCaseStudies.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = DC5EB9DB2C05276F0034B757 /* UIKitCaseStudies.xctestplan */; };
 		DC609AD6291D76150052647F /* 06-NavigationDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */; };
 		DC6A8411291F227400B3F6C9 /* 10-SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* 10-SynchronizedBindings.swift */; };
 		DCD4E685273B300F00CDF3BD /* 05-FullScreenCovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */; };
@@ -102,7 +103,7 @@
 		DC5EB9CD2C0525E80034B757 /* XCTTODO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTTODO.swift; sourceTree = "<group>"; };
 		DC5EB9D22C0525FA0034B757 /* PresentationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentationTests.swift; sourceTree = "<group>"; };
 		DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
-		DC5EB9DA2C0526FB0034B757 /* UIKitCaseStudies.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = UIKitCaseStudies.xctestplan; path = UIKitCaseStudiesTests/UIKitCaseStudies.xctestplan; sourceTree = "<group>"; };
+		DC5EB9DB2C05276F0034B757 /* UIKitCaseStudies.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIKitCaseStudies.xctestplan; sourceTree = "<group>"; };
 		DC609AD5291D76150052647F /* 06-NavigationDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "06-NavigationDestinations.swift"; sourceTree = "<group>"; };
 		DC6A8410291F227400B3F6C9 /* 10-SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "10-SynchronizedBindings.swift"; sourceTree = "<group>"; };
 		DCD4E684273B300F00CDF3BD /* 05-FullScreenCovers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-FullScreenCovers.swift"; sourceTree = "<group>"; };
@@ -150,7 +151,6 @@
 		CA47378B272F08EF0012CAC3 = {
 			isa = PBXGroup;
 			children = (
-				DC5EB9DA2C0526FB0034B757 /* UIKitCaseStudies.xctestplan */,
 				CA4737C3272F090F0012CAC3 /* swiftui-navigation */,
 				CA473805272F0D330012CAC3 /* CaseStudies */,
 				CA4737F2272F09780012CAC3 /* Frameworks */,
@@ -244,6 +244,7 @@
 			children = (
 				DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */,
 				DC5EB9D22C0525FA0034B757 /* PresentationTests.swift */,
+				DC5EB9DB2C05276F0034B757 /* UIKitCaseStudies.xctestplan */,
 				DC5EB9CE2C0525E80034B757 /* Internal */,
 			);
 			path = UIKitCaseStudiesTests;
@@ -436,6 +437,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC5EB9DC2C05276F0034B757 /* UIKitCaseStudies.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
