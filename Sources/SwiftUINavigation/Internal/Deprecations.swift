@@ -2,6 +2,122 @@
   import SwiftUI
   @_spi(RuntimeWarn) import SwiftUINavigationCore
 
+  // NB: Deprecated after 1.3.0
+
+  @available(iOS 14, tvOS 14, watchOS 7, *)
+  @available(macOS, unavailable)
+  extension View {
+    @available(
+      *, deprecated,
+      message:
+        "Use the 'fullScreenCover(item:)' (or 'fullScreenCover(item:id:)') overload that passes a binding"
+    )
+    public func fullScreenCover<Value, Content>(
+      unwrapping value: Binding<Value?>,
+      onDismiss: (() -> Void)? = nil,
+      @ViewBuilder content: @escaping (Binding<Value>) -> Content
+    ) -> some View
+    where Content: View {
+      self.fullScreenCover(
+        isPresented: value.isPresent(),
+        onDismiss: onDismiss
+      ) {
+        Binding(unwrapping: value).map(content)
+      }
+    }
+  }
+
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  extension View {
+    @available(
+      *, deprecated,
+      message: "Use the 'navigationDestination(item:)' overload that passes a binding"
+    )
+    @ViewBuilder
+    public func navigationDestination<Value, Destination: View>(
+      unwrapping value: Binding<Value?>,
+      @ViewBuilder destination: (Binding<Value>) -> Destination
+    ) -> some View {
+      if requiresBindWorkaround {
+        self.modifier(
+          _NavigationDestinationBindWorkaround(
+            isPresented: value.isPresent(),
+            destination: Binding(unwrapping: value).map(destination)
+          )
+        )
+      } else {
+        self.navigationDestination(isPresented: value.isPresent()) {
+          Binding(unwrapping: value).map(destination)
+        }
+      }
+    }
+  }
+
+  // NB: This view modifier works around a bug in SwiftUI's built-in modifier:
+  // https://gist.github.com/mbrandonw/f8b94957031160336cac6898a919cbb7#file-fb11056434-md
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  private struct _NavigationDestinationBindWorkaround<Destination: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    let destination: Destination
+
+    @State private var isPresentedState = false
+
+    public func body(content: Content) -> some View {
+      content
+        .navigationDestination(isPresented: self.$isPresentedState) { self.destination }
+        .bind(self.$isPresented, to: self.$isPresentedState)
+    }
+  }
+
+  private let requiresBindWorkaround = {
+    if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+      return true
+    }
+    guard #available(iOS 16.4, macOS 13.3, tvOS 16.4, watchOS 9.4, *)
+    else { return true }
+    return false
+  }()
+
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
+  extension View {
+    @available(
+      *, deprecated,
+      message: "Use the 'popover(item:)' (or 'popover(item:id:)') overload that passes a binding"
+    )
+    public func popover<Value, Content: View>(
+      unwrapping value: Binding<Value?>,
+      attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
+      arrowEdge: Edge = .top,
+      @ViewBuilder content: @escaping (Binding<Value>) -> Content
+    ) -> some View {
+      self.popover(
+        isPresented: value.isPresent(),
+        attachmentAnchor: attachmentAnchor,
+        arrowEdge: arrowEdge
+      ) {
+        Binding(unwrapping: value).map(content)
+      }
+    }
+  }
+
+  extension View {
+    @available(
+      *, deprecated,
+      message: "Use the 'sheet(item:)' (or 'sheet(item:id:)') overload that passes a binding"
+    )
+    public func sheet<Value, Content>(
+      unwrapping value: Binding<Value?>,
+      onDismiss: (() -> Void)? = nil,
+      @ViewBuilder content: @escaping (Binding<Value>) -> Content
+    ) -> some View
+    where Content: View {
+      self.sheet(isPresented: value.isPresent(), onDismiss: onDismiss) {
+        Binding(unwrapping: value).map(content)
+      }
+    }
+  }
+
   // NB: Deprecated after 1.2.1
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
@@ -116,24 +232,10 @@
     }
   }
 
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension View {
     @available(
-      iOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      macOS, introduced: 12, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      tvOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, introduced: 8, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
@@ -153,22 +255,7 @@
     }
 
     @available(
-      iOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      macOS, introduced: 12, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      tvOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, introduced: 8, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
@@ -181,22 +268,7 @@
     }
 
     @available(
-      iOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      macOS, introduced: 12, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      tvOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, introduced: 8, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
@@ -209,22 +281,7 @@
     }
 
     @available(
-      iOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      macOS, introduced: 12, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      tvOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, introduced: 8, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
@@ -246,22 +303,7 @@
     }
 
     @available(
-      iOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      macOS, introduced: 12, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      tvOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, introduced: 8, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
@@ -277,22 +319,7 @@
     }
 
     @available(
-      iOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      macOS, introduced: 12, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      tvOS, introduced: 15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, introduced: 8, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
@@ -306,20 +333,13 @@
         action: handler
       )
     }
+  }
 
+  @available(macOS, unavailable)
+  @available(iOS 14, tvOS 14, watchOS 8, *)
+  extension View {
     @available(
-      iOS, introduced: 14, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(macOS, unavailable)
-    @available(
-      tvOS, introduced: 14, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, introduced: 7, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
@@ -333,24 +353,12 @@
       fullScreenCover(
         unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
     }
+  }
 
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  extension View {
     @available(
-      iOS, introduced: 16, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      macOS, introduced: 13, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      tvOS, introduced: 16, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, introduced: 9, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
@@ -361,19 +369,16 @@
     ) -> some View {
       navigationDestination(unwrapping: `enum`.case(casePath), destination: destination)
     }
+  }
 
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
+  extension View {
     @available(
-      iOS, introduced: 13, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
-    @available(
-      macOS, introduced: 10.15, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(tvOS, unavailable)
-    @available(watchOS, unavailable)
     public func popover<Enum, Case, Content>(
       unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, Case>,
@@ -390,22 +395,7 @@
     }
 
     @available(
-      iOS, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      macOS, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      tvOS, deprecated: 9999,
-      message:
-        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
-    )
-    @available(
-      watchOS, deprecated: 9999,
+      *, deprecated,
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )

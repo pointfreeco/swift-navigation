@@ -7,24 +7,24 @@ struct OptionalConfirmationDialogs: View {
 
   var body: some View {
     List {
-      Stepper("Number: \(self.model.count)", value: self.$model.count)
+      Stepper("Number: \(model.count)", value: $model.count)
       Button {
-        Task { await self.model.numberFactButtonTapped() }
+        Task { await model.numberFactButtonTapped() }
       } label: {
         HStack {
           Text("Get number fact")
-          if self.model.isLoading {
+          if model.isLoading {
             Spacer()
             ProgressView()
           }
         }
       }
-      .disabled(self.model.isLoading)
-      .confirmationDialog(item: self.$model.fact, titleVisibility: .visible) {
+      .disabled(model.isLoading)
+      .confirmationDialog(item: $model.fact, titleVisibility: .visible) {
         Text("Fact about \($0.number)")
       } actions: {
         Button("Get another fact about \($0.number)") {
-          Task { await self.model.numberFactButtonTapped() }
+          Task { await model.numberFactButtonTapped() }
         }
       } message: {
         Text($0.description)
@@ -42,9 +42,9 @@ private class FeatureModel {
 
   @MainActor
   func numberFactButtonTapped() async {
-    self.isLoading = true
-    self.fact = await getNumberFact(self.count)
-    self.isLoading = false
+    isLoading = true
+    defer { isLoading = false }
+    fact = await getNumberFact(count)
   }
 }
 

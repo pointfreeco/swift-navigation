@@ -5,7 +5,7 @@ struct Fact: Identifiable {
   let number: Int
 
   var id: AnyHashable {
-    [self.description as AnyHashable, self.number]
+    [description as AnyHashable, number]
   }
 }
 
