@@ -1,8 +1,7 @@
 #if canImport(SwiftUI)
   import SwiftUI
 
-  @available(tvOS, unavailable)
-  @available(watchOS, unavailable)
+  // NB: Moving `@available(tvOS, unavailable)` to the extension causes tvOS builds to fail
   extension View {
     /// Presents a popover using a binding as a data source for the popover's content.
     ///
@@ -51,6 +50,8 @@
     ///     arrow.
     ///   - content: A closure returning the content of the popover.
     @_disfavoredOverload
+    @available(tvOS, unavailable)
+    @available(watchOS, unavailable)
     public func popover<Item, ID: Hashable, Content: View>(
       item: Binding<Item?>,
       id: KeyPath<Item, ID>,
@@ -85,6 +86,8 @@
     ///     arrow.
     ///   - content: A closure returning the content of the popover.
     @_disfavoredOverload
+    @available(tvOS, unavailable)
+    @available(watchOS, unavailable)
     public func popover<Item: Identifiable, Content: View>(
       item: Binding<Item?>,
       attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
@@ -118,6 +121,8 @@
     ///   - arrowEdge: The edge of the `attachmentAnchor` that defines the location of the popover's
     ///     arrow.
     ///   - content: A closure returning the content of the popover.
+    @available(tvOS, unavailable)
+    @available(watchOS, unavailable)
     public func popover<Item, ID: Hashable, Content: View>(
       item: Binding<Item?>,
       id: KeyPath<Item, ID>,
