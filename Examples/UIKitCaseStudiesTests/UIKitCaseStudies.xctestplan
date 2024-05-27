@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "6030B055-2CEA-4AFF-9C08-7234C10F3A1C",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Examples.xcodeproj",
+      "identifier" : "DC5EB98D2C0525350034B757",
+      "name" : "UIKitCaseStudies"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Examples.xcodeproj",
+        "identifier" : "DC5EB99C2C0525360034B757",
+        "name" : "UIKitCaseStudiesTests"
+      }
+    }
+  ],
+  "version" : 1
+}
