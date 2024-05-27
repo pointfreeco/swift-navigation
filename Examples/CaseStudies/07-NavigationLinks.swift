@@ -32,7 +32,7 @@ struct OptionalNavigationLinks: View {
         Text("Saved Facts")
       }
     }
-    .navigationDestination(unwrapping: $model.fact) { $fact in
+    .navigationDestination(item: $model.fact) { $fact in
       FactEditor(fact: $fact.description)
         .disabled(model.isLoading)
         .foregroundColor(model.isLoading ? .gray : nil)
