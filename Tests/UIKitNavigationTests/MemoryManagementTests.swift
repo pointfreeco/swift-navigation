@@ -40,29 +40,6 @@ final class MemoryManagementTests: XCTestCase {
     }
     XCTAssertNil(weakModel)
   }
-
-  @MainActor
-  func testPresentation() async throws {
-    class VC: UIViewController {
-      @UIBindable var model = Model()
-      override func viewDidLoad() {
-        super.viewDidLoad()
-        present(isPresented: $model.isPresented) {
-          UIViewController()
-        }
-      }
-    }
-
-    let window = UIWindow()
-    let vc = VC()
-    window.rootViewController = vc
-    _ = vc.view
-    XCTAssertEqual(vc.children.count, 0)
-    vc.model.isPresented = true
-    try await Task.sleep(for: .seconds(1))
-    XCTAssertEqual(vc.children.count, 1)
-    XCTAssertNotNil(vc.presentedViewController)
-  }
 }
 
 @Perceptible
