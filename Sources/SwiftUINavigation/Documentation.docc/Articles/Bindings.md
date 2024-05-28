@@ -4,7 +4,7 @@ Learn how to manage certain view state, such as `@FocusState` directly in your o
 
 ## Overview
 
-SwiftUI comes with many property wrappers that can be used in views to drive view state, such as 
+SwiftUI comes with many property wrappers that can be used in views to drive view state, such as
 
 `@FocusState`. Unfortunately, these property wrappers _must_ be used in views. It's not possible to
 extract this logic to an `@Observable` class and integrate it with the rest of the model's business
@@ -38,7 +38,7 @@ Notice that we store the focus as a regular `var` property in the model rather t
 This is because `@FocusState` only works when installed directly in a view. It cannot be used in
 an observable class.
 
-You can implement the view as you would normally, except you must also use `@FocusState` for the 
+You can implement the view as you would normally, except you must also use `@FocusState` for the
 focus _and_ use the `bind` helper to make sure that changes to the model's focus are replayed to
 the view, and vice versa.
 

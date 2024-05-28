@@ -21,16 +21,16 @@ class ItemRowModel: Identifiable {
   var onDuplicate: (Item) -> Void = unimplemented("ItemRowModel.onDuplicate")
   var onTap: () -> Void = unimplemented("ItemRowModel.onTap")
 
-  var id: Item.ID { self.item.id }
+  var id: Item.ID { item.id }
 
   init(item: Item) {
     self.item = item
   }
 
   func deleteButtonTapped() {
-    self.destination = .alert(
+    destination = .alert(
       AlertState {
-        TextState(self.item.name)
+        TextState(item.name)
       } actions: {
         ButtonState(role: .destructive, action: .send(.deleteConfirmation, animation: .default)) {
           TextState("Delete")
@@ -44,33 +44,33 @@ class ItemRowModel: Identifiable {
   func alertButtonTapped(_ action: AlertAction?) {
     switch action {
     case .deleteConfirmation?:
-      self.onDelete()
+      onDelete()
     case nil:
       break
     }
   }
 
   func cancelButtonTapped() {
-    self.destination = nil
+    destination = nil
   }
 
   func duplicateButtonTapped() {
-    self.destination = .duplicate(self.item.duplicate())
+    destination = .duplicate(item.duplicate())
   }
 
   func duplicate(item: Item) {
-    self.onDuplicate(item)
-    self.destination = nil
+    onDuplicate(item)
+    destination = nil
   }
 
   func rowTapped() {
-    self.onTap()
+    onTap()
   }
 }
 
 extension Item {
   func duplicate() -> Self {
-    Self(color: self.color, name: self.name, status: self.status)
+    Self(color: color, name: name, status: status)
   }
 }
 
@@ -79,14 +79,14 @@ struct ItemRowView: View {
 
   var body: some View {
     Button {
-      self.model.rowTapped()
+      model.rowTapped()
     } label: {
       HStack {
         VStack(alignment: .leading) {
-          Text(self.model.item.name)
+          Text(model.item.name)
             .font(.title3)
 
-          switch self.model.item.status {
+          switch model.item.status {
           case let .inStock(quantity):
             Text("In stock: \(quantity)")
           case let .outOfStock(isOnBackOrder):
@@ -96,41 +96,41 @@ struct ItemRowView: View {
 
         Spacer()
 
-        if let color = self.model.item.color {
+        if let color = model.item.color {
           Rectangle()
             .frame(width: 30, height: 30)
             .foregroundColor(color.swiftUIColor)
             .border(Color.black, width: 1)
         }
 
-        Button(action: { self.model.duplicateButtonTapped() }) {
+        Button(action: { model.duplicateButtonTapped() }) {
           Image(systemName: "square.fill.on.square.fill")
         }
         .padding(.leading)
 
-        Button(action: { self.model.deleteButtonTapped() }) {
+        Button(action: { model.deleteButtonTapped() }) {
           Image(systemName: "trash.fill")
         }
         .padding(.leading)
       }
       .buttonStyle(.plain)
-      .foregroundColor(self.model.item.status.is(\.inStock) ? nil : Color.gray)
-      .alert(self.$model.destination.alert) {
-        self.model.alertButtonTapped($0)
+      .foregroundColor(model.item.status.is(\.inStock) ? nil : Color.gray)
+      .alert($model.destination.alert) {
+        model.alertButtonTapped($0)
       }
-      .popover(unwrapping: self.$model.destination.duplicate) { $item in
+      .popover(item: $model.destination.duplicate) { $item in
         NavigationStack {
           ItemView(item: $item)
             .navigationBarTitle("Duplicate")
             .toolbar {
               ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
-                  self.model.cancelButtonTapped()
+                  model.cancelButtonTapped()
                 }
               }
               ToolbarItem(placement: .primaryAction) {
                 Button("Add") {
-                  self.model.duplicate(item: item)
+                  model.duplicate(item: item)
                 }
               }
             }

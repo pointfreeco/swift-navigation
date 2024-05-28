@@ -24,25 +24,25 @@ struct IfCaseLetCaseStudy: View {
       Section {
         Text(readMe)
       }
-      self.$editableString.active.map { $string in
+      $editableString.active.map { $string in
         VStack {
           TextField("Edit string", text: $string)
           HStack {
             Button("Discard", role: .cancel) {
-              self.editableString = .inactive
+              editableString = .inactive
             }
             Spacer()
             Button("Save") {
-              self.string = string
-              self.editableString = .inactive
+              string = string
+              editableString = .inactive
             }
           }
         }
       }
-      if !self.editableString.is(\.active) {
-        Text("\(self.string)")
+      if !editableString.is(\.active) {
+        Text("\(string)")
         Button("Edit") {
-          self.editableString = .active(self.string)
+          editableString = .active(string)
         }
       }
     }
