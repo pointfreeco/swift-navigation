@@ -1,4 +1,6 @@
-import Dispatch
+#if canImport(Dispatch)
+  import Dispatch
+#endif
 
 @MainActor
 public func observe(
@@ -21,7 +23,14 @@ private func onChange(_ apply: @escaping @MainActor @Sendable (UITransaction) ->
     apply(UITransaction.current)
   } onChange: {
     let transaction = MainActor.assumeIsolated { UITransaction.current }
-    DispatchQueue.main.async {
+    func task(operation: @escaping @MainActor @Sendable () -> Void) {
+      #if canImport(Dispatch)
+        DispatchQueue.main.async(execute: operation)
+      #else
+        Task(operation: operation)
+      #endif
+    }
+    task {
       UITransaction.$current.withValue(transaction) {
         onChange(apply)
       }
