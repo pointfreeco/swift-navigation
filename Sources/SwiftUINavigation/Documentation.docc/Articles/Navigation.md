@@ -25,7 +25,7 @@ non-`nil`. You can construct a `NavigationLink` that will activate when that sta
 non-`nil`, and will deactivate when the state becomes `nil`:
 
 ```swift
-NavigationLink(unwrapping: $destination) { isActive in
+NavigationLink(item: $destination) { isActive in
   destination = isActive ? 42 : nil
 } destination: { $number in
   CounterView(number: $number)
@@ -81,12 +81,12 @@ one of these destinations:
 ```
 
 With this set up you can make use of the
-``SwiftUI/NavigationLink/init(unwrapping:onNavigate:destination:label:)`` initializer on
+``SwiftUI/NavigationLink/init(item:onNavigate:destination:label:)`` initializer on
 `NavigationLink` in order to specify a binding to the optional destination, and further specify
 which case of the enum you want driving navigation:
 
 ```swift
-NavigationLink(unwrapping: $destination.counter) { isActive in
+NavigationLink(item: $destination.counter) { isActive in
   destination = isActive ? .counter(42) : nil
 } destination: { $number in
   CounterView(number: $number)
@@ -95,7 +95,7 @@ NavigationLink(unwrapping: $destination.counter) { isActive in
 }
 ```
 
-And similarly for ``SwiftUI/View/navigationDestination(unwrapping:destination:)``:
+And similarly for ``SwiftUI/View/navigationDestination(item:destination:)``:
 
 ```swift
 Button {
@@ -103,7 +103,7 @@ Button {
 } label: {
   Text("Go to counter")
 }
-.navigationDestination(unwrapping: $model.destination.counter) { $number in
+.navigationDestination(item: $model.destination.counter) { $number in
   CounterView(number: $number)
 }
 ```

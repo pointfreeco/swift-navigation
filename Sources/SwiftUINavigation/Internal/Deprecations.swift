@@ -701,6 +701,43 @@
       @ViewBuilder label: () -> Label
     ) where Destination == WrappedDestination? {
       self.init(
+        item: `enum`.case(casePath),
+        onNavigate: onNavigate,
+        destination: destination,
+        label: label
+      )
+    }
+  }
+
+  extension NavigationLink {
+    @available(
+      iOS, introduced: 13, deprecated: 16,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      macOS, introduced: 10.15, deprecated: 13,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      tvOS, introduced: 13, deprecated: 16,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    @available(
+      watchOS, introduced: 6, deprecated: 9,
+      message:
+        "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
+    )
+    public init<Enum, Case, WrappedDestination>(
+      unwrapping enum: Binding<Enum?>,
+      case casePath: AnyCasePath<Enum, Case>,
+      onNavigate: @escaping (Bool) -> Void,
+      @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
+      @ViewBuilder label: () -> Label
+    ) where Destination == WrappedDestination? {
+      self.init(
         unwrapping: `enum`.case(casePath),
         onNavigate: onNavigate,
         destination: destination,

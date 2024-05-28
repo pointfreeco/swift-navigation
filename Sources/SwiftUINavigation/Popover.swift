@@ -24,7 +24,7 @@
     ///     Button("Compose") {
     ///       self.draft = Post()
     ///     }
-    ///     .popover(unwrapping: $draft) { $draft in
+    ///     .popover(item: $draft) { $draft in
     ///       ComposeView(post: $draft, onSubmit: { ... })
     ///     }
     ///   }

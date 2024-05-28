@@ -266,7 +266,7 @@ later. If you must support iOS 15 and earlier, you can use the following initial
 `NavigationLink`, which also has a very similar API to the above:
 
 ```swift
-NavigationLink(unwrapping: $model.destination.edit) { isActive in
+NavigationLink(item: $model.destination.edit) { isActive in
   model.setEditIsActive(isActive)
 } destination: { $item in
   EditItemView(item: $item)

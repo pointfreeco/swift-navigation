@@ -21,8 +21,8 @@
     ///
     ///   var body: some View {
     ///     ForEach(self.posts) { post in
-    ///       NavigationLink(unwrapping: self.$postToEdit) { isActive in
-    ///         self.postToEdit = isActive ? post : nil
+    ///       NavigationLink(item: $postToEdit) { isActive in
+    ///         postToEdit = isActive ? post : nil
     ///       } destination: { $draft in
     ///         EditPostView(post: $draft)
     ///       } label: {
