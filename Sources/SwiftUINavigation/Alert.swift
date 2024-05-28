@@ -20,17 +20,15 @@
       _ state: Binding<AlertState<Value>?>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
-      self.alert(
-        (state.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-        isPresented: state.isPresent(),
-        presenting: state.wrappedValue,
-        actions: {
-          ForEach($0.buttons) {
-            Button($0, action: handler)
-          }
-        },
-        message: { $0.message.map { Text($0) } }
-      )
+      alert(item: state) {
+        Text($0.title)
+      } actions: {
+        ForEach($0.buttons) {
+          Button($0, action: handler)
+        }
+      } message: {
+        $0.message.map(Text.init)
+      }
     }
 
     /// Presents an alert from a binding to optional alert state.
@@ -52,17 +50,15 @@
       _ state: Binding<AlertState<Value>?>,
       action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
-      self.alert(
-        (state.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-        isPresented: state.isPresent(),
-        presenting: state.wrappedValue,
-        actions: {
-          ForEach($0.buttons) {
-            Button($0, action: handler)
-          }
-        },
-        message: { $0.message.map { Text($0) } }
-      )
+      alert(item: state) {
+        Text($0.title)
+      } actions: {
+        ForEach($0.buttons) {
+          Button($0, action: handler)
+        }
+      } message: {
+        $0.message.map(Text.init)
+      }
     }
   }
 #endif  // canImport(SwiftUI)
