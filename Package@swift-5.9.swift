@@ -37,6 +37,7 @@ let package = Package(
       name: "SwiftUINavigation",
       dependencies: [
         "SwiftUINavigationCore",
+        "UIKitNavigation",
         .product(name: "CasePaths", package: "swift-case-paths"),
       ]
     ),
