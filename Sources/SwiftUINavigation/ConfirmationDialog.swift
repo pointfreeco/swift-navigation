@@ -49,9 +49,9 @@
     ///   - handler: A closure that is called with an action from a particular dialog button when
     ///     tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-    public func confirmationDialog<Value>(
+    public func confirmationDialog<Value: Sendable>(
       _ state: Binding<ConfirmationDialogState<Value>?>,
-      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+      action handler: @escaping @Sendable (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       confirmationDialog(
         item: state,

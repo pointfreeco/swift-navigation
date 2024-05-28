@@ -46,9 +46,9 @@
     ///     dismisses the alert, and the action is fed to the `action` closure.
     ///   - handler: A closure that is called with an action from a particular alert button when
     ///     tapped.
-    public func alert<Value>(
+    public func alert<Value: Sendable>(
       _ state: Binding<AlertState<Value>?>,
-      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+      action handler: @escaping @Sendable (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       alert(item: state) {
         Text($0.title)
