@@ -113,7 +113,7 @@ Button {
 ### Navigation views and modifiers
 
 - ``SwiftUI/View/navigationDestination(item:destination:)``
-- ``SwiftUI/NavigationLink/init(unwrapping:onNavigate:destination:label:)``
+- ``SwiftUI/NavigationLink/init(item:onNavigate:destination:label:)``
 
 ### Supporting types
 

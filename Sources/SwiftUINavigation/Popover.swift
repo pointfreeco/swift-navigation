@@ -70,8 +70,8 @@
 
     /// Presents a full-screen cover using a binding as a data source for the sheet's content.
     ///
-    /// A version of ``fullScreenCover(item:id:onDismiss:content:)-14to1`` that takes an
-    /// identifiable item.
+    /// A version of ``SwiftUI/View/fullScreenCover(item:id:onDismiss:content:)-14to1`` that takes
+    /// an identifiable item.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the popover. When `item` is
@@ -106,8 +106,8 @@
     /// Presents a popover using a binding as a data source for the sheet's content based on the
     /// identity of the underlying item.
     ///
-    /// A version of ``popover(item:id:attachmentAnchor:arrowEdge:content:)-3un96`` that is passed
-    /// an item and not a binding to an item.
+    /// A version of ``SwiftUI/View/popover(item:id:attachmentAnchor:arrowEdge:content:)-3un96``
+    /// that is passed an item and not a binding to an item.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the popover. When `item` is

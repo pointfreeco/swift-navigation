@@ -64,7 +64,8 @@
 
     /// Presents a sheet using a binding as a data source for the sheet's content.
     ///
-    /// A version of ``sheet(item:id:onDismiss:content:)-1hi9l`` that takes an identifiable item.
+    /// A version of ``SwiftUI/View/sheet(item:id:onDismiss:content:)-1hi9l`` that takes an
+    /// identifiable item.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the sheet. When `item` is non-`nil`,
@@ -85,8 +86,8 @@
 
     /// Presents a sheet using a binding as a data source for the sheet's content.
     ///
-    /// A version of ``sheet(item:id:onDismiss:content:)-1hi9l`` that is passed an item and not a
-    /// binding to an item.
+    /// A version of ``SwiftUI/View/sheet(item:id:onDismiss:content:)-1hi9l`` that is passed an item
+    /// and not a binding to an item.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the sheet. When `item` is non-`nil`,
