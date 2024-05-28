@@ -249,7 +249,10 @@
     ///   - state: Alert state used to populate the alert.
     ///   - action: An action handler, called when a button with an action is tapped, by passing the
     ///     action to the closure.
-    public init<Action>(_ state: AlertState<Action>, action: @escaping (Action?) async -> Void) {
+    public init<Action: Sendable>(
+      _ state: AlertState<Action>,
+      action: @escaping @Sendable (Action?) async -> Void
+    ) {
       if state.buttons.count == 2 {
         self.init(
           title: Text(state.title),
