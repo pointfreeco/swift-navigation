@@ -70,7 +70,7 @@
   /// }
   /// ```
   ///
-  /// And in your view you can use the `.confirmationDialog(unwrapping:action:)` view modifier to
+  /// And in your view you can use the `.confirmationDialog(_:action:)` view modifier to
   /// present the dialog:
   ///
   /// ```swift
@@ -83,7 +83,7 @@
   ///         self.model.infoButtonTapped()
   ///       }
   ///     }
-  ///     .confirmationDialog(unwrapping: self.$model.dialog) { action in
+  ///     .confirmationDialog($model.dialog) { action in
   ///       self.model.dialogButtonTapped(action)
   ///     }
   ///   }

@@ -118,6 +118,26 @@
     }
   }
 
+  @available(iOS, introduced: 13, deprecated: 16)
+  @available(macOS, introduced: 10.15, deprecated: 13)
+  @available(tvOS, introduced: 13, deprecated: 16)
+  @available(watchOS, introduced: 6, deprecated: 9)
+  extension NavigationLink {
+    @available(*, deprecated, renamed: "init(item:onNavigate:destination:label:)")
+    public init<Value, WrappedDestination>(
+      unwrapping value: Binding<Value?>,
+      onNavigate: @escaping (_ isActive: Bool) -> Void,
+      @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
+      @ViewBuilder label: () -> Label
+    ) where Destination == WrappedDestination? {
+      self.init(
+        destination: Binding(unwrapping: value).map(destination),
+        isActive: value.isPresent().didSet(onNavigate),
+        label: label
+      )
+    }
+  }
+
   // NB: Deprecated after 1.2.1
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
@@ -681,7 +701,7 @@
       @ViewBuilder label: () -> Label
     ) where Destination == WrappedDestination? {
       self.init(
-        unwrapping: `enum`.case(casePath),
+        item: `enum`.case(casePath),
         onNavigate: onNavigate,
         destination: destination,
         label: label

@@ -17,7 +17,7 @@
     ///     Button("Compose") {
     ///       self.draft = Post()
     ///     }
-    ///     .navigationDestination(unwrapping: $draft) { $draft in
+    ///     .navigationDestination(item: $draft) { $draft in
     ///       ComposeView(post: $draft, onSubmit: { ... })
     ///     }
     ///   }

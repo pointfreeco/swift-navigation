@@ -13,6 +13,7 @@ instead.
 
 - ``IfLet``
 - ``IfCaseLet``
+- ``SwiftUI/NavigationLink/init(unwrapping:onNavigate:destination:label:)``
 - ``SwiftUI/NavigationLink/init(unwrapping:case:onNavigate:destination:label:)``
 - ``SwiftUI/NavigationLink/init(unwrapping:destination:onNavigate:label:)``
 - ``SwiftUI/NavigationLink/init(unwrapping:case:destination:onNavigate:label:)``
