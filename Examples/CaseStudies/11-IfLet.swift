@@ -17,25 +17,25 @@ struct IfLetCaseStudy: View {
       Section {
         Text(readMe)
       }
-      Binding(unwrapping: self.$editableString).map { $string in
+      Binding(unwrapping: $editableString).map { $string in
         VStack {
           TextField("Edit string", text: $string)
           HStack {
             Button("Discard") {
-              self.editableString = nil
+              editableString = nil
             }
             Spacer()
             Button("Save") {
-              self.string = string
-              self.editableString = nil
+              string = string
+              editableString = nil
             }
           }
         }
       }
-      if self.editableString == nil {
-        Text("\(self.string)")
+      if editableString == nil {
+        Text("\(string)")
         Button("Edit") {
-          self.editableString = self.string
+          editableString = string
         }
       }
     }

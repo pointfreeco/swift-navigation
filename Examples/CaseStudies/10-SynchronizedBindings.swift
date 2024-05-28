@@ -19,20 +19,20 @@ struct SynchronizedBindings: View {
       }
 
       Section {
-        TextField("Username", text: self.$model.username)
-          .focused(self.$focusedField, equals: .username)
+        TextField("Username", text: $model.username)
+          .focused($focusedField, equals: .username)
 
-        SecureField("Password", text: self.$model.password)
-          .focused(self.$focusedField, equals: .password)
+        SecureField("Password", text: $model.password)
+          .focused($focusedField, equals: .password)
 
         Button("Sign In") {
-          self.model.signInButtonTapped()
+          model.signInButtonTapped()
         }
         .buttonStyle(.borderedProminent)
       }
       .textFieldStyle(.roundedBorder)
     }
-    .bind(self.$model.focusedField, to: self.$focusedField)
+    .bind($model.focusedField, to: $focusedField)
     .navigationTitle("Synchronized focus")
   }
 }
@@ -49,12 +49,12 @@ private class FeatureModel {
   var username: String = ""
 
   func signInButtonTapped() {
-    if self.username.isEmpty {
-      self.focusedField = .username
-    } else if self.password.isEmpty {
-      self.focusedField = .password
+    if username.isEmpty {
+      focusedField = .username
+    } else if password.isEmpty {
+      focusedField = .password
     } else {
-      self.focusedField = nil
+      focusedField = nil
     }
   }
 }

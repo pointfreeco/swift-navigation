@@ -7,14 +7,14 @@ struct OptionalSheets: View {
   var body: some View {
     List {
       Section {
-        Stepper("Number: \(self.model.count)", value: self.$model.count)
+        Stepper("Number: \(model.count)", value: $model.count)
 
         HStack {
           Button("Get number fact") {
-            Task { await self.model.numberFactButtonTapped() }
+            Task { await model.numberFactButtonTapped() }
           }
 
-          if self.model.isLoading {
+          if model.isLoading {
             Spacer()
             ProgressView()
           }
@@ -24,28 +24,28 @@ struct OptionalSheets: View {
       }
 
       Section {
-        ForEach(self.model.savedFacts) { fact in
+        ForEach(model.savedFacts) { fact in
           Text(fact.description)
         }
-        .onDelete { self.model.removeSavedFacts(atOffsets: $0) }
+        .onDelete { model.removeSavedFacts(atOffsets: $0) }
       } header: {
         Text("Saved Facts")
       }
     }
-    .sheet(unwrapping: self.$model.fact) { $fact in
+    .sheet(item: $model.fact) { $fact in
       NavigationStack {
         FactEditor(fact: $fact.description)
-          .disabled(self.model.isLoading)
-          .foregroundColor(self.model.isLoading ? .gray : nil)
+          .disabled(model.isLoading)
+          .foregroundColor(model.isLoading ? .gray : nil)
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {
               Button("Cancel") {
-                self.model.cancelButtonTapped()
+                model.cancelButtonTapped()
               }
             }
             ToolbarItem(placement: .confirmationAction) {
               Button("Save") {
-                self.model.saveButtonTapped(fact: fact)
+                model.saveButtonTapped(fact: fact)
               }
             }
           }
@@ -60,7 +60,7 @@ private struct FactEditor: View {
 
   var body: some View {
     VStack {
-      TextEditor(text: self.$fact)
+      TextEditor(text: $fact)
     }
     .padding()
     .navigationTitle("Fact editor")
@@ -76,41 +76,41 @@ private class FeatureModel {
   private var task: Task<Void, Never>?
 
   deinit {
-    self.task?.cancel()
+    task?.cancel()
   }
 
   @MainActor
   func numberFactButtonTapped() async {
-    self.isLoading = true
-    self.fact = Fact(description: "\(self.count) is still loading...", number: self.count)
-    self.task = Task {
+    isLoading = true
+    fact = Fact(description: "\(count) is still loading...", number: count)
+    task = Task {
       let fact = await getNumberFact(self.count)
-      self.isLoading = false
+      isLoading = false
       guard !Task.isCancelled
       else { return }
       self.fact = fact
     }
-    await self.task?.value
+    await task?.value
   }
 
   @MainActor
   func cancelButtonTapped() {
-    self.task?.cancel()
-    self.task = nil
-    self.fact = nil
+    task?.cancel()
+    task = nil
+    fact = nil
   }
 
   @MainActor
   func saveButtonTapped(fact: Fact) {
-    self.task?.cancel()
-    self.task = nil
-    self.savedFacts.append(fact)
+    task?.cancel()
+    task = nil
+    savedFacts.append(fact)
     self.fact = nil
   }
 
   @MainActor
   func removeSavedFacts(atOffsets offsets: IndexSet) {
-    self.savedFacts.remove(atOffsets: offsets)
+    savedFacts.remove(atOffsets: offsets)
   }
 }
 

@@ -39,11 +39,11 @@ struct Routing: View {
       }
 
       Section {
-        Text("Count: \(self.count)")
+        Text("Count: \(count)")
       }
 
       Button("Alert") {
-        self.destination = .alert(
+        destination = .alert(
           AlertState {
             TextState("Update count?")
           } actions: {
@@ -58,7 +58,7 @@ struct Routing: View {
       }
 
       Button("Confirmation dialog") {
-        self.destination = .confirmationDialog(
+        destination = .confirmationDialog(
           ConfirmationDialogState(titleVisibility: .visible) {
             TextState("Update count?")
           } actions: {
@@ -73,41 +73,41 @@ struct Routing: View {
       }
 
       Button("Link") {
-        self.destination = .link(self.count)
+        destination = .link(count)
       }
 
       Button("Sheet") {
-        self.destination = .sheet(self.count)
+        destination = .sheet(count)
       }
     }
     .navigationTitle("Routing")
-    .alert(self.$destination.alert) { action in
+    .alert($destination.alert) { action in
       switch action {
       case .randomize?:
-        self.count = .random(in: 0...1_000)
+        count = .random(in: 0...1_000)
       case .reset?:
-        self.count = 0
+        count = 0
       case nil:
         break
       }
     }
-    .confirmationDialog(self.$destination.confirmationDialog) { action in
+    .confirmationDialog($destination.confirmationDialog) { action in
       switch action {
       case .decrement?:
-        self.count -= 1
+        count -= 1
       case .increment?:
-        self.count += 1
+        count += 1
       case nil:
         break
       }
     }
-    .navigationDestination(unwrapping: self.$destination.link) { $count in
+    .navigationDestination(item: $destination.link) { $count in
       Form {
         Stepper("Count: \(count)", value: $count)
       }
       .navigationTitle("Routing link")
     }
-    .sheet(unwrapping: self.$destination.sheet) { $count in
+    .sheet(item: $destination.sheet, id: \.self) { $count in
       NavigationStack {
         Form {
           Stepper("Count: \(count)", value: $count)
