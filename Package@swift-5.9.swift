@@ -12,9 +12,14 @@ let package = Package(
   ],
   products: [
     .library(
+      name: "SwiftNavigation",
+      targets: ["SwiftNavigation"]
+    ),
+    .library(
       name: "SwiftUINavigation",
       targets: ["SwiftUINavigation"]
     ),
+    // TODO: Should this be reorganized and renamed to `SwiftNavigationState`?
     .library(
       name: "SwiftUINavigationCore",
       targets: ["SwiftUINavigationCore"]
@@ -33,6 +38,14 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.0.0"),
   ],
   targets: [
+    .target(
+      name: "SwiftNavigation",
+      dependencies: [
+        .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
+        .product(name: "Perception", package: "swift-perception"),
+      ]
+    ),
     .target(
       name: "SwiftUINavigation",
       dependencies: [
@@ -57,10 +70,8 @@ let package = Package(
     .target(
       name: "UIKitNavigation",
       dependencies: [
+        "SwiftNavigation",
         "SwiftUINavigationCore",
-        .product(name: "CasePaths", package: "swift-case-paths"),
-        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-        .product(name: "Perception", package: "swift-perception"),
       ]
     ),
     .testTarget(
@@ -71,3 +82,15 @@ let package = Package(
     ),
   ]
 )
+
+for target in package.targets {
+  target.swiftSettings = target.swiftSettings ?? []
+  target.swiftSettings!.append(contentsOf: [
+    .enableExperimentalFeature("StrictConcurrency")
+  ])
+  // target.swiftSettings?.append(
+  //   .unsafeFlags([
+  //     "-enable-library-evolution",
+  //   ])
+  // )
+}

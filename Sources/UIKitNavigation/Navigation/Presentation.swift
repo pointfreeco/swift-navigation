@@ -125,10 +125,9 @@ extension UIViewController {
   ) {
     bindings.insert(item)
     let item = UIBinding(weak: item)
-    observe { [weak self] in
+    observe { [weak self] transaction in
       guard let self else { return }
       // TODO: Is this the correct behavior?
-      let transaction = UITransaction.current.isEmpty ? item.transaction : .current
       if let unwrappedItem = UIBinding(item) {
         var oldController: UIViewController?
         if let presented = presented[item] {
@@ -156,7 +155,7 @@ extension UIViewController {
         // TODO: More reliable behavior (in case `UIViewController.view` is accessed early):
         //       Use associated objects and `viewWillAppear` swizzling to delay deep linking
         DispatchQueue.main.async {
-          UITransaction.$current.withValue(transaction) {
+          withUITransaction(transaction) {
             present(oldController, newController, transaction)
           }
         }

@@ -18,7 +18,7 @@ public func withUIAnimation<Result>(
   _ body: () throws -> Result,
   completion: (@Sendable (Bool) -> Void)? = nil
 ) rethrows -> Result {
-  var transaction = UITransaction.current
+  var transaction = UITransaction()
   transaction.animation = animation
   if let completion {
     transaction.addAnimationCompletion(completion)

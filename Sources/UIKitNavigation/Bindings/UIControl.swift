@@ -44,13 +44,15 @@ extension _UIControl {
     // TODO: Should we vendor LockIsolated?
     let isSetting = LockIsolated(false)
     let weakBinding = UIBinding(weak: binding)
-    let token = observe {
+    let token = SwiftNavigation.observe { transaction in
       isSetting.setValue(true)
       defer { isSetting.setValue(false) }
       set(
         weakBinding.wrappedValue,
         // TODO: Is this the correct behavior?
-        UITransaction.current.isEmpty ? weakBinding.transaction : .current
+        transaction.animation == nil && !transaction.disablesAnimations
+          ? weakBinding.transaction
+          : transaction
       )
     }
     let observation = observe(keyPath) { [weak self] _, _ in
