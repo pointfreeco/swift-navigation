@@ -39,7 +39,7 @@ private func onChange(_ apply: @escaping @MainActor @Sendable (UITransaction) ->
 }
 
 @MainActor
-public final class ObservationToken: NSObject, Sendable {
+public final class ObservationToken: Sendable {
   private let onCancel: @MainActor @Sendable () -> Void
 
   private(set) public var isCancelled = false
