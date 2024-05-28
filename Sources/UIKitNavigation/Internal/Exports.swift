@@ -1,2 +1,4 @@
-@_exported import SwiftNavigation
-@_exported import SwiftUINavigationCore
+#if canImport(UIKit)
+  @_exported import SwiftNavigation
+  @_exported import SwiftUINavigationCore
+#endif
