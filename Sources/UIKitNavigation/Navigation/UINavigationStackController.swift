@@ -1,8 +1,7 @@
 #if canImport(UIKit)
   import UIKit
 
-  // TODO: Should this be `NavigationStackController`?
-  public class UINavigationStackController: UINavigationController {
+  public class NavigationStackController: UINavigationController {
     private var destinations: [DestinationType: (Any) -> UIViewController] = [:]
     fileprivate var path = UIBinding<any RandomAccessCollection & RangeReplaceableCollection>(
       UIBindable(DefaultPath()).elements
@@ -168,7 +167,7 @@
         didShow viewController: UIViewController,
         animated: Bool
       ) {
-        let navigationController = navigationController as! UINavigationStackController
+        let navigationController = navigationController as! NavigationStackController
         let oldPath = navigationController.path.wrappedValue
         let newPath = navigationController.viewControllers.map(\.navigationID)
         if oldPath.count > newPath.count {
@@ -220,7 +219,7 @@
   extension UINavigationController {
     // TODO: Should this be `pushValue(_:)`?
     public func push<Element: Hashable>(value: Element) {
-      guard let stackController = self as? UINavigationStackController
+      guard let stackController = self as? NavigationStackController
       else {
         // TODO: runtimeWarn?
         return

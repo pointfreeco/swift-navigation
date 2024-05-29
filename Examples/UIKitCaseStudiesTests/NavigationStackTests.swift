@@ -5,7 +5,7 @@ final class NavigationStackTests: XCTestCase {
   @MainActor
   func testBasics() async throws {
     @UIBindable var model = Model()
-    let nav = UINavigationStackController(path: $model.path) {
+    let nav = NavigationStackController(path: $model.path) {
       UIViewController()
     }
     nav.navigationDestination(for: Int.self) { _ in
@@ -34,7 +34,7 @@ final class NavigationStackTests: XCTestCase {
   @MainActor
   func testAppendSameData() async throws {
     @UIBindable var model = Model()
-    let nav = UINavigationStackController(path: $model.path) {
+    let nav = NavigationStackController(path: $model.path) {
       UIViewController()
     }
     nav.navigationDestination(for: Int.self) { _ in

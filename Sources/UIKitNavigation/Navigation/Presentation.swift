@@ -1,10 +1,7 @@
 #if canImport(UIKit)
   import UIKit
 
-  // TODO: Add `sheet(item:)` and other APIs as helpers?
-
   extension UIViewController {
-    // TODO: Should this take an `onPresent` that gets passed to `present`'s `completion` block?
     //       Maybe not useful and poses an issue with ambiguity when only one is specified.
     /// Presents a view controller modally when a binding to a Boolean value you provide is true.
     ///
@@ -24,9 +21,6 @@
       present(item: isPresented.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
     }
 
-    // TODO: Should this take an `onPresent` that gets passed to `present`'s `completion` block?
-    //       Maybe not useful and poses an issue with ambiguity when only one is specified.
-    // TODO: Version that is passed a `UIBinding<Item>`?
     /// Presents a view controller modally using the given item as a data source for its content.
     ///
     /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
@@ -45,8 +39,38 @@
       onDismiss: (() -> Void)? = nil,
       content: @escaping (Item) -> UIViewController
     ) {
-      destination(item: item, id: \.id) { $item in
-        content(item)
+      present(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    public func present<Item: Identifiable>(
+      item: UIBinding<Item?>,
+      onDismiss: (() -> Void)? = nil,
+      content: @escaping (UIBinding<Item>) -> UIViewController
+    ) {
+      present(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    }
+
+    public func present<Item, ID: Hashable>(
+      item: UIBinding<Item?>,
+      id: KeyPath<Item, ID>,
+      onDismiss: (() -> Void)? = nil,
+      content: @escaping (Item) -> UIViewController
+    ) {
+      present(item: item, id: id, onDismiss: onDismiss) {
+        content($0.wrappedValue)
+      }
+    }
+
+    @_disfavoredOverload
+    public func present<Item, ID: Hashable>(
+      item: UIBinding<Item?>,
+      id: KeyPath<Item, ID>,
+      onDismiss: (() -> Void)? = nil,
+      content: @escaping (UIBinding<Item>) -> UIViewController
+    ) {
+      destination(item: item, id: id) { $item in
+        content($item)
       } present: { [weak self] oldController, newController, transaction in
         if let oldController {
           oldController.dismiss(animated: !transaction.disablesAnimations) {
@@ -210,7 +234,6 @@
       pushViewController(item: isPresented.toOptionalUnit) { _ in content() }
     }
 
-    // TODO: Version that is passed a `UIBinding<Item>`?
     /// Pushes a view controller onto the receiver's stack using the given item as a data source for
     /// its content.
     ///
@@ -227,8 +250,18 @@
       item: UIBinding<Item?>,
       content: @escaping (Item) -> UIViewController
     ) {
+      pushViewController(item: item) {
+        content($0.wrappedValue)
+      }
+    }
+
+    @_disfavoredOverload
+    public func pushViewController<Item>(
+      item: UIBinding<Item?>,
+      content: @escaping (UIBinding<Item>) -> UIViewController
+    ) {
       destination(item: item) { $item in
-        content(item)
+        content($item)
       } present: { [weak self] controller, transaction in
         self?.pushViewController(controller, animated: !transaction.disablesAnimations)
       } dismiss: { [weak self] controller, transaction in
