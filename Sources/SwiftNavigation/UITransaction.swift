@@ -4,7 +4,6 @@
 ///   - transaction: An instance of a transaction, set as the thread's current transaction.
 ///   - body: A closure to execute.
 /// - Returns: The result of executing the closure with the specified transaction.
-@MainActor
 public func withUITransaction<Result>(
   _ transaction: UITransaction,
   _ body: () throws -> Result
@@ -20,7 +19,6 @@ public func withUITransaction<Result>(
 ///   - value: The new value to set for the item specified by `keyPath`.
 ///   - body: A closure to execute.
 /// - Returns: The result of executing the closure with the specified transaction value.
-@MainActor
 public func withUITransaction<R, V>(
   _ keyPath: WritableKeyPath<UITransaction, V>,
   _ value: V,
@@ -35,11 +33,10 @@ public func withUITransaction<R, V>(
 ///
 /// The root transaction for a state change comes from the binding that changed, plus any global
 /// values set by calling ``withUITransaction(_:_:)`` or ``withUIAnimation(_:_:)``.
-@MainActor
-public struct UITransaction {
+public struct UITransaction: Sendable {
   @TaskLocal static var current = Self()
 
-  private var storage: [Key: Any] = [:]
+  private var storage: [Key: any Sendable] = [:]
 
   /// Creates a transaction.
   public init() {}
@@ -89,10 +86,9 @@ public struct UITransaction {
 /// A key for accessing values in a transaction.
 ///
 /// Like SwiftUI's `TransactionKey` but for UIKit and other paradigms.
-@MainActor
 public protocol UITransactionKey {
   /// The associated type representing the type of the transaction key's value.
-  associatedtype Value
+  associatedtype Value: Sendable
 
   /// The default value for the transaction key.
   static var defaultValue: Value { get }

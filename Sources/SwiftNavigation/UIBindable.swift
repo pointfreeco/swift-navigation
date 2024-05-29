@@ -44,8 +44,7 @@ import Perception
 /// types, or even local variables.
 @dynamicMemberLookup
 @propertyWrapper
-@MainActor
-public struct UIBindable<Value>: Sendable {
+public struct UIBindable<Value> {
   private let objectIdentifier: ObjectIdentifier
 
   public var wrappedValue: Value

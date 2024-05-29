@@ -1,62 +1,44 @@
-#if canImport(Dispatch)
-  import Dispatch
-#endif
+import ConcurrencyExtras
 
-@MainActor
-public func observe(
-  _ apply: @escaping @MainActor @Sendable (UITransaction) -> Void
+package func observe(
+  _ apply: @escaping @Sendable (UITransaction) -> Void,
+  // TODO: Can we clean this up with an executor?
+  task: @escaping @Sendable (UITransaction, @escaping @Sendable () -> Void) -> Void = {
+    Task(operation: $1)
+  }
 ) -> ObservationToken {
-  var isCancelled = false
-  let token = ObservationToken {
-    isCancelled = true
-  }
-  onChange { transaction in
-    guard !isCancelled else { return }
-    apply(transaction)
-  }
+  let token = ObservationToken()
+  onChange(
+    { transaction in
+      guard !token.isCancelled else { return }
+      apply(transaction)
+    },
+    task: task
+  )
   return token
 }
 
-@MainActor
-private func onChange(_ apply: @escaping @MainActor @Sendable (UITransaction) -> Void) {
+private func onChange(
+  _ apply: @escaping @Sendable (UITransaction) -> Void,
+  task: @escaping @Sendable (UITransaction, @escaping @Sendable () -> Void) -> Void
+) {
   withPerceptionTracking {
-    apply(UITransaction.current)
+    apply(.current)
   } onChange: {
-    let transaction = MainActor.assumeIsolated { UITransaction.current }
-    func task(operation: @escaping @MainActor @Sendable () -> Void) {
-      #if canImport(Dispatch)
-        DispatchQueue.main.async(execute: operation)
-      #else
-        Task(operation: operation)
-      #endif
-    }
-    task {
-      UITransaction.$current.withValue(transaction) {
-        onChange(apply)
-      }
+    task(.current) {
+      onChange(apply, task: task)
     }
   }
 }
 
-@MainActor
 public final class ObservationToken: Sendable, HashableObject {
-  private let onCancel: @MainActor @Sendable () -> Void
+  fileprivate let _isCancelled = LockIsolated(false)
 
-  private(set) public var isCancelled = false
-
-  init(cancel onCancel: @MainActor @Sendable @escaping () -> Void) {
-    self.onCancel = onCancel
+  public var isCancelled: Bool {
+    _isCancelled.value
   }
 
   public func cancel() {
-    guard !isCancelled else { return }
-    defer { isCancelled = true }
-    onCancel()
-  }
-
-  deinit {
-    MainActor.assumeIsolated {
-      cancel()
-    }
+    _isCancelled.setValue(true)
   }
 }

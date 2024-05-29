@@ -74,7 +74,6 @@
 /// > `Perceptible`protocols, use the ``UIBindable`` property wrapper.
 @dynamicMemberLookup
 @propertyWrapper
-@MainActor
 public struct UIBinding<Value>: Sendable {
   private let location: any _UIBinding<Value>
 

@@ -45,7 +45,7 @@
       // TODO: Should we vendor LockIsolated?
       let isSetting = LockIsolated(false)
       let weakBinding = UIBinding(weak: binding)
-      let token = SwiftNavigation.observe { transaction in
+      let token = observe { transaction in
         isSetting.setValue(true)
         defer { isSetting.setValue(false) }
         set(
@@ -79,10 +79,20 @@
     }
   }
 
-  private struct Observation {
+  private final class Observation {
     let action: UIAction
     let observation: NSKeyValueObservation
     let token: ObservationToken
+
+    init(action: UIAction, observation: NSKeyValueObservation, token: ObservationToken) {
+      self.action = action
+      self.observation = observation
+      self.token = token
+    }
+
+    deinit {
+      token.cancel()
+    }
   }
 
   private let observationsKey = malloc(1)!

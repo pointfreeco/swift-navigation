@@ -24,11 +24,11 @@
     /// Adds a completion to run when the animations created with this transaction are all complete.
     ///
     /// The completion callback will always be fired exactly one time.
-    public mutating func addAnimationCompletion(_ completion: @escaping (Bool) -> Void) {
+    public mutating func addAnimationCompletion(_ completion: @escaping @Sendable (Bool) -> Void) {
       animationCompletions.append(completion)
     }
 
-    var animationCompletions: [(Bool) -> Void] {
+    var animationCompletions: [@Sendable (Bool) -> Void] {
       get { self[AnimationCompletionsKey.self] }
       set { self[AnimationCompletionsKey.self] = newValue }
     }
@@ -39,7 +39,7 @@
   }
 
   private enum AnimationCompletionsKey: UITransactionKey {
-    static var defaultValue: [(Bool) -> Void] = []
+    static let defaultValue: [@Sendable (Bool) -> Void] = []
   }
 
   private enum DisablesAnimationsKey: UITransactionKey {
