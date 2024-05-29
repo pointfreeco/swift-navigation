@@ -260,7 +260,10 @@
     /// - Parameters:
     ///   - button: Button state.
     ///   - action: An action closure that is invoked when the button is tapped.
-    public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action?) async -> Void) {
+    public init<Action: Sendable>(
+      _ button: ButtonState<Action>,
+      action: @escaping @Sendable (Action?) async -> Void
+    ) {
       let action = { _ = Task { await button.withAction(action) } }
       switch button.role {
       case .cancel:
@@ -310,7 +313,10 @@
     ///   - button: Button state.
     ///   - action: An action closure that is invoked when the button is tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-    public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action?) async -> Void) {
+    public init<Action: Sendable>(
+      _ button: ButtonState<Action>,
+      action: @escaping @Sendable (Action?) async -> Void
+    ) {
       self.init(
         role: button.role.map(ButtonRole.init),
         action: { Task { await button.withAction(action) } }
