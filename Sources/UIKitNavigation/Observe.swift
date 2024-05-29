@@ -31,7 +31,7 @@
           }
         }
       }
-      tokens.insert(token)
+      tokens.append(token)
       return token
     }
 
@@ -41,9 +41,9 @@
       observe { _ in apply() }
     }
 
-    fileprivate var tokens: Set<ObservationToken> {
+    fileprivate var tokens: [Any] {
       get {
-        objc_getAssociatedObject(self, tokensKey) as? Set<ObservationToken> ?? []
+        objc_getAssociatedObject(self, tokensKey) as? [Any] ?? []
       }
       set {
         objc_setAssociatedObject(self, tokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
