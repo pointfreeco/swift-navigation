@@ -4,7 +4,7 @@ import Foundation
 ///
 /// Like SwiftUI's `NavigationPath`, but for UIKit and other paradigms.
 public struct UINavigationPath: Equatable {
-  var elements: [AnyHashable]
+  package var elements: [AnyHashable]
 
   /// The number of elements in this path.
   public var count: Int {
