@@ -19,12 +19,12 @@
               return animation.perform(
                 { apply(transaction) },
                 completion: transaction.animationCompletions.isEmpty
-                ? nil
-                : {
-                  for completion in transaction.animationCompletions {
-                    completion($0)
+                  ? nil
+                  : {
+                    for completion in transaction.animationCompletions {
+                      completion($0)
+                    }
                   }
-                }
               )
             } else {
               apply(transaction)
