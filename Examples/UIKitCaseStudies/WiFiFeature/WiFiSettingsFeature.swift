@@ -4,7 +4,9 @@ import UIKitNavigation
 @Perceptible
 @MainActor
 class WiFiSettingsModel {
-  var destination: Destination?
+  var destination: Destination? {
+    didSet { bind() }
+  }
   var foundNetworks: [Network]
   var isOn: Bool
   var selectedNetworkID: Network.ID?
@@ -23,34 +25,44 @@ class WiFiSettingsModel {
     self.foundNetworks = foundNetworks
     self.isOn = isOn
     self.selectedNetworkID = selectedNetworkID
+    bind()
+  }
+
+  private func bind() {
+    switch destination {
+    case .connect(let model):
+      model.onConnect = { [weak self] network in
+        guard let self else { return }
+        destination = nil
+        selectedNetworkID = network.id
+      }
+
+    case .detail(let model):
+      model.onConfirmForget = { [weak self] in
+        guard let self else { return }
+        self.destination = nil
+        self.selectedNetworkID = nil
+      }
+
+    case .none:
+      break
+    }
   }
 
   func infoButtonTapped(network: Network) {
-    withUITransaction(\.disablesAnimations, true) {
-      destination = .detail(
-        NetworkDetailModel(network: network) { [weak self] in
-          guard let self else { return }
-          self.destination = nil
-          self.selectedNetworkID = nil
-        }
+    destination = .detail(
+      NetworkDetailModel(
+        network: network,
+        selectedNetworkID: selectedNetworkID
       )
-    }
+    )
   }
 
   func networkTapped(_ network: Network) {
     if network.id == selectedNetworkID {
       infoButtonTapped(network: network)
     } else if network.isSecured {
-      destination = .connect(
-        ConnectToNetworkModel(
-          network: network,
-          onConnect: { [weak self] network in
-            guard let self else { return }
-            destination = nil
-            selectedNetworkID = network.id
-          }
-        )
-      )
+      destination = .connect(ConnectToNetworkModel(network: network))
     } else {
       selectedNetworkID = network.id
     }

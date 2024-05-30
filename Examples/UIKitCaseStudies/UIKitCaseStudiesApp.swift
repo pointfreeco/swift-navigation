@@ -38,9 +38,11 @@ struct UIKitCaseStudiesApp: App {
   var body: some Scene {
     WindowGroup {
       if NSClassFromString("XCTestCase") == nil {
-        UIViewControllerRepresenting {
-          //        AppViewController()
-          Self.navigationController
+        WithPerceptionTracking {
+          UIViewControllerRepresenting {
+            //        AppViewController()
+            Self.navigationController
+          }
         }
       }
     }

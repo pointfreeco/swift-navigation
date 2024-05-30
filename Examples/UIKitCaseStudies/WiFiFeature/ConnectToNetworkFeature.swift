@@ -1,16 +1,18 @@
 import SwiftUI
 import UIKitNavigation
+import XCTestDynamicOverlay
 
 @Perceptible
 @MainActor
 class ConnectToNetworkModel: Identifiable {
   var incorrectPasswordAlertIsPresented = false
   var isConnecting = false
-  var onConnect: (Network) -> Void
+  var onConnect: (Network) -> Void = { _ in
+    XCTFail("ConnectToNetworkModel.onConnect unimplemented.")
+  }
   let network: Network
   var password = ""
-  init(network: Network, onConnect: @escaping (Network) -> Void) {
-    self.onConnect = onConnect
+  init(network: Network) {
     self.network = network
   }
   func joinButtonTapped() async {
@@ -100,8 +102,7 @@ final class ConnectToNetworkViewController: UIViewController {
     UINavigationController(
       rootViewController: ConnectToNetworkViewController(
         model: ConnectToNetworkModel(
-          network: Network(name: "Blob's WiFi"),
-          onConnect: { _ in }
+          network: Network(name: "Blob's WiFi")
         )
       )
     )

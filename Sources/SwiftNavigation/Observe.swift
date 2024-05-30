@@ -41,4 +41,9 @@ public final class ObservationToken: Sendable, HashableObject {
   public func cancel() {
     _isCancelled.setValue(true)
   }
+
+  /// Stores this observation token instance in the specified set.
+  public func store(in set: inout Set<ObservationToken>) {
+    set.insert(self)
+  }
 }

@@ -1,23 +1,23 @@
 import SwiftUI
 import UIKitNavigation
+import XCTestDynamicOverlay
 
 @MainActor
 @Perceptible
 class NetworkDetailModel {
   var forgetAlertIsPresented = false
-  let onConfirmForget: () -> Void
-  let network: Network
-
-  deinit {
-    //fatalError()
+  var onConfirmForget: () -> Void = {
+    XCTFail("NetworkDetailModel.onConfirmForget unimplemented.")
   }
+  let network: Network
+  let selectedNetworkID: Network.ID?
 
   init(
     network: Network,
-    onConfirmForget: @escaping () -> Void
+    selectedNetworkID: Network.ID?
   ) {
-    self.onConfirmForget = onConfirmForget
     self.network = network
+    self.selectedNetworkID = selectedNetworkID
   }
 
   func forgetNetworkButtonTapped() {
@@ -60,6 +60,12 @@ final class NetworkDetailViewController: UIViewController {
       forgetButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
     ])
 
+    observe { [weak self] in
+      guard let self else { return }
+
+      forgetButton.isHidden = model.network.id != model.selectedNetworkID
+    }
+
     present(isPresented: $model.forgetAlertIsPresented) { [unowned self] in
       let controller = UIAlertController(
         title: "Forget Wi-Fi Network “\(model.network.name)”?",
@@ -85,7 +91,7 @@ final class NetworkDetailViewController: UIViewController {
       rootViewController: NetworkDetailViewController(
         model: NetworkDetailModel(
           network: Network(name: "Blob's WiFi"),
-          onConfirmForget: {}
+          selectedNetworkID: UUID()
         )
       )
     )
