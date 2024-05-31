@@ -10,7 +10,7 @@ final class UINavigationPathTests: XCTestCase {
     path.append("hello")
     path.append(42)
     path.append(true)
-    path.append(User(id: 42, name: "Blob"))
+    path.append(User(id: 42))
 
     let codable = try XCTUnwrap(path.codable)
     let data = try JSONEncoder().encode(codable)
@@ -29,6 +29,5 @@ final class UINavigationPathTests: XCTestCase {
 
   public struct User: Codable, Hashable {
     let id: Int
-    var name: String
   }
 }

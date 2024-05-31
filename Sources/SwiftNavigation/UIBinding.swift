@@ -569,41 +569,6 @@ private final class _UIBindingOptionalEnumToCase<
 }
 
 extension UIBinding {
-  package init<V: RandomAccessCollection & RangeReplaceableCollection>(_ base: UIBinding<V>)
-  where Value == any RandomAccessCollection & RangeReplaceableCollection {
-    func open(_ location: some _UIBinding<V>) -> any _UIBinding<Value> {
-      _UIBindingToAnyRangeReplaceableCollection(base: location)
-    }
-    self.init(location: open(base.location), transaction: base.transaction)
-  }
-}
-
-private final class _UIBindingToAnyRangeReplaceableCollection<Base: _UIBinding>: _UIBinding
-where Base.Value: RandomAccessCollection & RangeReplaceableCollection {
-  let base: Base
-  init(base: Base) {
-    self.base = base
-  }
-  var wrappedValue: any RandomAccessCollection & RangeReplaceableCollection {
-    _read { yield base.wrappedValue }
-    _modify {
-      var wrappedValue: any RangeReplaceableCollection & RandomAccessCollection = base.wrappedValue
-      yield &wrappedValue
-      base.wrappedValue = wrappedValue as! Base.Value
-    }
-  }
-  static func == (
-    lhs: _UIBindingToAnyRangeReplaceableCollection,
-    rhs: _UIBindingToAnyRangeReplaceableCollection
-  ) -> Bool {
-    lhs.base == rhs.base
-  }
-  func hash(into hasher: inout Hasher) {
-    hasher.combine(base)
-  }
-}
-
-extension UIBinding {
   @_spi(Observation)
   public init(weak base: UIBinding<Value>) {
     func open(_ location: some _UIBinding<Value>) -> any _UIBinding<Value> {

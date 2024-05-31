@@ -2,10 +2,9 @@
   import UIKit
 
   public class NavigationStackController: UINavigationController {
-    private var destinations: [DestinationType: (Any) -> UIViewController] = [:]
-    fileprivate var path = UIBinding<any RandomAccessCollection & RangeReplaceableCollection>(
-      UIBindable(DefaultPath()).elements
-    )
+    private var destinations: [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
+      [:]
+    @UIBinding fileprivate var path: [UINavigationPath.Element] = []
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
 
@@ -22,7 +21,7 @@
       root: () -> UIViewController
     ) where Data.Element: Hashable {
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
-      self.path = UIBinding(path)
+      self._path = path.path  // TODO: `UIBinding(weak:)`?
       self.root = root()
     }
 
@@ -34,7 +33,7 @@
       root: () -> UIViewController
     ) {
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
-      self.path = UIBinding<any RandomAccessCollection & RangeReplaceableCollection>(path.elements)
+      self._path = path.elements  // TODO: `UIBinding(weak:)`?
       self.root = root()
     }
 
@@ -42,9 +41,22 @@
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
     ) {
-      destinations[DestinationType(data)] = { destination($0 as! D) }
-      if path.wrappedValue.contains(where: { $0 is D }) {
-        path.wrappedValue = path.wrappedValue
+      destinations[DestinationType(data)] = { element in
+        switch element {
+        case let .eager(value as D):
+          return destination(value)
+        case let .lazy(value):
+          if let value = value.decode() as? D {
+            return destination(value)
+          }
+        default:
+          break
+        }
+        // TODO: runtimeWarn
+        return nil
+      }
+      if path.contains(where: { $0.elementType == D.self }) {
+        path = path
       }
     }
 
@@ -56,10 +68,9 @@
       observe { [weak self] in
         guard let self else { return }
 
-        let newPath = path.wrappedValue
+        let newPath = path
 
-        let difference = newPath.map { $0 as! AnyHashable }
-          .difference(from: viewControllers.compactMap(\.navigationID))
+        let difference = newPath.difference(from: viewControllers.compactMap(\.navigationID))
 
         if difference.isEmpty {
           return
@@ -95,7 +106,7 @@
 
           loop: for viewController in oldViewControllers {
             if let navigationID = viewController.navigationID {
-              guard navigationID == newPath.first as! AnyHashable
+              guard navigationID == newPath.first
               else { break loop }
               newPath.removeFirst()
             } else {
@@ -103,7 +114,6 @@
             }
           }
           for navigationID in newPath {
-            let navigationID = navigationID as! AnyHashable
             if let viewController = viewControllers.first(where: { $0.navigationID == navigationID }
             ) {
               newViewControllers.append(viewController)
@@ -118,12 +128,17 @@
       }
     }
 
-    fileprivate func viewController(for navigationID: AnyHashable) -> UIViewController? {
-      guard let destination = destinations[DestinationType(type(of: navigationID.base))] else {
+    fileprivate func viewController(
+      for navigationID: UINavigationPath.Element
+    ) -> UIViewController? {
+      guard
+        let destinationType = navigationID.elementType,
+        let destination = destinations[DestinationType(destinationType)],
+        let viewController = destination(navigationID)
+      else {
         // TODO: runtimeWarn
         return nil
       }
-      let viewController = destination(navigationID)
       viewController.navigationID = navigationID
       if #available(macOS 14, iOS 17, watchOS 10, tvOS 17, *) {
         viewController.traitOverrides
@@ -168,10 +183,10 @@
         animated: Bool
       ) {
         let navigationController = navigationController as! NavigationStackController
-        let oldPath = navigationController.path.wrappedValue
-        let newPath = navigationController.viewControllers.map(\.navigationID)
+        let oldPath = navigationController.path
+        let newPath = navigationController.viewControllers.compactMap(\.navigationID)
         if oldPath.count > newPath.count {
-          navigationController.path.wrappedValue = newPath
+          navigationController.path = newPath
         }
         base?.navigationController?(
           navigationController, didShow: viewController, animated: animated
@@ -224,10 +239,7 @@
         // TODO: runtimeWarn?
         return
       }
-      func open<P: RandomAccessCollection & RangeReplaceableCollection>(_ path: inout P) {
-        path.append(value as! P.Element)
-      }
-      open(&stackController.path.wrappedValue)
+      stackController.path.append(.eager(value))
     }
   }
 
@@ -237,9 +249,9 @@
   }
 
   extension UIViewController {
-    fileprivate var navigationID: AnyHashable? {
+    fileprivate var navigationID: UINavigationPath.Element? {
       get {
-        objc_getAssociatedObject(self, navigationIDKey) as? AnyHashable
+        objc_getAssociatedObject(self, navigationIDKey) as? UINavigationPath.Element
       }
       set {
         objc_setAssociatedObject(
@@ -258,6 +270,24 @@
         return offset
       case let .remove(offset, _, _):
         return offset
+      }
+    }
+  }
+
+  extension RangeReplaceableCollection
+  where
+    Self: RandomAccessCollection,
+    Element: Hashable
+  {
+    fileprivate var path: [UINavigationPath.Element] {
+      get { map { .eager($0) } }
+      set {
+        replaceSubrange(
+          startIndex..<endIndex,
+          with: newValue.map {
+            guard case let .eager(element) = $0 else { fatalError() }
+            return element.base as! Element
+          })
       }
     }
   }

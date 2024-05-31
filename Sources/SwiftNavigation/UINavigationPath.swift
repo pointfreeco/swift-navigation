@@ -4,7 +4,33 @@ import Foundation
 ///
 /// Like SwiftUI's `NavigationPath`, but for UIKit and other paradigms.
 public struct UINavigationPath: Equatable {
-  package var elements: [AnyHashable]
+  package var elements: [Element] = []
+
+  package enum Element: Equatable {
+    case eager(AnyHashable)
+    case lazy(CodableRepresentation.Element)
+
+    package var elementType: Any.Type? {
+      switch self {
+      case let .eager(value):
+        return type(of: value.base)
+      case let .lazy(value):
+        return value.decodableType
+      }
+    }
+
+    package static func == (lhs: Self, rhs: Self) -> Bool {
+      switch (lhs, rhs) {
+      case let (.eager(lhs), .eager(rhs)):
+        return lhs == rhs
+      case let (.lazy(lhs), .lazy(rhs)):
+        return lhs == rhs
+      case let (.eager(eager), .lazy(lazy)), let (.lazy(lazy), .eager(eager)):
+        guard #available(iOS 14, *) else { fatalError() }
+        return CodableRepresentation.Element(eager) == lazy
+      }
+    }
+  }
 
   /// The number of elements in this path.
   public var count: Int {
@@ -26,15 +52,13 @@ public struct UINavigationPath: Equatable {
   }
 
   /// Creates a new, empty navigation path.
-  public init() {
-    self.elements = []
-  }
+  public init() {}
 
   /// Creates a new navigation path from the contents of a sequence.
   ///
   /// - Parameter elements: A sequence used to create the navigation path.
   public init<S: Sequence>(_ elements: S) where S.Element: Hashable {
-    self.elements = elements.map(AnyHashable.init)
+    self.elements = elements.map { .eager(AnyHashable($0)) }
   }
 
   /// Creates a new navigation path from a serializable version.
@@ -42,12 +66,12 @@ public struct UINavigationPath: Equatable {
   /// - Parameter codable: A value describing the contents of the new path in a serializable format.
   @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
   public init(_ codable: CodableRepresentation) {
-    self.elements = codable.elements.map(\.value)
+    self.elements = codable.elements.map { .lazy($0) }
   }
 
   /// Appends a new value to the end of this path.
   public mutating func append<V: Hashable>(_ value: V) {
-    elements.append(value)
+    elements.append(.eager(value))
   }
 
   /// Removes values from the end of this path.
@@ -64,24 +88,88 @@ public struct UINavigationPath: Equatable {
   /// When a navigation path contains elements the conform to the `Codable` protocol, you can use
   /// the path's `CodableRepresentation` to convert the path to an external representation and to
   /// convert an external representation back into a navigation path.
-  @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
   public struct CodableRepresentation: Codable, Equatable {
-    fileprivate struct Element: Equatable {
-      let type: Any.Type
-      let value: AnyHashable
+    package struct Element: Hashable {
+      static let decoder = JSONDecoder()
+      static let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        return encoder
+      }()
 
-      static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.type == rhs.type && lhs.value == rhs.value
+      let tag: String
+      let item: String
+
+      package static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.tag == rhs.tag && lhs.item == rhs.item
+      }
+
+      init(tag: String, item: String) {
+        self.tag = tag
+        self.item = item
+      }
+
+      var decodableType: (any Decodable.Type)? {
+        _typeByName(tag) as? any Decodable.Type
+      }
+
+      @available(iOS 14, macOS 11, tvOS 15, watchOS 7, *)
+      init?(_ value: AnyHashable) {
+        func item() -> String? {
+          guard let value = value as? any Encodable else { return nil }
+          #if swift(<5.7)
+            func open<A: Encodable>(_: A.Type) throws -> Data {
+              try Self.encoder.encode(element as! A)
+            }
+            return try? String(
+              decoding: _openExistential(type(of: element), do: open),
+              as: UTF8.self
+            )
+          #else
+            return try? String(decoding: Self.encoder.encode(value), as: UTF8.self)
+          #endif
+        }
+        guard
+          let tag = _mangledTypeName(type(of: value)),
+          let item = item()
+        else { return nil }
+        self.init(tag: tag, item: item)
+      }
+
+      package func decode() -> AnyHashable? {
+        func value(as type: any Decodable.Type) -> AnyHashable? {
+          #if swift(<5.7)
+            func open<A: Decodable>(_: A.Type)  A? {
+              try Self.decoder.decode(A.self, from: Data(item.utf8)) as? AnyHashable
+            }
+            return try? _openExistential(type, do: open)
+          #else
+            return try? Self.decoder.decode(type, from: Data(item.utf8)) as? AnyHashable
+          #endif
+        }
+        guard
+          let type = decodableType,
+          let value = value(as: type)
+        else {
+          return nil
+        }
+        return value
       }
     }
 
     fileprivate var elements: [Element] = []
 
+    @available(iOS 14, macOS 11, tvOS 15, watchOS 7, *)
     fileprivate init?(_ path: UINavigationPath) {
       elements.reserveCapacity(path.elements.count)
-      for value in path.elements.reversed() {
-        guard value.base is Encodable else { return nil }
-        elements.insert(Element(type: type(of: value.base), value: value), at: 0)
+      for element in path.elements {
+        switch element {
+        case let .eager(value):
+          guard let element = Element(value) else { return nil }
+          elements.append(element)
+        case let .lazy(element):
+          elements.append(element)
+        }
       }
     }
 
@@ -91,63 +179,21 @@ public struct UINavigationPath: Equatable {
         elements.reserveCapacity(count)
       }
       while !container.isAtEnd {
-        let typeName = try container.decode(String.self)
-        // TODO: Only allow types that have been used with navigationDestination?
-        guard let type = _typeByName(typeName) as? any Decodable.Type
-        else {
-          throw DecodingError.dataCorruptedError(
-            in: container,
-            debugDescription: "\(typeName) is not decodable."
-          )
-        }
-        let encodedValue = try container.decode(String.self)
-        #if swift(<5.7)
-          func decode<A: Decodable>(_: A.Type) throws -> A {
-            try JSONDecoder().decode(A.self, from: Data(encodedValue.utf8))
-          }
-          let value = try _openExistential(type, do: decode)
-        #else
-          let value = try JSONDecoder().decode(type, from: Data(encodedValue.utf8))
-        #endif
-        guard let value = value as? AnyHashable
-        else {
-          throw DecodingError.dataCorruptedError(
-            in: container,
-            debugDescription: "\(typeName) is not hashable."
-          )
-        }
-        elements.insert(Element(type: type, value: value), at: 0)
+        try elements.insert(
+          Element(
+            tag: container.decode(String.self),
+            item: container.decode(String.self)
+          ),
+          at: 0
+        )
       }
     }
 
     public func encode(to encoder: any Encoder) throws {
       var container = encoder.unkeyedContainer()
       for element in elements.reversed() {
-        try container.encode(_mangledTypeName(element.type))
-        guard let value = element.value as? any Encodable
-        else {
-          throw EncodingError.invalidValue(
-            element,
-            .init(
-              codingPath: container.codingPath,
-              debugDescription: "\(type(of: element)) is not encodable."
-            )
-          )
-        }
-
-        #if swift(<5.7)
-          func open<A: Encodable>(_: A.Type) throws -> Data {
-            try JSONEncoder().encode(element as! A)
-          }
-          let string = try String(
-            decoding: _openExistential(type(of: element), do: open),
-            as: UTF8.self
-          )
-          try container.encode(string)
-        #else
-          let string = try String(decoding: JSONEncoder().encode(value), as: UTF8.self)
-          try container.encode(string)
-        #endif
+        try container.encode(element.tag)
+        try container.encode(element.item)
       }
     }
   }

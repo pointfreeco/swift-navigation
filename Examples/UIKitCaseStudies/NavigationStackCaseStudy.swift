@@ -3,9 +3,11 @@ import UIKitNavigation
 @MainActor
 @Perceptible
 class AppModel {
-  //  var path: [Path] = []
+  // var path: [Path] = []
   var path = UINavigationPath()
-  init() {
+
+  // init(path: [Path]) {
+  init(path: UINavigationPath = UINavigationPath()) {
     self.path = path
   }
 
