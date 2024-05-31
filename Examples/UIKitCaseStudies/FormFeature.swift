@@ -60,10 +60,10 @@ final class FormViewController: UIViewController {
       configuration: .plain(),
       primaryAction: UIAction { [weak self] _ in
         self?.model.sheet = .init(text: "Blob")
-        //      Task {
-        //        try await Task.sleep(for: .seconds(2))
-        //        self?.model.sheet = .init(text: "Blob, Jr.")
-        //      }
+        // Task {
+        //   try await Task.sleep(for: .seconds(2))
+        //   self?.model.sheet = .init(text: "Blob, Jr.")
+        // }
       })
     sheetButton.setTitle("Present sheet", for: .normal)
 
@@ -151,7 +151,7 @@ final class ChildController: UIViewController {
     Task {
       try await Task.sleep(for: .seconds(1))
       if #available(iOS 17, *) {
-        self.traitCollection.dismiss()
+        traitCollection.dismiss()
       }
     }
   }

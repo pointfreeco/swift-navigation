@@ -172,7 +172,7 @@
           }
           newController.onDismiss = onDismiss
           if #available(macOS 14, iOS 17, watchOS 10, tvOS 17, *) {
-            newController.traitOverrides.dismiss = UIDismissAction {
+            newController.traitOverrides.dismiss = UIDismissAction { _ in
               onDismiss()
             }
           }

@@ -65,7 +65,7 @@
 
       super.delegate = pathDelegate
 
-      observe { [weak self] in
+      observe { [weak self] transaction in
         guard let self else { return }
 
         let newPath = path
@@ -78,7 +78,7 @@
           case let .insert(newPath.count, navigationID, nil) = difference.first,
           let viewController = viewController(for: navigationID)
         {
-          pushViewController(viewController, animated: UIView.areAnimationsEnabled)
+          pushViewController(viewController, animated: !transaction.disablesAnimations)
         } else if difference.count == 1,
           case .remove(newPath.count, _, nil) = difference.first
         {
@@ -93,7 +93,7 @@
           first == newPath.count
         {
           popToViewController(
-            viewControllers[first - 1], animated: UIView.areAnimationsEnabled
+            viewControllers[first - 1], animated: !transaction.disablesAnimations
           )
         } else {
           var newPath = newPath
@@ -123,7 +123,7 @@
               // TODO: runtimeWarn
             }
           }
-          setViewControllers(newViewControllers, animated: UIView.areAnimationsEnabled)
+          setViewControllers(newViewControllers, animated: !transaction.disablesAnimations)
         }
       }
     }
@@ -142,9 +142,9 @@
       viewController.navigationID = navigationID
       if #available(macOS 14, iOS 17, watchOS 10, tvOS 17, *) {
         viewController.traitOverrides
-          .dismiss = UIDismissAction { [weak self, weak viewController] in
+          .dismiss = UIDismissAction { [weak self, weak viewController] transaction in
             guard let self, let viewController else { return }
-            popFromViewController(viewController, animated: UIView.areAnimationsEnabled)
+            popFromViewController(viewController, animated: !transaction.disablesAnimations)
           }
       }
       return viewController

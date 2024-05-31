@@ -34,7 +34,7 @@ public func withUITransaction<R, V>(
 /// The root transaction for a state change comes from the binding that changed, plus any global
 /// values set by calling ``withUITransaction(_:_:)`` or ``withUIAnimation(_:_:)``.
 public struct UITransaction: Sendable {
-  @TaskLocal static var current = Self()
+  @TaskLocal package static var current = Self()
 
   private var storage: [Key: any Sendable] = [:]
 

@@ -4,18 +4,18 @@
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
   @MainActor
   public struct UIDismissAction: Sendable {
-    let run: @MainActor @Sendable () -> Void
+    let run: @MainActor @Sendable (UITransaction) -> Void
 
     // TODO: `public init`?
 
     public func callAsFunction() {
-      run()
+      run(.current)
     }
   }
 
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
   private enum DismissActionTrait: UITraitDefinition {
-    static let defaultValue = UIDismissAction {
+    static let defaultValue = UIDismissAction { _ in
       // TODO: Runtime warn that there is no presentation context
     }
   }
