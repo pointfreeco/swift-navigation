@@ -52,7 +52,6 @@ public struct UITransaction: Sendable {
   ///   static let defaultValue = false
   /// }
   ///
-  ///
   /// extension UITransaction {
   ///   var myCustomValue: Bool {
   ///     get { self[MyTransactionKey.self] }

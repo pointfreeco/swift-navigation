@@ -1,4 +1,5 @@
 #if canImport(UIKit)
+  @_spi(Observation) import SwiftNavigation
   import UIKit
 
   extension NSObject {

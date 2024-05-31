@@ -75,7 +75,7 @@
 @dynamicMemberLookup
 @propertyWrapper
 public struct UIBinding<Value>: Sendable {
-  private let location: any _UIBinding<Value>
+  fileprivate let location: any _UIBinding<Value>
 
   /// The binding's transaction.
   ///
@@ -182,13 +182,15 @@ public struct UIBinding<Value>: Sendable {
     self.init(location: open(base.location), transaction: base.transaction)
   }
 
-  // TODO: How is this used in SwiftUI? Is this useful in UIKit? Remove?
-  // public init<V: Hashable>(_ base: UIBinding<V>) where Value == AnyHashable {
-  //   func open(_ location: some _UIBinding<V>) -> any _UIBinding<Value> {
-  //     _UIBindingToAnyHashable(base: location)
-  //   }
-  //   self.init(location: open(base.location), transaction: base.transaction)
-  // }
+  /// Creates a binding by projecting the base value to a hashable value.
+  ///
+  /// - Parameter base: A `Hashable` value to project to an `AnyHashable` value.
+  public init<V: Hashable>(_ base: UIBinding<V>) where Value == AnyHashable {
+    func open(_ location: some _UIBinding<V>) -> any _UIBinding<Value> {
+      _UIBindingToAnyHashable(base: location)
+    }
+    self.init(location: open(base.location), transaction: base.transaction)
+  }
 
   /// The underlying value referenced by the binding variable.
   ///
@@ -485,26 +487,26 @@ private final class _UIBindingToOptional<Base: _UIBinding>: _UIBinding {
   }
 }
 
-//private final class _UIBindingToAnyHashable<Base: _UIBinding>: _UIBinding
-//where Base.Value: Hashable {
-//  let base: Base
-//  init(base: Base) {
-//    self.base = base
-//  }
-//  var wrappedValue: AnyHashable {
-//    get { base.wrappedValue }
-//    set {
-//      // TODO: Use swift-dependencies to make this precondition testable?
-//      base.wrappedValue = newValue.base as! Base.Value
-//    }
-//  }
-//  static func == (lhs: _UIBindingToAnyHashable, rhs: _UIBindingToAnyHashable) -> Bool {
-//    lhs.base == rhs.base
-//  }
-//  func hash(into hasher: inout Hasher) {
-//    hasher.combine(base)
-//  }
-//}
+private final class _UIBindingToAnyHashable<Base: _UIBinding>: _UIBinding
+where Base.Value: Hashable {
+  let base: Base
+  init(base: Base) {
+    self.base = base
+  }
+  var wrappedValue: AnyHashable {
+    get { base.wrappedValue }
+    set {
+      // TODO: Use swift-dependencies to make this precondition testable?
+      base.wrappedValue = newValue.base as! Base.Value
+    }
+  }
+  static func == (lhs: _UIBindingToAnyHashable, rhs: _UIBindingToAnyHashable) -> Bool {
+    lhs.base == rhs.base
+  }
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(base)
+  }
+}
 
 private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding, @unchecked
   Sendable
@@ -602,8 +604,8 @@ where Base.Value: RandomAccessCollection & RangeReplaceableCollection {
 }
 
 extension UIBinding {
-  // TODO: Publicize? Document?
-  package init(weak base: UIBinding<Value>) {
+  @_spi(Observation)
+  public init(weak base: UIBinding<Value>) {
     func open(_ location: some _UIBinding<Value>) -> any _UIBinding<Value> {
       _UIBindingToWeak(base: location)
     }
