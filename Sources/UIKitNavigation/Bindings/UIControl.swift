@@ -51,7 +51,6 @@
         defer { isSetting.setValue(false) }
         set(
           weakBinding.wrappedValue,
-          // TODO: Is this the correct behavior?
           transaction.animation == nil && !transaction.disablesAnimations
             ? weakBinding.transaction
             : transaction
