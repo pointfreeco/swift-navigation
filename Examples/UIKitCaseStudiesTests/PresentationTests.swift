@@ -22,10 +22,10 @@ final class PresentationTests: XCTestCase {
     try await setUp(controller: vc)
 
     await assertEventuallyEqual(vc.presentedViewController, nil)
-    
+
     vc.model.presentedChild = Model()
     await assertEventuallyNotEqual(vc.presentedViewController, nil)
-    
+
     vc.model.presentedChild = nil
     await assertEventuallyEqual(vc.presentedViewController, nil)
   }
@@ -34,7 +34,7 @@ final class PresentationTests: XCTestCase {
   func testPresents_TraitDismissal() async throws {
     let vc = BasicViewController()
     try await setUp(controller: vc)
-    
+
     await assertEventuallyEqual(vc.presentedViewController, nil)
 
     vc.model.isPresented = true
@@ -51,7 +51,7 @@ final class PresentationTests: XCTestCase {
     try await setUp(controller: vc)
 
     await assertEventuallyNotEqual(vc.presentedViewController, nil)
-    
+
     vc.model.isPresented = false
     await assertEventuallyEqual(vc.presentedViewController, nil)
   }
@@ -62,7 +62,7 @@ final class PresentationTests: XCTestCase {
     _ = vc.view
     try await Task.sleep(for: .seconds(0.1))
     try await setUp(controller: vc)
-    
+
     XCTTODO(
       """
       This does not currently pass because we eagerly present in `viewDidLoad` but really we should
@@ -115,7 +115,7 @@ final class PresentationTests: XCTestCase {
 
     vc.model.pushedChild = Model()
     await assertEventuallyEqual(nav.viewControllers.count, 2)
-    
+
     nav.popViewController(animated: false)
     await assertEventuallyEqual(nav.viewControllers.count, 1)
     await assertEventuallyNil(vc.model.pushedChild)
@@ -147,7 +147,7 @@ final class PresentationTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 2)
-    
+
     vc.model.isPushed = false
     await assertEventuallyEqual(nav.viewControllers.count, 1)
   }
@@ -235,7 +235,7 @@ final class PresentationTests: XCTestCase {
     try await setUp(controller: vc)
 
     await assertEventuallyNil(vc.presentedViewController)
-    
+
     vc.model.presentedChild = Model()
     await assertEventuallyNotNil(vc.presentedViewController)
 

@@ -104,7 +104,7 @@ final class NavigationPathTests: XCTestCase {
       nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
       []
     )
-    
+
     path.removeLast()
     await assertEventually {
       nav.viewControllers.count == 1
