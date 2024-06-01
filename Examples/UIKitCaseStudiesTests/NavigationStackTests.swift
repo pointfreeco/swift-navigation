@@ -31,7 +31,7 @@ final class NavigationStackTests: XCTestCase {
 
     model.path.removeLast()
     await assertEventuallyEqual(nav.viewControllers.count, 1)
-    XCTAssertEqual(model.path, [])    
+    XCTAssertEqual(model.path, [])
   }
 
   @MainActor
