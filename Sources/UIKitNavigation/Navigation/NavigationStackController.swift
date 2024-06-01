@@ -151,7 +151,6 @@
 
     private final class PathDelegate: NSObject, UINavigationControllerDelegate {
       weak var base: (any UINavigationControllerDelegate)?
-      let viewController = UIViewController()
 
       func navigationController(
         _ navigationController: UINavigationController,
@@ -204,7 +203,7 @@
         _ navigationController: UINavigationController
       ) -> UIInterfaceOrientationMask {
         base?.navigationControllerSupportedInterfaceOrientations?(navigationController)
-          ?? viewController.supportedInterfaceOrientations
+          ?? navigationController.supportedInterfaceOrientations
       }
 
       func navigationControllerPreferredInterfaceOrientationForPresentation(
@@ -213,7 +212,7 @@
         base?.navigationControllerPreferredInterfaceOrientationForPresentation?(
           navigationController
         )
-          ?? viewController.preferredInterfaceOrientationForPresentation
+          ?? navigationController.preferredInterfaceOrientationForPresentation
       }
 
       func navigationController(
