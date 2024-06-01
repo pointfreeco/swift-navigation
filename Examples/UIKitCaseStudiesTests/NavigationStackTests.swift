@@ -12,6 +12,7 @@ final class NavigationStackTests: XCTestCase {
       ChildViewController(number: number)
     }
     try setUp(controller: nav)
+    try await Task.sleep(for: .seconds(0.1))
 
     model.path.append(1)
     await assertEventuallyEqual(nav.viewControllers.count, 2)
@@ -28,11 +29,9 @@ final class NavigationStackTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 2)
     XCTAssertEqual(model.path, [1])
 
-    //    model.path.removeLast()
-    //    await assertEventually {
-    //      nav.viewControllers.count == 1
-    //    }
-    //    XCTAssertEqual(model.path, [])
+    model.path.removeLast()
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    XCTAssertEqual(model.path, [])    
   }
 
   @MainActor
@@ -132,7 +131,12 @@ final class NavigationStackTests: XCTestCase {
 
 @Observable
 private class Model {
-  var path: [Int]
+  var path: [Int] {
+    didSet {
+      print(path)
+      print("!!!!")
+    }
+  }
   init(path: [Int] = []) {
     self.path = path
   }

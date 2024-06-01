@@ -75,12 +75,14 @@
         let newPath = path
 
         let difference = newPath.difference(from: viewControllers.compactMap(\.navigationID))
-        print(path.count)
 
-        guard !difference.isEmpty || viewControllers.isEmpty else { return }
+        guard !difference.isEmpty || viewControllers.isEmpty else {
+          print("?!?!?!")
+          return
+        }
 
         if difference.count == 1,
-          case let .insert(newPath.count, navigationID, nil) = difference.first,
+          case let .insert(newPath.count - 1, navigationID, nil) = difference.first,
           let viewController = viewController(for: navigationID)
         {
           pushViewController(viewController, animated: !transaction.disablesAnimations)
@@ -116,7 +118,10 @@
           loop: for viewController in oldViewControllers {
             if let navigationID = viewController.navigationID {
               guard navigationID == newPath.first
-              else { break loop }
+              else {
+                break loop
+              }
+              newViewControllers.append(viewController)
               newPath.removeFirst()
             } else {
               newViewControllers.append(viewController)
@@ -191,11 +196,13 @@
         didShow viewController: UIViewController,
         animated: Bool
       ) {
-        let navigationController = navigationController as! NavigationStackController
-        let oldPath = navigationController.path
-        let newPath = navigationController.viewControllers.compactMap(\.navigationID)
-        if oldPath.count > newPath.count {
-          navigationController.path = newPath
+        DispatchQueue.main.async {
+          let navigationController = navigationController as! NavigationStackController
+          let oldPath = navigationController.path
+          let newPath = navigationController.viewControllers.compactMap(\.navigationID)
+          if oldPath.count > newPath.count {
+            navigationController.path = newPath
+          }
         }
         base?.navigationController?(
           navigationController, didShow: viewController, animated: animated

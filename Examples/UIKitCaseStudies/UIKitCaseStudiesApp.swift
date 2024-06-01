@@ -15,6 +15,9 @@ struct UIKitCaseStudiesApp: App {
     // model.path.append(AppModel.Path.counter(CounterModel()))
     // model.path.append(AppModel.Path.form(FormModel()))
 
+    model.path.append(1)
+    model.path.append("Blob")
+
     let navigationController = NavigationStackController(path: $model.path) {
       NavigationRootViewController()
     }
@@ -25,6 +28,14 @@ struct UIKitCaseStudiesApp: App {
       MainActor.assumeIsolated {
         let vc = UIViewController()
         vc.navigationItem.title = "\(n)"
+        return vc
+      }
+    }
+    navigationController.navigationDestination(for: String.self) { n in
+      MainActor.assumeIsolated {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .systemBackground
+        vc.navigationItem.title = n
         return vc
       }
     }
