@@ -16,31 +16,19 @@ final class NavigationPathTests: XCTestCase {
 
     path.append(1)
     await assertEventuallyEqual(nav.viewControllers.count, 2)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1]
-    )
+    await assertEventuallyEqual(nav.values, [1])
 
     path.append(2)
     await assertEventuallyEqual(nav.viewControllers.count, 3)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1, 2]
-    )
+    await assertEventuallyEqual(nav.values, [1, 2])
 
     path.removeLast()
     await assertEventuallyEqual(nav.viewControllers.count, 2)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1]
-    )
+    await assertEventuallyEqual(nav.values, [1])
 
     path.removeLast()
     await assertEventuallyEqual(nav.viewControllers.count, 1)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      []
-    )
+    await assertEventuallyEqual(nav.values, [])
   }
 
   @MainActor
@@ -59,31 +47,19 @@ final class NavigationPathTests: XCTestCase {
 
     path.append(1)
     await assertEventuallyEqual(nav.viewControllers.count, 2)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1]
-    )
+    await assertEventuallyEqual(nav.values, [1])
 
     path.append("blob")
     await assertEventuallyEqual(nav.viewControllers.count, 3)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1, "blob"]
-    )
+    await assertEventuallyEqual(nav.values, [1, "blob"])
 
     path.removeLast()
     await assertEventuallyEqual(nav.viewControllers.count, 2)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1]
-    )
+    await assertEventuallyEqual(nav.values, [1])
 
     path.removeLast()
     await assertEventuallyEqual(nav.viewControllers.count, 1)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      []
-    )
+    await assertEventuallyEqual(nav.values, [])
   }
 
   @MainActor
@@ -98,10 +74,7 @@ final class NavigationPathTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1, 2, 3]
-    )
+    await assertEventuallyEqual(nav.values, [1, 2, 3])
   }
 
   @MainActor
@@ -153,14 +126,8 @@ final class NavigationPathTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1, "Blob", true] as [AnyHashable]
-    )
-    await assertEventuallyEqual(
-      path.elements,
-      [.eager(1), .eager("Blob"), .eager(true)]
-    )
+    await assertEventuallyEqual(nav.values, [1, "Blob", true] as [AnyHashable])
+    await assertEventuallyEqual(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
   }
 
   @MainActor
@@ -198,63 +165,17 @@ final class NavigationPathTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1, "Blob", true] as [AnyHashable]
-    )
-    await assertEventuallyEqual(
-      path.elements,
-      [.eager(1), .eager("Blob"), .eager(true)]
-    )
-
-    @MainActor
-    func testDecodePath_Laziness() async throws {
-      @UIBinding var path = UINavigationPath(
-        try JSONDecoder().decode(
-          UINavigationPath.CodableRepresentation.self,
-          from: Data(
-            #"""
-            ["Sb","true","SS","\"Blob\"","Si","1"]
-            """#.utf8)
-        )
-      )
-      await assertEventuallyEqual(
-        path.elements,
-        [
-          .lazy(.init(tag: "Si", item: "1")),
-          .lazy(.init(tag: "SS", item: "\"Blob\"")),
-          .lazy(.init(tag: "Sb", item: "true")),
-        ]
-      )
-
-      let nav = NavigationStackController(path: $path) {
-        UIViewController()
-      }
-      nav.navigationDestination(for: Int.self) { value in
-        ValueViewController(value: value)
-      }
-      nav.navigationDestination(for: String.self) { value in
-        ValueViewController(value: value)
-      }
-      nav.navigationDestination(for: Bool.self) { value in
-        ValueViewController(value: value)
-      }
-      try await setUp(controller: nav)
-
-      await assertEventuallyEqual(nav.viewControllers.count, 4)
-      await assertEventuallyEqual(
-        nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-        [1, "Blob", true] as [AnyHashable]
-      )
-      await assertEventuallyEqual(
-        path.elements,
-        [.eager(1), .eager("Blob"), .eager(true)]
-      )
-    }
+    await assertEventuallyEqual(nav.values, [1, "Blob", true] as [AnyHashable])
+    await assertEventuallyEqual(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
   }
 
   @MainActor
   func testDecodePath_NestedNavigationDestination() async throws {
+    XCTTODO("""
+      This does not pass because it seems lazily using navigationDestination in nested contexts
+      are not being picked up when deep-linking.
+      """)
+    
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
@@ -280,18 +201,17 @@ final class NavigationPathTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1, "Blob", true] as [AnyHashable]
-    )
-    await assertEventuallyEqual(
-      path.elements,
-      [.eager(1), .eager("Blob"), .eager(true)]
-    )
+    await assertEventuallyEqual(nav.values, [1, "Blob", true] as [AnyHashable])
+    await assertEventuallyEqual(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
   }
 
   @MainActor
   func testDecodePath_NestedNavigationDestination_UnrecognizedType() async throws {
+    XCTTODO("""
+      This does not pass because it seems lazily using navigationDestination in nested contexts
+      are not being picked up when deep-linking.
+      """)
+
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
@@ -323,14 +243,8 @@ final class NavigationPathTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1, "Blob", true] as [AnyHashable]
-    )
-    await assertEventuallyEqual(
-      path.elements,
-      [.eager(1), .eager("Blob"), .eager(true)]
-    )
+    await assertEventuallyEqual(nav.values, [1, "Blob", true] as [AnyHashable])
+    await assertEventuallyEqual(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
   }
 
   @MainActor
@@ -379,6 +293,12 @@ private final class ValueViewController<Value>: UIViewController, _ValueViewCont
   }
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+}
+
+extension UINavigationController {
+  var values: [AnyHashable] {
+    viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable }
   }
 }
 

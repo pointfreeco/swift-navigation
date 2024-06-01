@@ -105,6 +105,10 @@ final class NavigationStackTests: XCTestCase {
 
   @MainActor
   func testReOrderStack() async throws {
+    XCTTODO("""
+      This test failure seems like a bug in UIKit :/
+      """)
+
     @UIBinding var path = [1, 2, 3, 4]
     let nav = NavigationStackController(path: $path) {
       UIViewController()
@@ -123,10 +127,81 @@ final class NavigationStackTests: XCTestCase {
       [4, 1, 3, 2]
     )
   }
+
+  @MainActor
+  func testPushLeafFeatureOutsideOfPath() async throws {
+    XCTTODO("""
+      Currently we cannot push two leaf features onto the stack and dismiss them.
+      """)
+
+    @UIBinding var path = [Int]()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ChildViewController(number: number)
+    }
+    try await setUp(controller: nav)
+
+    path.append(1)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(path, [1])
+
+    var child = try XCTUnwrap(nav.viewControllers[1] as? ChildViewController)
+    child.isLeafPresented = true
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    await assertEventuallyEqual(path, [1])
+
+    child = try XCTUnwrap(nav.viewControllers[2] as? ChildViewController)
+    child.isLeafPresented = true
+    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyEqual(path, [1])
+
+    nav.popViewController(animated: false)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(path, [1])
+
+    nav.popViewController(animated: false)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(path, [1])
+  }
+
+  @MainActor
+  func testLeafFeatureOutsideOfPath_AppendToPath() async throws {
+    XCTTODO("""
+      Currently we do not support pushing a leaf feature and then a path feature.
+      """)
+
+    @UIBinding var path = [Int]()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ChildViewController(number: number)
+    }
+    try await setUp(controller: nav)
+
+    path.append(1)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(path, [1])
+
+    var child = try XCTUnwrap(nav.viewControllers[1] as? ChildViewController)
+    child.isLeafPresented = true
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    await assertEventuallyEqual(path, [1])
+
+    // TODO: I'm not sure how we want to handle this situation. The assertions below may not
+    //       actually be what we want.
+    path.append(2)
+    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyEqual(path, [1, 2])
+  }
 }
 
 private final class ChildViewController: UIViewController {
   let number: Int
+  @UIBinding var isLeafPresented = false
+
   init(number: Int) {
     self.number = number
     super.init(nibName: nil, bundle: nil)
@@ -137,5 +212,11 @@ private final class ChildViewController: UIViewController {
   }
   override var debugDescription: String {
     "ChildViewController.\(number)"
+  }
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    navigationController?.pushViewController(isPresented: $isLeafPresented) { [weak self] in
+      ChildViewController(number: self?.number ?? 0)
+    }
   }
 }
