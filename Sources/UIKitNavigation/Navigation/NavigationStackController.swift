@@ -4,7 +4,11 @@
   public class NavigationStackController: UINavigationController {
     private var destinations: [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
       [:]
-    @UIBinding fileprivate var path: [UINavigationPath.Element] = []
+    @UIBinding fileprivate var path: [UINavigationPath.Element] = [] {
+      didSet {
+        print("!", path.count)
+      }
+    }
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
 
@@ -71,10 +75,11 @@
         let newPath = path
 
         let difference = newPath.difference(from: viewControllers.compactMap(\.navigationID))
+        print(path.count)
 
-        if difference.isEmpty {
-          return
-        } else if difference.count == 1,
+        guard !difference.isEmpty || viewControllers.isEmpty else { return }
+
+        if difference.count == 1,
           case let .insert(newPath.count, navigationID, nil) = difference.first,
           let viewController = viewController(for: navigationID)
         {
@@ -82,9 +87,13 @@
         } else if difference.count == 1,
           case .remove(newPath.count, _, nil) = difference.first
         {
-          popViewController(animated: UIView.areAnimationsEnabled)
+          popViewController(animated: transaction.disablesAnimations)
         } else if difference.insertions.isEmpty, newPath.isEmpty {
-          popToRootViewController(animated: UIView.areAnimationsEnabled)
+          if viewControllers.isEmpty {
+            setViewControllers([root!], animated: true)
+          } else {
+            popToRootViewController(animated: transaction.disablesAnimations)
+          }
         } else if difference.insertions.isEmpty,
           case let offsets = difference.removals.map(\.offset),
           let first = offsets.first,
@@ -287,7 +296,8 @@
           with: newValue.map {
             guard case let .eager(element) = $0 else { fatalError() }
             return element.base as! Element
-          })
+          }
+        )
       }
     }
   }

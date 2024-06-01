@@ -5,13 +5,13 @@ import UIKitNavigation
 @MainActor
 struct UIKitCaseStudiesApp: App {
   static let navigationController = {
-    let path = try! UINavigationPath(
-      JSONDecoder().decode(
-        UINavigationPath.CodableRepresentation.self,
-        from: Data(#"["Si", "42"]"#.utf8)
-      )
-    )
-    @UIBindable var model = AppModel(path: path)
+//    let path = try! UINavigationPath(
+//      JSONDecoder().decode(
+//        UINavigationPath.CodableRepresentation.self,
+//        from: Data(#"["Si", "42"]"#.utf8)
+//      )
+//    )
+    @UIBindable var model = AppModel(/*path: path*/)
     // model.path.append(AppModel.Path.counter(CounterModel()))
     // model.path.append(AppModel.Path.form(FormModel()))
 
