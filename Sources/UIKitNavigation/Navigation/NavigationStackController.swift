@@ -123,7 +123,6 @@
         let destination = destinations[DestinationType(destinationType)],
         let viewController = destination(navigationID)
       else {
-        // TODO: runtimeWarn
         return nil
       }
       viewController.navigationID = navigationID
@@ -169,8 +168,27 @@
         didShow viewController: UIViewController,
         animated: Bool
       ) {
+        defer {
+          base?.navigationController?(
+            navigationController, didShow: viewController, animated: animated
+          )
+        }
+        let navigationController = navigationController as! NavigationStackController
+        if let nextIndex = navigationController.path.firstIndex(where: {
+          guard case .lazy = $0 else { return false }
+          return true
+        }) {
+          let nextElement = navigationController.path[nextIndex]
+          let canPushElement = nextElement.elementType
+            .map { navigationController.destinations.keys.contains(DestinationType($0)) }
+            ?? false
+          if !canPushElement {
+            // TODO: runtimeWarn
+            navigationController.path.removeSubrange(nextIndex...)
+          }
+          return
+        }
         DispatchQueue.main.async {
-          let navigationController = navigationController as! NavigationStackController
           let oldPath = navigationController.path.filter {
             guard case .eager = $0 else { return false }
             return true
@@ -180,9 +198,6 @@
             navigationController.path = newPath
           }
         }
-        base?.navigationController?(
-          navigationController, didShow: viewController, animated: animated
-        )
       }
 
       func navigationControllerSupportedInterfaceOrientations(
@@ -244,12 +259,16 @@
         return
       }
 
-      stackController.destinations[NavigationStackController.DestinationType(data)] = { element in
+      stackController.destinations[NavigationStackController.DestinationType(data)] = {
+        [weak stackController] element in
+        guard let stackController else { return nil }
+
         switch element {
         case let .eager(value as D):
           return destination(value)
         case let .lazy(value):
           if let value = value.decode() as? D {
+            stackController.path[stackController.path.firstIndex(of: element)!] = .eager(value)
             return destination(value)
           }
         default:

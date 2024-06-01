@@ -202,12 +202,6 @@ final class NavigationPathTests: XCTestCase {
 
   @MainActor
   func testDecodePath_NestedNavigationDestination_UnrecognizedType() async throws {
-    XCTTODO(
-      """
-      This does not pass because it seems lazily using navigationDestination in nested contexts
-      are not being picked up when deep-linking.
-      """)
-
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
@@ -238,9 +232,9 @@ final class NavigationPathTests: XCTestCase {
 
     try await setUp(controller: nav)
 
-    await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyNoDifference(nav.values, [1, "Blob"] as [AnyHashable])
-    await assertEventuallyNoDifference(path.elements, [.eager(1), .eager("Blob")])
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyNoDifference(nav.values, [1] as [AnyHashable])
+    await assertEventuallyNoDifference(path.elements, [.eager(1)])
   }
 
   @MainActor
