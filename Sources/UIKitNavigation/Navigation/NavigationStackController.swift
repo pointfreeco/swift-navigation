@@ -3,7 +3,7 @@
   @_spi(Internals) import SwiftNavigation
 
   public class NavigationStackController: UINavigationController {
-    private var destinations: [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
+    fileprivate var destinations: [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
       [:]
     @UIBinding fileprivate var path: [UINavigationPath.Element] = []
     private let pathDelegate = PathDelegate()
@@ -36,29 +36,6 @@
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
       self._path = path.elements  // TODO: `UIBinding(weak:)`?
       self.root = root()
-    }
-
-    public func navigationDestination<D: Hashable>(
-      for data: D.Type,
-      destination: @escaping (D) -> UIViewController
-    ) {
-      destinations[DestinationType(data)] = { element in
-        switch element {
-        case let .eager(value as D):
-          return destination(value)
-        case let .lazy(value):
-          if let value = value.decode() as? D {
-            return destination(value)
-          }
-        default:
-          break
-        }
-        // TODO: runtimeWarn
-        return nil
-      }
-      if path.contains(where: { $0.elementType == D.self }) {
-        path = path
-      }
     }
 
     public override func viewDidLoad() {
@@ -102,38 +79,16 @@
           popToViewController(
             viewControllers[first - 1], animated: !transaction.disablesAnimations
           )
-        } else {
-          var newPath = newPath
-          let oldViewControllers =
-            viewControllers.isEmpty
-            ? root.map { [$0] } ?? []
-            : viewControllers
-          var newViewControllers: [UIViewController] = []
-          newViewControllers.reserveCapacity(max(viewControllers.count, newPath.count))
-
-          loop: for viewController in oldViewControllers {
-            if let navigationID = viewController.navigationID {
-              guard navigationID == newPath.first
-              else {
-                break loop
-              }
-              newViewControllers.append(viewController)
-              newPath.removeFirst()
-            } else {
-              newViewControllers.append(viewController)
-            }
+        } else {          
+          let newViewControllers = newPath.compactMap { navigationID in
+            self.viewControllers.first(where: { $0.navigationID == navigationID })
+            ?? self.viewController(for: navigationID)
+            // ?? TODO: Runtime warn?
           }
-          for navigationID in newPath {
-            if let viewController = viewControllers.first(where: { $0.navigationID == navigationID }
-            ) {
-              newViewControllers.append(viewController)
-            } else if let viewController = viewController(for: navigationID) {
-              newViewControllers.append(viewController)
-            } else {
-              // TODO: runtimeWarn
-            }
-          }
-          setViewControllers(newViewControllers, animated: !transaction.disablesAnimations)
+          setViewControllers(
+            (root.map { [$0] } ?? []) + newViewControllers,
+            animated: !transaction.disablesAnimations
+          )
         }
       }
     }
@@ -160,7 +115,7 @@
       return viewController
     }
 
-    private struct DestinationType: Hashable {
+    fileprivate struct DestinationType: Hashable {
       let rawValue: Any.Type
       init(_ rawValue: Any.Type) {
         self.rawValue = rawValue
@@ -252,6 +207,35 @@
         return
       }
       stackController.path.append(.eager(value))
+    }
+
+    public func navigationDestination<D: Hashable>(
+      for data: D.Type,
+      destination: @escaping (D) -> UIViewController
+    ) {
+      guard let stackController = self as? NavigationStackController
+      else {
+        // TODO: runtimeWarn?
+        return
+      }
+
+      stackController.destinations[NavigationStackController.DestinationType(data)] = { element in
+        switch element {
+        case let .eager(value as D):
+          return destination(value)
+        case let .lazy(value):
+          if let value = value.decode() as? D {
+            return destination(value)
+          }
+        default:
+          break
+        }
+        // TODO: runtimeWarn
+        return nil
+      }
+      if stackController.path.contains(where: { $0.elementType == D.self }) {
+        stackController.path = stackController.path
+      }
     }
   }
 
