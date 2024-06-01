@@ -3,7 +3,7 @@ import XCTest
 
 extension XCTestCase {
   @MainActor
-  func setUp(controller: UIViewController) throws {
+  func setUp(controller: UIViewController) async throws {
     guard
       let scene = UIApplication.shared.connectedScenes.first,
       let windowScene = scene as? UIWindowScene,
@@ -13,5 +13,6 @@ extension XCTestCase {
       throw WindowNotFound()
     }
     window.rootViewController = controller
+    try await Task.sleep(for: .milliseconds(100))
   }
 }

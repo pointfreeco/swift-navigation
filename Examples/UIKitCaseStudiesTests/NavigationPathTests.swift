@@ -11,7 +11,7 @@ final class NavigationPathTests: XCTestCase {
     nav.navigationDestination(for: Int.self) { number in
       NumberViewController(value: number)
     }
-    try setUp(controller: nav)
+    try await setUp(controller: nav)
 
     path.append(1)
     await assertEventually {
@@ -62,7 +62,7 @@ final class NavigationPathTests: XCTestCase {
     nav.navigationDestination(for: String.self) { string in
       StringViewController(value: string)
     }
-    try setUp(controller: nav)
+    try await setUp(controller: nav)
     //try await Task.sleep(for: .seconds(0.1))
 
     path.append(1)
@@ -91,32 +91,32 @@ final class NavigationPathTests: XCTestCase {
       nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
       ["blob"]
     )
-    //
-    //    path.removeLast()
-    //    await assertEventually {
-    //      nav.viewControllers.count == 2
-    //    }
-    //    XCTAssertEqual(
-    //      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
-    //      [1]
-    //    )
-    //    XCTAssertEqual(
-    //      nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
-    //      []
-    //    )
-    //
-    //    path.removeLast()
-    //    await assertEventually {
-    //      nav.viewControllers.count == 1
-    //    }
-    //    XCTAssertEqual(
-    //      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
-    //      []
-    //    )
-    //    XCTAssertEqual(
-    //      nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
-    //      []
-    //    )
+
+    path.removeLast()
+    await assertEventually {
+      nav.viewControllers.count == 2
+    }
+    XCTAssertEqual(
+      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+      [1]
+    )
+    XCTAssertEqual(
+      nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
+      []
+    )
+    
+    path.removeLast()
+    await assertEventually {
+      nav.viewControllers.count == 1
+    }
+    XCTAssertEqual(
+      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+      []
+    )
+    XCTAssertEqual(
+      nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
+      []
+    )
   }
 
   @MainActor
@@ -128,7 +128,7 @@ final class NavigationPathTests: XCTestCase {
     nav.navigationDestination(for: Int.self) { number in
       NumberViewController(value: number)
     }
-    try setUp(controller: nav)
+    try await setUp(controller: nav)
 
     await assertEventually {
       nav.viewControllers.count == 4
