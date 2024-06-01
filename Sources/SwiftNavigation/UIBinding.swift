@@ -292,6 +292,7 @@ public struct UIBinding<Value>: Sendable {
   ///
   /// - Parameter keyPath: A case key path to a specific associated value.
   /// - Returns: A new binding.
+  @_disfavoredOverload
   public subscript<Member>(
     dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
   ) -> UIBinding<Member>?
