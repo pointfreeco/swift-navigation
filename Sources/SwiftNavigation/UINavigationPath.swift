@@ -46,7 +46,7 @@ public struct UINavigationPath: Equatable {
 
   /// A value that describes the contents of this path in a serializable format.
   ///
-  /// This value is `nil` if any of the type-erased elements of the path don’t conform to the
+  /// This value is `nil` if any of the type-erased elements of the path don't conform to the
   /// `Codable` protocol.
   @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
   public var codable: CodableRepresentation? {

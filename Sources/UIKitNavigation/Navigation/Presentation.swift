@@ -3,7 +3,6 @@
   import UIKit
 
   extension UIViewController {
-    //       Maybe not useful and poses an issue with ambiguity when only one is specified.
     /// Presents a view controller modally when a binding to a Boolean value you provide is true.
     ///
     /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
@@ -43,6 +42,19 @@
       present(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
+    /// Presents a view controller modally using the given item as a data source for its content.
+    ///
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user. If `item`'s
+    ///     identity changes, the view controller is dismissed and replaced with a new one using the
+    ///     same process.
+    ///   - onDismiss: The closure to execute when dismissing the view controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
     @_disfavoredOverload
     public func present<Item: Identifiable>(
       item: UIBinding<Item?>,
@@ -52,6 +64,20 @@
       present(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
+    /// Presents a view controller modally using the given item as a data source for its content.
+    ///
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user. If `item`'s
+    ///     identity changes, the view controller is dismissed and replaced with a new one using the
+    ///     same process.
+    ///   - id: The key path to the provided item's identifier.
+    ///   - onDismiss: The closure to execute when dismissing the view controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
     public func present<Item, ID: Hashable>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
@@ -63,6 +89,20 @@
       }
     }
 
+    /// Presents a view controller modally using the given item as a data source for its content.
+    ///
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user. If `item`'s
+    ///     identity changes, the view controller is dismissed and replaced with a new one using the
+    ///     same process.
+    ///   - id: The key path to the provided item's identifier.
+    ///   - onDismiss: The closure to execute when dismissing the view controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
     @_disfavoredOverload
     public func present<Item, ID: Hashable>(
       item: UIBinding<Item?>,
@@ -88,7 +128,19 @@
       }
     }
 
-    // TODO: Document
+    /// Presents a view controller when a binding to a Boolean value you provide is true.
+    ///
+    /// This helper powers ``present(isPresented:onDismiss:content:)`` and
+    /// ``UIKit/UINavigationController/pushViewController(isPresented:content:)`` and can be used to
+    /// define custom transitions.
+    ///
+    /// - Parameters:
+    ///   - isPresented: A binding to a Boolean value that determines whether to present the view
+    ///     controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
+    ///   - present: The closure to execute when presenting the view controller.
+    ///   - dismiss: The closure to execute when dismissing the view controller.
     public func destination(
       isPresented: UIBinding<Bool>,
       content: @escaping () -> UIViewController,
@@ -103,7 +155,18 @@
       )
     }
 
-    // TODO: Document
+    /// Presents a view controller using the given item as a data source for its content.
+    ///
+    /// This helper powers ``UIKit/UINavigationController/pushViewController(item:content:)-4u68r)``
+    /// and can be used to define custom transitions.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user.
+    ///   - onDismiss: The closure to execute when dismissing the view controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
     public func destination<Item>(
       item: UIBinding<Item?>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
@@ -119,7 +182,21 @@
       )
     }
 
-    // TODO: Document
+    /// Presents a view controller using the given item as a data source for its content.
+    ///
+    /// This helper powers ``present(item:onDismiss:content:)-1zfb1`` and can be used to define
+    /// custom transitions.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user. If `item`'s
+    ///     identity changes, the view controller is dismissed and replaced with a new one using the
+    ///     same process.
+    ///   - id: The key path to the provided item's identifier.
+    ///   - onDismiss: The closure to execute when dismissing the view controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
     public func destination<Item, ID: Hashable>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
@@ -138,7 +215,6 @@
       )
     }
 
-    // TODO: Document
     private func destination<Item>(
       item: UIBinding<Item?>,
       id: @escaping (Item) -> AnyHashable?,
@@ -243,10 +319,8 @@
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
     ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user. If `item`'s
-    ///     identity changes, the view controller is dismissed and replaced with a new one using the
-    ///     same process.
-    ///   - content: A closure that returns the view controller to display onto the receiver’s stack.
+    ///     content in a view controller that you create that is displayed to the user.
+    ///   - content: A closure that returns the view controller to display onto the receiver's stack.
     public func pushViewController<Item>(
       item: UIBinding<Item?>,
       content: @escaping (Item) -> UIViewController
@@ -256,6 +330,16 @@
       }
     }
 
+    /// Pushes a view controller onto the receiver's stack using the given item as a data source for
+    /// its content.
+    ///
+    /// Like SwiftUI's `navigationDestination(item:)` view modifier, but for UIKit.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user.
+    ///   - content: A closure that returns the view controller to display onto the receiver's stack.
     @_disfavoredOverload
     public func pushViewController<Item>(
       item: UIBinding<Item?>,
