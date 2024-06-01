@@ -171,7 +171,7 @@ final class NavigationStackTests: XCTestCase {
   }
 
   @MainActor
-  func testReOrderStack() async throws {
+  func testReorderStack() async throws {
     @UIBinding var path = [1, 2, 3, 4]
     let nav = NavigationStackController(path: $path) {
       UIViewController()
