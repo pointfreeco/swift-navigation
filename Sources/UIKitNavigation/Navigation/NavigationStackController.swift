@@ -23,7 +23,7 @@
       root: () -> UIViewController
     ) where Data.Element: Hashable {
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
-      self._path = path.path  // TODO: `UIBinding(weak:)`?
+      self._path = UIBinding(weak: path.path)
       self.root = root()
     }
 
@@ -35,7 +35,7 @@
       root: () -> UIViewController
     ) {
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
-      self._path = path.elements  // TODO: `UIBinding(weak:)`?
+      self._path = UIBinding(weak: path.elements)
       self.root = root()
     }
 

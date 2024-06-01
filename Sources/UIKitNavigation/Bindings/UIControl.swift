@@ -1,6 +1,6 @@
 #if canImport(UIKit)
   import ConcurrencyExtras
-  @_spi(Observation) import SwiftNavigation
+  @_spi(Internals) import SwiftNavigation
   import UIKit
 
   @MainActor

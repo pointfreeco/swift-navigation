@@ -569,7 +569,7 @@ private final class _UIBindingOptionalEnumToCase<
 }
 
 extension UIBinding {
-  @_spi(Observation)
+  @_spi(Internals)
   public init(weak base: UIBinding<Value>) {
     func open(_ location: some _UIBinding<Value>) -> any _UIBinding<Value> {
       _UIBindingToWeak(base: location)

@@ -1,5 +1,5 @@
 #if canImport(UIKit)
-  @_spi(Observation) import SwiftNavigation
+  @_spi(Internals) import SwiftNavigation
   import UIKit
 
   extension UIViewController {

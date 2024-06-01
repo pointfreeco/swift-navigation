@@ -1,6 +1,6 @@
 import ConcurrencyExtras
 
-@_spi(Observation)
+@_spi(Internals)
 public func observe(
   _ apply: @escaping @Sendable (UITransaction) -> Void,
   // TODO: Can we clean this up with an executor?
