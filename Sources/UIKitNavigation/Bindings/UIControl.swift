@@ -26,13 +26,21 @@
       }
     }
 
-    // TODO: Make public?
+    /// Establishes a two-way connection between a source of truth and a property of this control.
+    ///
+    /// - Parameters:
+    ///   - binding: A source of truth for the control's value.
+    ///   - keyPath: A key path to the control's value.
+    ///   - event: The control-specific events for which the binding is updated.
+    ///   - set: A closure that is called when the binding's value changes with the new value and
+    ///     the current transaction, which can be used to determine if the change should be
+    ///     animated.
     @available(iOS 14, *)
-    func bind<Value>(
+    public func bind<Value>(
       _ binding: UIBinding<Value>,
       to keyPath: KeyPath<Self, Value>,
       for event: UIControl.Event,
-      set: @escaping (Value, UITransaction) -> Void
+      set: @escaping (_ newValue: Value, _ transaction: UITransaction) -> Void
     ) {
       if let observation = observations[keyPath] {
         observation.token.cancel()

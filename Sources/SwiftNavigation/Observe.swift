@@ -2,9 +2,11 @@ import ConcurrencyExtras
 
 @_spi(Internals)
 public func observe(
-  _ apply: @escaping @Sendable (UITransaction) -> Void,
+  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   // TODO: Can we clean this up with an executor?
-  task: @escaping @Sendable (UITransaction, @escaping @Sendable () -> Void) -> Void = {
+  task: @escaping @Sendable (
+    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+  ) -> Void = {
     Task(operation: $1)
   }
 ) -> ObservationToken {
@@ -20,8 +22,10 @@ public func observe(
 }
 
 private func onChange(
-  _ apply: @escaping @Sendable (UITransaction) -> Void,
-  task: @escaping @Sendable (UITransaction, @escaping @Sendable () -> Void) -> Void
+  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  task: @escaping @Sendable (
+    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+  ) -> Void
 ) {
   withPerceptionTracking {
     apply(.current)

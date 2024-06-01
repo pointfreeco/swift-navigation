@@ -137,8 +137,7 @@
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the view
     ///     controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
+    ///   - content: A closure that returns the view controller to display.
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
     public func destination(
@@ -164,9 +163,9 @@
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
     ///     non-`nil`, the item's content is passed to the `content` closure. You display this
     ///     content in a view controller that you create that is displayed to the user.
-    ///   - onDismiss: The closure to execute when dismissing the view controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
+    ///   - content: A closure that returns the view controller to display.
+    ///   - present: The closure to execute when presenting the view controller.
+    ///   - dismiss: The closure to execute when dismissing the view controller.
     public func destination<Item>(
       item: UIBinding<Item?>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
@@ -194,9 +193,9 @@
     ///     identity changes, the view controller is dismissed and replaced with a new one using the
     ///     same process.
     ///   - id: The key path to the provided item's identifier.
-    ///   - onDismiss: The closure to execute when dismissing the view controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
+    ///   - content: A closure that returns the view controller to display.
+    ///   - present: The closure to execute when presenting the view controller.
+    ///   - dismiss: The closure to execute when dismissing the view controller.
     public func destination<Item, ID: Hashable>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
@@ -228,7 +227,6 @@
       let item = UIBinding(weak: item)
       observe { [weak self] transaction in
         guard let self else { return }
-        // TODO: Is this the correct behavior?
         if let unwrappedItem = UIBinding(item) {
           var oldController: UIViewController?
           if let presented = presented[item] {
