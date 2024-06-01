@@ -171,12 +171,6 @@ final class NavigationPathTests: XCTestCase {
 
   @MainActor
   func testDecodePath_NestedNavigationDestination() async throws {
-    XCTTODO(
-      """
-      This does not pass because it seems lazily using navigationDestination in nested contexts
-      are not being picked up when deep-linking.
-      """)
-
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
