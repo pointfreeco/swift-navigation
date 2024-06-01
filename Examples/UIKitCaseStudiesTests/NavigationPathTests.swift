@@ -228,9 +228,10 @@ final class NavigationPathTests: XCTestCase {
       @UIBinding var path = UINavigationPath(
         try JSONDecoder().decode(
           UINavigationPath.CodableRepresentation.self,
-          from: Data(#"""
-          ["Sb","true","SS","\"Blob\"","Si","1"]
-          """#.utf8)
+          from: Data(
+            #"""
+            ["Sb","true","SS","\"Blob\"","Si","1"]
+            """#.utf8)
         )
       )
       await assertEventuallyEqual(
@@ -273,7 +274,8 @@ final class NavigationPathTests: XCTestCase {
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
-        from: Data(#"""
+        from: Data(
+          #"""
           ["Sb","true","SS","\"Blob\"","Si","1"]
           """#.utf8)
       )
@@ -303,13 +305,14 @@ final class NavigationPathTests: XCTestCase {
       [.eager(1), .eager("Blob"), .eager(true)]
     )
   }
-  
+
   @MainActor
   func testDecodePath_NestedNavigationDestination_UnrecognizedType() async throws {
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
-        from: Data(#"""
+        from: Data(
+          #"""
           [
             "Sb","true",
             "SS","\"Blob\"",
@@ -453,5 +456,6 @@ private final class BoolViewController: UIViewController {
 }
 
 private struct User: Hashable, Codable {
-  static let mangledTypeName = "21UIKitCaseStudiesTests014NavigationPathD0C10$10685e7e0yXZ10$10685e7ecyXZ4UserV"
+  static let mangledTypeName =
+    "21UIKitCaseStudiesTests014NavigationPathD0C10$10685e7e0yXZ10$10685e7ecyXZ4UserV"
 }

@@ -3,8 +3,9 @@
   @_spi(Internals) import SwiftNavigation
 
   public class NavigationStackController: UINavigationController {
-    fileprivate var destinations: [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
-      [:]
+    fileprivate var destinations:
+      [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
+        [:]
     @UIBinding fileprivate var path: [UINavigationPath.Element] = []
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
@@ -79,10 +80,10 @@
           popToViewController(
             viewControllers[first - 1], animated: !transaction.disablesAnimations
           )
-        } else {          
+        } else {
           let newViewControllers = newPath.compactMap { navigationID in
             self.viewControllers.first(where: { $0.navigationID == navigationID })
-            ?? self.viewController(for: navigationID)
+              ?? self.viewController(for: navigationID)
             // ?? TODO: Runtime warn?
           }
           setViewControllers(
