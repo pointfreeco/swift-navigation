@@ -4,9 +4,11 @@ import Foundation
 ///
 /// Like SwiftUI's `NavigationPath`, but for UIKit and other paradigms.
 public struct UINavigationPath: Equatable {
-  package var elements: [Element] = []
+  @_spi(Internals)
+  public var elements: [Element] = []
 
-  package enum Element: Equatable {
+  @_spi(Internals)
+  public enum Element: Equatable {
     case eager(AnyHashable)
     case lazy(CodableRepresentation.Element)
 
@@ -19,7 +21,7 @@ public struct UINavigationPath: Equatable {
       }
     }
 
-    package static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
       switch (lhs, rhs) {
       case let (.eager(lhs), .eager(rhs)):
         return lhs == rhs
@@ -89,7 +91,8 @@ public struct UINavigationPath: Equatable {
   /// the path's `CodableRepresentation` to convert the path to an external representation and to
   /// convert an external representation back into a navigation path.
   public struct CodableRepresentation: Codable, Equatable {
-    package struct Element: Hashable {
+    @_spi(Internals)
+    public struct Element: Hashable {
       static let decoder = JSONDecoder()
       static let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
@@ -100,11 +103,11 @@ public struct UINavigationPath: Equatable {
       let tag: String
       let item: String
 
-      package static func == (lhs: Self, rhs: Self) -> Bool {
+      public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.tag == rhs.tag && lhs.item == rhs.item
       }
 
-      init(tag: String, item: String) {
+      public init(tag: String, item: String) {
         self.tag = tag
         self.item = item
       }
@@ -130,7 +133,7 @@ public struct UINavigationPath: Equatable {
           #endif
         }
         guard
-          let tag = _mangledTypeName(type(of: value)),
+          let tag = _mangledTypeName(type(of: value.base)),
           let item = item()
         else { return nil }
         self.init(tag: tag, item: item)

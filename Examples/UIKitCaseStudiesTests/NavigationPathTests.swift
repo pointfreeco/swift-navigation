@@ -1,3 +1,4 @@
+@_spi(Internals) import SwiftNavigation
 import UIKitNavigation
 import XCTest
 
@@ -9,43 +10,35 @@ final class NavigationPathTests: XCTestCase {
       UIViewController()
     }
     nav.navigationDestination(for: Int.self) { number in
-      NumberViewController(value: number)
+      ValueViewController(value: number)
     }
     try await setUp(controller: nav)
 
     path.append(1)
-    await assertEventually {
-      nav.viewControllers.count == 2
-    }
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       [1]
     )
 
     path.append(2)
-    await assertEventually {
-      nav.viewControllers.count == 3
-    }
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       [1, 2]
     )
 
     path.removeLast()
-    await assertEventually {
-      nav.viewControllers.count == 2
-    }
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
-      [1]
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
+      [1, 2]
     )
 
     path.removeLast()
-    await assertEventually {
-      nav.viewControllers.count == 1
-    }
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       []
     )
   }
@@ -57,64 +50,54 @@ final class NavigationPathTests: XCTestCase {
       UIViewController()
     }
     nav.navigationDestination(for: Int.self) { number in
-      NumberViewController(value: number)
+      ValueViewController(value: number)
     }
     nav.navigationDestination(for: String.self) { string in
-      StringViewController(value: string)
+      ValueViewController(value: string)
     }
     try await setUp(controller: nav)
-    //try await Task.sleep(for: .seconds(0.1))
 
     path.append(1)
-    await assertEventually {
-      nav.viewControllers.count == 2
-    }
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       [1]
     )
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       []
     )
 
     path.append("blob")
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
     await assertEventuallyEqual(
-      nav.viewControllers.count,
-      3
-    )
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       [1]
     )
     await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       ["blob"]
     )
 
     path.removeLast()
-    await assertEventually {
-      nav.viewControllers.count == 2
-    }
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       [1]
     )
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       []
     )
 
     path.removeLast()
-    await assertEventually {
-      nav.viewControllers.count == 1
-    }
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       []
     )
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? StringViewController)?.value },
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       []
     )
   }
@@ -126,34 +109,161 @@ final class NavigationPathTests: XCTestCase {
       UIViewController()
     }
     nav.navigationDestination(for: Int.self) { number in
-      NumberViewController(value: number)
+      ValueViewController(value: number)
     }
     try await setUp(controller: nav)
 
-    await assertEventually {
-      nav.viewControllers.count == 4
-    }
-    XCTAssertEqual(
-      nav.viewControllers.compactMap { ($0 as? NumberViewController)?.value },
+    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       [1, 2, 3]
     )
   }
+
+  @MainActor
+  func testDeepLink_UnrecognizedType() async throws {
+    @UIBinding var path = UINavigationPath(["blob"])
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ValueViewController(value: number)
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+  }
+
+  @MainActor
+  func testDecodePath() async throws {
+    @UIBinding var path = UINavigationPath(
+      try JSONDecoder().decode(
+        UINavigationPath.CodableRepresentation.self,
+        from: Data(#"""
+          ["Sb","true","SS","\"Blob\"","Si","1"]
+          """#.utf8)
+      )
+    )
+    await assertEventuallyEqual(
+      path.elements,
+      [
+        .lazy(.init(tag: "Si", item: "1")),
+        .lazy(.init(tag: "SS", item: "\"Blob\"")),
+        .lazy(.init(tag: "Sb", item: "true")),
+      ]
+    )
+
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { value in
+      ValueViewController(value: value)
+    }
+    nav.navigationDestination(for: String.self) { value in
+      ValueViewController(value: value)
+    }
+    nav.navigationDestination(for: Bool.self) { value in
+      ValueViewController(value: value)
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
+      [1, "Blob", true] as [AnyHashable]
+    )
+    await assertEventuallyEqual(
+      path.elements,
+      [.eager(1), .eager("Blob"), .eager(true)]
+    )
+  }
+
+  @MainActor
+  func testDecodePath_Laziness() async throws {
+    @UIBinding var path = UINavigationPath(
+      try JSONDecoder().decode(
+        UINavigationPath.CodableRepresentation.self,
+        from: Data(#"""
+          ["Sb","true","SS","\"Blob\"","Si","1"]
+          """#.utf8)
+      )
+    )
+    await assertEventuallyEqual(
+      path.elements,
+      [
+        .lazy(.init(tag: "Si", item: "1")),
+        .lazy(.init(tag: "SS", item: "\"Blob\"")),
+        .lazy(.init(tag: "Sb", item: "true")),
+      ]
+    )
+
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { value in
+      ValueViewController(value: value)
+    }
+    nav.navigationDestination(for: String.self) { value in
+      ValueViewController(value: value)
+    }
+    nav.navigationDestination(for: Bool.self) { value in
+      ValueViewController(value: value)
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
+      [1, "Blob", true] as [AnyHashable]
+    )
+    await assertEventuallyEqual(
+      path.elements,
+      [.eager(1), .eager("Blob"), .eager(true)]
+    )
+  }
+
+  @MainActor
+  func testDecodePath_UnrecognizedType() async throws {
+    struct User: Hashable, Codable {}
+
+    @UIBinding var path = UINavigationPath(
+      try JSONDecoder().decode(
+        UINavigationPath.CodableRepresentation.self,
+        from: Data(#"""
+          ["21UIKitCaseStudiesTests014NavigationPathD0C10$10685e7e0yXZ10$10685e7ecyXZ4UserV","{}"]
+          """#.utf8)
+      )
+    )
+    await assertEventuallyEqual(
+      path.elements,
+      [
+        .lazy(
+          .init(
+            tag: "21UIKitCaseStudiesTests014NavigationPathD0C10$10685e7e0yXZ10$10685e7ecyXZ4UserV",
+            item: "{}"
+          )
+        ),
+      ]
+    )
+
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(path.elements, [])
+  }
 }
 
-private final class NumberViewController: UIViewController {
-  let value: Int
-  init(value: Int) {
-    self.value = value
-    super.init(nibName: nil, bundle: nil)
-  }
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
+@MainActor
+private protocol _ValueViewController: UIViewController {
+  associatedtype Value
+  var value: Value { get }
 }
-
-private final class StringViewController: UIViewController {
-  let value: String
-  init(value: String) {
+private final class ValueViewController<Value>: UIViewController, _ValueViewController {
+  let value: Value
+  init(value: Value) {
     self.value = value
     super.init(nibName: nil, bundle: nil)
   }

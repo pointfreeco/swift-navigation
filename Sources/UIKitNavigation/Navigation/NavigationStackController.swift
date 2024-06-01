@@ -1,14 +1,11 @@
 #if canImport(UIKit)
   import UIKit
+  @_spi(Internals) import SwiftNavigation
 
   public class NavigationStackController: UINavigationController {
     private var destinations: [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
       [:]
-    @UIBinding fileprivate var path: [UINavigationPath.Element] = [] {
-      didSet {
-        print("!", path.count)
-      }
-    }
+    @UIBinding fileprivate var path: [UINavigationPath.Element] = []
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
 
@@ -77,7 +74,6 @@
         let difference = newPath.difference(from: viewControllers.compactMap(\.navigationID))
 
         guard !difference.isEmpty || viewControllers.isEmpty else {
-          print("?!?!?!")
           return
         }
 

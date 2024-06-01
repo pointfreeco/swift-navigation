@@ -102,6 +102,27 @@ final class NavigationStackTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 3)
     await assertEventuallyEqual(path, [1, 2])
   }
+
+  @MainActor
+  func testReOrderStack() async throws {
+    @UIBinding var path = [1, 2, 3, 4]
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ChildViewController(number: number)
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 5)
+
+    path = [4, 1, 3, 2]
+    await assertEventuallyEqual(nav.viewControllers.count, 5)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? ChildViewController)?.number },
+      [4, 1, 3, 2]
+    )
+  }
 }
 
 private final class ChildViewController: UIViewController {
