@@ -1,10 +1,11 @@
+import CustomDump
 import XCTest
 
 @MainActor
 func assertEventuallyEqual<T: Equatable>(
   _ expression1: @autoclosure @escaping @MainActor () -> T,
   _ expression2: @autoclosure @escaping @MainActor () -> T,
-  timeout: TimeInterval = 2,
+  timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
 ) async {
@@ -20,10 +21,29 @@ func assertEventuallyEqual<T: Equatable>(
 }
 
 @MainActor
+func assertEventuallyNoDifference<T: Equatable>(
+  _ expression1: @autoclosure @escaping @MainActor () -> T,
+  _ expression2: @autoclosure @escaping @MainActor () -> T,
+  timeout: TimeInterval = 1,
+  file: StaticString = #file,
+  line: UInt = #line
+) async {
+  await _assertEventually(
+    expression1(),
+    expression2(),
+    condition: { $0 == $1 },
+    assert: XCTAssertNoDifference,
+    timeout: timeout,
+    file: file,
+    line: line
+  )
+}
+
+@MainActor
 func assertEventuallyNotEqual<T: Equatable>(
   _ expression1: @autoclosure @escaping @MainActor () -> T,
   _ expression2: @autoclosure @escaping @MainActor () -> T,
-  timeout: TimeInterval = 2,
+  timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
 ) async {
@@ -41,7 +61,7 @@ func assertEventuallyNotEqual<T: Equatable>(
 @MainActor
 func assertEventuallyNil<T>(
   _ expression: @autoclosure @escaping @MainActor () -> T?,
-  timeout: TimeInterval = 2,
+  timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
 ) async {
@@ -58,7 +78,7 @@ func assertEventuallyNil<T>(
 @MainActor
 func assertEventuallyNotNil<T>(
   _ expression: @autoclosure @escaping @MainActor () -> T?,
-  timeout: TimeInterval = 2,
+  timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
 ) async {

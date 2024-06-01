@@ -78,7 +78,7 @@
           first == newPath.count
         {
           popToViewController(
-            viewControllers[first - 1], animated: !transaction.disablesAnimations
+            viewControllers[first], animated: !transaction.disablesAnimations
           )
         } else {
           var newPath = newPath

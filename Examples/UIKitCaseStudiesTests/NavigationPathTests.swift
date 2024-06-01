@@ -186,7 +186,7 @@ final class NavigationPathTests: XCTestCase {
           """#.utf8)
       )
     )
-    await assertEventuallyEqual(
+    await assertEventuallyNoDifference(
       path.elements,
       [
         .lazy(.init(tag: "Si", item: "1")),
@@ -202,8 +202,8 @@ final class NavigationPathTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyEqual(nav.values, [1, "Blob", true] as [AnyHashable])
-    await assertEventuallyEqual(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
+    await assertEventuallyNoDifference(nav.values, [1, "Blob", true] as [AnyHashable])
+    await assertEventuallyNoDifference(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
   }
 
   @MainActor
@@ -228,12 +228,12 @@ final class NavigationPathTests: XCTestCase {
           """#.utf8)
       )
     )
-    await assertEventuallyEqual(
+    await assertEventuallyNoDifference(
       path.elements,
       [
         .lazy(.init(tag: "Si", item: "1")),
-        .lazy(.init(tag: "SS", item: "\"Blob\"")),
         .lazy(.init(tag: User.mangledTypeName, item: "{}")),
+        .lazy(.init(tag: "SS", item: "\"Blob\"")),
         .lazy(.init(tag: "Sb", item: "true")),
       ]
     )
@@ -245,8 +245,8 @@ final class NavigationPathTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyEqual(nav.values, [1, "Blob", true] as [AnyHashable])
-    await assertEventuallyEqual(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
+    await assertEventuallyNoDifference(nav.values, [1, "Blob"] as [AnyHashable])
+    await assertEventuallyNoDifference(path.elements, [.eager(1), .eager("Blob")])
   }
 
   @MainActor
@@ -313,7 +313,7 @@ private final class RootViewController: UIViewController {
   }
 }
 
-private final class IntegerViewController: UIViewController {
+private final class IntegerViewController: UIViewController, _ValueViewController {
   let value: Int
   init(value: Int) {
     self.value = value
@@ -330,7 +330,7 @@ private final class IntegerViewController: UIViewController {
   }
 }
 
-private final class StringViewController: UIViewController {
+private final class StringViewController: UIViewController, _ValueViewController {
   let value: String
   init(value: String) {
     self.value = value
@@ -347,7 +347,7 @@ private final class StringViewController: UIViewController {
   }
 }
 
-private final class BoolViewController: UIViewController {
+private final class BoolViewController: UIViewController, _ValueViewController {
   let value: Bool
   init(value: Bool) {
     self.value = value

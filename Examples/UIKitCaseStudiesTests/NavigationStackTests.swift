@@ -104,12 +104,74 @@ final class NavigationStackTests: XCTestCase {
   }
 
   @MainActor
-  func testReOrderStack() async throws {
-    XCTTODO(
-      """
-      This test failure seems like a bug in UIKit :/
-      """)
+  func testAppendMultipleValuesAtOnce() async throws {
+    @UIBinding var path = [Int]()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ChildViewController(number: number)
+    }
+    try await setUp(controller: nav)
 
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+
+    path = [1, 2]
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? ChildViewController)?.number },
+      [1, 2]
+    )
+
+    path = [1, 2, 3, 4]
+    await assertEventuallyEqual(nav.viewControllers.count, 5)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? ChildViewController)?.number },
+      [1, 2, 3, 4]
+    )
+  }
+
+  @MainActor
+  func testRemoveMultipleValuesAtOnce() async throws {
+    @UIBinding var path = [1, 2, 3, 4, 5, 6]
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ChildViewController(number: number)
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 7)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? ChildViewController)?.number },
+      [1, 2, 3, 4, 5, 6]
+    )
+
+    path = [1, 2, 3, 4]
+    await assertEventuallyEqual(nav.viewControllers.count, 5)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? ChildViewController)?.number },
+      [1, 2, 3, 4]
+    )
+
+    path = [1, 2]
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? ChildViewController)?.number },
+      [1, 2]
+    )
+
+    path = []
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(
+      nav.viewControllers.compactMap { ($0 as? ChildViewController)?.number },
+      []
+    )
+  }
+
+  @MainActor
+  func testReOrderStack() async throws {
     @UIBinding var path = [1, 2, 3, 4]
     let nav = NavigationStackController(path: $path) {
       UIViewController()
@@ -121,7 +183,9 @@ final class NavigationStackTests: XCTestCase {
 
     await assertEventuallyEqual(nav.viewControllers.count, 5)
 
-    path = [4, 1, 3, 2]
+    withUITransaction(\.disablesAnimations, true) {
+      path = [4, 1, 3, 2]
+    }
     await assertEventuallyEqual(nav.viewControllers.count, 5)
     await assertEventuallyEqual(
       nav.viewControllers.compactMap { ($0 as? ChildViewController)?.number },
@@ -131,11 +195,6 @@ final class NavigationStackTests: XCTestCase {
 
   @MainActor
   func testPushLeafFeatureOutsideOfPath() async throws {
-    XCTTODO(
-      """
-      Currently we cannot push two leaf features onto the stack and dismiss them.
-      """)
-
     @UIBinding var path = [Int]()
     let nav = NavigationStackController(path: $path) {
       UIViewController()
@@ -160,7 +219,7 @@ final class NavigationStackTests: XCTestCase {
     await assertEventuallyEqual(path, [1])
 
     nav.popViewController(animated: false)
-    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
     await assertEventuallyEqual(path, [1])
 
     nav.popViewController(animated: false)
