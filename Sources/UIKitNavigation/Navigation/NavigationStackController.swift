@@ -81,15 +81,37 @@
             viewControllers[first - 1], animated: !transaction.disablesAnimations
           )
         } else {
-          let newViewControllers = newPath.compactMap { navigationID in
-            self.viewControllers.first(where: { $0.navigationID == navigationID })
-              ?? self.viewController(for: navigationID)
-            // ?? TODO: Runtime warn?
+          var newPath = newPath
+          let oldViewControllers =
+            viewControllers.isEmpty
+            ? root.map { [$0] } ?? []
+            : viewControllers
+          var newViewControllers: [UIViewController] = []
+          newViewControllers.reserveCapacity(max(viewControllers.count, newPath.count))
+
+          loop: for viewController in oldViewControllers {
+            if let navigationID = viewController.navigationID {
+              guard navigationID == newPath.first
+              else {
+                break loop
+              }
+              newViewControllers.append(viewController)
+              newPath.removeFirst()
+            } else {
+              newViewControllers.append(viewController)
+            }
           }
-          setViewControllers(
-            (root.map { [$0] } ?? []) + newViewControllers,
-            animated: !transaction.disablesAnimations
-          )
+          for navigationID in newPath {
+            if let viewController = viewControllers.first(where: { $0.navigationID == navigationID }
+            ) {
+              newViewControllers.append(viewController)
+            } else if let viewController = viewController(for: navigationID) {
+              newViewControllers.append(viewController)
+            } else {
+              // TODO: runtimeWarn
+            }
+          }
+          setViewControllers(newViewControllers, animated: !transaction.disablesAnimations)
         }
       }
     }
