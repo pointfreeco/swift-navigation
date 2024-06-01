@@ -139,7 +139,8 @@ final class NavigationPathTests: XCTestCase {
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
-        from: Data(#"""
+        from: Data(
+          #"""
           ["Sb","true","SS","\"Blob\"","Si","1"]
           """#.utf8)
       )
@@ -183,7 +184,8 @@ final class NavigationPathTests: XCTestCase {
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
-        from: Data(#"""
+        from: Data(
+          #"""
           ["Sb","true","SS","\"Blob\"","Si","1"]
           """#.utf8)
       )
@@ -229,7 +231,8 @@ final class NavigationPathTests: XCTestCase {
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(
         UINavigationPath.CodableRepresentation.self,
-        from: Data(#"""
+        from: Data(
+          #"""
           ["21UIKitCaseStudiesTests014NavigationPathD0C10$10685e7e0yXZ10$10685e7ecyXZ4UserV","{}"]
           """#.utf8)
       )
@@ -242,7 +245,7 @@ final class NavigationPathTests: XCTestCase {
             tag: "21UIKitCaseStudiesTests014NavigationPathD0C10$10685e7e0yXZ10$10685e7ecyXZ4UserV",
             item: "{}"
           )
-        ),
+        )
       ]
     )
 
