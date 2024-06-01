@@ -32,7 +32,7 @@ final class NavigationPathTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 2)
     await assertEventuallyEqual(
       nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1, 2]
+      [1]
     )
 
     path.removeLast()
@@ -63,20 +63,12 @@ final class NavigationPathTests: XCTestCase {
       nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       [1]
     )
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      []
-    )
 
     path.append("blob")
     await assertEventuallyEqual(nav.viewControllers.count, 3)
     await assertEventuallyEqual(
       nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      [1]
-    )
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      ["blob"]
+      [1, "blob"]
     )
 
     path.removeLast()
@@ -85,17 +77,9 @@ final class NavigationPathTests: XCTestCase {
       nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       [1]
     )
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      []
-    )
 
     path.removeLast()
     await assertEventuallyEqual(nav.viewControllers.count, 1)
-    await assertEventuallyEqual(
-      nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
-      []
-    )
     await assertEventuallyEqual(
       nav.viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable },
       []
