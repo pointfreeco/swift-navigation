@@ -105,7 +105,8 @@ final class NavigationStackTests: XCTestCase {
 
   @MainActor
   func testReOrderStack() async throws {
-    XCTTODO("""
+    XCTTODO(
+      """
       This test failure seems like a bug in UIKit :/
       """)
 
@@ -130,7 +131,8 @@ final class NavigationStackTests: XCTestCase {
 
   @MainActor
   func testPushLeafFeatureOutsideOfPath() async throws {
-    XCTTODO("""
+    XCTTODO(
+      """
       Currently we cannot push two leaf features onto the stack and dismiss them.
       """)
 
@@ -168,7 +170,8 @@ final class NavigationStackTests: XCTestCase {
 
   @MainActor
   func testLeafFeatureOutsideOfPath_AppendToPath() async throws {
-    XCTTODO("""
+    XCTTODO(
+      """
       Currently we do not support pushing a leaf feature and then a path feature.
       """)
 
