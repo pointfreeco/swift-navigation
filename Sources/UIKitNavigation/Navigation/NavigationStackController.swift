@@ -51,7 +51,10 @@
 
         let difference = newPath.difference(from: viewControllers.compactMap(\.navigationID))
 
-        guard !difference.isEmpty || viewControllers.isEmpty else {
+        guard !difference.isEmpty else {
+          if viewControllers.isEmpty, let root {
+            setViewControllers([root], animated: true)
+          }
           return
         }
 
@@ -65,11 +68,7 @@
         {
           popViewController(animated: transaction.disablesAnimations)
         } else if difference.insertions.isEmpty, newPath.isEmpty {
-          if viewControllers.isEmpty {
-            setViewControllers([root!], animated: true)
-          } else {
-            popToRootViewController(animated: transaction.disablesAnimations)
-          }
+          popToRootViewController(animated: transaction.disablesAnimations)
         } else if difference.insertions.isEmpty,
           case let offsets = difference.removals.map(\.offset),
           let first = offsets.first,
