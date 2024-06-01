@@ -28,11 +28,11 @@ final class NavigationStackTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 2)
     XCTAssertEqual(model.path, [1])
 
-//    model.path.removeLast()
-//    await assertEventually {
-//      nav.viewControllers.count == 1
-//    }
-//    XCTAssertEqual(model.path, [])
+    //    model.path.removeLast()
+    //    await assertEventually {
+    //      nav.viewControllers.count == 1
+    //    }
+    //    XCTAssertEqual(model.path, [])
   }
 
   @MainActor
