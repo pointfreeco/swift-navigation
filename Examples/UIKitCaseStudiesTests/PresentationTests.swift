@@ -7,17 +7,17 @@ final class PresentationTests: XCTestCase {
     let vc = BasicViewController()
     try await setUp(controller: vc)
 
-    await assertEventuallyEqual(vc.presentedViewController, nil)
+    await assertEventuallyNil(vc.presentedViewController)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.isPresented = true
     }
-    await assertEventuallyNotEqual(vc.presentedViewController, nil)
+    await assertEventuallyNotNil(vc.presentedViewController)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.isPresented = false
     }
-    await assertEventuallyEqual(vc.presentedViewController, nil)
+    await assertEventuallyNil(vc.presentedViewController)
   }
 
   @MainActor
@@ -25,17 +25,17 @@ final class PresentationTests: XCTestCase {
     let vc = BasicViewController()
     try await setUp(controller: vc)
 
-    await assertEventuallyEqual(vc.presentedViewController, nil)
+    await assertEventuallyNil(vc.presentedViewController)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.presentedChild = Model()
     }
-    await assertEventuallyNotEqual(vc.presentedViewController, nil)
+    await assertEventuallyNotNil(vc.presentedViewController)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.presentedChild = nil
     }
-    await assertEventuallyEqual(vc.presentedViewController, nil)
+    await assertEventuallyNil(vc.presentedViewController)
   }
 
   @MainActor
@@ -43,17 +43,17 @@ final class PresentationTests: XCTestCase {
     let vc = BasicViewController()
     try await setUp(controller: vc)
 
-    await assertEventuallyEqual(vc.presentedViewController, nil)
+    await assertEventuallyNil(vc.presentedViewController)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.isPresented = true
     }
-    await assertEventuallyNotEqual(vc.presentedViewController, nil)
+    await assertEventuallyNotNil(vc.presentedViewController)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.presentedViewController?.traitCollection.dismiss()
     }
-    await assertEventuallyEqual(vc.presentedViewController, nil)
+    await assertEventuallyNil(vc.presentedViewController)
     await assertEventuallyEqual(vc.model.isPresented, false)
   }
 
@@ -67,7 +67,7 @@ final class PresentationTests: XCTestCase {
     withUITransaction(\.disablesAnimations, true) {
       vc.model.isPresented = false
     }
-    await assertEventuallyEqual(vc.presentedViewController, nil)
+    await assertEventuallyNil(vc.presentedViewController)
   }
 
   @MainActor
@@ -75,12 +75,12 @@ final class PresentationTests: XCTestCase {
     let vc = BasicViewController(model: Model(isPresented: true))
     try await setUp(controller: vc)
 
-    await assertEventuallyNotEqual(vc.presentedViewController, nil)
+    await assertEventuallyNotNil(vc.presentedViewController)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.isPresented = false
     }
-    await assertEventuallyEqual(vc.presentedViewController, nil)
+    await assertEventuallyNil(vc.presentedViewController)
   }
 
   @MainActor
