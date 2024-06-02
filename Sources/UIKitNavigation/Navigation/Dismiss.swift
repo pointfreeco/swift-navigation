@@ -6,7 +6,7 @@
   public struct UIDismissAction: Sendable {
     let run: @MainActor @Sendable (UITransaction) -> Void
 
-    // TODO: `public init`?
+    // TODO: Should there be a `public init`? Is it useful to create this outside the library?
 
     public func callAsFunction() {
       run(.current)

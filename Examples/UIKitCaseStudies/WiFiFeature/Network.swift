@@ -32,7 +32,7 @@ extension [Network] {
   ]
 }
 
-private let goofyWiFiNames = [
+let goofyWiFiNames = [
   "AirSpace1",
   "Living Room",
   "Courage",

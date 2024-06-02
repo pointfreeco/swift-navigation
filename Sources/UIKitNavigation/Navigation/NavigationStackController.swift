@@ -238,7 +238,6 @@
   }
 
   extension UINavigationController {
-    // TODO: Should this be `pushValue(_:)`?
     public func push<Element: Hashable>(value: Element) {
       guard let stackController = self as? NavigationStackController
       else {
