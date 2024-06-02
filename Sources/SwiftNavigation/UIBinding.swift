@@ -334,37 +334,52 @@ public struct UIBinding<Value>: Sendable {
   }
 }
 
-extension UIBinding: Equatable {
-  nonisolated public static func == (lhs: Self, rhs: Self) -> Bool {
-    func openLHS<B: _UIBinding<Value>>(_ lhs: B) -> Bool {
-      func openRHS(_ rhs: some _UIBinding<Value>) -> Bool {
-        lhs == rhs as? B
-      }
-      return openRHS(rhs.location)
-    }
-    return openLHS(lhs.location)
+extension UIBinding: Identifiable where Value: Identifiable {
+  public var id: Value.ID {
+    wrappedValue.id
   }
 }
 
-extension UIBinding: Hashable {
-  nonisolated public func hash(into hasher: inout Hasher) {
-    hasher.combine(location)
+public struct UIBindingIdentifier: Hashable {
+  private let location: AnyHashable
+
+  public init<Value>(_ binding: UIBinding<Value>) {
+    self.location = AnyHashable(binding.location)
   }
 }
 
-// TODO: Should `UIBinding` be identifiable?
-//extension UIBinding: Identifiable {
-//  public struct ID: Hashable {
-//    private let binding: UIBinding
-//  }
+// TODO: Remove equatable/hashable conformance? (breaks the collection view demo but maybe OK?)
+// extension UIBinding: Equatable {
+//   nonisolated public static func == (lhs: Self, rhs: Self) -> Bool {
+//     func openLHS<B: _UIBinding<Value>>(_ lhs: B) -> Bool {
+//       func openRHS(_ rhs: some _UIBinding<Value>) -> Bool {
+//         lhs == rhs as? B
+//       }
+//       return openRHS(rhs.location)
+//     }
+//     return openLHS(lhs.location)
+//   }
+// }
 //
-//  nonisolated public var id: ID {
-//    ID(binding: self)
-//  }
-//}
+// extension UIBinding: Hashable {
+//   nonisolated public func hash(into hasher: inout Hasher) {
+//     hasher.combine(location)
+//   }
+// }
+//
+// TODO: If equatable/hashable, make unconditionally identifiable based on underlying location?
+// extension UIBinding: Identifiable {
+//   public struct ID: Hashable {
+//     private let binding: UIBinding
+//   }
+//
+//   nonisolated public var id: ID {
+//     ID(binding: self)
+//   }
+// }
 
 // TODO: Conform to BidirectionalCollection/Collection/RandomAccessCollection/Sequence?
-// TODO: Conform to DynamicProperty?
+// TODO: Binding.init(_ uiBinding:)?
 
 protocol _UIBinding<Value>: AnyObject, Hashable, Sendable {
   associatedtype Value
@@ -405,11 +420,7 @@ private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
     lhs === rhs
   }
   func hash(into hasher: inout Hasher) {
-    if let value = value as? any Hashable {
-      hasher.combine(AnyHashable(value))
-    } else {
-      hasher.combine(ObjectIdentifier(self))
-    }
+    hasher.combine(ObjectIdentifier(self))
   }
 }
 

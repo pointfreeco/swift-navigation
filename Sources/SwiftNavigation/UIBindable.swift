@@ -45,12 +45,9 @@ import Perception
 @dynamicMemberLookup
 @propertyWrapper
 public struct UIBindable<Value> {
-  private let objectIdentifier: ObjectIdentifier
-
   public var wrappedValue: Value
 
   init(objectIdentifier: ObjectIdentifier, wrappedValue: Value) {
-    self.objectIdentifier = objectIdentifier
     self.wrappedValue = wrappedValue
   }
 
@@ -112,24 +109,8 @@ public struct UIBindable<Value> {
   }
 #endif
 
-extension UIBindable: Equatable {
-  nonisolated public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.objectIdentifier == rhs.objectIdentifier
-  }
-}
-
-extension UIBindable: Hashable {
-  nonisolated public func hash(into hasher: inout Hasher) {
-    hasher.combine(objectIdentifier)
-  }
-}
-
-extension UIBindable: Identifiable {
-  public struct ID: Hashable {
-    fileprivate let rawValue: ObjectIdentifier
-  }
-
-  nonisolated public var id: ID {
-    ID(rawValue: objectIdentifier)
+extension UIBindable: Identifiable where Value: Identifiable {
+  public var id: Value.ID {
+    wrappedValue.id
   }
 }

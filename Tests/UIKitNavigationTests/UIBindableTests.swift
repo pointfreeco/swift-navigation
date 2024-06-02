@@ -4,6 +4,7 @@ import XCTest
 @Perceptible
 private final class Model {
   var text = ""
+  var title = ""
   var id: String { text }
 }
 
@@ -24,20 +25,25 @@ final class UIBindableTests: XCTestCase {
   }
 
   @MainActor
-  func testEquatable() throws {
-    let model = Model()
-    @UIBindable var model1 = model
-    @UIBindable var model2 = model
-    XCTAssertEqual($model1, $model2)
-    XCTAssertEqual($model1.text, $model2.text)
-  }
-
-  @MainActor
   func testEquatableHashable() throws {
     let model = Model()
     @UIBindable var model1 = model
     @UIBindable var model2 = model
-    XCTAssertEqual($model1.hashValue, $model2.hashValue)
-    XCTAssertEqual($model1.text.hashValue, $model2.text.hashValue)
+    @UIBindable var model3 = Model()
+    XCTAssertEqual(UIBindingIdentifier($model1.text), UIBindingIdentifier($model2.text))
+    XCTAssertNotEqual(UIBindingIdentifier($model1.text), UIBindingIdentifier($model2.title))
+    XCTAssertNotEqual(UIBindingIdentifier($model1.text), UIBindingIdentifier($model3.text))
+    XCTAssertEqual(
+      UIBindingIdentifier($model1.text).hashValue,
+      UIBindingIdentifier($model2.text).hashValue
+    )
+    XCTAssertNotEqual(
+      UIBindingIdentifier($model1.text).hashValue,
+      UIBindingIdentifier($model2.title).hashValue
+    )
+    XCTAssertNotEqual(
+      UIBindingIdentifier($model1.text).hashValue,
+      UIBindingIdentifier($model3.text).hashValue
+    )
   }
 }

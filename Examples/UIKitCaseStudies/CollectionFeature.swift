@@ -13,16 +13,16 @@ extension UICollectionView {
     self.init(frame: frame, collectionViewLayout: collectionViewLayout)
 
     let cellRegistration = UICollectionView.CellRegistration<
-      Cell, UIBinding<Item>
+      Cell, UIBindingWrapper<Item>
     > { [weak self] cell, indexPath, item in
       guard let self else { return }
       observe {  // TODO: Should this `perceive` be here?
-        content(cell, indexPath, item)
+        content(cell, indexPath, item.wrappedValue)
       }
     }
 
     let dataSource = UICollectionViewDiffableDataSource<
-      Section, UIBinding<Item>
+      Section, UIBindingWrapper<Item>
     >(collectionView: self) { collectionView, indexPath, item in
       MainActor.assumeIsolated {
         collectionView.dequeueConfiguredReusableCell(
@@ -31,11 +31,12 @@ extension UICollectionView {
       }
     }
 
+    // TODO: Weakify `data`
     observe {
-      var snapshot = NSDiffableDataSourceSnapshot<Section, UIBinding<Item>>()
+      var snapshot = NSDiffableDataSourceSnapshot<Section, UIBindingWrapper<Item>>()
       snapshot.appendSections([.main])
       snapshot.appendItems(
-        data.wrappedValue.ids.map { UIBinding(data[id: $0])! }
+        data.wrappedValue.ids.map { UIBindingWrapper(wrappedValue: UIBinding(data[id: $0])!) }
       )
       dataSource.apply(snapshot, animatingDifferences: true)
     }
@@ -43,6 +44,18 @@ extension UICollectionView {
 }
 
 private enum Section { case main }
+
+private struct UIBindingWrapper<Value>: Hashable {
+  let wrappedValue: UIBinding<Value>
+
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    UIBindingIdentifier(lhs.wrappedValue) == UIBindingIdentifier(rhs.wrappedValue)
+  }
+
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(UIBindingIdentifier(wrappedValue))
+  }
+}
 
 // ...
 

@@ -232,13 +232,14 @@
       dismiss: @escaping (UIViewController, UITransaction) -> Void
     ) -> ObservationToken {
       _ = Self.installSwizzles
-      bindings.insert(item)
+      bindings.insert(UIBindingIdentifier(item))
       let item = UIBinding(weak: item)
+      let key = UIBindingIdentifier(item)
       return observe { [weak self] transaction in
         guard let self else { return }
         if let unwrappedItem = UIBinding(item) {
           var oldController: UIViewController?
-          if let presented = presented[item] {
+          if let presented = presented[key] {
             if let presentationID = presented.presentationID,
               presentationID != id(unwrappedItem.wrappedValue)
             {
@@ -259,7 +260,7 @@
               onDismiss()
             }
           }
-          self.presented[item] = Presented(newController, id: id(unwrappedItem.wrappedValue))
+          self.presented[key] = Presented(newController, id: id(unwrappedItem.wrappedValue))
           let work = {
             withUITransaction(transaction) {
               present(oldController, newController, transaction)
@@ -270,11 +271,11 @@
           } else {
             onViewAppear.append(work)
           }
-        } else if let presented = presented[item] {
+        } else if let presented = presented[key] {
           if let controller = presented.controller {
             dismiss(controller, transaction)
           }
-          self.presented[item] = nil
+          self.presented[key] = nil
         }
       }
     }
