@@ -13,11 +13,12 @@
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
+    @discardableResult
     public func present(
       isPresented: UIBinding<Bool>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping () -> UIViewController
-    ) {
+    ) -> ObservationToken {
       present(item: isPresented.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
     }
 
@@ -34,11 +35,12 @@
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
+    @discardableResult
     public func present<Item: Identifiable>(
       item: UIBinding<Item?>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (Item) -> UIViewController
-    ) {
+    ) -> ObservationToken {
       present(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
@@ -56,11 +58,12 @@
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
     @_disfavoredOverload
+    @discardableResult
     public func present<Item: Identifiable>(
       item: UIBinding<Item?>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> UIViewController
-    ) {
+    ) -> ObservationToken {
       present(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
@@ -78,12 +81,13 @@
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
+    @discardableResult
     public func present<Item, ID: Hashable>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (Item) -> UIViewController
-    ) {
+    ) -> ObservationToken {
       present(item: item, id: id, onDismiss: onDismiss) {
         content($0.wrappedValue)
       }
@@ -104,12 +108,13 @@
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
     @_disfavoredOverload
+    @discardableResult
     public func present<Item, ID: Hashable>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> UIViewController
-    ) {
+    ) -> ObservationToken {
       destination(item: item, id: id) { $item in
         content($item)
       } present: { [weak self] oldController, newController, transaction in
@@ -140,12 +145,13 @@
     ///   - content: A closure that returns the view controller to display.
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
+    @discardableResult
     public func destination(
       isPresented: UIBinding<Bool>,
       content: @escaping () -> UIViewController,
       present: @escaping (UIViewController, UITransaction) -> Void,
       dismiss: @escaping (UIViewController, UITransaction) -> Void
-    ) {
+    ) -> ObservationToken {
       destination(
         item: isPresented.toOptionalUnit,
         content: { _ in content() },
@@ -166,12 +172,13 @@
     ///   - content: A closure that returns the view controller to display.
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
+    @discardableResult
     public func destination<Item>(
       item: UIBinding<Item?>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
       present: @escaping (UIViewController, UITransaction) -> Void,
       dismiss: @escaping (UIViewController, UITransaction) -> Void
-    ) {
+    ) -> ObservationToken {
       destination(
         item: item,
         id: { _ in nil },
@@ -196,6 +203,7 @@
     ///   - content: A closure that returns the view controller to display.
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
+    @discardableResult
     public func destination<Item, ID: Hashable>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
@@ -204,7 +212,7 @@
         _ oldValue: UIViewController?, _ newValue: UIViewController, _ transaction: UITransaction
       ) -> Void,
       dismiss: @escaping (UIViewController, UITransaction) -> Void
-    ) {
+    ) -> ObservationToken {
       destination(
         item: item,
         id: { $0[keyPath: id] },
@@ -222,11 +230,11 @@
         _ oldValue: UIViewController?, _ newValue: UIViewController, _ transaction: UITransaction
       ) -> Void,
       dismiss: @escaping (UIViewController, UITransaction) -> Void
-    ) {
+    ) -> ObservationToken {
       _ = Self.installSwizzles
       bindings.insert(item)
       let item = UIBinding(weak: item)
-      observe { [weak self] transaction in
+      return observe { [weak self] transaction in
         guard let self else { return }
         if let unwrappedItem = UIBinding(item) {
           var oldController: UIViewController?
@@ -338,10 +346,11 @@
     ///     controller.
     ///   - content: A closure that returns the view controller to display onto the receiver's
     ///     stack.
+    @discardableResult
     public func pushViewController(
       isPresented: UIBinding<Bool>,
       content: @escaping () -> UIViewController
-    ) {
+    ) -> ObservationToken {
       pushViewController(item: isPresented.toOptionalUnit) { _ in content() }
     }
 
@@ -355,10 +364,11 @@
     ///     non-`nil`, the item's content is passed to the `content` closure. You display this
     ///     content in a view controller that you create that is displayed to the user.
     ///   - content: A closure that returns the view controller to display onto the receiver's stack.
+    @discardableResult
     public func pushViewController<Item>(
       item: UIBinding<Item?>,
       content: @escaping (Item) -> UIViewController
-    ) {
+    ) -> ObservationToken {
       pushViewController(item: item) {
         content($0.wrappedValue)
       }
@@ -375,10 +385,11 @@
     ///     content in a view controller that you create that is displayed to the user.
     ///   - content: A closure that returns the view controller to display onto the receiver's stack.
     @_disfavoredOverload
+    @discardableResult
     public func pushViewController<Item>(
       item: UIBinding<Item?>,
       content: @escaping (UIBinding<Item>) -> UIViewController
-    ) {
+    ) -> ObservationToken {
       destination(item: item) { $item in
         content($item)
       } present: { [weak self] controller, transaction in
