@@ -127,6 +127,32 @@ final class NavigationPathTests: XCTestCase {
   }
 
   @MainActor
+  func testPush_UnrecognizedType() async throws {
+    @UIBinding var path = UINavigationPath()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ValueViewController(value: number)
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(path.elements, [])
+
+    XCTExpectFailure {
+      $0.compactDescription.hasPrefix(
+        """
+        No "navigationDestination(for: String.self) { … }" was found among the view controllers on \
+        the path.
+        """
+      )
+    }
+    nav.push(value: "blob")
+    await assertEventuallyEqual(path.elements, [])
+  }
+
+  @MainActor
   func testDecodePath() async throws {
     @UIBinding var path = UINavigationPath(
       try JSONDecoder().decode(

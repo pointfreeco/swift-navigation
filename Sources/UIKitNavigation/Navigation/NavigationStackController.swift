@@ -266,7 +266,11 @@
     public func push<Element: Hashable>(value: Element) {
       guard let stackController = self as? NavigationStackController
       else {
-        // TODO: runtimeWarn?
+        runtimeWarn(
+          """
+          Tried to push a value a non-"NavigationStackController".
+          """
+        )
         return
       }
       stackController.path.append(.eager(value))
@@ -280,7 +284,7 @@
       else {
         runtimeWarn(
           """
-          Applied a "navigationDestination" to a non-"NavigationStackController".
+          Tried to apply a "navigationDestination" to a non-"NavigationStackController".
           """
         )
         return
