@@ -150,6 +150,7 @@
     }
 
     private final class PathDelegate: NSObject, UINavigationControllerDelegate {
+      let viewController = UIViewController()
       weak var base: (any UINavigationControllerDelegate)?
 
       func navigationController(
@@ -178,7 +179,8 @@
           return true
         }) {
           let nextElement = navigationController.path[nextIndex]
-          let canPushElement = nextElement.elementType
+          let canPushElement =
+            nextElement.elementType
             .map { navigationController.destinations.keys.contains(DestinationType($0)) }
             ?? false
           if !canPushElement {
@@ -203,7 +205,7 @@
         _ navigationController: UINavigationController
       ) -> UIInterfaceOrientationMask {
         base?.navigationControllerSupportedInterfaceOrientations?(navigationController)
-          ?? navigationController.supportedInterfaceOrientations
+          ?? viewController.supportedInterfaceOrientations
       }
 
       func navigationControllerPreferredInterfaceOrientationForPresentation(
@@ -212,7 +214,7 @@
         base?.navigationControllerPreferredInterfaceOrientationForPresentation?(
           navigationController
         )
-          ?? navigationController.preferredInterfaceOrientationForPresentation
+          ?? viewController.preferredInterfaceOrientationForPresentation
       }
 
       func navigationController(

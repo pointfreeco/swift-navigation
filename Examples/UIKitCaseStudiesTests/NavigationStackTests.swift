@@ -247,7 +247,7 @@ final class NavigationStackTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 2)
     await assertEventuallyEqual(path, [1])
 
-    var child = try XCTUnwrap(nav.viewControllers[1] as? ChildViewController)
+    let child = try XCTUnwrap(nav.viewControllers[1] as? ChildViewController)
     child.isLeafPresented = true
     await assertEventuallyEqual(nav.viewControllers.count, 3)
     await assertEventuallyEqual(path, [1])
