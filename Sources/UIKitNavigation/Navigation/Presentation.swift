@@ -429,15 +429,15 @@
     }()
 
     @objc fileprivate func UIKitNavigation_viewDidAppear(_ animated: Bool) {
+      UIKitNavigation_viewDidAppear(animated)
       guard hasViewAppeared else {
         hasViewAppeared = true
-        for presentation in onViewAppear {
-          presentation()
+        for present in onViewAppear {
+          present()
         }
         onViewAppear.removeAll()
         return
       }
-      UIKitNavigation_viewDidAppear(animated)
     }
 
     @objc fileprivate func UIKitNavigation_viewDidDisappear(_ animated: Bool) {
