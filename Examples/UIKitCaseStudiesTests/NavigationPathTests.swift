@@ -80,6 +80,14 @@ final class NavigationPathTests: XCTestCase {
   @MainActor
   func testDeepLink_UnrecognizedType() async throws {
     @UIBinding var path = UINavigationPath(["blob"])
+    XCTExpectFailure {
+      $0.compactDescription.hasPrefix(
+        """
+        No "navigationDestination(for: String.self) { … }" was found among the view controllers on \
+        the path.
+        """
+      )
+    }
     let nav = NavigationStackController(path: $path) {
       UIViewController()
     }
@@ -89,6 +97,33 @@ final class NavigationPathTests: XCTestCase {
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(path.elements, [])
+  }
+
+  @MainActor
+  func testAppend_UnrecognizedType() async throws {
+    @UIBinding var path = UINavigationPath()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ValueViewController(value: number)
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(path.elements, [])
+
+    XCTExpectFailure {
+      $0.compactDescription.hasPrefix(
+        """
+        No "navigationDestination(for: String.self) { … }" was found among the view controllers on \
+        the path.
+        """
+      )
+    }
+    path.append("blob")
+    await assertEventuallyEqual(path.elements, [])
   }
 
   @MainActor
@@ -226,10 +261,15 @@ final class NavigationPathTests: XCTestCase {
       ]
     )
 
+    XCTExpectFailure {
+      $0.compactDescription == """
+        Failed to decode item in navigation path at index 1. Perhaps the "navigationDestination" \
+        declarations have changed since the path was encoded?
+        """
+    }
     let nav = NavigationStackController(path: $path) {
       RootViewController()
     }
-
     try await setUp(controller: nav)
 
     await assertEventuallyEqual(nav.viewControllers.count, 2)
@@ -260,6 +300,12 @@ final class NavigationPathTests: XCTestCase {
       ]
     )
 
+    XCTExpectFailure {
+      $0.compactDescription == """
+        Failed to decode item in navigation path at index 0. Perhaps the "navigationDestination" \
+        declarations have changed since the path was encoded?
+        """
+    }
     let nav = NavigationStackController(path: $path) {
       UIViewController()
     }

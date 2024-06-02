@@ -1,6 +1,7 @@
 #if canImport(UIKit)
   import UIKit
   @_spi(Internals) import SwiftNavigation
+  @_spi(RuntimeWarn) import SwiftUINavigationCore
 
   public class NavigationStackController: UINavigationController {
     fileprivate var destinations:
@@ -100,16 +101,24 @@
               newViewControllers.append(viewController)
             }
           }
-          for navigationID in newPath {
+          var invalidIndices = IndexSet()
+          for (index, navigationID) in newPath.enumerated() {
             if let viewController = viewControllers.first(where: { $0.navigationID == navigationID }
             ) {
               newViewControllers.append(viewController)
             } else if let viewController = viewController(for: navigationID) {
               newViewControllers.append(viewController)
-            } else {
-              // TODO: runtimeWarn
+            } else if case .eager = navigationID, let elementType = navigationID.elementType {
+              runtimeWarn(
+                """
+                No "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
+                found among the view controllers on the path.
+                """
+              )
+              invalidIndices.insert(index)
             }
           }
+          path.remove(atOffsets: invalidIndices)
           setViewControllers(newViewControllers, animated: !transaction.disablesAnimations)
         }
       }
@@ -184,7 +193,21 @@
             .map { navigationController.destinations.keys.contains(DestinationType($0)) }
             ?? false
           if !canPushElement {
-            // TODO: runtimeWarn
+            runtimeWarn(
+              """
+              Failed to decode item in navigation path at index \(nextIndex). Perhaps the \
+              "navigationDestination" declarations have changed since the path was encoded?
+              """
+            )
+            if let elementType = nextElement.elementType {
+              runtimeWarn(
+                """
+                Missing navigation destination while decoding a "UINavigationPath". No \
+                "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
+                found among the view controllers on the path.
+                """
+              )
+            }
             navigationController.path.removeSubrange(nextIndex...)
           }
           return
@@ -255,27 +278,37 @@
     ) {
       guard let stackController = self as? NavigationStackController
       else {
-        // TODO: runtimeWarn?
+        runtimeWarn(
+          """
+          Applied a "navigationDestination" to a non-"NavigationStackController".
+          """
+        )
         return
       }
 
       stackController.destinations[NavigationStackController.DestinationType(data)] = {
         [weak stackController] element in
-        guard let stackController else { return nil }
+        guard let stackController else { fatalError() }
 
         switch element {
-        case let .eager(value as D):
-          return destination(value)
+        case let .eager(value):
+          return destination(value as! D)
         case let .lazy(value):
-          if let value = value.decode() as? D {
-            stackController.path[stackController.path.firstIndex(of: element)!] = .eager(value)
-            return destination(value)
+          let index = stackController.path.firstIndex(of: element)!
+          guard let value = value.decode()
+          else {
+            runtimeWarn(
+              """
+              Failed to decode item in navigation path at index \(index). Perhaps the \
+              "navigationDestination" declarations have changed since the path was encoded?
+              """
+            )
+            stackController.path.remove(at: index)
+            return nil
           }
-        default:
-          break
+          stackController.path[index] = .eager(value)
+          return destination(value as! D)
         }
-        // TODO: runtimeWarn
-        return nil
       }
       if stackController.path.contains(where: { $0.elementType == D.self }) {
         stackController.path = stackController.path
