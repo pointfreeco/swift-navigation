@@ -42,9 +42,11 @@
       for event: UIControl.Event,
       set: @escaping (_ newValue: Value, _ transaction: UITransaction) -> Void
     ) {
+      // TODO: Support better cancellation? Return `ObservationToken` that does this work?
       if let observation = observations[keyPath] {
         observation.token.cancel()
         removeAction(observation.action, for: .allEvents)
+        observation.observation.invalidate()
       }
       let action = UIAction { [weak self] _ in
         guard let self else { return }
