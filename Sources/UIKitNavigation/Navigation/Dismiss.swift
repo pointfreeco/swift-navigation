@@ -1,5 +1,6 @@
 #if canImport(UIKit)
   import UIKit
+  @_spi(RuntimeWarn) import SwiftUINavigationCore
 
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
   @MainActor
@@ -16,13 +17,19 @@
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
   private enum DismissActionTrait: UITraitDefinition {
     static let defaultValue = UIDismissAction { _ in
-      // TODO: Runtime warn that there is no presentation context
+      runtimeWarn(
+        """
+        A view controller requested dismissal, but couldn't be dismissed.
+        """
+      )
     }
   }
 
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
   extension UITraitCollection {
     public var dismiss: UIDismissAction { self[DismissActionTrait.self] }
+
+    // TODO: `isPresented`?
   }
 
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)

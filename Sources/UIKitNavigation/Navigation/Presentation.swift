@@ -223,6 +223,7 @@
       ) -> Void,
       dismiss: @escaping (UIViewController, UITransaction) -> Void
     ) {
+      _ = Self.installSwizzles
       bindings.insert(item)
       let item = UIBinding(weak: item)
       observe { [weak self] transaction in
@@ -251,12 +252,15 @@
             }
           }
           self.presented[item] = Presented(newController, id: id(unwrappedItem.wrappedValue))
-          // TODO: More reliable behavior (in case `UIViewController.view` is accessed early):
-          //       Use associated objects and `viewWillAppear` swizzling to delay deep linking
-          DispatchQueue.main.async {
+          let work = {
             withUITransaction(transaction) {
               present(oldController, newController, transaction)
             }
+          }
+          if hasViewAppeared {
+            DispatchQueue.main.async { work() }
+          } else {
+            onViewAppear.append(work)
           }
         } else if let presented = presented[item] {
           if let controller = presented.controller {
@@ -276,6 +280,35 @@
       }
     }
 
+    fileprivate var hasViewAppeared: Bool {
+      get {
+        objc_getAssociatedObject(self, hasViewAppearedKey) as? Bool ?? false
+      }
+      set {
+        objc_setAssociatedObject(self, hasViewAppearedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      }
+    }
+
+    fileprivate var onViewAppear: [() -> Void] {
+      get {
+        objc_getAssociatedObject(self, onViewAppearKey) as? [() -> Void] ?? []
+      }
+      set {
+        objc_setAssociatedObject(
+          self, onViewAppearKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+      }
+    }
+
+    fileprivate var onDismiss: (() -> Void)? {
+      get {
+        objc_getAssociatedObject(self, onDismissKey) as? () -> Void
+      }
+      set {
+        objc_setAssociatedObject(self, onDismissKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      }
+    }
+
     fileprivate var presented: [AnyHashable: Presented] {
       get {
         (objc_getAssociatedObject(self, presentedKey)
@@ -289,6 +322,9 @@
   }
 
   private let bindingsKey = malloc(1)!
+  private let hasViewAppearedKey = malloc(1)!
+  private let onDismissKey: UnsafeMutableRawPointer = malloc(1)!
+  private let onViewAppearKey: UnsafeMutableRawPointer = malloc(1)!
   private let presentedKey = malloc(1)!
 
   extension UINavigationController {
@@ -371,6 +407,39 @@
   }
 
   extension UIViewController {
+    static let installSwizzles: () = {
+      if let original = class_getInstanceMethod(
+        UIViewController.self, #selector(UIViewController.viewDidAppear)
+      ),
+        let swizzled = class_getInstanceMethod(
+          UIViewController.self, #selector(UIViewController.UIKitNavigation_viewDidAppear)
+        )
+      {
+        method_exchangeImplementations(original, swizzled)
+      }
+      if let original = class_getInstanceMethod(
+        UIViewController.self, #selector(UIViewController.viewDidDisappear)
+      ),
+        let swizzled = class_getInstanceMethod(
+          UIViewController.self, #selector(UIViewController.UIKitNavigation_viewDidDisappear)
+        )
+      {
+        method_exchangeImplementations(original, swizzled)
+      }
+    }()
+
+    @objc fileprivate func UIKitNavigation_viewDidAppear(_ animated: Bool) {
+      guard hasViewAppeared else {
+        hasViewAppeared = true
+        for presentation in onViewAppear {
+          presentation()
+        }
+        onViewAppear.removeAll()
+        return
+      }
+      UIKitNavigation_viewDidAppear(animated)
+    }
+
     @objc fileprivate func UIKitNavigation_viewDidDisappear(_ animated: Bool) {
       UIKitNavigation_viewDidDisappear(animated)
       if isBeingDismissed || isMovingFromParent, let onDismiss {
@@ -378,29 +447,7 @@
         self.onDismiss = nil
       }
     }
-
-    fileprivate var onDismiss: (() -> Void)? {
-      get {
-        objc_getAssociatedObject(self, onDismissKey) as? () -> Void
-      }
-      set {
-        objc_setAssociatedObject(self, onDismissKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-      }
-    }
   }
-
-  private let onDismissKey: UnsafeMutableRawPointer = {
-    if let original = class_getInstanceMethod(
-      UIViewController.self, #selector(UIViewController.viewDidDisappear)
-    ),
-      let swizzled = class_getInstanceMethod(
-        UIViewController.self, #selector(UIViewController.UIKitNavigation_viewDidDisappear)
-      )
-    {
-      method_exchangeImplementations(original, swizzled)
-    }
-    return malloc(1)!
-  }()
 
   extension Bool {
     fileprivate struct Unit: Hashable, Identifiable {

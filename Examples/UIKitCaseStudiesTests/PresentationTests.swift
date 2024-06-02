@@ -62,7 +62,7 @@ final class PresentationTests: XCTestCase {
     let vc = BasicViewController(model: Model(isPresented: true))
     try await setUp(controller: vc)
 
-    await assertEventuallyNotEqual(vc.presentedViewController, nil)
+    await assertEventuallyNotNil(vc.presentedViewController)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.isPresented = false
@@ -73,16 +73,7 @@ final class PresentationTests: XCTestCase {
   @MainActor
   func testPresents_DeepLink_EarlyViewDidLoad() async throws {
     let vc = BasicViewController(model: Model(isPresented: true))
-    _ = vc.view
-    try await Task.sleep(for: .seconds(0.1))
     try await setUp(controller: vc)
-
-    XCTTODO(
-      """
-      This does not currently pass because we eagerly present in `viewDidLoad` but really we should
-      wait for `viewDidAppear`.
-      """
-    )
 
     await assertEventuallyNotEqual(vc.presentedViewController, nil)
 
@@ -199,17 +190,8 @@ final class PresentationTests: XCTestCase {
   @MainActor
   func testPushViewController_DeepLink_EarlyViewDidLoad() async throws {
     let vc = BasicViewController(model: Model(isPushed: true))
-    _ = vc.view
-    try await Task.sleep(for: .seconds(0.2))
     let nav = UINavigationController(rootViewController: vc)
     try await setUp(controller: nav)
-
-    XCTTODO(
-      """
-      This does not currently pass because we eagerly present in `viewDidLoad` but really we should
-      wait for `viewDidAppear`.
-      """
-    )
 
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 

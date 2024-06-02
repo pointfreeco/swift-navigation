@@ -232,7 +232,8 @@ final class NavigationStackTests: XCTestCase {
     XCTTODO(
       """
       Currently we do not support pushing a leaf feature and then a path feature.
-      """)
+      """
+    )
 
     @UIBinding var path = [Int]()
     let nav = NavigationStackController(path: $path) {
