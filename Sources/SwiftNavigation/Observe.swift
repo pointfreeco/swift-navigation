@@ -36,7 +36,7 @@ private func onChange(
   }
 }
 
-/// A token for cancelling observation created with ``observe(_:task:)``.
+/// A token for cancelling observation.
 public final class ObservationToken: Sendable, HashableObject {
   fileprivate let _isCancelled = LockIsolated(false)
   private let onCancel: @Sendable () -> Void
@@ -53,11 +53,11 @@ public final class ObservationToken: Sendable, HashableObject {
     cancel()
   }
 
-  /// Cancels observation that was created with ``observe(_:task:)``.
+  /// Cancels observation that was created with ``UIKitNavigation/observe(_:)``.
   ///
   /// > Note: This cancellation is lazy and cooperative. It does not cancel the observation
-  /// > immediately, but rather next time a change is detected by ``observe(_:task:)`` it will cease
-  /// > any future observation.
+  /// > immediately, but rather next time a change is detected by `observe` it will cease any future
+  /// > observation.
   public func cancel() {
     _isCancelled.withValue { isCancelled in
       guard !isCancelled else { return }

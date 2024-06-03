@@ -32,7 +32,7 @@ public func withUITransaction<R, V>(
 /// Use a transaction to pass an animation between views in a view hierarchy.
 ///
 /// The root transaction for a state change comes from the binding that changed, plus any global
-/// values set by calling ``withUITransaction(_:_:)`` or ``withUIAnimation(_:_:)``.
+/// values set by calling ``withUITransaction(_:_:)``.
 public struct UITransaction: Sendable {
   @TaskLocal package static var current = Self()
 

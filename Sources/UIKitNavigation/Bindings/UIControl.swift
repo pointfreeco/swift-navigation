@@ -3,12 +3,13 @@
   @_spi(Internals) import SwiftNavigation
   import UIKit
 
+  /// A protocol used to extend `UIControl`.
   @MainActor
-  protocol _UIControl: UIControl {}
+  public protocol UIControlProtocol: UIControl {}
 
-  extension UIControl: _UIControl {}
+  extension UIControl: UIControlProtocol {}
 
-  extension _UIControl {
+  extension UIControlProtocol {
     /// Establishes a two-way connection between a source of truth and a property of this control.
     ///
     /// - Parameters:

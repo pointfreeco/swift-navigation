@@ -28,7 +28,7 @@ public struct UINavigationPath: Equatable {
       case let (.lazy(lhs), .lazy(rhs)):
         return lhs == rhs
       case let (.eager(eager), .lazy(lazy)), let (.lazy(lazy), .eager(eager)):
-        guard #available(iOS 14, *) else { fatalError() }
+        guard #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) else { fatalError() }
         return CodableRepresentation.Element(eager) == lazy
       }
     }
