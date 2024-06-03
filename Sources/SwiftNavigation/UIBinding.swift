@@ -22,7 +22,7 @@
 ///
 ///     observe { [weak self] in
 ///       guard let self else { return }
-///       titleLabel.text = self.isPlaying ? "Pause" : "Play"
+///       titleLabel.text = isPlaying ? "Pause" : "Play"
 ///     }
 ///     addAction(
 ///       UIAction { [weak self] _ in self?.isPlaying.toggle() },
@@ -211,7 +211,7 @@ public struct UIBinding<Value>: Sendable {
   ///
   ///     observe { [weak self] in
   ///       guard let self else { return }
-  ///       titleLabel.text = self.isPlaying ? "Pause" : "Play"
+  ///       titleLabel.text = isPlaying ? "Pause" : "Play"
   ///     }
   ///     addAction(
   ///       UIAction { [weak self] _ in self?.isPlaying.toggle() },
@@ -340,9 +340,13 @@ extension UIBinding: Identifiable where Value: Identifiable {
   }
 }
 
+/// A unique identifier for a binding.
 public struct UIBindingIdentifier: Hashable {
   private let location: AnyHashable
 
+  /// Creates an instance that uniquely identifies the given binding.
+  ///
+  /// - Parameter binding: An instance of a binding.
   public init<Value>(_ binding: UIBinding<Value>) {
     self.location = AnyHashable(binding.location)
   }

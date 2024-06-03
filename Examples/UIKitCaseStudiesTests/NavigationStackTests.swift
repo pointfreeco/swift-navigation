@@ -268,7 +268,7 @@ private final class ChildViewController: UIViewController {
   init(number: Int) {
     self.number = number
     super.init(nibName: nil, bundle: nil)
-    self.navigationItem.title = "\(number)"
+    navigationItem.title = "\(number)"
   }
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
