@@ -1,6 +1,8 @@
 import SwiftUI
 import UIKitNavigation
 
+// TODO: Clean up case studies
+
 @main
 @MainActor
 struct UIKitCaseStudiesApp: App {

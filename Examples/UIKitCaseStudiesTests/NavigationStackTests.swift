@@ -253,8 +253,6 @@ final class NavigationStackTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 3)
     await assertEventuallyEqual(path, [1])
 
-    // TODO: I'm not sure how we want to handle this situation. The assertions below may not
-    //       actually be what we want.
     path.append(2)
     await assertEventuallyEqual(nav.viewControllers.count, 4)
     await assertEventuallyEqual(path, [1, 2])

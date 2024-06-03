@@ -5,9 +5,6 @@
     import SwiftUI
   #endif
 
-  // TODO: Support arbitrary body closures, `CASpringAnimation`?
-  // TODO: Should this be `UIKitAnimation`? `UIView.Animation`?
-
   /// Executes a closure with the specified animation and returns the result.
   ///
   /// - Parameters:
@@ -143,8 +140,6 @@
       return animation
     }
 
-    // TODO: `logicallyComplete(after duration: TimeInterval) -> Self`?
-
     public func hash(into hasher: inout Hasher) {
       hasher.combine(delay)
       hasher.combine(duration)
@@ -245,23 +240,5 @@
         )
       }
     #endif
-
-    // TODO: Is this right?
-    // public static func interpolatingSpring(
-    //   duration: TimeInterval = 0.5,
-    //   bounce: Double = 0,
-    //   initialVelocity: Double = 0
-    // ) -> Self {
-    //   .animate(
-    //     withDuration: 0.5,
-    //     usingSpringWithDamping: 1 - bounce,
-    //     initialSpringVelocity: initialVelocity
-    //   )
-    // }
-
-    // TODO: bouncy?
-    // TODO: smooth?
-    // TODO: snappy?
-    // TODO: spring?
   }
 #endif

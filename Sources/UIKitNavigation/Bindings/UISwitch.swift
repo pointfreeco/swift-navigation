@@ -21,8 +21,6 @@
     ///   state changes.
     public func bind(isOn: UIBinding<Bool>) {
       bind(isOn, to: \.isOn, for: .valueChanged) { [weak self] isOn, transaction in
-        // TODO: Is it possible to disable a `Switch` animation in SwiftUI?
-        // TODO: If not, should we match SwiftUI's behavior and always pass `true` to animated?
         self?.setOn(isOn, animated: !transaction.disablesAnimations)
       }
       addAction(

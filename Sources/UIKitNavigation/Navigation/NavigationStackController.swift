@@ -20,7 +20,6 @@
       navigationBarClass: AnyClass? = nil,
       toolbarClass: AnyClass? = nil,
       path: UIBinding<Data>,
-      // TODO: Should this be `rootViewController`?
       root: () -> UIViewController
     ) where Data.Element: Hashable {
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
@@ -32,7 +31,6 @@
       navigationBarClass: AnyClass? = nil,
       toolbarClass: AnyClass? = nil,
       path: UIBinding<UINavigationPath>,
-      // TODO: Should this be `rootViewController`?
       root: () -> UIViewController
     ) {
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)

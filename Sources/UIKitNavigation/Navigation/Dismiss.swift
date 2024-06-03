@@ -5,31 +5,30 @@
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
   @MainActor
   public struct UIDismissAction: Sendable {
-    let run: @MainActor @Sendable (UITransaction) -> Void
-
-    // TODO: Should there be a `public init`? Is it useful to create this outside the library?
+    let run: (@MainActor @Sendable (UITransaction) -> Void)?
 
     public func callAsFunction() {
+      guard let run else {
+        runtimeWarn(
+          """
+          A view controller requested dismissal, but couldn't be dismissed.
+          """
+        )
+        return
+      }
       run(.current)
     }
   }
 
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
   private enum DismissActionTrait: UITraitDefinition {
-    static let defaultValue = UIDismissAction { _ in
-      runtimeWarn(
-        """
-        A view controller requested dismissal, but couldn't be dismissed.
-        """
-      )
-    }
+    static let defaultValue = UIDismissAction(run: nil)
   }
 
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
   extension UITraitCollection {
     public var dismiss: UIDismissAction { self[DismissActionTrait.self] }
-
-    // TODO: `isPresented`?
+    public var isPresented: Bool { dismiss.run != nil }
   }
 
   @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)

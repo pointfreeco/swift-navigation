@@ -16,7 +16,7 @@ extension UICollectionView {
       Cell, UIBindingWrapper<Item>
     > { [weak self] cell, indexPath, item in
       guard let self else { return }
-      observe {  // TODO: Should this `perceive` be here?
+      observe {
         content(cell, indexPath, item.wrappedValue)
       }
     }
@@ -31,7 +31,8 @@ extension UICollectionView {
       }
     }
 
-    // TODO: Weakify `data`
+    objc_setAssociatedObject(self, bindingKey, data, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    let data = UIBinding(weak: data)
     observe {
       var snapshot = NSDiffableDataSourceSnapshot<Section, UIBindingWrapper<Item>>()
       snapshot.appendSections([.main])
@@ -42,6 +43,8 @@ extension UICollectionView {
     }
   }
 }
+
+private let bindingKey = malloc(1)!
 
 private enum Section { case main }
 

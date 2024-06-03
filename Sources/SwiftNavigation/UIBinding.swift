@@ -352,39 +352,6 @@ public struct UIBindingIdentifier: Hashable {
   }
 }
 
-// TODO: Remove equatable/hashable conformance? (breaks the collection view demo but maybe OK?)
-// extension UIBinding: Equatable {
-//   nonisolated public static func == (lhs: Self, rhs: Self) -> Bool {
-//     func openLHS<B: _UIBinding<Value>>(_ lhs: B) -> Bool {
-//       func openRHS(_ rhs: some _UIBinding<Value>) -> Bool {
-//         lhs == rhs as? B
-//       }
-//       return openRHS(rhs.location)
-//     }
-//     return openLHS(lhs.location)
-//   }
-// }
-//
-// extension UIBinding: Hashable {
-//   nonisolated public func hash(into hasher: inout Hasher) {
-//     hasher.combine(location)
-//   }
-// }
-//
-// TODO: If equatable/hashable, make unconditionally identifiable based on underlying location?
-// extension UIBinding: Identifiable {
-//   public struct ID: Hashable {
-//     private let binding: UIBinding
-//   }
-//
-//   nonisolated public var id: ID {
-//     ID(binding: self)
-//   }
-// }
-
-// TODO: Conform to BidirectionalCollection/Collection/RandomAccessCollection/Sequence?
-// TODO: Binding.init(_ uiBinding:)?
-
 protocol _UIBinding<Value>: AnyObject, Hashable, Sendable {
   associatedtype Value
   var wrappedValue: Value { get set }
@@ -511,10 +478,7 @@ where Base.Value: Hashable {
   }
   var wrappedValue: AnyHashable {
     get { base.wrappedValue }
-    set {
-      // TODO: Use swift-dependencies to make this precondition testable?
-      base.wrappedValue = newValue.base as! Base.Value
-    }
+    set { base.wrappedValue = newValue.base as! Base.Value }
   }
   static func == (lhs: _UIBindingToAnyHashable, rhs: _UIBindingToAnyHashable) -> Bool {
     lhs.base == rhs.base
@@ -585,7 +549,7 @@ private final class _UIBindingOptionalEnumToCase<
 }
 
 extension UIBinding {
-  @_spi(Internals)
+  // TODO: Document
   public init(weak base: UIBinding<Value>) {
     func open(_ location: some _UIBinding<Value>) -> any _UIBinding<Value> {
       _UIBindingToWeak(base: location)

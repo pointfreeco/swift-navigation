@@ -20,7 +20,6 @@
       set { self[DisablesAnimationsKey.self] = newValue }
     }
 
-    // TODO: `criteria: UIAnimationCompletionCriteria`?
     /// Adds a completion to run when the animations created with this transaction are all complete.
     ///
     /// The completion callback will always be fired exactly one time.

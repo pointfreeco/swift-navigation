@@ -36,24 +36,18 @@
     ///     the current transaction, which can be used to determine if the change should be
     ///     animated.
     @available(iOS 14, *)
+    @discardableResult
     public func bind<Value>(
       _ binding: UIBinding<Value>,
       to keyPath: KeyPath<Self, Value>,
       for event: UIControl.Event,
       set: @escaping (_ newValue: Value, _ transaction: UITransaction) -> Void
-    ) {
-      // TODO: Support better cancellation? Return `ObservationToken` that does this work?
-      if let observation = observations[keyPath] {
-        observation.token.cancel()
-        removeAction(observation.action, for: .allEvents)
-        observation.observation.invalidate()
-      }
+    ) -> ObservationToken {
       let action = UIAction { [weak self] _ in
         guard let self else { return }
         binding.wrappedValue = self[keyPath: keyPath]
       }
       addAction(action, for: event)
-      // TODO: Should we vendor LockIsolated?
       let isSetting = LockIsolated(false)
       let weakBinding = UIBinding(weak: binding)
       let token = observe { transaction in
@@ -74,36 +68,27 @@
           }
         }
       }
-      observations[keyPath] = Observation(action: action, observation: observation, token: token)
+      let observationToken = ObservationToken { [weak self] in
+        MainActor.assumeIsolated { self?.removeAction(action, for: .allEvents) }
+        token.cancel()
+        observation.invalidate()
+      }
+      observationTokens[keyPath] = observationToken
+      return observationToken
     }
 
-    private var observations: [AnyKeyPath: Observation] {
+    private var observationTokens: [AnyKeyPath: ObservationToken] {
       get {
-        objc_getAssociatedObject(self, observationsKey) as? [AnyKeyPath: Observation] ?? [:]
+        objc_getAssociatedObject(self, observationTokensKey) as? [AnyKeyPath: ObservationToken]
+          ?? [:]
       }
       set {
         objc_setAssociatedObject(
-          self, observationsKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self, observationTokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }
   }
 
-  private final class Observation {
-    let action: UIAction
-    let observation: NSKeyValueObservation
-    let token: ObservationToken
-
-    init(action: UIAction, observation: NSKeyValueObservation, token: ObservationToken) {
-      self.action = action
-      self.observation = observation
-      self.token = token
-    }
-
-    deinit {
-      token.cancel()
-    }
-  }
-
-  private let observationsKey = malloc(1)!
+  private let observationTokensKey = malloc(1)!
 #endif

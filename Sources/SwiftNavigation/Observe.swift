@@ -39,9 +39,18 @@ private func onChange(
 /// A token for cancelling observation created with ``observe(_:task:)``.
 public final class ObservationToken: Sendable, HashableObject {
   fileprivate let _isCancelled = LockIsolated(false)
+  private let onCancel: @Sendable () -> Void
 
   public var isCancelled: Bool {
     _isCancelled.value
+  }
+
+  public init(onCancel: @escaping @Sendable () -> Void = {}) {
+    self.onCancel = onCancel
+  }
+
+  deinit {
+    cancel()
   }
 
   /// Cancels observation that was created with ``observe(_:task:)``.
@@ -50,7 +59,11 @@ public final class ObservationToken: Sendable, HashableObject {
   /// > immediately, but rather next time a change is detected by ``observe(_:task:)`` it will cease
   /// > any future observation.
   public func cancel() {
-    _isCancelled.setValue(true)
+    _isCancelled.withValue { isCancelled in
+      guard !isCancelled else { return }
+      defer { isCancelled = true }
+      onCancel()
+    }
   }
 
   /// Stores this observation token instance in the specified collection.
