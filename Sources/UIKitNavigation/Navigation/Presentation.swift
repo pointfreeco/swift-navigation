@@ -267,7 +267,7 @@
             }
           }
           if hasViewAppeared {
-            DispatchQueue.main.async { work() }
+            work()
           } else {
             onViewAppear.append(work)
           }
@@ -294,7 +294,9 @@
         objc_getAssociatedObject(self, hasViewAppearedKey) as? Bool ?? false
       }
       set {
-        objc_setAssociatedObject(self, hasViewAppearedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(
+          self, hasViewAppearedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
       }
     }
 
@@ -364,7 +366,8 @@
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
     ///     non-`nil`, the item's content is passed to the `content` closure. You display this
     ///     content in a view controller that you create that is displayed to the user.
-    ///   - content: A closure that returns the view controller to display onto the receiver's stack.
+    ///   - content: A closure that returns the view controller to display onto the receiver's
+    ///     stack.
     @discardableResult
     public func pushViewController<Item>(
       item: UIBinding<Item?>,
@@ -384,7 +387,8 @@
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
     ///     non-`nil`, the item's content is passed to the `content` closure. You display this
     ///     content in a view controller that you create that is displayed to the user.
-    ///   - content: A closure that returns the view controller to display onto the receiver's stack.
+    ///   - content: A closure that returns the view controller to display onto the receiver's
+    ///     stack.
     @_disfavoredOverload
     @discardableResult
     public func pushViewController<Item>(

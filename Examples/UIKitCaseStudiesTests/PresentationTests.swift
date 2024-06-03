@@ -134,6 +134,7 @@ final class PresentationTests: XCTestCase {
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
+    await Task.yield()
     nav.popViewController(animated: false)
     await assertEventuallyEqual(nav.viewControllers.count, 1)
     await assertEventuallyNil(vc.model.pushedChild)
