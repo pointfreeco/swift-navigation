@@ -207,25 +207,25 @@
     public static var linear: Self { .linear(duration: 0.35) }
 
     public static func linear(duration: TimeInterval) -> Self {
-      .animate(withDuration: 0.35, options: .curveLinear)
+      .animate(withDuration: duration, options: .curveLinear)
     }
 
     public static var easeIn: Self { .easeIn(duration: 0.35) }
 
     public static func easeIn(duration: TimeInterval) -> Self {
-      .animate(withDuration: 0.35, options: .curveEaseIn)
+      .animate(withDuration: duration, options: .curveEaseIn)
     }
 
     public static var easeOut: Self { .easeOut(duration: 0.35) }
 
     public static func easeOut(duration: TimeInterval) -> Self {
-      .animate(withDuration: 0.35, options: .curveEaseOut)
+      .animate(withDuration: duration, options: .curveEaseOut)
     }
 
     public static var easeInOut: Self { .easeInOut(duration: 0.35) }
 
     public static func easeInOut(duration: TimeInterval) -> Self {
-      .animate(withDuration: 0.35, options: .curveEaseInOut)
+      .animate(withDuration: duration, options: .curveEaseInOut)
     }
 
     #if canImport(SwiftUI)
