@@ -94,10 +94,7 @@ public struct UIBinding<Value>: Sendable {
     transaction: UITransaction
   ) {
     self.init(
-      location: _UIBindingAppendKeyPath(
-        base: _UIBindingRoot(wrappedValue: root),
-        keyPath: keyPath
-      ),
+      location: _UIBindingWeakRoot(root: root, keyPath: keyPath),
       transaction: transaction
     )
   }
@@ -124,8 +121,13 @@ public struct UIBinding<Value>: Sendable {
   ///
   /// - Parameter wrappedValue: An initial value to store in the state property.
   public init(wrappedValue value: Value) {
-    @UIBindable var wrapper = _UIBindingWrapper(value)
-    self = $wrapper.value
+    self.init(
+      location: _UIBindingAppendKeyPath(
+        base: _UIBindingStrongRoot(root: _UIBindingWrapper(value)),
+        keyPath: \.value
+      ),
+      transaction: UITransaction()
+    )
   }
 
   /// Creates a binding from the value of another binding.
@@ -357,16 +359,43 @@ protocol _UIBinding<Value>: AnyObject, Hashable, Sendable {
   var wrappedValue: Value { get set }
 }
 
-private final class _UIBindingRoot<Value: AnyObject>: _UIBinding, @unchecked Sendable {
-  var wrappedValue: Value
-  init(wrappedValue: Value) {
-    self.wrappedValue = wrappedValue
+private final class _UIBindingStrongRoot<Root: AnyObject>: _UIBinding, @unchecked Sendable {
+  init(root: Root) {
+    self.wrappedValue = root
   }
-  static func == (lhs: _UIBindingRoot, rhs: _UIBindingRoot) -> Bool {
-    lhs.wrappedValue === rhs.wrappedValue
+  var wrappedValue: Root
+  static func == (lhs: _UIBindingStrongRoot, rhs: _UIBindingStrongRoot) -> Bool {
+    lhs === rhs
   }
   func hash(into hasher: inout Hasher) {
     hasher.combine(ObjectIdentifier(wrappedValue))
+  }
+}
+
+private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unchecked Sendable {
+  let keyPath: ReferenceWritableKeyPath<Root, Value>
+  let objectIdentifier: ObjectIdentifier
+  weak var root: Root?
+  var value: Value
+  init(root: Root, keyPath: ReferenceWritableKeyPath<Root, Value>) {
+    self.keyPath = keyPath
+    self.objectIdentifier = ObjectIdentifier(root)
+    self.root = root
+    self.value = root[keyPath: keyPath]
+  }
+  var wrappedValue: Value {
+    get { root?[keyPath: keyPath] ?? value }
+    set {
+      value = newValue
+      root?[keyPath: keyPath] = value
+    }
+  }
+  static func == (lhs: _UIBindingWeakRoot, rhs: _UIBindingWeakRoot) -> Bool {
+    lhs.objectIdentifier == rhs.objectIdentifier && lhs.keyPath == rhs.keyPath
+  }
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(objectIdentifier)
+    hasher.combine(keyPath)
   }
 }
 
@@ -545,34 +574,5 @@ private final class _UIBindingOptionalEnumToCase<
   func hash(into hasher: inout Hasher) {
     hasher.combine(base)
     hasher.combine(keyPath)
-  }
-}
-
-extension UIBinding {
-  // TODO: Document
-  public init(weak base: UIBinding<Value>) {
-    func open(_ location: some _UIBinding<Value>) -> any _UIBinding<Value> {
-      _UIBindingToWeak(base: location)
-    }
-    self.init(location: open(base.location), transaction: base.transaction)
-  }
-}
-
-private final class _UIBindingToWeak<Base: _UIBinding>: _UIBinding, @unchecked Sendable {
-  weak var base: Base?
-  let value: Base.Value
-  init(base: Base) {
-    self.base = base
-    self.value = base.wrappedValue
-  }
-  var wrappedValue: Base.Value {
-    get { base?.wrappedValue ?? value }
-    set { base?.wrappedValue = newValue }
-  }
-  static func == (lhs: _UIBindingToWeak, rhs: _UIBindingToWeak) -> Bool {
-    lhs.base == rhs.base
-  }
-  func hash(into hasher: inout Hasher) {
-    hasher.combine(base)
   }
 }

@@ -50,11 +50,6 @@ final class MemoryManagementTests: XCTestCase {
       let vc = NavigationStackController(path: $model.path) { UIViewController() }
       _ = vc.view!
     }
-    XCTTODO(
-      """
-      The following assertion should pass but currently does not.
-      """
-    )
     await assertEventuallyNil(weakModel)
   }
 }

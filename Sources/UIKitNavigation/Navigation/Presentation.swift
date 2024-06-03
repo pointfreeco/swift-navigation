@@ -232,9 +232,8 @@
       dismiss: @escaping (UIViewController, UITransaction) -> Void
     ) -> ObservationToken {
       _ = Self.installSwizzles
-      bindings.insert(UIBindingIdentifier(item))
-      let item = UIBinding(weak: item)
       let key = UIBindingIdentifier(item)
+      bindings.insert(key)
       return observe { [weak self] transaction in
         guard let self else { return }
         if let unwrappedItem = UIBinding(item) {

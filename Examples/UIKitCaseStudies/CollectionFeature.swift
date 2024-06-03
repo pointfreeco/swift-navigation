@@ -31,8 +31,6 @@ extension UICollectionView {
       }
     }
 
-    objc_setAssociatedObject(self, bindingKey, data, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    let data = UIBinding(weak: data)
     observe {
       var snapshot = NSDiffableDataSourceSnapshot<Section, UIBindingWrapper<Item>>()
       snapshot.appendSections([.main])

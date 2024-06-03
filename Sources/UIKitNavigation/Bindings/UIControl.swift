@@ -50,14 +50,13 @@
       }
       addAction(action, for: event)
       let isSetting = LockIsolated(false)
-      let weakBinding = UIBinding(weak: binding)
       let token = observe { transaction in
         isSetting.setValue(true)
         defer { isSetting.setValue(false) }
         set(
-          weakBinding.wrappedValue,
+          binding.wrappedValue,
           transaction.animation == nil && !transaction.disablesAnimations
-            ? weakBinding.transaction
+            ? binding.transaction
             : transaction
         )
       }
