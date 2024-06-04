@@ -79,4 +79,6 @@ public final class ObservationToken: Sendable, HashableObject {
   public func store(in set: inout Set<ObservationToken>) {
     set.insert(self)
   }
+
+  // TODO: Add `store(in object: NSObject)`?
 }
