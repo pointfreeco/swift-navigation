@@ -160,6 +160,10 @@
       let viewController = UIViewController()
       weak var base: (any UINavigationControllerDelegate)?
 
+      override func responds(to aSelector: Selector!) -> Bool {
+        base?.responds(to: aSelector) ?? false
+      }
+
       func navigationController(
         _ navigationController: UINavigationController,
         willShow viewController: UIViewController,
