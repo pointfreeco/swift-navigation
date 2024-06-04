@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKitNavigation
+import XCTestDynamicOverlay
 
 // TODO: Clean up case studies
 
@@ -10,6 +11,11 @@ struct UIKitCaseStudiesApp: App {
   let navigationController: UINavigationController
 
   init() {
+    guard !_XCTIsTesting else {
+      self.model = AppModel()
+      self.navigationController = UINavigationController()
+      return
+    }
     // let path = try! UINavigationPath(
     //   JSONDecoder().decode(
     //     UINavigationPath.CodableRepresentation.self,

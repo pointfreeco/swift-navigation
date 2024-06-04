@@ -72,7 +72,11 @@ let package = Package(
       dependencies: [
         "SwiftNavigation",
         "SwiftUINavigationCore",
+        "UIKitNavigationShim",
       ]
+    ),
+    .target(
+      name: "UIKitNavigationShim"
     ),
     .testTarget(
       name: "UIKitNavigationTests",

@@ -229,12 +229,6 @@ final class NavigationStackTests: XCTestCase {
 
   @MainActor
   func testLeafFeatureOutsideOfPath_AppendToPath() async throws {
-    XCTTODO(
-      """
-      Currently we do not support pushing a leaf feature and then a path feature.
-      """
-    )
-
     @UIBinding var path = [Int]()
     let nav = NavigationStackController(path: $path) {
       UIViewController()
@@ -243,28 +237,53 @@ final class NavigationStackTests: XCTestCase {
       ChildViewController(number: number)
     }
     try await setUp(controller: nav)
+    await assertEventuallyEqual(nav.hasViewAppeared, true)
 
-    path.append(1)
+    withUITransaction(\.disablesAnimations, true) {
+      path.append(1)
+    }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
     await assertEventuallyEqual(path, [1])
 
     let child = try XCTUnwrap(nav.viewControllers[1] as? ChildViewController)
-    child.isLeafPresented = true
+    withUITransaction(\.disablesAnimations, true) {
+      child.isLeafPresented = true
+    }
     await assertEventuallyEqual(nav.viewControllers.count, 3)
     await assertEventuallyEqual(path, [1])
 
-    path.append(2)
+    try await Task.sleep(for: .seconds(0.1))
+    withUITransaction(\.disablesAnimations, true) {
+      path.append(2)
+    }
     await assertEventuallyEqual(nav.viewControllers.count, 4)
     await assertEventuallyEqual(path, [1, 2])
+  }
+
+  @MainActor
+  func testLazyNavigation_AppendToPath() async throws {
+    let nav = UINavigationController(rootViewController: UIViewController())
+    try await setUp(controller: nav)
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+
+    let child = ChildViewController(number: 1)
+    nav.pushViewController(child, animated: false)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+
+    withUITransaction(\.disablesAnimations, true) {
+      child.isLeafPresented = true
+    }
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
   }
 }
 
 private final class ChildViewController: UIViewController {
   let number: Int
-  @UIBinding var isLeafPresented = false
+  @UIBinding var isLeafPresented: Bool
 
-  init(number: Int) {
+  init(number: Int, isLeafPresented: Bool = false) {
     self.number = number
+    self.isLeafPresented = isLeafPresented
     super.init(nibName: nil, bundle: nil)
     navigationItem.title = "\(number)"
   }

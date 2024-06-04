@@ -1,6 +1,7 @@
 #if canImport(UIKit)
   @_spi(Internals) import SwiftNavigation
   import UIKit
+  import UIKitNavigationShim
 
   extension UIViewController {
     /// Presents a view controller modally when a binding to a Boolean value you provide is true.
@@ -231,7 +232,6 @@
       ) -> Void,
       dismiss: @escaping (UIViewController, UITransaction) -> Void
     ) -> ObservationToken {
-      _ = Self.installSwizzles
       let key = UIBindingIdentifier(item)
       bindings.insert(key)
       return observe { [weak self] transaction in
@@ -288,37 +288,6 @@
       }
     }
 
-    fileprivate var hasViewAppeared: Bool {
-      get {
-        objc_getAssociatedObject(self, hasViewAppearedKey) as? Bool ?? false
-      }
-      set {
-        objc_setAssociatedObject(
-          self, hasViewAppearedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-        )
-      }
-    }
-
-    fileprivate var onViewAppear: [() -> Void] {
-      get {
-        objc_getAssociatedObject(self, onViewAppearKey) as? [() -> Void] ?? []
-      }
-      set {
-        objc_setAssociatedObject(
-          self, onViewAppearKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-        )
-      }
-    }
-
-    fileprivate var onDismiss: (() -> Void)? {
-      get {
-        objc_getAssociatedObject(self, onDismissKey) as? () -> Void
-      }
-      set {
-        objc_setAssociatedObject(self, onDismissKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-      }
-    }
-
     fileprivate var presented: [AnyHashable: Presented] {
       get {
         (objc_getAssociatedObject(self, presentedKey)
@@ -332,9 +301,6 @@
   }
 
   private let bindingsKey = malloc(1)!
-  private let hasViewAppearedKey = malloc(1)!
-  private let onDismissKey: UnsafeMutableRawPointer = malloc(1)!
-  private let onViewAppearKey: UnsafeMutableRawPointer = malloc(1)!
   private let presentedKey = malloc(1)!
 
   extension UINavigationController {
@@ -418,49 +384,6 @@
     init(_ controller: UIViewController, id presentationID: AnyHashable? = nil) {
       self.controller = controller
       self.presentationID = presentationID
-    }
-  }
-
-  extension UIViewController {
-    static let installSwizzles: () = {
-      if let original = class_getInstanceMethod(
-        UIViewController.self, #selector(UIViewController.viewDidAppear)
-      ),
-        let swizzled = class_getInstanceMethod(
-          UIViewController.self, #selector(UIViewController.UIKitNavigation_viewDidAppear)
-        )
-      {
-        method_exchangeImplementations(original, swizzled)
-      }
-      if let original = class_getInstanceMethod(
-        UIViewController.self, #selector(UIViewController.viewDidDisappear)
-      ),
-        let swizzled = class_getInstanceMethod(
-          UIViewController.self, #selector(UIViewController.UIKitNavigation_viewDidDisappear)
-        )
-      {
-        method_exchangeImplementations(original, swizzled)
-      }
-    }()
-
-    @objc fileprivate func UIKitNavigation_viewDidAppear(_ animated: Bool) {
-      UIKitNavigation_viewDidAppear(animated)
-      guard hasViewAppeared else {
-        hasViewAppeared = true
-        for present in onViewAppear {
-          present()
-        }
-        onViewAppear.removeAll()
-        return
-      }
-    }
-
-    @objc fileprivate func UIKitNavigation_viewDidDisappear(_ animated: Bool) {
-      UIKitNavigation_viewDidDisappear(animated)
-      if isBeingDismissed || isMovingFromParent, let onDismiss {
-        onDismiss()
-        self.onDismiss = nil
-      }
     }
   }
 #endif
