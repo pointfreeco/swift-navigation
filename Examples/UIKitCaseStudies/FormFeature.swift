@@ -27,10 +27,12 @@ final class FormModel: HashableObject {
 }
 
 extension UITextField {
-  func focus<Value: Hashable>(_ focus: UIBinding<Value?>, equals value: Value) {
+  // TODO: Move to library?
+  // TODO: `focus(_ condition: UIBinding<Bool>)`?
+  func focus<Value: Hashable>(_ binding: UIBinding<Value?>, equals value: Value) {
     observe { [weak self] in
       guard let self else { return }
-      switch (focus.wrappedValue, isFirstResponder) {
+      switch (binding.wrappedValue, isFirstResponder) {
       case (value, false):
         becomeFirstResponder()
       case (nil, true):
@@ -41,16 +43,16 @@ extension UITextField {
     }
     addAction(
       UIAction { _ in
-        focus.wrappedValue = value
+        binding.wrappedValue = value
       },
       for: .editingDidBegin
     )
     addAction(
       UIAction { _ in
-        guard focus.wrappedValue == value else { return }
-        focus.wrappedValue = nil
+        guard binding.wrappedValue == value else { return }
+        binding.wrappedValue = nil
       },
-      for: [.editingDidEnd, .editingDidEndOnExit]
+      for: [.editingDidEnd, .editingDidEndOnExit]  // TODO: Is this right?
     )
   }
 }
