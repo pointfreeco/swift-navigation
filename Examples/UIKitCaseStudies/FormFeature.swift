@@ -33,6 +33,14 @@ extension UITextField {
   func focus<Value: Hashable>(
     _ binding: UIBinding<Value?>, equals value: Value
   ) -> ObservationToken {
+    let editingDidBeginAction = UIAction { _ in binding.wrappedValue = value }
+    let editingDidEndAction = UIAction { _ in
+      guard binding.wrappedValue == value else { return }
+      binding.wrappedValue = nil
+    }
+    addAction(editingDidBeginAction, for: .editingDidBegin)
+    // TODO: Is this right?
+    addAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
     let token = observe { [weak self] in
       guard let self else { return }
       switch (binding.wrappedValue, isFirstResponder) {
@@ -44,14 +52,6 @@ extension UITextField {
         break
       }
     }
-    let editingDidBeginAction = UIAction { _ in binding.wrappedValue = value }
-    let editingDidEndAction = UIAction { _ in
-      guard binding.wrappedValue == value else { return }
-      binding.wrappedValue = nil
-    }
-    addAction(editingDidBeginAction, for: .editingDidBegin)
-    // TODO: Is this right?
-    addAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
     return ObservationToken { [weak self] in
       token.cancel()
       MainActor.assumeIsolated {
