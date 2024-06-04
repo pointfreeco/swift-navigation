@@ -90,10 +90,10 @@ final class FormViewController: UIViewController {
       configuration: .plain(),
       primaryAction: UIAction { [weak self] _ in
         self?.model.sheet = .init(text: "Blob")
-         Task {
-           try await Task.sleep(for: .seconds(2))
-           self?.model.sheet? = .init(text: "Blob, Jr.")
-         }
+        Task {
+          try await Task.sleep(for: .seconds(2))
+          self?.model.sheet? = .init(text: "Blob, Jr.")
+        }
       }
     )
     sheetButton.setTitle("Present sheet", for: .normal)
@@ -202,10 +202,13 @@ final class ChildController: UIViewController {
 
     // NB: Parent traits aren't propagated yet in `viewDidLoad`
     if #available(iOS 17, *), traitCollection.isPresented {
-      navigationItem.rightBarButtonItem = UIBarButtonItem(
-        title: "Dismiss",
-        primaryAction: UIAction { [weak self] _ in self?.traitCollection.dismiss() }
-      )
+      var dismissButton: UIBarButtonItem {
+        UIBarButtonItem(
+          title: "Dismiss",
+          primaryAction: UIAction { [weak self] _ in self?.traitCollection.dismiss() }
+        )
+      }
+      navigationItem.rightBarButtonItem = traitCollection.isPresented ? dismissButton : nil
     }
   }
 }
