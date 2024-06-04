@@ -233,7 +233,6 @@
       dismiss: @escaping (UIViewController, UITransaction) -> Void
     ) -> ObservationToken {
       let key = UIBindingIdentifier(item)
-      bindings.insert(key)
       return observe { [weak self] transaction in
         guard let self else { return }
         if let unwrappedItem = UIBinding(item) {
@@ -279,19 +278,10 @@
       }
     }
 
-    fileprivate var bindings: Set<AnyHashable> {
-      get {
-        objc_getAssociatedObject(self, bindingsKey) as? Set<AnyHashable> ?? []
-      }
-      set {
-        objc_setAssociatedObject(self, bindingsKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-      }
-    }
-
-    fileprivate var presented: [AnyHashable: Presented] {
+    fileprivate var presented: [UIBindingIdentifier: Presented] {
       get {
         (objc_getAssociatedObject(self, presentedKey)
-          as? [AnyHashable: Presented])
+          as? [UIBindingIdentifier: Presented])
           ?? [:]
       }
       set {
@@ -300,7 +290,6 @@
     }
   }
 
-  private let bindingsKey = malloc(1)!
   private let presentedKey = malloc(1)!
 
   extension UINavigationController {
