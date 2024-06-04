@@ -1,8 +1,5 @@
 #if canImport(UIKit)
-  // TODO: `UIPageViewController`?
-  // TODO: `UIPickerView`? Requires setting a delegate/data source for the binding.
   // TODO: `UISearchTextField(…, $tokens, $suggestedTokens)`?
-  // TODO: `UITabBar`/`UITabBarController`? Maybe not possible without delegate/subclass.
 
   import ConcurrencyExtras
   @_spi(Internals) import SwiftNavigation

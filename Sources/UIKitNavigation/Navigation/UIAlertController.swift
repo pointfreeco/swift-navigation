@@ -8,6 +8,11 @@
   @available(tvOS 13, *)
   @available(watchOS, unavailable)
   extension UIAlertController {
+    // TODO: Document
+    ///
+    /// - Parameters:
+    ///   - state: <#state description#>
+    ///   - handler: <#handler description#>
     public convenience init<Action>(
       state: AlertState<Action>,
       handler: @escaping (_ action: Action?) -> Void
@@ -22,6 +27,11 @@
       }
     }
 
+    // TODO: Document
+    ///
+    /// - Parameters:
+    ///   - state: <#state description#>
+    ///   - handler: <#handler description#>
     public convenience init<Action>(
       state: ConfirmationDialogState<Action>,
       handler: @escaping (_ action: Action?) -> Void
