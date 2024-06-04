@@ -15,7 +15,6 @@ final class FormModel: HashableObject {
   var focus: Focus?
   var isOn = false
   var isDrillDownPresented = false
-  var isSheetPresented = false
   var sheet: Sheet?
   var sliderValue: Float = 0.5
   var stepperValue: Double = 5
@@ -154,7 +153,9 @@ final class FormViewController: UIViewController {
           color: \(model.color.map(String.init(describing:)) ?? "nil"),
           date: \(model.date),
           focus: \(model.focus.map(String.init(describing:)) ?? "nil"),
+          isDrillDownPresented: \(model.isDrillDownPresented),
           isOn: \(model.isOn),
+          sheet: \(model.sheet.map(String.init(describing:)) ?? "nil"),
           sliderValue: \(model.sliderValue),
           stepperValue: \(model.stepperValue),
           text: \(model.text.description)
