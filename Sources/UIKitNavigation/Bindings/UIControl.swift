@@ -44,6 +44,7 @@
       for event: UIControl.Event,
       set: @escaping (_ newValue: Value, _ transaction: UITransaction) -> Void
     ) -> ObservationToken {
+      unbind(keyPath)
       let action = UIAction { [weak self] _ in
         guard let self else { return }
         binding.wrappedValue = self[keyPath: keyPath]
@@ -75,6 +76,11 @@
       }
       observationTokens[keyPath] = observationToken
       return observationToken
+    }
+
+    public func unbind<Value>(_ keyPath: KeyPath<Self, Value>) {
+      observationTokens[keyPath]?.cancel()
+      observationTokens[keyPath] = nil
     }
 
     private var observationTokens: [AnyKeyPath: ObservationToken] {

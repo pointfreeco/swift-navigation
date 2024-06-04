@@ -8,8 +8,8 @@
     ///
     /// - Parameters:
     ///   - frame: The frame rectangle for the view, measured in points.
-    ///   - date: The binding to read from for the current page, and write to when the current page
-    ///     changes.
+    ///   - currentPage: The binding to read from for the current page, and write to when the
+    ///     current page changes.
     public convenience init(frame: CGRect = .zero, currentPage: UIBinding<Int>) {
       self.init(frame: frame)
       bind(currentPage: currentPage)

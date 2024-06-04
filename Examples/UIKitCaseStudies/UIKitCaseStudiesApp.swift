@@ -6,19 +6,22 @@ import UIKitNavigation
 @main
 @MainActor
 struct UIKitCaseStudiesApp: App {
-  static let navigationController = {
-    //    let path = try! UINavigationPath(
-    //      JSONDecoder().decode(
-    //        UINavigationPath.CodableRepresentation.self,
-    //        from: Data(#"["Si", "42"]"#.utf8)
-    //      )
-    //    )
-    @UIBindable var model = AppModel( /*path: path*/)
-    // model.path.append(AppModel.Path.counter(CounterModel()))
-    // model.path.append(AppModel.Path.form(FormModel()))
+  @UIBindable var model: AppModel
+  let navigationController: UINavigationController
 
-    model.path.append(1)
-    model.path.append("Blob")
+  init() {
+    // let path = try! UINavigationPath(
+    //   JSONDecoder().decode(
+    //     UINavigationPath.CodableRepresentation.self,
+    //     from: Data(#"["Si", "42"]"#.utf8)
+    //   )
+    // )
+    @UIBindable var model = AppModel(/*path: path*/)
+    model.path.append(AppModel.Path.counter(CounterModel()))
+    model.path.append(AppModel.Path.form(FormModel()))
+
+    // model.path.append(1)
+    // model.path.append("Blob")
 
     let navigationController = NavigationStackController(path: $model.path) {
       NavigationRootViewController()
@@ -58,16 +61,17 @@ struct UIKitCaseStudiesApp: App {
     //     )
     //   )
     // )
-    return navigationController
-  }()
+    self.model = model
+    self.navigationController = navigationController
+  }
 
   var body: some Scene {
     WindowGroup {
       if NSClassFromString("XCTestCase") == nil {
         WithPerceptionTracking {
           UIViewControllerRepresenting {
-            //        AppViewController()
-            Self.navigationController
+            // AppViewController()
+            self.navigationController
           }
         }
       }

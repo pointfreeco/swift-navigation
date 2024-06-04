@@ -3,9 +3,16 @@ import UIKitNavigation
 
 @MainActor
 @Perceptible
-final class FormModel: Hashable {
+final class FormModel: HashableObject {
+  enum Focus: Hashable {
+    case attributedText
+    case text
+  }
+
+  var attributedText = try! AttributedString(markdown: "Hello, **world**!")
   var color: UIColor? = .white
   var date = Date()
+  var focus: Focus?
   var isOn = false
   var isDrillDownPresented = false
   var isSheetPresented = false
@@ -18,12 +25,47 @@ final class FormModel: Hashable {
     var text = "Hi"
     var id: String { text }
   }
+}
 
-  nonisolated func hash(into hasher: inout Hasher) {
-    hasher.combine(ObjectIdentifier(self))
+extension UITextField {
+  func focus<Value: Hashable>(_ focus: UIBinding<Value?>, equals value: Value) {
+    observe { [weak self] in
+      guard let self else { return }
+      switch (focus.wrappedValue, isFirstResponder) {
+      case (value, false):
+        becomeFirstResponder()
+      case (nil, true):
+        resignFirstResponder()
+      default:
+        break
+      }
+    }
+    addAction(
+      UIAction { _ in
+        focus.wrappedValue = value
+      },
+      for: .editingDidBegin
+    )
+    addAction(
+      UIAction { _ in
+        guard focus.wrappedValue == value else { return }
+        focus.wrappedValue = nil
+      },
+      for: [.editingDidEnd, .editingDidEndOnExit]
+    )
   }
-  nonisolated static func == (lhs: FormModel, rhs: FormModel) -> Bool {
-    lhs === rhs
+}
+
+extension UIBinding where Value == NSAttributedString {
+  fileprivate init(_ base: UIBinding<AttributedString>) {
+    self = base.toNSAttributedString
+  }
+}
+
+extension AttributedString {
+  fileprivate var toNSAttributedString: NSAttributedString {
+    get { NSAttributedString(self) }
+    set { self = AttributedString(newValue) }
   }
 }
 
@@ -55,6 +97,17 @@ final class FormViewController: UIViewController {
 
     let myTextField = UITextField(text: $model.text)
     myTextField.borderStyle = .roundedRect
+    myTextField.focus($model.focus, equals: .text)
+
+    Task {
+      try await Task.sleep(for: .seconds(1))
+      model.focus = .attributedText
+    }
+
+    let myAttributedTextField = UITextField(attributedText: UIBinding($model.attributedText))
+    myAttributedTextField.allowsEditingTextAttributes = true
+    myAttributedTextField.borderStyle = .roundedRect
+    myAttributedTextField.focus($model.focus, equals: .attributedText)
 
     let sheetButton = UIButton(
       configuration: .plain(),
@@ -64,7 +117,8 @@ final class FormViewController: UIViewController {
         //   try await Task.sleep(for: .seconds(2))
         //   self?.model.sheet = .init(text: "Blob, Jr.")
         // }
-      })
+      }
+    )
     sheetButton.setTitle("Present sheet", for: .normal)
 
     let drillDownButton = UIButton(
@@ -83,6 +137,7 @@ final class FormViewController: UIViewController {
       myStepper,
       mySwitch,
       myTextField,
+      myAttributedTextField,
       myLabel,
       sheetButton,
       drillDownButton,
@@ -100,12 +155,14 @@ final class FormViewController: UIViewController {
       view.backgroundColor = model.color
       myLabel.text = """
         MyModel(
-          color: \(String(describing: model.color)),
+          attributedText: \(String(model.attributedText.characters).description),
+          color: \(model.color.map(String.init(describing:)) ?? "nil"),
           date: \(model.date),
+          focus: \(model.focus.map(String.init(describing:)) ?? "nil"),
           isOn: \(model.isOn),
-          sliderValue: \(model.sliderValue)
+          sliderValue: \(model.sliderValue),
           stepperValue: \(model.stepperValue),
-          text: \(model.text)
+          text: \(model.text.description)
         )
         """
     }

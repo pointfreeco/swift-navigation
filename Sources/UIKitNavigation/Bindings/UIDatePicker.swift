@@ -8,8 +8,8 @@
     ///
     /// - Parameters:
     ///   - frame: The frame rectangle for the view, measured in points.
-    ///   - date: The binding to read from for the selected date, and write to when the selected date
-    ///     changes.
+    ///   - date: The binding to read from for the selected date, and write to when the selected
+    ///     date changes.
     public convenience init(frame: CGRect = .zero, date: UIBinding<Date>) {
       self.init(frame: frame)
       bind(date: date)

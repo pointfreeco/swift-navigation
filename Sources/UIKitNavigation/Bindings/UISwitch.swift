@@ -8,7 +8,7 @@
     ///
     /// - Parameters:
     ///   - frame: The frame rectangle for the view, measured in points.
-    ///   - value: The binding to read from for the current state, and write to when the state
+    ///   - isOn: The binding to read from for the current state, and write to when the state
     ///     changes.
     public convenience init(frame: CGRect = .zero, isOn: UIBinding<Bool>) {
       self.init(frame: frame)
@@ -17,7 +17,7 @@
 
     /// Establishes a two-way connection between a binding and the switch's current state.
     ///
-    /// - Parameter value: The binding to read from for the current state, and write to when the
+    /// - Parameter isOn: The binding to read from for the current state, and write to when the
     ///   state changes.
     public func bind(isOn: UIBinding<Bool>) {
       bind(isOn, to: \.isOn, for: .valueChanged) { [weak self] isOn, transaction in
