@@ -8,6 +8,9 @@
 
 @implementation Shim
 
+// NB: We must use Objective-C here to eagerly swizzle view controller code that is responsible for
+//     state-driven presentation and dismissal of child features.
+
 + (void)load {
   method_exchangeImplementations(
     class_getInstanceMethod(UIViewController.class, @selector(viewDidAppear:)),
