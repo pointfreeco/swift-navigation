@@ -186,13 +186,6 @@ final class ChildController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    if #available(iOS 17, *) {
-      navigationItem.rightBarButtonItem = UIBarButtonItem(
-        title: "Dismiss",
-        primaryAction: UIAction { [weak self] _ in self?.traitCollection.dismiss() }
-      )
-    }
-
     view.backgroundColor = .systemBackground
     let label = UILabel()
     label.text = text
@@ -202,5 +195,17 @@ final class ChildController: UIViewController {
       label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
     ])
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+
+    // NB: Parent traits aren't propagated yet in `viewDidLoad`
+    if #available(iOS 17, *), traitCollection.isPresented {
+      navigationItem.rightBarButtonItem = UIBarButtonItem(
+        title: "Dismiss",
+        primaryAction: UIAction { [weak self] _ in self?.traitCollection.dismiss() }
+      )
+    }
   }
 }
