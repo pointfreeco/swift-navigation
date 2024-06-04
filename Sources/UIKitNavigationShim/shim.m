@@ -27,6 +27,28 @@ static void *onViewAppearKey = &onViewAppearKey;
 
 @implementation UIViewController (UIKitNavigation)
 
+- (void)UIKitNavigation_viewDidAppear:(BOOL)animated {
+  [self UIKitNavigation_viewDidAppear:animated];
+
+  if (self.hasViewAppeared) {
+    return;
+  }
+  self.hasViewAppeared = YES;
+  for (void (^work)() in self.onViewAppear) {
+    work();
+  }
+  self.onViewAppear = @[];
+}
+
+- (void)UIKitNavigation_viewDidDisappear:(BOOL)animated {
+  [self UIKitNavigation_viewDidDisappear:animated];
+
+  if ((self.isBeingDismissed || self.isMovingFromParentViewController) && self.onDismiss != NULL) {
+    self.onDismiss();
+    self.onDismiss = nil;
+  }
+}
+
 - (BOOL)hasViewAppeared {
   return [objc_getAssociatedObject(self, hasViewAppearedKey) boolValue];
 }
@@ -52,28 +74,6 @@ static void *onViewAppearKey = &onViewAppearKey;
 
 - (void)setOnViewAppear:(NSMutableArray<void (^)()> *)onViewAppear {
   objc_setAssociatedObject(self, onViewAppearKey, onViewAppear, OBJC_ASSOCIATION_COPY_NONATOMIC);
-}
-
-- (void)UIKitNavigation_viewDidAppear:(BOOL)animated {
-  [self UIKitNavigation_viewDidAppear:animated];
-
-  if (self.hasViewAppeared) {
-    return;
-  }
-  self.hasViewAppeared = YES;
-  for (void (^work)() in self.onViewAppear) {
-    work();
-  }
-  self.onViewAppear = @[];
-}
-
-- (void)UIKitNavigation_viewDidDisappear:(BOOL)animated {
-  [self UIKitNavigation_viewDidDisappear:animated];
-
-  if ((self.isBeingDismissed || self.isMovingFromParentViewController) && self.onDismiss != NULL) {
-    self.onDismiss();
-    self.onDismiss = nil;
-  }
 }
 
 @end
