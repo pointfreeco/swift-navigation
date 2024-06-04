@@ -41,7 +41,7 @@ extension UITextField {
     addAction(editingDidBeginAction, for: .editingDidBegin)
     // TODO: Is this right?
     addAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
-    let token = observe { [weak self] in
+    let innerToken = observe { [weak self] in
       guard let self else { return }
       switch (binding.wrappedValue, isFirstResponder) {
       case (value, false):
@@ -52,15 +52,21 @@ extension UITextField {
         break
       }
     }
-    return ObservationToken { [weak self] in
-      token.cancel()
+    let outerToken = ObservationToken { [weak self] in
       MainActor.assumeIsolated {
         self?.removeAction(editingDidBeginAction, for: .editingDidBegin)
         self?.removeAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
       }
+      innerToken.cancel()
     }
+    objc_setAssociatedObject(
+      self, observationTokenKey, outerToken, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+    )
+    return outerToken
   }
 }
+
+private let observationTokenKey = malloc(1)!
 
 extension UIBinding where Value == NSAttributedString {
   fileprivate init(_ base: UIBinding<AttributedString>) {
