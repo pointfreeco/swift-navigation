@@ -70,7 +70,7 @@
     ) -> some View {
       confirmationDialog(
         item.wrappedValue.map(title) ?? Text(verbatim: ""),
-        isPresented: item.isPresent(),
+        isPresented: Binding(item),
         titleVisibility: titleVisibility,
         presenting: item.wrappedValue,
         actions: actions,
@@ -140,7 +140,7 @@
     ) -> some View {
       confirmationDialog(
         item.wrappedValue.map(title) ?? Text(verbatim: ""),
-        isPresented: item.isPresent(),
+        isPresented: Binding(item),
         titleVisibility: titleVisibility,
         presenting: item.wrappedValue,
         actions: actions

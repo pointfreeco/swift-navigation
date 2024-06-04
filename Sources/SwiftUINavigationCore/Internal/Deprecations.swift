@@ -1,6 +1,19 @@
 #if canImport(SwiftUI)
   import SwiftUI
 
+  // NB: Deprecated after 1.4.0
+
+  extension Binding {
+    @available(
+      *, deprecated,
+      message: "Use 'Binding.init(_:)' to project an optional binding to a Boolean, instead."
+    )
+    public func isPresent<Wrapped>() -> Binding<Bool>
+    where Value == Wrapped? {
+      Binding<Bool>(self)
+    }
+  }
+
   // NB: Deprecated after 0.5.0
 
   extension ButtonState {
