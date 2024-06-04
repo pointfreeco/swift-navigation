@@ -1,4 +1,4 @@
-# ``UIKit/UISlider``
+# ``UIKit/UIViewController``
 
 ## Topics
 
