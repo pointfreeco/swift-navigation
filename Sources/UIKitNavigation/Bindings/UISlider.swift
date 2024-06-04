@@ -18,7 +18,9 @@
     ///
     /// - Parameter value: The binding to read from for the current value, and write to when the
     ///   value changes.
-    public func bind(value: UIBinding<Float>) {
+    /// - Returns: A cancel token.
+    @discardableResult
+    public func bind(value: UIBinding<Float>) -> ObservationToken {
       bind(value, to: \.value, for: .valueChanged)
     }
   }

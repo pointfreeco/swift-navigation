@@ -19,7 +19,9 @@
     ///
     /// - Parameter date: The binding to read from for the selected date, and write to when the
     ///   selected date changes.
-    public func bind(date: UIBinding<Date>) {
+    /// - Returns: A cancel token.
+    @discardableResult
+    public func bind(date: UIBinding<Date>) -> ObservationToken {
       bind(date, to: \.date, for: .valueChanged)
     }
   }

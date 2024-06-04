@@ -24,6 +24,7 @@ Tools for making UIKit navigation simpler, more ergonomic and more precise.
 - ``UIKit/UIColorWell``
 - ``UIKit/UIDatePicker``
 - ``UIKit/UIPageControl``
+- ``UIKit/UISegmentedControl``
 - ``UIKit/UISlider``
 - ``UIKit/UIStepper``
 - ``UIKit/UISwitch``

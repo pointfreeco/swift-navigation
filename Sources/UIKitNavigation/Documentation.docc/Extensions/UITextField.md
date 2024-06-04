@@ -2,7 +2,17 @@
 
 ## Topics
 
-### Binding to observable state
+### Binding to observable text
 
 - ``UIKit/UITextField/init(frame:text:)``
 - ``UIKit/UITextField/bind(text:)``
+
+### Binding to attributed text
+
+- ``UIKit/UITextField/init(frame:attributedText:)``
+- ``UIKit/UITextField/bind(attributedText:)``
+
+### Binding to focus state
+
+- ``UIKit/UITextField/focus(_:)``
+- ``UIKit/UITextField/focus(_:equals:)``

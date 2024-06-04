@@ -1,9 +1,8 @@
 #if canImport(UIKit)
   // TODO: `UIPageViewController`?
-  // TODO: `UISearchController.isActive` -> `focus($isActive)`?
-  // TODO: `UISearchTextField($text, $tokens, $suggestedTokens)`?
-  // TODO: `UISegmentedControl`
-  // TODO: `UITabBar`
+  // TODO: `UIPickerView`? Requires setting a delegate/data source for the binding.
+  // TODO: `UISearchTextField(…, $tokens, $suggestedTokens)`?
+  // TODO: `UITabBar`/`UITabBarController`? Maybe not possible without delegate/subclass.
 
   import ConcurrencyExtras
   @_spi(Internals) import SwiftNavigation
@@ -15,6 +14,7 @@
 
   extension UIControl: UIControlProtocol {}
 
+  @available(iOS 14, *)
   extension UIControlProtocol {
     /// Establishes a two-way connection between a source of truth and a property of this control.
     ///
@@ -22,14 +22,15 @@
     ///   - binding: A source of truth for the control's value.
     ///   - keyPath: A key path to the control's value.
     ///   - event: The control-specific events for which the binding is updated.
-    @available(iOS 14, *)
+    /// - Returns: A cancel token.
+    @discardableResult
     public func bind<Value>(
       _ binding: UIBinding<Value>,
       to keyPath: ReferenceWritableKeyPath<Self, Value>,
       for event: UIControl.Event
-    ) {
-      bind(binding, to: keyPath, for: event) { [weak self] newValue, _ in
-        self?[keyPath: keyPath] = newValue
+    ) -> ObservationToken {
+      bind(binding, to: keyPath, for: event) { control, newValue, _ in
+        control[keyPath: keyPath] = newValue
       }
     }
 
@@ -42,13 +43,13 @@
     ///   - set: A closure that is called when the binding's value changes with the new value and
     ///     the current transaction, which can be used to determine if the change should be
     ///     animated.
-    @available(iOS 14, *)
+    /// - Returns: A cancel token.
     @discardableResult
     public func bind<Value>(
       _ binding: UIBinding<Value>,
       to keyPath: KeyPath<Self, Value>,
       for event: UIControl.Event,
-      set: @escaping (_ newValue: Value, _ transaction: UITransaction) -> Void
+      set: @escaping (_ control: Self, _ newValue: Value, _ transaction: UITransaction) -> Void
     ) -> ObservationToken {
       unbind(keyPath)
       let action = UIAction { [weak self] _ in
@@ -57,21 +58,22 @@
       }
       addAction(action, for: event)
       let isSetting = LockIsolated(false)
-      let token = observe { transaction in
+      let token = observe { [weak self] transaction in
+        guard let self else { return }
         isSetting.setValue(true)
         defer { isSetting.setValue(false) }
         set(
+          self,
           binding.wrappedValue,
           transaction.animation == nil && !transaction.disablesAnimations
             ? binding.transaction
             : transaction
         )
       }
-      let observation = observe(keyPath) { [weak self] _, _ in
-        guard let self else { return }
+      let observation = observe(keyPath) { control, _ in
         if !isSetting.value {
           MainActor.assumeIsolated {
-            binding.wrappedValue = self[keyPath: keyPath]
+            binding.wrappedValue = control[keyPath: keyPath]
           }
         }
       }

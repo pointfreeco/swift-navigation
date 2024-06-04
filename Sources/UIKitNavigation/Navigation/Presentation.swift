@@ -463,15 +463,4 @@
       }
     }
   }
-
-  extension Bool {
-    fileprivate struct Unit: Hashable, Identifiable {
-      var id: Unit { self }
-    }
-
-    fileprivate var toOptionalUnit: Unit? {
-      get { self ? Unit() : nil }
-      set { self = newValue != nil }
-    }
-  }
 #endif

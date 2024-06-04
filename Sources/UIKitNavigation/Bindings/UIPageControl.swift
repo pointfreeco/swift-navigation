@@ -19,7 +19,9 @@
     ///
     /// - Parameter currentPage: The binding to read from for the current page, and write to when
     ///   the current page changes.
-    public func bind(currentPage: UIBinding<Int>) {
+    /// - Returns: A cancel token.
+    @discardableResult
+    public func bind(currentPage: UIBinding<Int>) -> ObservationToken {
       bind(currentPage, to: \.currentPage, for: .valueChanged)
     }
   }

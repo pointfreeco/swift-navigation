@@ -4,69 +4,33 @@ import UIKitNavigation
 @MainActor
 @Perceptible
 final class FormModel: HashableObject {
-  enum Focus: Hashable {
-    case attributedText
-    case text
-  }
-
   var attributedText = try! AttributedString(markdown: "Hello, **world**!")
   var color: UIColor? = .white
   var date = Date()
   var focus: Focus?
   var isOn = false
   var isDrillDownPresented = false
+  var segment = Segment.columnA
   var sheet: Sheet?
   var sliderValue: Float = 0.5
   var stepperValue: Double = 5
   var text = "Blob"
+
+  enum Focus: Hashable {
+    case attributedText
+    case text
+  }
+
+  enum Segment: Int, CaseIterable {
+    case columnA
+    case columnB
+  }
 
   struct Sheet: Identifiable {
     var text = "Hi"
     var id: String { text }
   }
 }
-
-extension UITextField {
-  // TODO: Move to library?
-  // TODO: `focus(_ condition: UIBinding<Bool>)`?
-  @discardableResult
-  func focus<Value: Hashable>(
-    _ binding: UIBinding<Value?>, equals value: Value
-  ) -> ObservationToken {
-    let editingDidBeginAction = UIAction { _ in binding.wrappedValue = value }
-    let editingDidEndAction = UIAction { _ in
-      guard binding.wrappedValue == value else { return }
-      binding.wrappedValue = nil
-    }
-    addAction(editingDidBeginAction, for: .editingDidBegin)
-    // TODO: Is this right?
-    addAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
-    let innerToken = observe { [weak self] in
-      guard let self else { return }
-      switch (binding.wrappedValue, isFirstResponder) {
-      case (value, false):
-        becomeFirstResponder()
-      case (nil, true):
-        resignFirstResponder()
-      default:
-        break
-      }
-    }
-    let outerToken = ObservationToken { [weak self] in
-      MainActor.assumeIsolated {
-        self?.removeAction(editingDidBeginAction, for: .editingDidBegin)
-        self?.removeAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
-      }
-      innerToken.cancel()
-    }
-    objc_setAssociatedObject(
-      self, observationTokenKey, outerToken, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-    )
-    return outerToken
-  }
-}
-
-private let observationTokenKey = malloc(1)!
 
 extension UIBinding where Value == NSAttributedString {
   fileprivate init(_ base: UIBinding<AttributedString>) {
@@ -100,6 +64,12 @@ final class FormViewController: UIViewController {
     let myColorWell = UIColorWell(selectedColor: $model.color)
 
     let myDatePicker = UIDatePicker(date: $model.date)
+
+    let mySegmentControl = UISegmentedControl()
+    for (index, segment) in FormModel.Segment.allCases.enumerated() {
+      mySegmentControl.insertSegment(withTitle: "\(segment)", at: index, animated: false)
+    }
+    mySegmentControl.bind(selectedSegment: $model.segment)
 
     let mySlider = UISlider(value: $model.sliderValue)
 
@@ -140,6 +110,7 @@ final class FormViewController: UIViewController {
     let stack = UIStackView(arrangedSubviews: [
       myColorWell,
       myDatePicker,
+      mySegmentControl,
       mySlider,
       myStepper,
       mySwitch,
@@ -168,6 +139,7 @@ final class FormViewController: UIViewController {
           focus: \(model.focus.map(String.init(describing:)) ?? "nil"),
           isDrillDownPresented: \(model.isDrillDownPresented),
           isOn: \(model.isOn),
+          segment: \(model.segment),
           sheet: \(model.sheet.map(String.init(describing:)) ?? "nil"),
           sliderValue: \(model.sliderValue),
           stepperValue: \(model.stepperValue),

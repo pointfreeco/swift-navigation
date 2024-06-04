@@ -19,17 +19,12 @@
     ///
     /// - Parameter isOn: The binding to read from for the current state, and write to when the
     ///   state changes.
-    public func bind(isOn: UIBinding<Bool>) {
-      bind(isOn, to: \.isOn, for: .valueChanged) { [weak self] isOn, transaction in
-        self?.setOn(isOn, animated: !transaction.disablesAnimations)
+    /// - Returns: A cancel token.
+    @discardableResult
+    public func bind(isOn: UIBinding<Bool>) -> ObservationToken {
+      bind(isOn, to: \.isOn, for: .valueChanged) { control, isOn, transaction in
+        control.setOn(isOn, animated: !transaction.disablesAnimations)
       }
-      addAction(
-        UIAction { [weak self] _ in
-          guard let self else { return }
-          isOn.wrappedValue = self.isOn
-        },
-        for: .valueChanged
-      )
     }
   }
 #endif
