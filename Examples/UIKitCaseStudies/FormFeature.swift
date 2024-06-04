@@ -181,7 +181,15 @@ final class FormViewController: UIViewController {
     }
 
     present(item: $model.sheet) { item in
-      UINavigationController(rootViewController: ChildController(text: item.text))
+      let vc = UINavigationController(rootViewController: ChildController(text: item.text))
+      if let sheet = vc.sheetPresentationController {
+        sheet.detents = [.medium()]
+        sheet.largestUndimmedDetentIdentifier = .medium
+        sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+        sheet.prefersEdgeAttachedInCompactHeight = true
+        sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
+      }
+      return vc
     }
 
     NSLayoutConstraint.activate([

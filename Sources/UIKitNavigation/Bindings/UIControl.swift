@@ -1,4 +1,10 @@
 #if canImport(UIKit)
+  // TODO: `UIPageViewController`?
+  // TODO: `UISearchController.isActive` -> `focus($isActive)`?
+  // TODO: `UISearchTextField($text, $tokens, $suggestedTokens)`?
+  // TODO: `UISegmentedControl`
+  // TODO: `UITabBar`
+
   import ConcurrencyExtras
   @_spi(Internals) import SwiftNavigation
   import UIKit
