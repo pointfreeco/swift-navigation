@@ -219,6 +219,18 @@
 
   // MARK: - SwiftUI bridging
 
+  @available(
+    iOS, introduced: 13, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
+  )
+  @available(
+    macOS, introduced: 10.15, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
+  )
+  @available(
+    tvOS, introduced: 13, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
+  )
+  @available(
+    watchOS, introduced: 6, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
+  )
   extension Alert {
     /// Creates an alert from alert state.
     ///
