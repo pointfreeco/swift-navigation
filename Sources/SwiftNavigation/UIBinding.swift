@@ -174,6 +174,13 @@ public struct UIBinding<Value>: Sendable {
     self.init(location: open(base.location), transaction: base.transaction)
   }
 
+  /// Creates a binding by projecting the base optional value to a Boolean value.
+  ///
+  /// - Parameter base: A value to project to a Boolean value.
+  public init<V>(_ base: UIBinding<V?>) where Value == Bool {
+    self = base.isPresented
+  }
+
   /// Creates a binding by projecting the base value to an optional value.
   ///
   /// - Parameter base: A value to project to an optional value.
@@ -574,5 +581,18 @@ private final class _UIBindingOptionalEnumToCase<
   func hash(into hasher: inout Hasher) {
     hasher.combine(base)
     hasher.combine(keyPath)
+  }
+}
+
+extension Optional {
+  fileprivate var isPresented: Bool {
+    get { self != nil }
+    set {
+      guard !newValue else {
+        // TODO: runtimeWarn?
+        return
+      }
+      self = nil
+    }
   }
 }
