@@ -19,7 +19,7 @@
     ) -> some View
     where Content: View {
       self.fullScreenCover(
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         onDismiss: onDismiss
       ) {
         Binding(unwrapping: value).map(content)
@@ -41,12 +41,12 @@
       if requiresBindWorkaround {
         self.modifier(
           _NavigationDestinationBindWorkaround(
-            isPresented: value.isPresent(),
+            isPresented: Binding(value),
             destination: Binding(unwrapping: value).map(destination)
           )
         )
       } else {
-        self.navigationDestination(isPresented: value.isPresent()) {
+        self.navigationDestination(isPresented: Binding(value)) {
           Binding(unwrapping: value).map(destination)
         }
       }
@@ -92,7 +92,7 @@
       @ViewBuilder content: @escaping (Binding<Value>) -> Content
     ) -> some View {
       self.popover(
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         attachmentAnchor: attachmentAnchor,
         arrowEdge: arrowEdge
       ) {
@@ -112,7 +112,7 @@
       @ViewBuilder content: @escaping (Binding<Value>) -> Content
     ) -> some View
     where Content: View {
-      self.sheet(isPresented: value.isPresent(), onDismiss: onDismiss) {
+      self.sheet(isPresented: Binding(value), onDismiss: onDismiss) {
         Binding(unwrapping: value).map(content)
       }
     }
@@ -132,7 +132,7 @@
     ) where Destination == WrappedDestination? {
       self.init(
         destination: Binding(unwrapping: value).map(destination),
-        isActive: value.isPresent().didSet(onNavigate),
+        isActive: Binding(value).didSet(onNavigate),
         label: label
       )
     }
@@ -164,7 +164,7 @@
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.map(title) ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         titleVisibility: titleVisibility,
         presenting: value.wrappedValue,
         actions: actions,
@@ -184,7 +184,7 @@
     ) -> some View {
       alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
@@ -202,7 +202,7 @@
     ) -> some View {
       alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
@@ -220,7 +220,7 @@
     ) -> some View {
       confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
         presenting: value.wrappedValue,
         actions: {
@@ -239,7 +239,7 @@
     ) -> some View {
       confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
         presenting: value.wrappedValue,
         actions: {
@@ -521,7 +521,7 @@
     )
     public func isPresent<Enum, Case>(_ casePath: AnyCasePath<Enum, Case>) -> Binding<Bool>
     where Value == Enum? {
-      self.case(casePath).isPresent()
+      .init(self.case(casePath))
     }
   }
 
@@ -1941,7 +1941,7 @@
     ) where Destination == WrappedDestination? {
       self.init(
         destination: Binding(unwrapping: value).map(destination),
-        isActive: value.isPresent().didSet(onNavigate),
+        isActive: Binding(value).didSet(onNavigate),
         label: label
       )
     }
