@@ -13,6 +13,7 @@ instead.
 
 - ``IfLet``
 - ``IfCaseLet``
+- ``SwiftUI/NavigationLink/init(unwrapping:onNavigate:destination:label:)``
 - ``SwiftUI/NavigationLink/init(unwrapping:case:onNavigate:destination:label:)``
 - ``SwiftUI/NavigationLink/init(unwrapping:destination:onNavigate:label:)``
 - ``SwiftUI/NavigationLink/init(unwrapping:case:destination:onNavigate:label:)``
@@ -20,6 +21,7 @@ instead.
 
 ### View modifiers
 
+- ``SwiftUI/View/alert(title:unwrapping:actions:message:)``
 - ``SwiftUI/View/alert(title:unwrapping:case:actions:message:)``
 - ``SwiftUI/View/alert(title:unwrapping:actions:message:)``
 - ``SwiftUI/View/alert(unwrapping:action:)-7da26``
@@ -28,6 +30,7 @@ instead.
 - ``SwiftUI/View/alert(unwrapping:case:action:)-14fwn``
 - ``SwiftUI/View/alert(unwrapping:case:action:)-3yw6u``
 - ``SwiftUI/View/alert(unwrapping:case:action:)-4w3oq``
+- ``SwiftUI/View/confirmationDialog(title:titleVisibility:unwrapping:actions:message:)``
 - ``SwiftUI/View/confirmationDialog(title:titleVisibility:unwrapping:case:actions:message:)``
 - ``SwiftUI/View/confirmationDialog(unwrapping:action:)-9465l``
 - ``SwiftUI/View/confirmationDialog(unwrapping:action:)-4f8ze``
@@ -35,9 +38,13 @@ instead.
 - ``SwiftUI/View/confirmationDialog(unwrapping:case:action:)-uncl``
 - ``SwiftUI/View/confirmationDialog(unwrapping:case:action:)-2ddxv``
 - ``SwiftUI/View/confirmationDialog(unwrapping:case:action:)-7oi9``
+- ``SwiftUI/View/fullScreenCover(unwrapping:onDismiss:content:)``
 - ``SwiftUI/View/fullScreenCover(unwrapping:case:onDismiss:content:)``
+- ``SwiftUI/View/navigationDestination(unwrapping:destination:)``
 - ``SwiftUI/View/navigationDestination(unwrapping:case:destination:)``
+- ``SwiftUI/View/popover(unwrapping:attachmentAnchor:arrowEdge:content:)``
 - ``SwiftUI/View/popover(unwrapping:case:attachmentAnchor:arrowEdge:content:)``
+- ``SwiftUI/View/sheet(unwrapping:onDismiss:content:)``
 - ``SwiftUI/View/sheet(unwrapping:case:onDismiss:content:)``
 
 ### Bindings

@@ -9,7 +9,7 @@ The library comes with new tools for driving drill-down navigation with optional
 This includes new initializers on `NavigationLink` and new overloads of the `navigationDestination`
 view modifier.
 
-Suppose your view or model holds a piece of optional state that represents whether or not a 
+Suppose your view or model holds a piece of optional state that represents whether or not a
 drill-down should occur:
 
 ```swift
@@ -20,14 +20,14 @@ struct ContentView: View {
 }
 ```
 
-Further suppose that the screen being navigated to wants a binding to the integer when it is 
-non-`nil`. You can construct a `NavigationLink` that will activate when that state becomes 
+Further suppose that the screen being navigated to wants a binding to the integer when it is
+non-`nil`. You can construct a `NavigationLink` that will activate when that state becomes
 non-`nil`, and will deactivate when the state becomes `nil`:
 
 ```swift
-NavigationLink(unwrapping: self.$destination) { isActive in
-  self.destination = isActive ? 42 : nil
-} destination: { $number in 
+NavigationLink(item: $destination) { isActive in
+  destination = isActive ? 42 : nil
+} destination: { $number in
   CounterView(number: $number)
 } label: {
   Text("Go to counter")
@@ -46,13 +46,11 @@ For iOS 16+ you can use the `navigationDestination` overload:
 
 ```swift
 Button {
-  self.destination = 42
+  destination = 42
 } label: {
   Text("Go to counter")
 }
-.navigationDestination(
-  unwrapping: self.$model.destination
-) { $item in 
+.navigationDestination(item: $model.destination) { $item in
   CounterView(number: $number)
 }
 ```
@@ -60,7 +58,7 @@ Button {
 Sometimes it is not optimal to model navigation destinations as optionals. In particular, if a
 feature can navigate to multiple, mutually exclusive screens, then an enum is more appropriate.
 
-Suppose that in addition to be able to drill down to a counter view that one can also open a 
+Suppose that in addition to be able to drill down to a counter view that one can also open a
 sheet with some text. We can model those destinations as an enum:
 
 ```swift
@@ -83,29 +81,29 @@ one of these destinations:
 ```
 
 With this set up you can make use of the
-``SwiftUI/NavigationLink/init(unwrapping:onNavigate:destination:label:)`` initializer on
+``SwiftUI/NavigationLink/init(item:onNavigate:destination:label:)`` initializer on
 `NavigationLink` in order to specify a binding to the optional destination, and further specify
 which case of the enum you want driving navigation:
 
 ```swift
-NavigationLink(unwrapping: self.$destination.counter) { isActive in
-  self.destination = isActive ? .counter(42) : nil
-} destination: { $number in 
+NavigationLink(item: $destination.counter) { isActive in
+  destination = isActive ? .counter(42) : nil
+} destination: { $number in
   CounterView(number: $number)
 } label: {
   Text("Go to counter")
 }
 ```
 
-And similarly for ``SwiftUI/View/navigationDestination(unwrapping:destination:)``:
+And similarly for ``SwiftUI/View/navigationDestination(item:destination:)``:
 
 ```swift
 Button {
-  self.destination = .counter(42)
+  destination = .counter(42)
 } label: {
   Text("Go to counter")
 }
-.navigationDestination(unwrapping: self.$model.destination.counter) { $number in 
+.navigationDestination(item: $model.destination.counter) { $number in
   CounterView(number: $number)
 }
 ```
@@ -114,8 +112,8 @@ Button {
 
 ### Navigation views and modifiers
 
-- ``SwiftUI/View/navigationDestination(unwrapping:destination:)``
-- ``SwiftUI/NavigationLink/init(unwrapping:onNavigate:destination:label:)``
+- ``SwiftUI/View/navigationDestination(item:destination:)``
+- ``SwiftUI/NavigationLink/init(item:onNavigate:destination:label:)``
 
 ### Supporting types
 

@@ -25,16 +25,16 @@ struct CustomComponents: View {
 
       Button("Show bottom menu") {
         withAnimation {
-          self.count = 0
+          count = 0
         }
       }
 
-      if let count = self.count, count > 0 {
+      if let count = count, count > 0 {
         Text("Current count: \(count)")
           .transition(.opacity)
       }
     }
-    .bottomMenu(unwrapping: self.$count) { $count in
+    .bottomMenu(item: $count) { $count in
       Stepper("Number: \(count)", value: $count.animation())
     }
     .navigationTitle("Custom components")
@@ -49,13 +49,13 @@ where BottomMenuContent: View {
   func body(content: Content) -> some View {
     content.overlay(
       ZStack(alignment: .bottom) {
-        if self.isActive {
+        if isActive {
           Rectangle()
             .fill(Color.black.opacity(0.4))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onTapGesture {
               withAnimation {
-                self.isActive = false
+                isActive = false
               }
             }
             .zIndex(1)
@@ -83,7 +83,7 @@ extension View {
     @ViewBuilder content: @escaping () -> Content
   ) -> some View
   where Content: View {
-    self.modifier(
+    modifier(
       BottomMenuModifier(
         isActive: isActive,
         content: content
@@ -91,28 +91,16 @@ extension View {
     )
   }
 
-  fileprivate func bottomMenu<Value, Content>(
-    unwrapping value: Binding<Value?>,
-    @ViewBuilder content: @escaping (Binding<Value>) -> Content
+  fileprivate func bottomMenu<Item, Content>(
+    item: Binding<Item?>,
+    @ViewBuilder content: @escaping (Binding<Item>) -> Content
   ) -> some View
   where Content: View {
-    self.modifier(
+    modifier(
       BottomMenuModifier(
-        isActive: value.isPresent(),
-        content: { Binding(unwrapping: value).map(content) }
+        isActive: item.isPresent(),
+        content: { Binding(unwrapping: item).map(content) }
       )
-    )
-  }
-
-  fileprivate func bottomMenu<Enum, Case, Content>(
-    unwrapping value: Binding<Enum?>,
-    case casePath: AnyCasePath<Enum, Case>,
-    @ViewBuilder content: @escaping (Binding<Case>) -> Content
-  ) -> some View
-  where Content: View {
-    self.bottomMenu(
-      unwrapping: value.case(casePath),
-      content: content
     )
   }
 }

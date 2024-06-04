@@ -19,7 +19,7 @@ your model, as well as an enum that describes every action that can happen in th
 class FeatureModel {
   var alert: AlertState<AlertAction>?
   enum AlertAction {
-    case deletionConfirmed
+    case confirmDelete
   }
 
   // ...
@@ -34,8 +34,12 @@ func deleteButtonTapped() {
   self.alert = AlertState {
     TextState("Are you sure?")
   } actions: {
-    ButtonState("Delete", action: .send(.delete))
-    ButtonState("Nevermind", role: .cancel)
+    ButtonState(role: .destructive, action: .confirmDelete) {
+      TextState("Delete")
+    }
+    ButtonState(role: .cancel) {
+      TextState("Nevermind")
+    }
   } message: {
     TextState("Deleting this item cannot be undone.")
   }
@@ -49,11 +53,17 @@ equatability. This makes it possible to write tests against these values.
 > ```swift
 > } actions: {
 >   if item.isLocked {
->     ButtonState("Unlock and delete", action: .send(.unlockAndDelete))
+>     ButtonState(role: .destructive, action: .confirmDelete) {
+>       TextState("Unlock and delete")
+>     }
 >   } else {
->     ButtonState("Delete", action: .send(.delete))
+>     ButtonState(role: .destructive, action: .confirmDelete) {
+>       TextState("Delete")
+>     }
 >   }
->   ButtonState("Nevermind", role: .cancel)
+>   ButtonState(role: .cancel) {
+>     TextState("Nevermind")
+>   }
 > }
 > ```
 
@@ -62,7 +72,7 @@ Next you can provide an endpoint that will be called when the alert is interacte
 ```swift
 func alertButtonTapped(_ action: AlertAction?) {
   switch action {
-  case .deletionConfirmed:
+  case .confirmDelete:
     // NB: Perform deletion logic here
   case nil:
     // NB: Perform cancel button logic here
@@ -81,8 +91,8 @@ struct ContentView: View {
     List {
       // ...
     }
-    .alert(self.$model.alert) { action in
-      self.model.alertButtonTapped(action)
+    .alert($model.alert) { action in
+      model.alertButtonTapped(action)
     }
   }
 }
@@ -98,7 +108,7 @@ func testDelete() {
   model.deleteButtonTapped()
   XCTAssertEqual(model.alert?.title, TextState("Are you sure?"))
 
-  model.alertButtonTapped(.deletionConfirmation)
+  model.alertButtonTapped(.confirmDelete)
   // NB: Assert that deletion actually occurred.
 }
 ```
@@ -123,7 +133,7 @@ class FeatureModel {
   }
 
   enum AlertAction {
-    case deletionConfirmed
+    case confirmDelete
   }
 
   // ...
@@ -134,8 +144,8 @@ With this kind of set up you can use an alternative `alert` view modifier that t
 argument for specifying which case of the enum drives the presentation of the alert:
 
 ```swift
-.alert(self.$model.destination.alert) { action in
-  self.model.alertButtonTapped(action)
+.alert($model.destination.alert) { action in
+  model.alertButtonTapped(action)
 }
 ```
 
@@ -155,24 +165,27 @@ For example, the model for a delete confirmation could look like this:
 class FeatureModel {
   var dialog: ConfirmationDialogState<DialogAction>?
   enum DialogAction {
-    case deletionConfirmed
+    case confirmDelete
   }
 
   func deleteButtonTapped() {
-    self.dialog = ConfirmationDialogState(
-      title: TextState("Are you sure?"),
-      titleVisibility: .visible,
-      message: TextState("Deleting this item cannot be undone."),
-      buttons: [
-        .destructive(TextState("Delete"), action: .send(.delete)),
-        .cancel(TextState("Nevermind")),
-      ]
-    )
+    dialog = ConfirmationDialogState(titleVisibility: .visible) {
+      TextState("Are you sure?")
+    } actions: {
+      ButtonState(role: .destructive, action: .confirmDelete) {
+        TextState("Delete")
+      }
+      ButtonState(role: .cancel) {
+        TextState("Nevermind")
+      }
+    } message: {
+      TextState("Deleting this item cannot be undone.")
+    }
   }
 
   func dialogButtonTapped(_ action: DialogAction?) {
     switch action {
-    case .deletionConfirmed:
+    case .confirmDelete:
       // NB: Perform deletion logic here
     case nil:
       // NB: Perform cancel button logic here
@@ -191,19 +204,14 @@ struct ContentView: View {
     List {
       // ...
     }
-    .confirmationDialog(self.$model.dialog) { action in
-      self.dialogButtonTapped(action)
+    .confirmationDialog($model.dialog) { action in
+      dialogButtonTapped(action)
     }
   }
 }
 ```
 
 ## Topics
-
-### Alert and dialog modifiers
-
-- ``SwiftUI/View/alert(title:unwrapping:actions:message:)``
-- ``SwiftUI/View/confirmationDialog(title:titleVisibility:unwrapping:actions:message:)``
 
 ### Alert state and dialog state
 

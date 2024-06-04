@@ -19,18 +19,18 @@
       _ state: Binding<ConfirmationDialogState<Value>?>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
     ) -> some View {
-      self.confirmationDialog(
-        state.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
-        isPresented: state.isPresent(),
-        titleVisibility: state.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
-        presenting: state.wrappedValue,
-        actions: {
-          ForEach($0.buttons) {
-            Button($0, action: handler)
-          }
-        },
-        message: { $0.message.map { Text($0) } }
-      )
+      confirmationDialog(
+        item: state,
+        titleVisibility: state.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic
+      ) {
+        Text($0.title)
+      } actions: {
+        ForEach($0.buttons) {
+          Button($0, action: handler)
+        }
+      } message: {
+        $0.message.map(Text.init)
+      }
     }
 
     /// Presents a confirmation dialog from a binding to optional confirmation dialog state.
@@ -49,22 +49,22 @@
     ///   - handler: A closure that is called with an action from a particular dialog button when
     ///     tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-    public func confirmationDialog<Value>(
+    public func confirmationDialog<Value: Sendable>(
       _ state: Binding<ConfirmationDialogState<Value>?>,
-      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+      action handler: @escaping @Sendable (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
-      self.confirmationDialog(
-        state.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
-        isPresented: state.isPresent(),
-        titleVisibility: state.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
-        presenting: state.wrappedValue,
-        actions: {
-          ForEach($0.buttons) {
-            Button($0, action: handler)
-          }
-        },
-        message: { $0.message.map { Text($0) } }
-      )
+      confirmationDialog(
+        item: state,
+        titleVisibility: state.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic
+      ) {
+        Text($0.title)
+      } actions: {
+        ForEach($0.buttons) {
+          Button($0, action: handler)
+        }
+      } message: {
+        $0.message.map(Text.init)
+      }
     }
   }
 #endif  // canImport(SwiftUI)

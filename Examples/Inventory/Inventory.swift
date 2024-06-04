@@ -5,7 +5,7 @@ import SwiftUINavigation
 @Observable
 class InventoryModel {
   var inventory: IdentifiedArrayOf<ItemRowModel> {
-    didSet { self.bind() }
+    didSet { bind() }
   }
   var destination: Destination?
 
@@ -25,46 +25,46 @@ class InventoryModel {
   }
 
   func delete(item: Item) {
-    _ = self.inventory.remove(id: item.id)
+    _ = inventory.remove(id: item.id)
   }
 
   func add(item: Item) {
     withAnimation {
-      self.inventory.append(ItemRowModel(item: item))
-      self.destination = nil
+      inventory.append(ItemRowModel(item: item))
+      destination = nil
     }
   }
 
   func addButtonTapped() {
-    self.destination = .add(Item(color: nil, name: "", status: .inStock(quantity: 1)))
+    destination = .add(Item(color: nil, name: "", status: .inStock(quantity: 1)))
   }
 
   func cancelButtonTapped() {
-    self.destination = nil
+    destination = nil
   }
 
   func cancelEditButtonTapped() {
-    self.destination = nil
+    destination = nil
   }
 
   func commitEdit(item: Item) {
-    self.inventory[id: item.id]?.item = item
-    self.destination = nil
+    inventory[id: item.id]?.item = item
+    destination = nil
   }
 
   private func bind() {
-    for itemRowModel in self.inventory {
+    for itemRowModel in inventory {
       itemRowModel.onDelete = { [weak self, weak itemRowModel] in
         guard let self, let itemRowModel else { return }
-        self.delete(item: itemRowModel.item)
+        delete(item: itemRowModel.item)
       }
       itemRowModel.onDuplicate = { [weak self] item in
         guard let self else { return }
-        self.add(item: item)
+        add(item: item)
       }
       itemRowModel.onTap = { [weak self, weak itemRowModel] in
         guard let self, let itemRowModel else { return }
-        self.destination = .edit(itemRowModel.item)
+        destination = .edit(itemRowModel.item)
       }
     }
   }
@@ -75,43 +75,43 @@ struct InventoryView: View {
 
   var body: some View {
     List {
-      ForEach(self.model.inventory) {
+      ForEach(model.inventory) {
         ItemRowView(model: $0)
       }
     }
     .toolbar {
       ToolbarItem(placement: .primaryAction) {
-        Button("Add") { self.model.addButtonTapped() }
+        Button("Add") { model.addButtonTapped() }
       }
     }
     .navigationTitle("Inventory")
-    .navigationDestination(unwrapping: self.$model.destination.edit) { $item in
+    .navigationDestination(item: $model.destination.edit) { $item in
       ItemView(item: $item)
         .navigationBarTitle("Edit")
         .navigationBarBackButtonHidden(true)
         .toolbar {
           ToolbarItem(placement: .cancellationAction) {
             Button("Cancel") {
-              self.model.cancelEditButtonTapped()
+              model.cancelEditButtonTapped()
             }
           }
           ToolbarItem(placement: .primaryAction) {
             Button("Save") {
-              self.model.commitEdit(item: item)
+              model.commitEdit(item: item)
             }
           }
         }
     }
-    .sheet(unwrapping: self.$model.destination.add) { $itemToAdd in
+    .sheet(item: $model.destination.add) { $itemToAdd in
       NavigationStack {
         ItemView(item: $itemToAdd)
           .navigationTitle("Add")
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-              Button("Cancel") { self.model.cancelButtonTapped() }
+              Button("Cancel") { model.cancelButtonTapped() }
             }
             ToolbarItem(placement: .primaryAction) {
-              Button("Save") { self.model.add(item: itemToAdd) }
+              Button("Save") { model.add(item: itemToAdd) }
             }
           }
       }
