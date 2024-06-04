@@ -99,11 +99,6 @@ final class FormViewController: UIViewController {
     myTextField.borderStyle = .roundedRect
     myTextField.focus($model.focus, equals: .text)
 
-    Task {
-      try await Task.sleep(for: .seconds(1))
-      model.focus = .attributedText
-    }
-
     let myAttributedTextField = UITextField(attributedText: UIBinding($model.attributedText))
     myAttributedTextField.allowsEditingTextAttributes = true
     myAttributedTextField.borderStyle = .roundedRect
@@ -113,10 +108,10 @@ final class FormViewController: UIViewController {
       configuration: .plain(),
       primaryAction: UIAction { [weak self] _ in
         self?.model.sheet = .init(text: "Blob")
-        // Task {
-        //   try await Task.sleep(for: .seconds(2))
-        //   self?.model.sheet = .init(text: "Blob, Jr.")
-        // }
+         Task {
+           try await Task.sleep(for: .seconds(2))
+           self?.model.sheet? = .init(text: "Blob, Jr.")
+         }
       }
     )
     sheetButton.setTitle("Present sheet", for: .normal)
@@ -172,7 +167,7 @@ final class FormViewController: UIViewController {
     }
 
     present(item: $model.sheet) { item in
-      ChildController(text: item.text)
+      UINavigationController(rootViewController: ChildController(text: item.text))
     }
 
     NSLayoutConstraint.activate([
@@ -196,6 +191,14 @@ final class ChildController: UIViewController {
   }
   override func viewDidLoad() {
     super.viewDidLoad()
+
+    if #available(iOS 17, *) {
+      navigationItem.rightBarButtonItem = UIBarButtonItem(
+        title: "Dismiss",
+        primaryAction: UIAction { [weak self] _ in self?.traitCollection.dismiss() }
+      )
+    }
+
     view.backgroundColor = .systemBackground
     let label = UILabel()
     label.text = text
@@ -205,11 +208,5 @@ final class ChildController: UIViewController {
       label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
     ])
-    Task {
-      try await Task.sleep(for: .seconds(1))
-      if #available(iOS 17, *) {
-        traitCollection.dismiss()
-      }
-    }
   }
 }
