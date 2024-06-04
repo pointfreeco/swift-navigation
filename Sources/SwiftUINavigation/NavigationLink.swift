@@ -62,7 +62,7 @@
     ) where Destination == WrappedDestination? {
       self.init(
         destination: Binding(unwrapping: item).map(destination),
-        isActive: item.isPresent().didSet(onNavigate),
+        isActive: Binding(item).didSet(onNavigate),
         label: label
       )
     }

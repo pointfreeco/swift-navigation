@@ -67,7 +67,7 @@
     ) -> some View {
       alert(
         item.wrappedValue.map(title) ?? Text(verbatim: ""),
-        isPresented: item.isPresent(),
+        isPresented: Binding(item),
         presenting: item.wrappedValue,
         actions: actions,
         message: message
@@ -132,7 +132,7 @@
     ) -> some View {
       alert(
         item.wrappedValue.map(title) ?? Text(verbatim: ""),
-        isPresented: item.isPresent(),
+        isPresented: Binding(item),
         presenting: item.wrappedValue,
         actions: actions
       )

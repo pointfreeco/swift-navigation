@@ -20,9 +20,13 @@ A few core types and modifiers included in SwiftUI Navigation.
 
 ### Bindings
 
-- ``SwiftUI/Binding/isPresent()``
+- ``SwiftUI/Binding/init(_:)``
 - ``SwiftUI/View/bind(_:to:)``
 
 ### Navigation
 
 - ``SwiftUI/View/navigationDestination(item:destination:)``
+
+### Deprecations
+
+- <doc:Deprecations>
