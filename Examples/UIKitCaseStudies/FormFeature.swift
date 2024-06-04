@@ -29,8 +29,11 @@ final class FormModel: HashableObject {
 extension UITextField {
   // TODO: Move to library?
   // TODO: `focus(_ condition: UIBinding<Bool>)`?
-  func focus<Value: Hashable>(_ binding: UIBinding<Value?>, equals value: Value) {
-    observe { [weak self] in
+  @discardableResult
+  func focus<Value: Hashable>(
+    _ binding: UIBinding<Value?>, equals value: Value
+  ) -> ObservationToken {
+    let token = observe { [weak self] in
       guard let self else { return }
       switch (binding.wrappedValue, isFirstResponder) {
       case (value, false):
@@ -41,19 +44,21 @@ extension UITextField {
         break
       }
     }
-    addAction(
-      UIAction { _ in
-        binding.wrappedValue = value
-      },
-      for: .editingDidBegin
-    )
-    addAction(
-      UIAction { _ in
-        guard binding.wrappedValue == value else { return }
-        binding.wrappedValue = nil
-      },
-      for: [.editingDidEnd, .editingDidEndOnExit]  // TODO: Is this right?
-    )
+    let editingDidBeginAction = UIAction { _ in binding.wrappedValue = value }
+    let editingDidEndAction = UIAction { _ in
+      guard binding.wrappedValue == value else { return }
+      binding.wrappedValue = nil
+    }
+    addAction(editingDidBeginAction, for: .editingDidBegin)
+    // TODO: Is this right?
+    addAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
+    return ObservationToken { [weak self] in
+      token.cancel()
+      MainActor.assumeIsolated {
+        self?.removeAction(editingDidBeginAction, for: .editingDidBegin)
+        self?.removeAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
+      }
+    }
   }
 }
 
