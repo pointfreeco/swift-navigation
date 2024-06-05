@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception",
       "state" : {
-        "branch" : "if-canimport-swiftui",
-        "revision" : "b56d72a7b62c6ea31c0b6d45b05074fe8c459f40"
+        "revision" : "64f7f6c28c6a4d3c4b9da2ba02383e29ab48a8cf",
+        "version" : "1.2.2"
       }
     },
     {
