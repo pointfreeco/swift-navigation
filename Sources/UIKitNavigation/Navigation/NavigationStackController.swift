@@ -161,7 +161,8 @@
       weak var base: (any UINavigationControllerDelegate)?
 
       override func responds(to aSelector: Selector!) -> Bool {
-        base?.responds(to: aSelector) ?? false
+        aSelector == #selector(navigationController(_:didShow:animated:))
+          || base?.responds(to: aSelector) ?? false
       }
 
       func navigationController(

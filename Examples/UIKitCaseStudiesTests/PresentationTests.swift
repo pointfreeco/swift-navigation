@@ -13,11 +13,13 @@ final class PresentationTests: XCTestCase {
       vc.model.isPresented = true
     }
     await assertEventuallyNotNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, true)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.isPresented = false
     }
     await assertEventuallyNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, false)
   }
 
   @MainActor
@@ -31,11 +33,13 @@ final class PresentationTests: XCTestCase {
       vc.model.presentedChild = Model()
     }
     await assertEventuallyNotNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, true)
 
     withUITransaction(\.disablesAnimations, true) {
       vc.model.presentedChild = nil
     }
     await assertEventuallyNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, false)
   }
 
   @MainActor
@@ -300,6 +304,7 @@ private final class Model: Identifiable {
 
 private class BasicViewController: UIViewController {
   @UIBindable var model: Model
+  var isPresenting = false
   init(model: Model = Model()) {
     self.model = model
     super.init(nibName: nil, bundle: nil)
@@ -309,11 +314,17 @@ private class BasicViewController: UIViewController {
   }
   override func viewDidLoad() {
     super.viewDidLoad()
-    present(isPresented: $model.isPresented) {
-      UIViewController()
+    present(isPresented: $model.isPresented) { [weak self] in
+      self?.isPresenting = false
+    } content: { [weak self] in
+      self?.isPresenting = true
+      return UIViewController()
     }
-    present(item: $model.presentedChild) { model in
-      BasicViewController(model: model)
+    present(item: $model.presentedChild) { [weak self] in
+      self?.isPresenting = false
+    } content: { [weak self] model in
+      self?.isPresenting = true
+      return BasicViewController(model: model)
     }
     navigationController?.pushViewController(isPresented: $model.isPushed) {
       UIViewController()

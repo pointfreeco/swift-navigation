@@ -133,7 +133,7 @@ final class FormViewController: UIViewController {
       view.backgroundColor = model.color
       myLabel.text = """
         MyModel(
-          attributedText: \(String(model.attributedText.characters).description),
+          attributedText: \(String(model.attributedText.characters).debugDescription),
           color: \(model.color.map(String.init(describing:)) ?? "nil"),
           date: \(model.date),
           focus: \(model.focus.map(String.init(describing:)) ?? "nil"),
@@ -143,7 +143,7 @@ final class FormViewController: UIViewController {
           sheet: \(model.sheet.map(String.init(describing:)) ?? "nil"),
           sliderValue: \(model.sliderValue),
           stepperValue: \(model.stepperValue),
-          text: \(model.text.description)
+          text: \(model.text.debugDescription)
         )
         """
     }
