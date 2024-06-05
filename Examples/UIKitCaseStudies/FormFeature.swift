@@ -4,7 +4,7 @@ import UIKitNavigation
 @MainActor
 @Perceptible
 final class FormModel: HashableObject {
-  var attributedText = try! AttributedString(markdown: "Hello, **world**!")
+  var attributedText: NSAttributedString = .mock
   var color: UIColor? = .white
   var date = Date()
   var focus: Focus?
@@ -29,19 +29,6 @@ final class FormModel: HashableObject {
   struct Sheet: Identifiable {
     var text = "Hi"
     var id: String { text }
-  }
-}
-
-extension UIBinding where Value == NSAttributedString {
-  fileprivate init(_ base: UIBinding<AttributedString>) {
-    self = base.toNSAttributedString
-  }
-}
-
-extension AttributedString {
-  fileprivate var toNSAttributedString: NSAttributedString {
-    get { NSAttributedString(self) }
-    set { self = AttributedString(newValue) }
   }
 }
 
@@ -81,7 +68,7 @@ final class FormViewController: UIViewController {
     myTextField.borderStyle = .roundedRect
     myTextField.focus($model.focus, equals: .text)
 
-    let myAttributedTextField = UITextField(attributedText: UIBinding($model.attributedText))
+    let myAttributedTextField = UITextField(attributedText: $model.attributedText)
     myAttributedTextField.allowsEditingTextAttributes = true
     myAttributedTextField.borderStyle = .roundedRect
     myAttributedTextField.focus($model.focus, equals: .attributedText)
@@ -133,7 +120,7 @@ final class FormViewController: UIViewController {
       view.backgroundColor = model.color
       myLabel.text = """
         MyModel(
-          attributedText: \(String(model.attributedText.characters).debugDescription),
+          attributedText: \(model.attributedText.string.debugDescription),
           color: \(model.color.map(String.init(describing:)) ?? "nil"),
           date: \(model.date),
           focus: \(model.focus.map(String.init(describing:)) ?? "nil"),
@@ -210,5 +197,20 @@ final class ChildController: UIViewController {
       }
       navigationItem.rightBarButtonItem = traitCollection.isPresented ? dismissButton : nil
     }
+  }
+}
+
+extension NSAttributedString {
+  fileprivate static var mock: NSAttributedString {
+    let base = UIFont.preferredFont(forTextStyle: .body)
+    var font = UIFont(
+      descriptor: base.fontDescriptor.withSymbolicTraits(.traitBold) ?? base.fontDescriptor,
+      size: base.pointSize
+    )
+    let name = NSAttributedString(string: "Blob, Jr.", attributes: [.font: font])
+    var string = NSMutableAttributedString(string: "Hello, ")
+    string.append(name)
+    string.append(NSAttributedString(string: "!"))
+    return string
   }
 }
