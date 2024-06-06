@@ -19,7 +19,7 @@
     ) -> some View
     where Content: View {
       self.fullScreenCover(
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         onDismiss: onDismiss
       ) {
         Binding(unwrapping: value).map(content)
@@ -41,12 +41,12 @@
       if requiresBindWorkaround {
         self.modifier(
           _NavigationDestinationBindWorkaround(
-            isPresented: value.isPresent(),
+            isPresented: Binding(value),
             destination: Binding(unwrapping: value).map(destination)
           )
         )
       } else {
-        self.navigationDestination(isPresented: value.isPresent()) {
+        self.navigationDestination(isPresented: Binding(value)) {
           Binding(unwrapping: value).map(destination)
         }
       }
@@ -92,7 +92,7 @@
       @ViewBuilder content: @escaping (Binding<Value>) -> Content
     ) -> some View {
       self.popover(
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         attachmentAnchor: attachmentAnchor,
         arrowEdge: arrowEdge
       ) {
@@ -112,7 +112,7 @@
       @ViewBuilder content: @escaping (Binding<Value>) -> Content
     ) -> some View
     where Content: View {
-      self.sheet(isPresented: value.isPresent(), onDismiss: onDismiss) {
+      self.sheet(isPresented: Binding(value), onDismiss: onDismiss) {
         Binding(unwrapping: value).map(content)
       }
     }
@@ -132,7 +132,7 @@
     ) where Destination == WrappedDestination? {
       self.init(
         destination: Binding(unwrapping: value).map(destination),
-        isActive: value.isPresent().didSet(onNavigate),
+        isActive: Binding(value).didSet(onNavigate),
         label: label
       )
     }
@@ -164,7 +164,7 @@
     ) -> some View {
       self.confirmationDialog(
         value.wrappedValue.map(title) ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         titleVisibility: titleVisibility,
         presenting: value.wrappedValue,
         actions: actions,
@@ -184,7 +184,7 @@
     ) -> some View {
       alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
@@ -196,13 +196,13 @@
     }
 
     @available(*, deprecated, renamed: "alert(_:action:)")
-    public func alert<Value>(
+    public func alert<Value: Sendable>(
       unwrapping value: Binding<AlertState<Value>?>,
-      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+      action handler: @escaping @Sendable (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       alert(
         (value.wrappedValue?.title).map(Text.init) ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         presenting: value.wrappedValue,
         actions: {
           ForEach($0.buttons) {
@@ -220,7 +220,7 @@
     ) -> some View {
       confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
         presenting: value.wrappedValue,
         actions: {
@@ -233,13 +233,13 @@
     }
 
     @available(*, deprecated, renamed: "confirmationDialog(_:action:)")
-    public func confirmationDialog<Value>(
+    public func confirmationDialog<Value: Sendable>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+      action handler: @escaping @Sendable (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       confirmationDialog(
         value.wrappedValue.flatMap { Text($0.title) } ?? Text(verbatim: ""),
-        isPresented: value.isPresent(),
+        isPresented: Binding(value),
         titleVisibility: value.wrappedValue.map { .init($0.titleVisibility) } ?? .automatic,
         presenting: value.wrappedValue,
         actions: {
@@ -292,10 +292,10 @@
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
-    public func alert<Enum, Value>(
+    public func alert<Enum, Value: Sendable>(
       unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, AlertState<Value>>,
-      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+      action handler: @escaping @Sendable (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       alert(`enum`.case(casePath), action: handler)
     }
@@ -343,10 +343,10 @@
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
-    public func confirmationDialog<Enum, Value>(
+    public func confirmationDialog<Enum, Value: Sendable>(
       unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, ConfirmationDialogState<Value>>,
-      action handler: @escaping (Value?) async -> Void = { (_: Never?) async in }
+      action handler: @escaping @Sendable (Value?) async -> Void = { (_: Never?) async in }
     ) -> some View {
       confirmationDialog(
         `enum`.case(casePath),
@@ -521,7 +521,7 @@
     )
     public func isPresent<Enum, Case>(_ casePath: AnyCasePath<Enum, Case>) -> Binding<Bool>
     where Value == Enum? {
-      self.case(casePath).isPresent()
+      .init(self.case(casePath))
     }
   }
 
@@ -767,7 +767,7 @@
     message:
       "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
-  public struct CaseLet<Enum, Case, Content>: View
+  public struct CaseLet<Enum, Case, Content>: Sendable, View
   where Content: View {
     @EnvironmentObject private var `enum`: BindingObject<Enum>
     public let casePath: AnyCasePath<Enum, Case>
@@ -1847,9 +1847,9 @@
       message:
         "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
-    public func alert<Value>(
+    public func alert<Value: Sendable>(
       unwrapping value: Binding<AlertState<Value>?>,
-      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping @Sendable (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       alert(value) { (value: Value?) in
         if let value = value {
@@ -1865,10 +1865,10 @@
       message:
         "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
-    public func alert<Enum, Value>(
+    public func alert<Enum, Value: Sendable>(
       unwrapping enum: Binding<Enum?>,
       case casePath: CasePath<Enum, AlertState<Value>>,
-      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping @Sendable (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       alert(unwrapping: `enum`, case: casePath) { (value: Value?) async in
         if let value = value {
@@ -1884,9 +1884,9 @@
       message:
         "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
-    public func confirmationDialog<Value>(
+    public func confirmationDialog<Value: Sendable>(
       unwrapping value: Binding<ConfirmationDialogState<Value>?>,
-      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping @Sendable (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       confirmationDialog(unwrapping: value) { (value: Value?) in
         if let value = value {
@@ -1902,10 +1902,10 @@
       message:
         "'View.alert' now passes an optional action to its handler to allow you to handle action-less dismissals."
     )
-    public func confirmationDialog<Enum, Value>(
+    public func confirmationDialog<Enum, Value: Sendable>(
       unwrapping enum: Binding<Enum?>,
       case casePath: CasePath<Enum, ConfirmationDialogState<Value>>,
-      action handler: @escaping (Value) async -> Void = { (_: Void) async in }
+      action handler: @escaping @Sendable (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       confirmationDialog(unwrapping: `enum`, case: casePath) { (value: Value?) async in
         if let value = value {
@@ -1941,7 +1941,7 @@
     ) where Destination == WrappedDestination? {
       self.init(
         destination: Binding(unwrapping: value).map(destination),
-        isActive: value.isPresent().didSet(onNavigate),
+        isActive: Binding(value).didSet(onNavigate),
         label: label
       )
     }

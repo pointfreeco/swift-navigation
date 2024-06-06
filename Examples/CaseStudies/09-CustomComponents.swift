@@ -98,7 +98,7 @@ extension View {
   where Content: View {
     modifier(
       BottomMenuModifier(
-        isActive: item.isPresent(),
+        isActive: Binding(item),
         content: { Binding(unwrapping: item).map(content) }
       )
     )
