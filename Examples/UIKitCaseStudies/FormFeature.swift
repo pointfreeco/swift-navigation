@@ -5,6 +5,7 @@ import UIKitNavigation
 @Perceptible
 final class FormModel: HashableObject {
   var attributedText: NSAttributedString = .mock
+  var attributedTextSelection: UITextSelection?
   var color: UIColor? = .white
   var date = Date()
   var focus: Focus?
@@ -15,6 +16,7 @@ final class FormModel: HashableObject {
   var sliderValue: Float = 0.5
   var stepperValue: Double = 5
   var text = "Blob"
+  var textSelection: UITextSelection?
 
   enum Focus: Hashable {
     case attributedText
@@ -65,11 +67,13 @@ final class FormViewController: UIViewController {
     let mySwitch = UISwitch(isOn: $model.isOn)
 
     let myTextField = UITextField(text: $model.text)
+    myTextField.bind(selection: $model.textSelection)
     myTextField.borderStyle = .roundedRect
     myTextField.focus($model.focus, equals: .text)
 
     let myAttributedTextField = UITextField(attributedText: $model.attributedText)
     myAttributedTextField.allowsEditingTextAttributes = true
+    myAttributedTextField.bind(selection: $model.attributedTextSelection)
     myAttributedTextField.borderStyle = .roundedRect
     myAttributedTextField.focus($model.focus, equals: .attributedText)
 
@@ -118,9 +122,19 @@ final class FormViewController: UIViewController {
       guard let self else { return }
 
       view.backgroundColor = model.color
+
+      let attributedTextSelection = model.attributedTextSelection.map {
+        self.model.attributedText.string.range(for: $0.range)
+      }
+      let textSelection = model.textSelection.map {
+        self.model.text.range(for: $0.range)
+      }
+
       myLabel.text = """
         MyModel(
           attributedText: \(model.attributedText.string.debugDescription),
+          attributedTextSelection: \
+        \(attributedTextSelection.map(String.init(describing:)) ?? "nil"),
           color: \(model.color.map(String.init(describing:)) ?? "nil"),
           date: \(model.date),
           focus: \(model.focus.map(String.init(describing:)) ?? "nil"),
@@ -130,7 +144,8 @@ final class FormViewController: UIViewController {
           sheet: \(model.sheet.map(String.init(describing:)) ?? "nil"),
           sliderValue: \(model.sliderValue),
           stepperValue: \(model.stepperValue),
-          text: \(model.text.debugDescription)
+          text: \(model.text.debugDescription),
+          textSelection: \(textSelection.map(String.init(describing:)) ?? "nil")
         )
         """
     }
@@ -158,6 +173,23 @@ final class FormViewController: UIViewController {
 
       myColorWell.heightAnchor.constraint(equalToConstant: 50),
     ])
+
+    Task { [weak self] in
+      try await Task.sleep(for: .seconds(1))
+
+      guard let self else { return }
+      model.textSelection = UITextSelection(
+        insertionPoint: "text".index(after: "text".startIndex)
+      )
+    }
+  }
+}
+
+private extension String {
+  func range(for range: Range<String.Index>) -> Range<Int> {
+    distance(from: startIndex, to: range.lowerBound)
+    ..<
+    distance(from: startIndex, to: range.upperBound)
   }
 }
 

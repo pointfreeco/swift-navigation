@@ -46,6 +46,85 @@
     public func bind(attributedText: UIBinding<NSAttributedString>) -> ObservationToken {
       bind(UIBinding(attributedText), to: \.attributedText, for: .editingChanged)
     }
+    
+    /// Establishes a two-way connection between a binding and the text field's current selection.
+    ///
+    /// - Parameter selection: The binding to read from for the current selection, and write to when
+    ///   the selected text range changes.
+    /// - Returns: A cancel token.
+    @discardableResult
+    public func bind(selection: UIBinding<UITextSelection?>) -> ObservationToken {
+      let editingChangedAction = UIAction { [weak self] _ in
+        guard let self else { return }
+        selection.wrappedValue = self.textSelection
+      }
+      addAction(editingChangedAction, for: [.editingChanged, .editingDidBegin])
+      let editingDidEndAction = UIAction { _ in selection.wrappedValue = nil }
+      addAction(editingDidEndAction, for: .editingDidEnd)
+      let token = observe { [weak self] in
+        guard let self else { return }
+        textSelection = selection.wrappedValue
+      }
+      let observation = observe(\.selectedTextRange) { control, _ in
+        MainActor.assumeIsolated {
+          selection.wrappedValue = control.textSelection
+        }
+      }
+      let observationToken = ObservationToken { [weak self] in
+        MainActor.assumeIsolated {
+          self?.removeAction(editingChangedAction, for: [.editingChanged, .editingDidBegin])
+          self?.removeAction(editingDidEndAction, for: .editingDidEnd)
+        }
+        token.cancel()
+        observation.invalidate()
+      }
+      observationTokens[\UITextField.selectedTextRange] = observationToken
+      return observationToken
+    }
+
+    fileprivate var textSelection: UITextSelection? {
+      get {
+        guard
+          let textRange = selectedTextRange,
+          let text
+        else {
+          return nil
+        }
+        let lowerBound = text.index(
+          text.startIndex,
+          offsetBy: offset(from: beginningOfDocument, to: textRange.start),
+          limitedBy: text.endIndex
+        ) ?? text.endIndex
+        let upperBound = text.index(
+          text.startIndex,
+          offsetBy: offset(from: beginningOfDocument, to: textRange.end),
+          limitedBy: text.endIndex
+        ) ?? text.endIndex
+        return UITextSelection(range: lowerBound..<upperBound)
+      }
+      set {
+        guard let text else { return }
+        guard let selection = newValue?.range else {
+          selectedTextRange = nil
+          return
+        }
+        guard
+          let from = position(
+            from: beginningOfDocument,
+            offset: text.distance(
+              from: text.startIndex, to: min(selection.lowerBound, text.endIndex)
+            )
+          ),
+          let to = position(
+            from: beginningOfDocument,
+            offset: text.distance(
+              from: text.startIndex, to: min(selection.upperBound, text.endIndex)
+            )
+          )
+        else { return }
+        selectedTextRange = textRange(from: from, to: to)
+      }
+    }
 
     // TODO: Should this be `bind(focus:equals:)`?
     /// Modifies this text field by binding its focus state to the given state value.
@@ -212,5 +291,19 @@
     }
 
     private static let focusTokenKey = malloc(1)!
+  }
+
+  public struct UITextSelection: Hashable, Sendable {
+    public var range: Range<String.Index>
+
+    public init(range: Range<String.Index>) {
+      self.range = range
+    }
+    public init(insertionPoint: String.Index) {
+      self.range = insertionPoint..<insertionPoint
+    }
+    public var isInsertion: Bool {
+      self.range.isEmpty
+    }
   }
 #endif
