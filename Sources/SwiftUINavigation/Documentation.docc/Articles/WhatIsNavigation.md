@@ -6,26 +6,28 @@ creation of concise and testable APIs for navigation.
 ## Overview
 
 We will define navigation as a "mode" change in an application. The most prototypical example of
-this in SwiftUI are navigation stacks and links. A user taps a button, and a right-to-left
-animation transitions you from the current screen to the next screen.
+this is the drill-down. A user taps a button, and a right-to-left animation transitions you from the
+current screen to the next screen.
 
-But there are more examples of navigation beyond that one example. Modal sheets can be thought of
-as navigation too. They slide from bottom-to-top and transition you from the current screen to a
-new screen. Full screen covers and popovers are also an example of navigation, as they are very
-similar to sheets except they either take over the full screen (i.e. covers) or only partially
-take over the screen (i.e. popovers).
+But there are many more examples of navigation beyond stacks and links. Modals can be thought of as
+navigation, too. A sheet can slide from bottom-to-top and transition you from the current screen to
+a new screen. A full-screen cover can further take over the entire screen. Or a popover can
+partially take over the screen.
 
-Even alerts and confirmation dialogs can be thought of navigation as they take full control over
-the interface and force you to make a selection. It's also possible for you to define your own
-notions of navigation, such as bottom sheets, toasts, and more.
+Alerts and confirmation dialogs can also be thought of navigation as they are also modals that take
+full control over the interface and force you to make a selection.
+
+It's even possible for you to define your own notions of navigation, such as menus, notifications,
+and more.
 
 ## State-driven navigation
 
-All of these seemingly disparate examples of navigation can be unified under a single API. The
-presentation and dismissal of a screen can be described with an optional piece of state. When the
-state changes from `nil` to non-`nil` the screen will be presented, whether that be via a
-drill-down, modal, popover, etc. And when the state changes from non-`nil` to `nil` the screen will
-be dismissed.
+All of these seemingly disparate examples of navigation can be unified under a single API.
+Presentation and dismissal can be described with an optional piece of state:
+
+  * When the state changes from `nil` to non-`nil`, a screen can be presented, whether that be
+    _via_ a drill-down, modal, _etc._
+  * And when the state changes from non-`nil` to `nil`, a screen can be dismissed.
 
 Driving navigation from state like this can be incredibly powerful:
 
@@ -34,18 +36,18 @@ Driving navigation from state like this can be incredibly powerful:
     view present.
   * It easily enables deep linking capabilities. If all forms of navigation in your application are
     driven off of state, then you can instantly open your application into any state imaginable by
-    simply constructing a piece of state, handing it to SwiftUI, and letting it do its thing.
+    simply constructing a piece of data, handing it to SwiftUI, and letting it do its thing.
   * It also allows you to write unit tests for navigation logic without resorting to UI tests, which
-    can be slow, flakey and introduce instability into your test suite. If you write a unit test
-    that shows when a user performs an action that a piece of state went from `nil` to non-`nil`,
+    can be slow, flakey, and introduce instability into your test suite. If you write a unit test
+    showing that when a user performs an action that a piece of state went from `nil` to non-`nil`,
     then you can be assured that the user would be navigated to the next screen.
 
-So, this is why state-driven navigation is so great. So, what tools does SwiftUI gives us to embrace
-this pattern?
+This is why state-driven navigation is so great. So, what are tools are at our disposal in Swift to
+embrace this pattern?
 
 ## SwiftUI's tools for navigation
 
-Many of SwiftUI's navigation tools are driven off of optional state, but sadly not all.
+Many of SwiftUI's navigation tools are driven off of optional state.
 
 The simplest example is modal sheets. A simple API is provided that takes a binding of an optional
 item, and when that item flips to a non-`nil` value it is handed to a content closure to produce
@@ -94,38 +96,64 @@ struct FeatureView: View {
 
 This works really great. When the button is tapped, the `tapped(item:)` method is called on the
 model causing the `editingItem` state to be hydrated, and then SwiftUI sees that value is no longer
-`nil` and so causes the sheet to be presented.
+`nil` and so it causes the sheet to be presented.
 
 A lot of SwiftUI's navigation APIs follow this pattern. For example, here's the signatures for
 showing popovers and full screen covers:
 
 ```swift
-func popover<Item, Content>(
+func popover<Item: Identifiable, Content: View>(
   item: Binding<Item?>,
   attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
   arrowEdge: Edge = .top,
-  content: @escaping (Item) -> Content
-) -> some View where Item : Identifiable, Content : View
+  @ViewBuilder content: @escaping (Item) -> Content
+) -> some View
 
-func fullScreenCover<Item, Content>(
+func fullScreenCover<Item: Identifiable, Content: View>(
   item: Binding<Item?>,
   onDismiss: (() -> Void)? = nil,
-  content: @escaping (Item) -> Content
-) -> some View where Item : Identifiable, Content : View
+  @ViewBuilder content: @escaping (Item) -> Content
+) -> some View
 ```
 
-Both take a binding of an optional and a content closure for transforming the non-`nil` state into
-a view that is presented in the popover or cover.
+There is even a drill-down API of this form:
 
-There are, however, two potential problems with these APIs.
+```swift
+public func navigationDestination<D: Hashable, C: View>(
+  item: Binding<D?>,
+  @ViewBuilder destination: @escaping (D) -> C
+) -> some View
+```
 
-First, the argument passed to the `content` closure is the plain, non-`nil` value. This means the
-sheet view presented is handed a plain, inert value, and if that view wants to make mutations it
-will need to find a way to communicate that back to the parent. However, two-way communication
-is already a solved problem in SwiftUI with bindings.
+All of these APIs take a binding of an optional and a content closure for transforming the non-`nil`
+state into a view that is presented in the popover or cover.
 
-So, it might be better if the `sheet(item:content:)` API handed a binding to the unwrapped item so
-that any mutations in the sheet would be instantly observable by the parent:
+There are, however, a few problems with these APIs.
+
+First, many of them require an `Identifiable` conformance for the underlying data. The identity of
+the data lets SwiftUI dismiss and represent a modal when it detects a change, which is a great
+feature to have, but often the data you want to present does not conform to `Identifiable`, and
+introducing a conformance comes with a lot of questions and potential boilerplate.
+
+SwiftUI already provides an elegant solution to the problem in its `ForEach` view, which takes an
+`id` parameter to single out an element's identity without requiring an `Identifiable` conformance.
+So, what if `sheet`, `fullScreenCover` and `popover` were given the same treatment?
+
+```swift
+.sheet(item: $model.title, id: \.self) { title in
+  Text(title)
+}
+```
+
+Unfortunately SwiftUI comes with no such API.
+
+The second problem is that the argument passed to the `content` closure is the plain, unwrapped
+value. This means the modal content is handed a potentially inert value. If that modal view wants to
+make mutations to this value it will need to find a way to communicate that back to the parent.
+
+However, two-way communication is already a solved problem in SwiftUI with bindings. So, it might be
+better if the `sheet(item:content:)` API handed a binding to the unwrapped item so that any
+mutations in the sheet would be instantly observable by the parent:
 
 ```swift
 .sheet(item: $model.editingItem) { $item in
@@ -135,8 +163,43 @@ that any mutations in the sheet would be instantly observable by the parent:
 
 However, this is not the API exposed to us from SwiftUI.
 
-The second problem is that while optional state is a great way to drive navigation, it doesn't
-scale to multiple navigation destinations.
+The third problem is that while optional state is a great way to drive navigation, not all SwiftUI
+APIs are as concise as the above examples. For example, alerts and dialogs are not only driven by
+optional state, but also a boolean:
+
+```swift
+.alert(
+  Text("Confirm deletion"),
+  isPresented: $model.isAlertPresented,
+  presenting: item
+) { item in
+  Button("Nevermind", role: .cancel)
+  Button("Delete \(item.name)", role: .destructive)
+}
+```
+
+Modeling the domain in this way unfortunately introduces a couple invalid runtime states:
+
+  * `isPresented` can be `true`, but `item` can be `nil`.
+  * `isPresented` can be `false`, but `item` can be non-`nil`.
+
+On top of that, SwiftUI's `alert` modifiers take static titles, which means the title cannot be
+dynamically computed from the alert data.
+
+What if SwiftUI has alert and dialog modifiers that looked a little more like its other navigation
+modifiers, with the added feature of giving the alert title access to the underlying data?
+
+```swift
+.alert(item: $item) { item in
+  Text("Delete \(item.name)"?)
+} actions: { _ in
+  Button("Nevermind", role: .cancel)
+  Button("Delete", role: .destructive)
+}
+```
+
+The third problem is that while optional state is a great way to drive navigation, it doesn't scale
+to multiple navigation destinations.
 
 For example, suppose that in addition to being able to edit an item, the feature can also add an
 item and duplicate an item, and you can navigate to a help screen. That can technically be
@@ -154,18 +217,17 @@ class FeatureModel {
 ```
 
 But this is not the most concise way to model this domain. Four optional values means there are
-`2⁴=16` different states this feature can be in, but only 5 of those states are valid. Either all
-can be `nil`, representing we are not navigated anywhere, or at most one can be non-`nil`,
-representing navigation to a single screen.
+2⁴&nbsp;=&nbsp;16 different states this feature can be in, but only 5 of those states are valid:
+either all can be `nil`, representing we are not navigated anywhere, or at most one can be
+non-`nil`, representing navigation to a single screen.
 
 But it is not valid to have 2, 3 or 4 non-`nil` values. That would represent multiple screens
 being simultaneously navigated to, such as two sheets being presented, which is invalid in SwiftUI
-and can even cause crashes.
+and can even cause crashes. And 11 of those 16 states—the vast majority—are invalid.
 
-This is showing that four optional values is not the best way to represent 4 navigation
-destinations. Instead, it is more concise to model the 4 destinations as an enum with a case for
-each destination, and then hold onto a single optional value to represent which destination
-is currently active:
+This is showing that 4 optionals is not the best way to represent 4 navigation destinations.
+Instead, it is more concise to model the 4 destinations as an enum with a case for each destination,
+and then hold onto a single optional value to represent which destination is currently active:
 
 ```swift
 @Observable
@@ -186,15 +248,16 @@ This allows you to prove that at most one destination can be active at a time. I
 to have both an "add" and "duplicate" screen presented at the same time.
 
 But sadly SwiftUI does not come with the tools necessary to drive navigation off of an optional
-enum. This is what motivated the creation of this library. It should be possible to represent
-all of the screens a feature can navigate to as an enum, and then drive sheets, popovers, covers
-and more from a particular case of that enum.
+enum. This is what motivated the creation of this library. It should be possible to represent all
+of the screens a feature can navigate to as an enum, and then drive drill-downs, sheets, popovers,
+covers, alerts, and more, from a particular case of that enum.
 
 ## SwiftUINavigation's tools
 
-The tools that ship with this library aim to solve the problems discussed above, and more. There are
-new APIs for sheets, popovers, covers, alerts, confirmation dialogs _and_ navigation links that
-allow you to model destinations as an enum and drive navigation by a particular case of the enum.
+The tools that ship with this library aim to solve the problems discussed above and more. There are
+new APIs for sheets, popovers, covers, alerts, confirmation dialogs, _and_ navigation stack
+destinations that allow you to model destinations as an enum and drive navigation by a particular
+case of the enum.
 
 All of the APIs for these seemingly disparate forms of navigation are unified by a single pattern.
 You first specify a binding to an optional value driving navigation, and then you specify some
@@ -277,6 +340,14 @@ NavigationLink(item: $model.destination.edit) { isActive in
 
 That is the basics of using this library's APIs for driving navigation off of state. Learn more by
 reading the articles below.
+
+## UIKit's tools for navigation
+
+<!-- TODO -->
+
+## UIKitNavigation's tools
+
+<!-- TODO -->
 
 ## Topics
 

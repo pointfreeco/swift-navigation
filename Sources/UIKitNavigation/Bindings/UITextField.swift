@@ -203,12 +203,14 @@
     }
 
     private var focusToken: ObservationToken? {
-      get { objc_getAssociatedObject(self, focusTokenKey) as? ObservationToken }
+      get { objc_getAssociatedObject(self, Self.focusTokenKey) as? ObservationToken }
       set {
-        objc_setAssociatedObject(self, focusTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(
+          self, Self.focusTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
       }
     }
-  }
 
-  private let focusTokenKey = malloc(1)!
+    private static let focusTokenKey = malloc(1)!
+  }
 #endif

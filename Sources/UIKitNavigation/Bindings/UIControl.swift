@@ -69,10 +69,12 @@
             : transaction
         )
       }
+      // NB: This key path must only be accessed on the main actor
+      nonisolated(unsafe) let uncheckedKeyPath = keyPath
       let observation = observe(keyPath) { control, _ in
         if !isSetting.value {
           MainActor.assumeIsolated {
-            binding.wrappedValue = control[keyPath: keyPath]
+            binding.wrappedValue = control[keyPath: uncheckedKeyPath]
           }
         }
       }
@@ -103,5 +105,6 @@
     }
   }
 
+  @MainActor
   private let observationTokensKey = malloc(1)!
 #endif

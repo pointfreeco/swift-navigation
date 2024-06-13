@@ -89,7 +89,7 @@ public struct UIBindable<Value> {
 }
 
 #if canImport(Observation)
-  @available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   extension UIBindable where Value: AnyObject & Observable {
     /// Creates a bindable object from an observable object.
     ///

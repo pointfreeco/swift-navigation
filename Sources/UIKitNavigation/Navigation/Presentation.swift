@@ -253,7 +253,7 @@
             }
           }
           newController.onDismiss = onDismiss
-          if #available(macOS 14, iOS 17, watchOS 10, tvOS 17, *) {
+          if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
             newController.traitOverrides.dismiss = UIDismissAction { _ in
               onDismiss()
             }
@@ -280,17 +280,19 @@
 
     fileprivate var presented: [UIBindingIdentifier: Presented] {
       get {
-        (objc_getAssociatedObject(self, presentedKey)
+        (objc_getAssociatedObject(self, Self.presentedKey)
           as? [UIBindingIdentifier: Presented])
           ?? [:]
       }
       set {
-        objc_setAssociatedObject(self, presentedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(
+          self, Self.presentedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
       }
     }
-  }
 
-  private let presentedKey = malloc(1)!
+    private static let presentedKey = malloc(1)!
+  }
 
   extension UINavigationController {
     /// Pushes a view controller onto the receiver's stack when a binding to a Boolean value you

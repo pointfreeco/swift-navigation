@@ -133,7 +133,7 @@
         return nil
       }
       viewController.navigationID = navigationID
-      if #available(macOS 14, iOS 17, watchOS 10, tvOS 17, *) {
+      if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
         viewController.traitOverrides
           .dismiss = UIDismissAction { [weak self, weak viewController] transaction in
             guard let self, let viewController else { return }
@@ -331,17 +331,17 @@
   extension UIViewController {
     fileprivate var navigationID: UINavigationPath.Element? {
       get {
-        objc_getAssociatedObject(self, navigationIDKey) as? UINavigationPath.Element
+        objc_getAssociatedObject(self, Self.navigationIDKey) as? UINavigationPath.Element
       }
       set {
         objc_setAssociatedObject(
-          self, navigationIDKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self, Self.navigationIDKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }
-  }
 
-  private let navigationIDKey = malloc(1)!
+    private static let navigationIDKey = malloc(1)!
+  }
 
   extension CollectionDifference.Change {
     fileprivate var offset: Int {

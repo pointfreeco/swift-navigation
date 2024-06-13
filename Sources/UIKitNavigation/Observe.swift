@@ -168,5 +168,5 @@
     }
   }
 
-  private let tokensKey = malloc(1)!
+  private nonisolated(unsafe) let tokensKey = malloc(1)!
 #endif

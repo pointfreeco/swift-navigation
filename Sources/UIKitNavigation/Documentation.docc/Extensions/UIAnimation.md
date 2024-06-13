@@ -29,6 +29,7 @@
 - ``animate(withDuration:delay:options:)``
 - ``animate(withDuration:delay:usingSpringWithDamping:initialSpringVelocity:options:)``
 - ``animate(springDuration:bounce:initialSpringVelocity:delay:options:)``
+- ``init(_:)``
 
 ### Configuring an animation
 

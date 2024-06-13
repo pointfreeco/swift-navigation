@@ -42,8 +42,6 @@ extension UICollectionView {
   }
 }
 
-private let bindingKey = malloc(1)!
-
 private enum Section { case main }
 
 private struct UIBindingWrapper<Value>: Hashable {

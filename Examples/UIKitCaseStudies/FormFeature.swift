@@ -203,12 +203,12 @@ final class ChildController: UIViewController {
 extension NSAttributedString {
   fileprivate static var mock: NSAttributedString {
     let base = UIFont.preferredFont(forTextStyle: .body)
-    var font = UIFont(
+    let font = UIFont(
       descriptor: base.fontDescriptor.withSymbolicTraits(.traitBold) ?? base.fontDescriptor,
       size: base.pointSize
     )
     let name = NSAttributedString(string: "Blob, Jr.", attributes: [.font: font])
-    var string = NSMutableAttributedString(string: "Hello, ")
+    let string = NSMutableAttributedString(string: "Hello, ")
     string.append(name)
     string.append(NSAttributedString(string: "!"))
     return string
