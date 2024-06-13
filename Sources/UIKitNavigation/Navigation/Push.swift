@@ -9,7 +9,14 @@
 
     public func callAsFunction<Element: Hashable>(value: Element) {
       guard let run else {
-        // TODO: runtimeWarn?
+        runtimeWarn(
+          """
+          Tried to push a value from outside of a navigation stack.
+
+          'UITraitCollection.push(value:)' must be called from an object in a \
+          'NavigationStackController'.
+          """
+        )
         return
       }
       run(value)

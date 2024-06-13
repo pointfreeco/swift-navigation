@@ -272,12 +272,13 @@
   }
 
   extension UINavigationController {
+    @available(iOS, deprecated: 9999, message: "Use 'traitCollection.push(value:)', instead.")
     public func push<Element: Hashable>(value: Element) {
       guard let stackController = self as? NavigationStackController
       else {
         runtimeWarn(
           """
-          Tried to push a value a non-"NavigationStackController".
+          Tried to push a value to a non-"NavigationStackController".
           """
         )
         return
