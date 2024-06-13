@@ -3,6 +3,8 @@ PLATFORM_MACOS = macOS
 PLATFORM_TVOS = tvOS Simulator,name=Apple TV
 PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
 
+TEST_RUNNER_CI = $(CI)
+
 default: test
 
 test:
