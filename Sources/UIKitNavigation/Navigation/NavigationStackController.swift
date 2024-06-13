@@ -43,6 +43,12 @@
 
       super.delegate = pathDelegate
 
+      if #available(iOS 17, *) {
+        traitOverrides.push = UIPushAction { [weak self] value in
+          self?.push(value: value)
+        }
+      }
+
       observe { [weak self] transaction in
         guard let self else { return }
 

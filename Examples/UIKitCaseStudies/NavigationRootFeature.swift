@@ -8,7 +8,11 @@ final class NavigationRootViewController: UIViewController {
       type: .system,
       primaryAction: UIAction { [weak self] _ in
         guard let self else { return }
-        navigationController?.push(value: AppModel.Path.counter(CounterModel()))
+        if #available(iOS 17, *) {
+          traitCollection.push(value: AppModel.Path.counter(CounterModel()))
+        } else {
+          navigationController?.push(value: AppModel.Path.counter(CounterModel()))
+        }
       })
     counterButton.setTitle("Counter", for: .normal)
     let stack = UIStackView(arrangedSubviews: [
