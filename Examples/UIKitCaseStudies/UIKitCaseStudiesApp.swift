@@ -3,6 +3,34 @@ import UIKitNavigation
 import XCTestDynamicOverlay
 
 // TODO: Clean up case studies
+/*
+
+ - Observation
+
+ - Controls
+
+ - Navigation
+   - Tree-based
+     - Alerts
+     - Optional
+     - Enum
+   - Stack-based
+   - Type-erased stacks
+
+   * Programmatic deep-linking
+   * Programmatic dismissal
+   * Child dismissal (traits)
+   * Push(value) (trait vs. navController)
+     * NavigationLinkView case study
+
+ - Animations
+
+ Case studies:
+ - Collections
+   - Ad hoc observation
+   - Binding helper
+
+ */
 
 @main
 @MainActor
