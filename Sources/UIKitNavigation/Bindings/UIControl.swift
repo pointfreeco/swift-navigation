@@ -37,11 +37,9 @@
     ///   - binding: A source of truth for the control's value.
     ///   - keyPath: A key path to the control's value.
     ///   - event: The control-specific events for which the binding is updated.
-    ///   - set: A closure that is called when the binding's value changes.
-    ///   - control: A weakly-captured `self` to be configured with a new value.
-    ///   - newValue: A new value that can be used to configure the control.
-    ///   - transaction: A transaction, which can be used to determine how and if the change should
-    ///     be animated.
+    ///   - set: A closure that is called when the binding's value changes with a weakly-captured
+    ///     control, a new value that can be used to configure the control, and a transaction, which
+    ///     can be used to determine how and if the change should be animated.
     /// - Returns: A cancel token.
     @discardableResult
     public func bind<Value>(
