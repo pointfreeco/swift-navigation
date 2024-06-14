@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception",
       "state" : {
-        "revision" : "64f7f6c28c6a4d3c4b9da2ba02383e29ab48a8cf",
-        "version" : "1.2.2"
+        "revision" : "d8340521e532cffdf75a64468ff9362de8bd2bb9",
+        "version" : "1.2.3"
       }
     },
     {
