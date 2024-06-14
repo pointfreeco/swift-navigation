@@ -67,15 +67,15 @@ final class FormViewController: UIViewController {
     let mySwitch = UISwitch(isOn: $model.isOn)
 
     let myTextField = UITextField(text: $model.text)
+    myTextField.bind(focus: $model.focus, equals: .text)
     myTextField.bind(selection: $model.textSelection)
     myTextField.borderStyle = .roundedRect
-    myTextField.focus($model.focus, equals: .text)
 
     let myAttributedTextField = UITextField(attributedText: $model.attributedText)
     myAttributedTextField.allowsEditingTextAttributes = true
+    myAttributedTextField.bind(focus: $model.focus, equals: .attributedText)
     myAttributedTextField.bind(selection: $model.attributedTextSelection)
     myAttributedTextField.borderStyle = .roundedRect
-    myAttributedTextField.focus($model.focus, equals: .attributedText)
 
     let sheetButton = UIButton(
       configuration: .plain(),
