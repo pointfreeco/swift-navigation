@@ -56,7 +56,7 @@
     @available(watchOS, introduced: 6, deprecated: 9)
     public init<Item, WrappedDestination>(
       item: Binding<Item?>,
-      onNavigate: @escaping (_ isActive: Bool) -> Void,
+      onNavigate: @escaping @Sendable (_ isActive: Bool) -> Void,
       @ViewBuilder destination: @escaping (Binding<Item>) -> WrappedDestination,
       @ViewBuilder label: () -> Label
     ) where Destination == WrappedDestination? {
