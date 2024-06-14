@@ -69,7 +69,6 @@
         init(_ value: Value) {
           self.wrappedValue = value
         }
-        public var projectedValue: Self { self }
       }
     #else
       import Foundation
