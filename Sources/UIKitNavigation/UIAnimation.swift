@@ -40,7 +40,7 @@
       switch framework {
       case let .swiftUI(animation):
         #if swift(>=6)
-          if #available(macOS 15, iOS 18, tvOS 18, visionOS 2, watchOS 11, *) {
+          if #available(iOS 18, macOS 15, tvOS 18, visionOS 2, watchOS 11, *) {
             var result: Swift.Result<Result, Error>?
             UIView.animate(
               with: animation,

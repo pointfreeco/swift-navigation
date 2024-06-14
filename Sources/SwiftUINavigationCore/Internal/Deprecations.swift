@@ -194,10 +194,7 @@
     }
   }
 
-  @available(iOS 13, *)
-  @available(macOS 12, *)
-  @available(tvOS 13, *)
-  @available(watchOS 6, *)
+  @available(iOS 13, macOS 12, tvOS 13, watchOS 6, *)
   extension ConfirmationDialogState {
     @available(*, deprecated, message: "Use 'ButtonState<Action>' instead.")
     public typealias Button = ButtonState<Action>

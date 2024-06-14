@@ -355,8 +355,8 @@
     }
   }
 
-  @available(macOS, unavailable)
   @available(iOS 14, tvOS 14, watchOS 8, *)
+  @available(macOS, unavailable)
   extension View {
     @available(
       *, deprecated,

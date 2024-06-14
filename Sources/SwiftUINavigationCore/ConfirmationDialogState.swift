@@ -116,10 +116,7 @@
   /// // Verify that favorite logic executed correctly
   /// model.dialog = nil
   /// ```
-  @available(iOS 13, *)
-  @available(macOS 12, *)
-  @available(tvOS 13, *)
-  @available(watchOS 6, *)
+  @available(iOS 13, macOS 12, tvOS 13, watchOS 6, *)
   public struct ConfirmationDialogState<Action>: Identifiable {
     public let id: UUID
     public var buttons: [ButtonState<Action>]
@@ -148,10 +145,7 @@
     ///   - title: The title of the dialog.
     ///   - actions: A ``ButtonStateBuilder`` returning the dialog's actions.
     ///   - message: The message for the dialog.
-    @available(iOS 15, *)
-    @available(macOS 12, *)
-    @available(tvOS 15, *)
-    @available(watchOS 8, *)
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
     public init(
       titleVisibility: ConfirmationDialogStateTitleVisibility,
       title: () -> TextState,
@@ -221,10 +215,7 @@
     case visible
   }
 
-  @available(iOS 13, *)
-  @available(macOS 12, *)
-  @available(tvOS 13, *)
-  @available(watchOS 6, *)
+  @available(iOS 13, macOS 12, tvOS 13, watchOS 6, *)
   extension ConfirmationDialogState: CustomDumpReflectable {
     public var customDumpMirror: Mirror {
       var children: [(label: String?, value: Any)] = []
@@ -246,10 +237,7 @@
     }
   }
 
-  @available(iOS 13, *)
-  @available(macOS 12, *)
-  @available(tvOS 13, *)
-  @available(watchOS 6, *)
+  @available(iOS 13, macOS 12, tvOS 13, watchOS 6, *)
   extension ConfirmationDialogState: Equatable where Action: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
       lhs.title == rhs.title
@@ -258,10 +246,7 @@
     }
   }
 
-  @available(iOS 13, *)
-  @available(macOS 12, *)
-  @available(tvOS 13, *)
-  @available(watchOS 6, *)
+  @available(iOS 13, macOS 12, tvOS 13, watchOS 6, *)
   extension ConfirmationDialogState: Hashable where Action: Hashable {
     public func hash(into hasher: inout Hasher) {
       hasher.combine(self.title)
@@ -270,10 +255,7 @@
     }
   }
 
-  @available(iOS 13, *)
-  @available(macOS 12, *)
-  @available(tvOS 13, *)
-  @available(watchOS 6, *)
+  @available(iOS 13, macOS 12, tvOS 13, watchOS 6, *)
   extension ConfirmationDialogState: Sendable where Action: Sendable {}
 
   // MARK: - SwiftUI bridging
