@@ -11,8 +11,8 @@
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - selectedColor: The binding to read from for the selected color, and write to when the
     ///     selected color is changes.
-    public convenience init<Segment: RawRepresentable<Int>>(
-      frame: CGRect = .zero, selectedSegment: UIBinding<Segment>
+    public convenience init(
+      frame: CGRect = .zero, selectedSegment: UIBinding<some RawRepresentable<Int>>
     ) {
       self.init(frame: frame)
       bind(selectedSegment: selectedSegment)
@@ -24,9 +24,7 @@
     ///   when the selected color changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind<Segment: RawRepresentable<Int>>(
-      selectedSegment: UIBinding<Segment>
-    ) -> ObservationToken {
+    public func bind(selectedSegment: UIBinding<some RawRepresentable<Int>>) -> ObservationToken {
       bind(selectedSegment.toRawValue, to: \.selectedSegmentIndex, for: .valueChanged)
     }
   }

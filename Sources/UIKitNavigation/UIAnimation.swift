@@ -39,17 +39,19 @@
     ) rethrows -> Result {
       switch framework {
       case let .swiftUI(animation):
-        if #available(macOS 15, iOS 18, tvOS 18, visionOS 2, watchOS 11, *) {
-          var result: Swift.Result<Result, Error>?
-          UIView.animate(
-            with: animation,
-            changes: { result = Swift.Result(catching: body) },
-            completion: completion.map { completion in { completion(true) } }
-          )
-          return try result!._rethrowGet()
-        } else {
-          fatalError()
-        }
+        #if swift(>=6)
+          if #available(macOS 15, iOS 18, tvOS 18, visionOS 2, watchOS 11, *) {
+            var result: Swift.Result<Result, Error>?
+            UIView.animate(
+              with: animation,
+              changes: { result = Swift.Result(catching: body) },
+              completion: completion.map { completion in { completion(true) } }
+            )
+            return try result!._rethrowGet()
+          }
+        #endif
+        _ = animation
+        fatalError()
 
       case let .uiKit(animation):
         func animations() throws -> Result {
@@ -330,7 +332,7 @@
     /// Animates changes using the specified SwiftUI animation.
     ///
     /// - Parameter animation: The animation to use for the changes.
-    @available(macOS 15, iOS 18, tvOS 18, visionOS 2, watchOS 11, *)
+    @available(iOS 18, macOS 15, tvOS 18, visionOS 2, watchOS 11, *)
     public init(_ animation: Animation) {
       self.init(framework: .swiftUI(animation))
     }

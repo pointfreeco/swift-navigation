@@ -68,11 +68,11 @@
         )
       }
       // NB: This key path must only be accessed on the main actor
-      nonisolated(unsafe) let uncheckedKeyPath = keyPath
+      let uncheckedKeyPath = UncheckedSendable(keyPath)
       let observation = observe(keyPath) { control, _ in
         guard !isSetting.value else { return }
         MainActor.assumeIsolated {
-          binding.wrappedValue = control[keyPath: uncheckedKeyPath]
+          binding.wrappedValue = control[keyPath: uncheckedKeyPath.value]
         }
       }
       let observationToken = ObservationToken { [weak self] in

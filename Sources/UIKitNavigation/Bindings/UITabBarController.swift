@@ -1,4 +1,4 @@
-#if canImport(UIKit)
+#if swift(>=6) && canImport(UIKit)
   import UIKit
 
   @available(iOS 18, *)

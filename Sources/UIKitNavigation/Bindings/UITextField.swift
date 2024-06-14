@@ -191,21 +191,21 @@
     ///   - value: The value to match against when determining whether the binding should change.
     /// - Returns: A cancel token.
     @discardableResult
-    public func focus<Value: Hashable>(
-      _ binding: UIBinding<Value?>, equals value: Value
+    public func bind<Value: Hashable>(
+      focus: UIBinding<Value?>, equals value: Value
     ) -> ObservationToken {
       self.focusToken?.cancel()
-      let editingDidBeginAction = UIAction { _ in binding.wrappedValue = value }
+      let editingDidBeginAction = UIAction { _ in focus.wrappedValue = value }
       let editingDidEndAction = UIAction { _ in
-        guard binding.wrappedValue == value else { return }
-        binding.wrappedValue = nil
+        guard focus.wrappedValue == value else { return }
+        focus.wrappedValue = nil
       }
       addAction(editingDidBeginAction, for: .editingDidBegin)
       // TODO: Is this right? Should we only do `.editingDidEnd`?
       addAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
       let innerToken = observe { [weak self] in
         guard let self else { return }
-        switch (binding.wrappedValue, isFirstResponder) {
+        switch (focus.wrappedValue, isFirstResponder) {
         case (value, false):
           becomeFirstResponder()
         case (nil, true):
@@ -225,7 +225,6 @@
       return outerToken
     }
 
-    // TODO: Should this be `bind(focus:)`?
     /// Binds this text field's focus state to the given Boolean state value.
     ///
     /// Use this method to cause the text field to receive focus whenever the the `condition` value
@@ -277,8 +276,8 @@
     ///   automatically dismisses focus.
     /// - Returns: A cancel token.
     @discardableResult
-    public func focus(_ condition: UIBinding<Bool>) -> ObservationToken {
-      focus(condition.toOptionalUnit, equals: Bool.Unit())
+    public func bind(focus condition: UIBinding<Bool>) -> ObservationToken {
+      bind(focus: condition.toOptionalUnit, equals: Bool.Unit())
     }
 
     private var focusToken: ObservationToken? {
@@ -293,6 +292,9 @@
     private static let focusTokenKey = malloc(1)!
   }
 
+  /// Represents a selection of text.
+  ///
+  /// Like SwiftUI's `TextSelection`, but for UIKit.
   public struct UITextSelection: Hashable, Sendable {
     public var range: Range<String.Index>
 

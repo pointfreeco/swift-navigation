@@ -14,5 +14,9 @@
 
 ### Binding to focus state
 
-- ``UIKit/UITextField/focus(_:)``
-- ``UIKit/UITextField/focus(_:equals:)``
+- ``UIKit/UITextField/bind(focus:)``
+- ``UIKit/UITextField/bind(focus:equals:)``
+
+### Binding to text selection
+
+- ``UIKit/UITextField/bind(selection:)``
