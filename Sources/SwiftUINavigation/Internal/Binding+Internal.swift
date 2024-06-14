@@ -2,7 +2,7 @@
   import SwiftUI
 
   extension Binding {
-    func didSet(_ perform: @escaping (Value) -> Void) -> Self {
+    func didSet(_ perform: @escaping @Sendable (Value) -> Void) -> Self {
       .init(
         get: { self.wrappedValue },
         set: { newValue, transaction in

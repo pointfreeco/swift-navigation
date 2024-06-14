@@ -61,7 +61,9 @@
     /// - Parameter isDuplicate: A closure to evaluate whether two elements are equivalent, for
     ///   purposes of filtering writes. Return `true` from this closure to indicate that the second
     ///   element is a duplicate of the first.
-    public func removeDuplicates(by isDuplicate: @escaping (Value, Value) -> Bool) -> Self {
+    public func removeDuplicates(
+      by isDuplicate: @Sendable @escaping (Value, Value) -> Bool
+    ) -> Self {
       .init(
         get: { self.wrappedValue },
         set: { newValue, transaction in
@@ -81,7 +83,7 @@
     ///
     /// [FB9404926]: https://gist.github.com/mbrandonw/70df235e42d505b3b1b9b7d0d006b049
     public func removeDuplicates() -> Self {
-      self.removeDuplicates(by: ==)
+      self.removeDuplicates(by: { $0 == $1 })
     }
   }
 

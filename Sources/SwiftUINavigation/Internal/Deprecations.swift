@@ -126,7 +126,7 @@
     @available(*, deprecated, renamed: "init(item:onNavigate:destination:label:)")
     public init<Value, WrappedDestination>(
       unwrapping value: Binding<Value?>,
-      onNavigate: @escaping (_ isActive: Bool) -> Void,
+      onNavigate: @escaping @Sendable (_ isActive: Bool) -> Void,
       @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
       @ViewBuilder label: () -> Label
     ) where Destination == WrappedDestination? {
@@ -452,19 +452,22 @@
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
-    public init?<Enum>(unwrapping enum: Binding<Enum>, case casePath: AnyCasePath<Enum, Value>) {
-      guard var `case` = casePath.extract(from: `enum`.wrappedValue)
+    public init?<Enum>(unwrapping enum: Binding<Enum>, case casePath: AnyCasePath<Enum, Value>)
+    where Value: Sendable {
+      guard let `case` = casePath.extract(from: `enum`.wrappedValue).map({ LockIsolated($0) })
       else { return nil }
 
       self.init(
         get: {
-          `case` = casePath.extract(from: `enum`.wrappedValue) ?? `case`
-          return `case`
+          `case`.withLock {
+            $0 = casePath.extract(from: `enum`.wrappedValue) ?? $0
+            return $0
+          }
         },
-        set: {
+        set: { newValue, transaction in
           guard casePath.extract(from: `enum`.wrappedValue) != nil else { return }
-          `case` = $0
-          `enum`.transaction($1).wrappedValue = casePath.embed($0)
+          `case`.withLock { $0 = newValue }
+          `enum`.transaction(transaction).wrappedValue = casePath.embed(newValue)
         }
       )
     }
@@ -525,7 +528,7 @@
     }
   }
 
-  public struct IfCaseLet<Enum, Case, IfContent, ElseContent>: View
+  public struct IfCaseLet<Enum, Case: Sendable, IfContent, ElseContent>: View
   where IfContent: View, ElseContent: View {
     public let `enum`: Binding<Enum>
     public let casePath: AnyCasePath<Enum, Case>
@@ -696,7 +699,7 @@
     public init<Enum, Case, WrappedDestination>(
       unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, Case>,
-      onNavigate: @escaping (Bool) -> Void,
+      onNavigate: @escaping @Sendable (Bool) -> Void,
       @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
       @ViewBuilder label: () -> Label
     ) where Destination == WrappedDestination? {
@@ -767,7 +770,7 @@
     message:
       "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
-  public struct CaseLet<Enum, Case, Content>: Sendable, View
+  public struct CaseLet<Enum, Case: Sendable, Content>: Sendable, View
   where Content: View {
     @EnvironmentObject private var `enum`: BindingObject<Enum>
     public let casePath: AnyCasePath<Enum, Case>
@@ -839,7 +842,7 @@
       "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
   extension Switch {
-    public init<Case1, Content1, DefaultContent>(
+    public init<Case1: Sendable, Content1, DefaultContent>(
       _ enum: Binding<Enum>,
       @ViewBuilder content: () -> TupleView<
         (
@@ -864,7 +867,7 @@
       }
     }
 
-    public init<Case1, Content1>(
+    public init<Case1: Sendable, Content1>(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
       line: UInt = #line,
@@ -882,7 +885,7 @@
       }
     }
 
-    public init<Case1, Content1, Case2, Content2, DefaultContent>(
+    public init<Case1: Sendable, Content1, Case2: Sendable, Content2, DefaultContent>(
       _ enum: Binding<Enum>,
       @ViewBuilder content: () -> TupleView<
         (
@@ -913,7 +916,7 @@
       }
     }
 
-    public init<Case1, Content1, Case2, Content2>(
+    public init<Case1: Sendable, Content1, Case2: Sendable, Content2>(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
       line: UInt = #line,
@@ -942,9 +945,9 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
       DefaultContent
     >(
       _ enum: Binding<Enum>,
@@ -983,7 +986,7 @@
       }
     }
 
-    public init<Case1, Content1, Case2, Content2, Case3, Content3>(
+    public init<Case1: Sendable, Content1, Case2: Sendable, Content2, Case3: Sendable, Content3>(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
       line: UInt = #line,
@@ -1017,10 +1020,10 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
       DefaultContent
     >(
       _ enum: Binding<Enum>,
@@ -1066,10 +1069,10 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4
     >(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
@@ -1109,11 +1112,11 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
       DefaultContent
     >(
       _ enum: Binding<Enum>,
@@ -1165,11 +1168,11 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5
     >(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
@@ -1214,12 +1217,12 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
-      Case6, Content6,
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
+      Case6: Sendable, Content6,
       DefaultContent
     >(
       _ enum: Binding<Enum>,
@@ -1277,12 +1280,12 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
-      Case6, Content6
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
+      Case6: Sendable, Content6
     >(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
@@ -1332,13 +1335,13 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
-      Case6, Content6,
-      Case7, Content7,
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
+      Case6: Sendable, Content6,
+      Case7: Sendable, Content7,
       DefaultContent
     >(
       _ enum: Binding<Enum>,
@@ -1402,13 +1405,13 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
-      Case6, Content6,
-      Case7, Content7
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
+      Case6: Sendable, Content6,
+      Case7: Sendable, Content7
     >(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
@@ -1463,14 +1466,14 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
-      Case6, Content6,
-      Case7, Content7,
-      Case8, Content8,
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
+      Case6: Sendable, Content6,
+      Case7: Sendable, Content7,
+      Case8: Sendable, Content8,
       DefaultContent
     >(
       _ enum: Binding<Enum>,
@@ -1540,14 +1543,14 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
-      Case6, Content6,
-      Case7, Content7,
-      Case8, Content8
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
+      Case6: Sendable, Content6,
+      Case7: Sendable, Content7,
+      Case8: Sendable, Content8
     >(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
@@ -1607,15 +1610,15 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
-      Case6, Content6,
-      Case7, Content7,
-      Case8, Content8,
-      Case9, Content9,
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
+      Case6: Sendable, Content6,
+      Case7: Sendable, Content7,
+      Case8: Sendable, Content8,
+      Case9: Sendable, Content9,
       DefaultContent
     >(
       _ enum: Binding<Enum>,
@@ -1691,15 +1694,15 @@
     }
 
     public init<
-      Case1, Content1,
-      Case2, Content2,
-      Case3, Content3,
-      Case4, Content4,
-      Case5, Content5,
-      Case6, Content6,
-      Case7, Content7,
-      Case8, Content8,
-      Case9, Content9
+      Case1: Sendable, Content1,
+      Case2: Sendable, Content2,
+      Case3: Sendable, Content3,
+      Case4: Sendable, Content4,
+      Case5: Sendable, Content5,
+      Case6: Sendable, Content6,
+      Case7: Sendable, Content7,
+      Case8: Sendable, Content8,
+      Case9: Sendable, Content9
     >(
       _ enum: Binding<Enum>,
       file: StaticString = #fileID,
@@ -1936,7 +1939,7 @@
     public init<Value, WrappedDestination>(
       unwrapping value: Binding<Value?>,
       @ViewBuilder destination: @escaping (Binding<Value>) -> WrappedDestination,
-      onNavigate: @escaping (_ isActive: Bool) -> Void,
+      onNavigate: @escaping @Sendable (_ isActive: Bool) -> Void,
       @ViewBuilder label: () -> Label
     ) where Destination == WrappedDestination? {
       self.init(
@@ -1951,7 +1954,7 @@
       unwrapping enum: Binding<Enum?>,
       case casePath: CasePath<Enum, Case>,
       @ViewBuilder destination: @escaping (Binding<Case>) -> WrappedDestination,
-      onNavigate: @escaping (Bool) -> Void,
+      onNavigate: @escaping @Sendable (Bool) -> Void,
       @ViewBuilder label: () -> Label
     ) where Destination == WrappedDestination? {
       self.init(
