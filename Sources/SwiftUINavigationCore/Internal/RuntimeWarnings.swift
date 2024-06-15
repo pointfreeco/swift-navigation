@@ -21,7 +21,7 @@
         #if canImport(os)
           os_log(
             .fault,
-            dso: dso,
+            dso: dso.wrappedValue,
             log: OSLog(subsystem: "com.apple.runtime-issues", category: category),
             "%@",
             message
@@ -45,27 +45,30 @@
       //     To work around this, we hook into SwiftUI's runtime issue delivery mechanism, instead.
       //
       // Feedback filed: https://gist.github.com/stephencelis/a8d06383ed6ccde3e5ef5d1b3ad52bbc
-      #if swift(>=5.10)
-        @usableFromInline
-        nonisolated(unsafe) let dso = getSwiftUIDSO()
-      #else
-        @usableFromInline
-        let dso = getSwiftUIDSO()
-      #endif
-
-      private func getSwiftUIDSO() -> UnsafeMutableRawPointer {
-        let count = _dyld_image_count()
-        for i in 0..<count {
-          if let name = _dyld_get_image_name(i) {
-            let swiftString = String(cString: name)
-            if swiftString.hasSuffix("/SwiftUI") {
-              if let header = _dyld_get_image_header(i) {
-                return UnsafeMutableRawPointer(mutating: UnsafeRawPointer(header))
+      @usableFromInline
+      let dso = UncheckedSendable<UnsafeMutableRawPointer>(
+        {
+          let count = _dyld_image_count()
+          for i in 0..<count {
+            if let name = _dyld_get_image_name(i) {
+              let swiftString = String(cString: name)
+              if swiftString.hasSuffix("/SwiftUI") {
+                if let header = _dyld_get_image_header(i) {
+                  return UnsafeMutableRawPointer(mutating: UnsafeRawPointer(header))
+                }
               }
             }
           }
+          return UnsafeMutableRawPointer(mutating: #dsohandle)
+        }())
+
+      @usableFromInline
+      struct UncheckedSendable<Value>: @unchecked Sendable {
+        @usableFromInline
+        var wrappedValue: Value
+        init(_ value: Value) {
+          self.wrappedValue = value
         }
-        return UnsafeMutableRawPointer(mutating: #dsohandle)
       }
     #else
       import Foundation

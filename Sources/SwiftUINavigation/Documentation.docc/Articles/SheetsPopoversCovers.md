@@ -42,6 +42,22 @@ Notice that the trailing closure is handed a binding to the unwrapped state. Thi
 handed to the child view, and any changes made by the parent will be reflected in the child, and
 vice-versa.
 
+However, this does not compile just yet because `sheet(item:)` requires that the item being 
+presented conform to `Identifable`, and `Int` does not conform. This library comes with an overload
+of `sheet`, called ``SwiftUI/View/sheet(item:id:onDismiss:content:)-1hi9l``, that allows you to 
+specify the ID of the item being presented:
+
+```swift
+var body: some View {
+  List {
+    // ...
+  }
+  .sheet(item: $destination, id: \.self) { $number in
+    CounterView(number: $number)
+  }
+}
+```
+
 Sometimes it is not optimal to model presentation destinations as optionals. In particular, if a
 feature can navigate to multiple, mutually exclusive screens, then an enum is more appropriate.
 
@@ -65,7 +81,7 @@ var body: some View {
   List {
     // ...
   }
-  .sheet(item: $destination.counter) { $number in
+  .sheet(item: $destination.counter, id: \.self) { $number in
     CounterView(number: $number)
   }
 }
@@ -73,7 +89,7 @@ var body: some View {
 
 ### Popovers
 
-Popovers work similarly to covers. If the popover's state is represented as an optional you can do
+Popovers work similarly to sheets. If the popover's state is represented as an optional you can do
 the following:
 
 ```swift
@@ -84,7 +100,7 @@ struct ContentView: View {
     List {
       // ...
     }
-    .popover(item: $destination) { $number in
+    .popover(item: $destination, id: \.self) { $number in
       CounterView(number: $number)
     }
   }
@@ -107,7 +123,7 @@ struct ContentView: View {
     List {
       // ...
     }
-    .popover(item: $destination.counter) { $number in
+    .popover(item: $destination.counter, id: \.self) { $number in
       CounterView(number: $number)
     }
   }
@@ -116,7 +132,7 @@ struct ContentView: View {
 
 ### Covers
 
-Full screen covers work similarly to covers and sheets. If the cover's state is represented as an
+Full screen covers work similarly to sheets and popovers. If the cover's state is represented as an
 optional you can do the following:
 
 ```swift
@@ -127,7 +143,7 @@ struct ContentView: View {
     List {
       // ...
     }
-    .fullscreenCover(item: $destination) { $number in
+    .fullscreenCover(item: $destination, id: \.self) { $number in
       CounterView(number: $number)
     }
   }
@@ -150,7 +166,7 @@ struct ContentView: View {
     List {
       // ...
     }
-    .fullscreenCover(item: $destination.counter) { $number in
+    .fullscreenCover(item: $destination.counter, id: \.self) { $number in
       CounterView(number: $number)
     }
   }

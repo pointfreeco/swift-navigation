@@ -1,7 +1,4 @@
 #if canImport(UIKit)
-  // TODO: `UISearchTextField(…, $tokens, $suggestedTokens)`?
-
-  import ConcurrencyExtras
   @_spi(Internals) import SwiftNavigation
   import UIKit
 
@@ -57,8 +54,8 @@
       let isSetting = LockIsolated(false)
       let token = observe { [weak self] transaction in
         guard let self else { return }
-        isSetting.setValue(true)
-        defer { isSetting.setValue(false) }
+        isSetting.withLock { $0 = true }
+        defer { isSetting.withLock { $0 = false } }
         set(
           self,
           binding.wrappedValue,
@@ -68,11 +65,11 @@
         )
       }
       // NB: This key path must only be accessed on the main actor
-      let uncheckedKeyPath = UncheckedSendable(keyPath)
-      let observation = observe(keyPath) { control, _ in
-        guard !isSetting.value else { return }
+      @UncheckedSendable var uncheckedKeyPath = keyPath
+      let observation = observe(keyPath) { [$uncheckedKeyPath] control, _ in
+        guard isSetting.withLock({ !$0 }) else { return }
         MainActor.assumeIsolated {
-          binding.wrappedValue = control[keyPath: uncheckedKeyPath.value]
+          binding.wrappedValue = control[keyPath: $uncheckedKeyPath.wrappedValue]
         }
       }
       let observationToken = ObservationToken { [weak self] in
