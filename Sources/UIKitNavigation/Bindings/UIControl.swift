@@ -1,4 +1,5 @@
 #if canImport(UIKit)
+  import ConcurrencyExtras
   @_spi(Internals) import SwiftNavigation
   import UIKit
 
@@ -54,8 +55,8 @@
       let isSetting = LockIsolated(false)
       let token = observe { [weak self] transaction in
         guard let self else { return }
-        isSetting.withLock { $0 = true }
-        defer { isSetting.withLock { $0 = false } }
+        isSetting.withValue { $0 = true }
+        defer { isSetting.withValue { $0 = false } }
         set(
           self,
           binding.wrappedValue,
@@ -67,7 +68,7 @@
       // NB: This key path must only be accessed on the main actor
       @UncheckedSendable var uncheckedKeyPath = keyPath
       let observation = observe(keyPath) { [$uncheckedKeyPath] control, _ in
-        guard isSetting.withLock({ !$0 }) else { return }
+        guard isSetting.withValue({ !$0 }) else { return }
         MainActor.assumeIsolated {
           binding.wrappedValue = control[keyPath: $uncheckedKeyPath.wrappedValue]
         }

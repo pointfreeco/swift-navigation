@@ -1,3 +1,5 @@
+import ConcurrencyExtras
+
 @_spi(Internals)
 public func observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
@@ -40,7 +42,7 @@ public final class ObservationToken: Sendable, HashableObject {
   private let onCancel: @Sendable () -> Void
 
   public var isCancelled: Bool {
-    _isCancelled.withLock { $0 }
+    _isCancelled.withValue { $0 }
   }
 
   public init(onCancel: @escaping @Sendable () -> Void = {}) {
@@ -57,7 +59,7 @@ public final class ObservationToken: Sendable, HashableObject {
   /// > immediately, but rather next time a change is detected by `observe` it will cease any future
   /// > observation.
   public func cancel() {
-    _isCancelled.withLock { isCancelled in
+    _isCancelled.withValue { isCancelled in
       guard !isCancelled else { return }
       defer { isCancelled = true }
       onCancel()
