@@ -1,43 +1,55 @@
 import SwiftUI
 import SwiftUINavigation
 
-private let readMe = """
-  This case study demonstrates how to enhance an existing SwiftUI component so that it can be \
-  driven off of optional and enum state.
+struct CustomComponents: CaseStudy {
+  let title = "Custom components"
+  let readMe = """
+    This case study demonstrates how to enhance an existing SwiftUI component so that it can be \
+    driven off of enum state.
 
-  The BottomMenuModifier component in this is file is primarily powered by a simple boolean \
-  binding, which means its content cannot be dynamic based off of the source of truth that drives \
-  its presentation, and it cannot make mutations to the source of truth.
+    By marking your enum with @CasePathable you can deriving bindings of each case of the enum \
+    in order to hand off to SwiftUI components that take bindings of optionals.
+    """
+  let usesOwnLayout = true
+  @State var bottom: Bottom?
 
-  However, by leveraging the binding transformations that come with this library we can extend the \
-  bottom menu component with additional APIs that allow presentation and dismissal to be powered \
-  by optionals and enums.
-  """
-
-struct CustomComponents: View {
-  @State var count: Int?
+  @CasePathable
+  @dynamicMemberLookup
+  enum Bottom {
+    case count(Int)
+    case text(String)
+  }
 
   var body: some View {
     Form {
       Section {
-        Text(readMe)
-      }
-
-      Button("Show bottom menu") {
-        withAnimation {
-          count = 0
+        DisclosureGroup("About this case study") {
+          Text(readMe)
         }
       }
 
-      if let count = count, count > 0 {
+      Button("Show bottom menu: count") {
+        withAnimation { bottom = .count(0) }
+      }
+      Button("Show bottom menu: text") {
+        withAnimation { bottom = .text("") }
+      }
+
+      if let count = bottom?.count, count > 0 {
         Text("Current count: \(count)")
           .transition(.opacity)
       }
+      if let text = bottom?.text, !text.isEmpty {
+        Text("Current text: \(text)")
+          .transition(.opacity)
+      }
     }
-    .bottomMenu(item: $count) { $count in
-      Stepper("Number: \(count)", value: $count.animation())
+    .bottomMenu(item: $bottom.count) { $count in
+      Stepper("Number: \(count)", value: $count)
     }
-    .navigationTitle("Custom components")
+    .bottomMenu(item: $bottom.text) { $text in
+      TextField("Type into this field", text: $text)
+    }
   }
 }
 
@@ -106,5 +118,9 @@ extension View {
 }
 
 #Preview {
-  CustomComponents()
+  NavigationStack {
+    CaseStudyView {
+      CustomComponents()
+    }
+  }
 }

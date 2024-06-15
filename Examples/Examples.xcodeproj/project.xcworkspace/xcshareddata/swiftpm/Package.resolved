@@ -1,4 +1,5 @@
 {
+  "originHash" : "1454c19f1a106b68abb39f64dbe73c4b01b62ae1ec4d499df1d2aa243ea2d0fc",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -14,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "8d712376c99fc0267aa0e41fea732babe365270a",
-        "version" : "1.3.3"
+        "revision" : "b871e5ed11a23e52c2896a92ce2c829982ff8619",
+        "version" : "1.4.2"
       }
     },
     {
@@ -86,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception",
       "state" : {
-        "branch" : "if-canimport-swiftui",
-        "revision" : "a1582655b1cb49f391db88297846ab6792b5c7d9"
+        "revision" : "64f7f6c28c6a4d3c4b9da2ba02383e29ab48a8cf",
+        "version" : "1.2.2"
       }
     },
     {
@@ -118,5 +119,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

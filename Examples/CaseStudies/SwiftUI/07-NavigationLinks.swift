@@ -5,7 +5,7 @@ struct OptionalNavigationLinks: View {
   @State private var model = FeatureModel()
 
   var body: some View {
-    List {
+    Form {
       Section {
         Stepper("Number: \(model.count)", value: $model.count)
 

@@ -1,26 +1,32 @@
 import SwiftUI
 import SwiftUINavigation
 
-@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-struct OptionalAlerts: View {
+struct Alerts: CaseStudy {
+  let title = "Alerts"
+  let readMe = """
+    The 'alert' modifier in SwiftUI can lead one to model their domain imprecisely as it \
+    takes both a binding of a boolean to control whether or not the alert is shown, and \
+    a piece of optional state that represents what is being alerted.
+
+    This library comes with a new 'alert' view modifier that allows one to drive an alert off \
+    of a single piece of optional state.
+    """
   @State private var model = FeatureModel()
 
   var body: some View {
-    List {
+    Section {
       Stepper("Number: \(model.count)", value: $model.count)
       Button {
         Task { await model.numberFactButtonTapped() }
       } label: {
-        HStack {
-          Text("Get number fact")
+        LabeledContent("Get number fact") {
           if model.isLoading {
-            Spacer()
             ProgressView()
           }
         }
       }
-      .disabled(model.isLoading)
     }
+    .disabled(model.isLoading)
     .alert(item: $model.fact) {
       Text("Fact about \($0.number)")
     } actions: {
@@ -33,7 +39,6 @@ struct OptionalAlerts: View {
     } message: {
       Text($0.description)
     }
-    .navigationTitle("Alerts")
   }
 }
 
@@ -52,5 +57,9 @@ private class FeatureModel {
 }
 
 #Preview {
-  OptionalAlerts()
+  NavigationStack {
+    CaseStudyView {
+      Alerts()
+    }
+  }
 }
