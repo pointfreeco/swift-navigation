@@ -116,7 +116,27 @@ final class FormViewController: UIViewController {
     stack.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
     stack.spacing = 8
     stack.translatesAutoresizingMaskIntoConstraints = false
-    view.addSubview(stack)
+
+    let scroll = UIScrollView()
+    scroll.addSubview(stack)
+    scroll.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(scroll)
+
+    NSLayoutConstraint.activate([
+      stack.topAnchor.constraint(equalTo: scroll.topAnchor),
+      stack.leadingAnchor.constraint(equalTo: scroll.leadingAnchor),
+      stack.trailingAnchor.constraint(equalTo: scroll.trailingAnchor),
+      stack.bottomAnchor.constraint(equalTo: scroll.bottomAnchor),
+
+      scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+      scroll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      scroll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      scroll.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+      scroll.widthAnchor.constraint(equalTo: stack.widthAnchor),
+
+      myColorWell.heightAnchor.constraint(equalToConstant: 50),
+    ])
 
     observe { [weak self] in
       guard let self else { return }
@@ -164,23 +184,6 @@ final class FormViewController: UIViewController {
         sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
       }
       return vc
-    }
-
-    NSLayoutConstraint.activate([
-      stack.topAnchor.constraint(equalTo: view.topAnchor),
-      stack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      stack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-      myColorWell.heightAnchor.constraint(equalToConstant: 50),
-    ])
-
-    Task { [weak self] in
-      try await Task.sleep(for: .seconds(1))
-
-      guard let self else { return }
-      model.textSelection = UITextSelection(
-        insertionPoint: "text".index(after: "text".startIndex)
-      )
     }
   }
 }
