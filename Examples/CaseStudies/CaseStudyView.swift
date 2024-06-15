@@ -1,9 +1,28 @@
 import SwiftUI
 
+@MainActor
 protocol CaseStudy: View {
   var readMe: String { get }
   var title: String { get }
   var usesOwnLayout: Bool { get }
+}
+
+@resultBuilder
+enum CaseStudyViewBuilder {
+  @MainActor
+  static func buildExpression(_ caseStudy: some CaseStudy) -> some View {
+    NavigationLink(caseStudy.title) {
+      caseStudy
+    }
+  }
+  static func buildPartialBlock(first: some View) -> some View {
+    first
+  }
+  @ViewBuilder
+  static func buildPartialBlock(accumulated: some View, next: some View) -> some View {
+    accumulated
+    next
+  }
 }
 
 extension CaseStudy {
@@ -32,16 +51,22 @@ struct CaseStudyView<C: CaseStudy>: View {
   }
 }
 
-struct CaseStudyGroupView<Title: View, each C: CaseStudy>: View {
-  let title: Title
-  let caseStudies: (repeat each C)
+struct CaseStudyGroupView<Title: View, Content: View>: View {
+  @CaseStudyViewBuilder let content: Content
+  @ViewBuilder let title: Title
 
   var body: some View {
     Section {
-      TupleView((repeat (each caseStudies).navigationLink()))
+      content
     } header: {
       title
     }
+  }
+}
+
+extension CaseStudyGroupView where Title == Text {
+  init(_ title: String, @CaseStudyViewBuilder content: () -> Content) {
+    self.init(content: content) { Text(title) }
   }
 }
 
@@ -64,12 +89,9 @@ extension CaseStudy {
 #Preview("Case study group") {
   NavigationStack {
     Form {
-      CaseStudyGroupView(
-        title: Text("Group"),
-        caseStudies: (
-          DemoCaseStudy()
-        )
-      )
+      CaseStudyGroupView("Group") {
+        DemoCaseStudy()
+      }
     }
   }
 }

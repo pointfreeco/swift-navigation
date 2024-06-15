@@ -8,13 +8,10 @@ struct SwiftUICaseStudiesView: View {
 
   var body: some View {
     List {
-      CaseStudyGroupView(
-        title: Text("Miscellaneous"),
-        caseStudies: (
-          SynchronizedBindings(),
-          CustomComponents()
-        )
-      )
+      CaseStudyGroupView("Miscellaneous") {
+        SynchronizedBindings()
+        CustomComponents()
+      }
     }
   }
 }
