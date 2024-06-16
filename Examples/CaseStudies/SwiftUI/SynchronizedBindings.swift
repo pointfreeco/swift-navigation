@@ -1,8 +1,8 @@
 import SwiftUI
 import SwiftUINavigation
 
-struct SynchronizedBindings: CaseStudy {
-  let title = "Synchronized focus"
+struct SynchronizedBindings: SwiftUICaseStudy {
+  let caseStudyTitle = "Synchronized focus"
   let readMe = """
     This demonstrates how to synchronize model state with view state using the "bind" view \
     modifier. 

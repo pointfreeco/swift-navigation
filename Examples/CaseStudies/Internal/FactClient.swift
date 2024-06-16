@@ -4,8 +4,8 @@ struct Fact: Identifiable {
   var description: String
   let number: Int
 
-  var id: AnyHashable {
-    [description as AnyHashable, number]
+  var id: Int {
+    number
   }
 }
 

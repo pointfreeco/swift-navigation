@@ -1,8 +1,8 @@
 import SwiftUI
 import SwiftUINavigation
 
-struct Alerts: CaseStudy {
-  let title = "Alerts"
+struct Alerts: SwiftUICaseStudy {
+  let caseStudyTitle = "Alerts"
   let readMe = """
     The 'alert' modifier in SwiftUI can lead one to model their domain imprecisely as it \
     takes both a binding of a boolean to control whether or not the alert is shown, and \
@@ -11,7 +11,7 @@ struct Alerts: CaseStudy {
     This library comes with a new 'alert' view modifier that allows one to drive an alert off \
     of a single piece of optional state.
     """
-  @State private var model = FeatureModel()
+  @State private var model = Model()
 
   var body: some View {
     Section {
@@ -40,22 +40,21 @@ struct Alerts: CaseStudy {
       Text($0.description)
     }
   }
-}
 
-@Observable
-private class FeatureModel {
-  var count = 0
-  var isLoading = false
-  var fact: Fact?
+  @Observable
+  class Model {
+    var count = 0
+    var isLoading = false
+    var fact: Fact?
 
-  @MainActor
-  func numberFactButtonTapped() async {
-    isLoading = true
-    defer { isLoading = false }
-    fact = await getNumberFact(count)
+    @MainActor
+    func numberFactButtonTapped() async {
+      isLoading = true
+      defer { isLoading = false }
+      fact = await getNumberFact(count)
+    }
   }
 }
-
 #Preview {
   NavigationStack {
     CaseStudyView {

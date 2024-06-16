@@ -1,37 +1,41 @@
 import SwiftUI
 import SwiftUINavigation
 
-struct OptionalNavigationLinks: View {
+struct NavigationDestinations: SwiftUICaseStudy {
+  let caseStudyTitle = "Navigation destination"
+  let readMe = """
+    This case study shows how to use an overload of SwiftUI's 'navigationDestination(item:)' \
+    modifier that will give you a binding to the data being presented, rather than just plain data.
+    """
   @State private var model = FeatureModel()
-
+  
   var body: some View {
-    Form {
-      Section {
-        Stepper("Number: \(model.count)", value: $model.count)
-
-        HStack {
-          Button("Get number fact") {
-            Task { await model.setFactNavigation(isActive: true) }
-          }
-
-          if self.model.isLoading {
-            Spacer()
-            ProgressView()
-          }
+    Section {
+      Stepper("Number: \(model.count)", value: $model.count)
+      
+      HStack {
+        Button("Get number fact") {
+          Task { await model.numberFactButtonTapped() }
         }
-      } header: {
-        Text("Fact Finder")
-      }
-
-      Section {
-        ForEach(model.savedFacts) { fact in
-          Text(fact.description)
+        
+        if model.isLoading {
+          Spacer()
+          ProgressView()
         }
-        .onDelete { model.removeSavedFacts(atOffsets: $0) }
-      } header: {
-        Text("Saved Facts")
       }
+    } header: {
+      Text("Fact Finder")
     }
+    
+    Section {
+      ForEach(model.savedFacts) { fact in
+        Text(fact.description)
+      }
+      .onDelete { model.removeSavedFacts(atOffsets: $0) }
+    } header: {
+      Text("Saved Facts")
+    }
+    .navigationTitle("Destinations")
     .navigationDestination(item: $model.fact) { $fact in
       FactEditor(fact: $fact.description)
         .disabled(model.isLoading)
@@ -50,66 +54,55 @@ struct OptionalNavigationLinks: View {
           }
         }
     }
-    .navigationTitle("Links")
   }
 }
 
 private struct FactEditor: View {
   @Binding var fact: String
+  @FocusState var isFocused
 
   var body: some View {
     VStack {
       TextEditor(text: $fact)
+        .focused($isFocused)
     }
     .padding()
-    .navigationTitle("Fact editor")
+    .navigationBarTitle("Fact Editor")
+    .onAppear { isFocused = true }
   }
 }
 
 @Observable
+@MainActor
 private class FeatureModel {
   var count = 0
   var fact: Fact?
   var isLoading = false
   var savedFacts: [Fact] = []
-  private var task: Task<Void, Never>?
 
-  deinit {
-    task?.cancel()
-  }
-
-  @MainActor
   func setFactNavigation(isActive: Bool) async {
     if isActive {
       isLoading = true
-      fact = Fact(description: "\(count) is still loading...", number: count)
-      task = Task {
-        let fact = await getNumberFact(self.count)
-        isLoading = false
-        guard !Task.isCancelled
-        else { return }
-        self.fact = fact
-      }
-      await task?.value
+      defer { isLoading = false }
+      self.fact = await getNumberFact(self.count)
     } else {
-      task?.cancel()
-      task = nil
       fact = nil
     }
   }
 
-  @MainActor
+  func numberFactButtonTapped() async {
+    await setFactNavigation(isActive: true)
+  }
+
   func cancelButtonTapped() async {
     await setFactNavigation(isActive: false)
   }
 
-  @MainActor
   func saveButtonTapped(fact: Fact) async {
     savedFacts.append(fact)
     await setFactNavigation(isActive: false)
   }
 
-  @MainActor
   func removeSavedFacts(atOffsets offsets: IndexSet) {
     savedFacts.remove(atOffsets: offsets)
   }
@@ -117,6 +110,8 @@ private class FeatureModel {
 
 #Preview {
   NavigationStack {
-    OptionalNavigationLinks()
+    CaseStudyView {
+      NavigationDestinations()
+    }
   }
 }

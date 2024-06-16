@@ -2,17 +2,24 @@ import SwiftUI
 import SwiftUINavigation
 
 struct SwiftUICaseStudiesView: View {
-  let caseStudies = [
-    SynchronizedBindings()
-  ]
-
   var body: some View {
     List {
+      CaseStudyGroupView("Optional-based navigation") {
+        Alerts()
+        AlertsWithAlertState()
+        ConfirmationDialogs()
+        Sheets()
+        NavigationDestinations()
+      }
+      CaseStudyGroupView("Enum-based navigation") {
+        MultipleDestinations()
+      }
       CaseStudyGroupView("Miscellaneous") {
         SynchronizedBindings()
         CustomComponents()
       }
     }
+    .navigationTitle("SwiftUI")
   }
 }
 

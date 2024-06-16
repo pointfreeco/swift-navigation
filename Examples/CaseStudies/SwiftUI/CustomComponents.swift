@@ -1,8 +1,8 @@
 import SwiftUI
 import SwiftUINavigation
 
-struct CustomComponents: CaseStudy {
-  let title = "Custom components"
+struct CustomComponents: SwiftUICaseStudy {
+  let caseStudyTitle = "Custom components"
   let readMe = """
     This case study demonstrates how to enhance an existing SwiftUI component so that it can be \
     driven off of enum state.

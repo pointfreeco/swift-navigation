@@ -1,38 +1,41 @@
 import SwiftUI
 import SwiftUINavigation
 
-struct OptionalFullScreenCovers: View {
+struct Sheets: SwiftUICaseStudy {
+  let caseStudyTitle = "Sheets"
+  let readMe = """
+    This case study shows how to use an overload of SwiftUI's 'sheet(item:)' modifier that will \
+    give you a binding to the data being presented, rather than just plain data.
+    """
   @State private var model = FeatureModel()
 
   var body: some View {
-    List {
-      Section {
-        Stepper("Number: \(model.count)", value: $model.count)
+    Section {
+      Stepper("Number: \(model.count)", value: $model.count)
 
-        HStack {
-          Button("Get number fact") {
-            Task { await model.numberFactButtonTapped() }
-          }
-
-          if model.isLoading {
-            Spacer()
-            ProgressView()
-          }
+      HStack {
+        Button("Get number fact") {
+          Task { await model.numberFactButtonTapped() }
         }
-      } header: {
-        Text("Fact Finder")
-      }
 
-      Section {
-        ForEach(model.savedFacts) { fact in
-          Text(fact.description)
+        if model.isLoading {
+          Spacer()
+          ProgressView()
         }
-        .onDelete { model.removeSavedFacts(atOffsets: $0) }
-      } header: {
-        Text("Saved Facts")
       }
+    } header: {
+      Text("Fact Finder")
     }
-    .fullScreenCover(item: $model.fact) { $fact in
+
+    Section {
+      ForEach(model.savedFacts) { fact in
+        Text(fact.description)
+      }
+      .onDelete { model.removeSavedFacts(atOffsets: $0) }
+    } header: {
+      Text("Saved Facts")
+    }
+    .sheet(item: $model.fact) { $fact in
       NavigationStack {
         FactEditor(fact: $fact.description)
           .disabled(model.isLoading)
@@ -51,19 +54,22 @@ struct OptionalFullScreenCovers: View {
           }
       }
     }
-    .navigationTitle("Full-screen covers")
+    .navigationTitle("Sheets")
   }
 }
 
 private struct FactEditor: View {
   @Binding var fact: String
+  @FocusState var isFocused: Bool
 
   var body: some View {
     VStack {
       TextEditor(text: $fact)
+        .focused($isFocused)
     }
     .padding()
     .navigationTitle("Fact editor")
+    .onAppear { isFocused = true }
   }
 }
 
@@ -73,33 +79,21 @@ private class FeatureModel {
   var fact: Fact?
   var isLoading = false
   var savedFacts: [Fact] = []
-  private var task: Task<Void, Never>?
 
   @MainActor
   func numberFactButtonTapped() async {
     isLoading = true
-    fact = Fact(description: "\(count) is still loading...", number: count)
-    task = Task {
-      let fact = await getNumberFact(count)
-      isLoading = false
-      guard !Task.isCancelled
-      else { return }
-      self.fact = fact
-    }
-    await task?.value
+    defer { isLoading = false }
+    self.fact = await getNumberFact(self.count)
   }
 
   @MainActor
   func cancelButtonTapped() {
-    task?.cancel()
-    task = nil
     fact = nil
   }
 
   @MainActor
   func saveButtonTapped(fact: Fact) {
-    task?.cancel()
-    task = nil
     savedFacts.append(fact)
     self.fact = nil
   }
@@ -111,5 +105,9 @@ private class FeatureModel {
 }
 
 #Preview {
-  OptionalFullScreenCovers()
+  NavigationStack {
+    CaseStudyView {
+      Sheets()
+    }
+  }
 }
