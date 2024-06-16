@@ -1,4 +1,4 @@
-// swift-tools-version:5.7.1
+// swift-tools-version: 5.9
 
 import PackageDescription
 
@@ -49,3 +49,10 @@ let package = Package(
     ),
   ]
 )
+
+for target in package.targets {
+  target.swiftSettings = target.swiftSettings ?? []
+  target.swiftSettings!.append(contentsOf: [
+    .enableExperimentalFeature("StrictConcurrency")
+  ])
+}
