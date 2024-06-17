@@ -4,11 +4,13 @@ import SwiftUINavigation
 struct AlertsWithAlertState: SwiftUICaseStudy {
   let caseStudyTitle = "Alert/dialog state"
   let readMe = """
-    The 'AlertState' type is a purely data description of all the properties of an alert, such \
-    as its title, message and even actions. You can use 'AlertState' to make your alerts more \
-    testable, which can be useful when alerts involve complex and nuanced logic. This also helps \
-    keep logic in your observable model and out of your views.
+    This case study shows how to drive alerts and dialog using the `AlertState` and \
+    `ConfirmationDialogState` data types. These data types are pure data descriptions of all the \
+    properties of an alert or dialog, such as its title, message, and even actions. You can these \
+    types to make your alerts more testable, which can be useful when alerts involve complex and \
+    nuanced logic. This also helps keep logic in your observable model and out of your views.
     """
+
   @State private var model = FeatureModel()
 
   var body: some View {
@@ -25,26 +27,48 @@ struct AlertsWithAlertState: SwiftUICaseStudy {
       }
     }
     .disabled(model.isLoading)
-    .alert($model.alert)
+    .alert($model.alert) {
+      await model.alertButtonTapped($0)
+    }
   }
 }
 
+@MainActor
 @Observable
 private class FeatureModel {
   var count = 0
   var isLoading = false
-  var alert: AlertState<Never>?
+  var alert: AlertState<AlertAction>?
 
-  @MainActor
+  enum AlertAction {
+    case getFact
+  }
+
   func numberFactButtonTapped() async {
+    await getFact()
+  }
+
+  func alertButtonTapped(_ action: AlertAction?) async {
+    switch action {
+    case .getFact:
+      await getFact()
+    case nil:
+      break
+    }
+  }
+
+  private func getFact() async {
     isLoading = true
     defer { isLoading = false }
     let fact = await getNumberFact(count)
     alert = AlertState {
       TextState("Fact about \(count)")
     } actions: {
-      ButtonState {
+      ButtonState(role: .cancel) {
         TextState("OK")
+      }
+      ButtonState(action: .getFact) {
+        TextState("Get another fact")
       }
     } message: {
       TextState(fact.description)
