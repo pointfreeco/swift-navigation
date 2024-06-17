@@ -30,8 +30,9 @@ enum CaseStudyViewBuilder {
   @ViewBuilder
   static func buildExpression(_ caseStudy: some SwiftUICaseStudy) -> some View {
     if caseStudy.isPresentedInSheet {
+      // TODO: do
       Button(caseStudy.caseStudyTitle) {
-
+        
       }
     } else {
       NavigationLink(caseStudy.caseStudyTitle) {
@@ -44,16 +45,7 @@ enum CaseStudyViewBuilder {
   }
   @ViewBuilder
   static func buildExpression(_ caseStudy: some UIKitCaseStudy) -> some View {
-    if caseStudy.isPresentedInSheet {
-      ModalCaseStudyButton(caseStudy: caseStudy)
-    } else {
-      NavigationLink(caseStudy.caseStudyTitle) {
-        UIViewControllerRepresenting {
-          caseStudy
-        }
-        .modifier(CaseStudyModifier(caseStudy: caseStudy))
-      }
-    }
+    CaseStudyButton(caseStudy: caseStudy)
   }
   static func buildPartialBlock(first: some View) -> some View {
     first
@@ -65,18 +57,29 @@ enum CaseStudyViewBuilder {
   }
 }
 
-struct ModalCaseStudyButton<C: UIKitCaseStudy>: View {
+struct CaseStudyButton<C: UIKitCaseStudy>: View {
   let caseStudy: C
   @State var isPresented = false
   var body: some View {
-    Button(caseStudy.caseStudyTitle) {
-      isPresented = true
-    }
-    .sheet(isPresented: $isPresented) {
-      UIViewControllerRepresenting {
-        UINavigationController(rootViewController: caseStudy)
+    if caseStudy.isPresentedInSheet {
+      Button(caseStudy.caseStudyTitle) {
+        isPresented = true
       }
-      .modifier(CaseStudyModifier(caseStudy: caseStudy))
+      .sheet(isPresented: $isPresented) {
+        UIViewControllerRepresenting {
+          caseStudy is UINavigationController
+              ? caseStudy
+              : UINavigationController(rootViewController: caseStudy)
+        }
+        .modifier(CaseStudyModifier(caseStudy: caseStudy))
+      }
+    } else {
+      NavigationLink(caseStudy.caseStudyTitle) {
+        UIViewControllerRepresenting {
+          caseStudy
+        }
+        .modifier(CaseStudyModifier(caseStudy: caseStudy))
+      }
     }
   }
 }

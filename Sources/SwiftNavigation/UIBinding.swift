@@ -1,3 +1,5 @@
+import SwiftUINavigationCore 
+
 /// A property wrapper type that can read and write an observable value.
 ///
 /// Like SwiftUI's `Binding`, but for UIKit and other paradigms.
@@ -384,7 +386,10 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   let objectIdentifier: ObjectIdentifier
   weak var root: Root?
   var value: Value
-  init(root: Root, keyPath: ReferenceWritableKeyPath<Root, Value>) {
+  init(
+    root: Root,
+    keyPath: ReferenceWritableKeyPath<Root, Value>
+  ) {
     self.keyPath = keyPath
     self.objectIdentifier = ObjectIdentifier(root)
     self.root = root
@@ -393,6 +398,10 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   var wrappedValue: Value {
     get { root?[keyPath: keyPath] ?? value }
     set {
+      if root == nil {
+        // TODO: messaging
+        runtimeWarn("Binding failed to write to '\(Root.self)' because it is 'nil'.")
+      }
       value = newValue
       root?[keyPath: keyPath] = value
     }

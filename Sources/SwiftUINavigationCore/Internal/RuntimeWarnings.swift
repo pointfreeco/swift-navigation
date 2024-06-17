@@ -1,8 +1,7 @@
 #if canImport(SwiftUI)
-  @_spi(RuntimeWarn)
   @_transparent
   @inline(__always)
-  public func runtimeWarn(
+  package func runtimeWarn(
     _ message: @autoclosure () -> String,
     category: String? = "SwiftNavigation",
     file: StaticString? = nil,

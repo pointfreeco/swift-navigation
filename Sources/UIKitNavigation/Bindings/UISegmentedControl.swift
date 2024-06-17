@@ -1,6 +1,6 @@
 #if canImport(UIKit)
   import UIKit
-  @_spi(RuntimeWarn) import SwiftUINavigationCore
+  import SwiftUINavigationCore
 
   @available(iOS 14, *)
   extension UISegmentedControl {

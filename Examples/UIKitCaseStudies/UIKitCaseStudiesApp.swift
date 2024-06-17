@@ -51,8 +51,8 @@ struct UIKitCaseStudiesApp: App {
     //   )
     // )
     @UIBindable var model = AppModel(/*path: path*/)
-    model.path.append(AppModel.Path.counter(CounterModel()))
-    model.path.append(AppModel.Path.form(FormModel()))
+//    model.path.append(AppModel.Path.counter(CounterModel()))
+//    model.path.append(AppModel.Path.form(FormModel()))
 
     // model.path.append(1)
     // model.path.append("Blob")

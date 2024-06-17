@@ -28,7 +28,7 @@
 		CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */; };
 		CA9D70472C1F6108003B672A /* AlertDialogState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70462C1F6108003B672A /* AlertDialogState.swift */; };
 		CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */; };
-		CA9D70502C1FB431003B672A /* StaticPathStackNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */; };
+		CA9D70502C1FB431003B672A /* StaticNavigationStackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704F2C1FB431003B672A /* StaticNavigationStackController.swift */; };
 		CA9D70522C1FB4B7003B672A /* ErasedPathStackNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */; };
 		CA9D70542C1FB4FA003B672A /* BasicsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70532C1FB4FA003B672A /* BasicsNavigationViewController.swift */; };
 		CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70552C2087DC003B672A /* EnumControls.swift */; };
@@ -89,7 +89,7 @@
 		CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitCaseStudies.swift; sourceTree = "<group>"; };
 		CA9D70462C1F6108003B672A /* AlertDialogState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDialogState.swift; sourceTree = "<group>"; };
 		CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConciseEnumNavigationViewController.swift; sourceTree = "<group>"; };
-		CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticPathStackNavigationController.swift; sourceTree = "<group>"; };
+		CA9D704F2C1FB431003B672A /* StaticNavigationStackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticNavigationStackController.swift; sourceTree = "<group>"; };
 		CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErasedPathStackNavigationController.swift; sourceTree = "<group>"; };
 		CA9D70532C1FB4FA003B672A /* BasicsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicsNavigationViewController.swift; sourceTree = "<group>"; };
 		CA9D70552C2087DC003B672A /* EnumControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumControls.swift; sourceTree = "<group>"; };
@@ -231,15 +231,15 @@
 		CA9D704A2C1F6431003B672A /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				DC5EB9BC2C0525980034B757 /* WiFiFeature */,
 				CA9D70532C1FB4FA003B672A /* BasicsNavigationViewController.swift */,
 				CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */,
 				CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */,
 				CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */,
 				CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */,
-				CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */,
+				CA9D704F2C1FB431003B672A /* StaticNavigationStackController.swift */,
 				CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */,
 				CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */,
+				DC5EB9BC2C0525980034B757 /* WiFiFeature */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -503,7 +503,7 @@
 			files = (
 				CABE9FC1272F2C0000AFC150 /* EnumNavigation.swift in Sources */,
 				DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */,
-				CA9D70502C1FB431003B672A /* StaticPathStackNavigationController.swift in Sources */,
+				CA9D70502C1FB431003B672A /* StaticNavigationStackController.swift in Sources */,
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
 				CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */,
 				CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */,

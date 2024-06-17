@@ -1,6 +1,6 @@
 #if canImport(UIKit)
   import UIKit
-  @_spi(RuntimeWarn) import SwiftUINavigationCore
+  import SwiftUINavigationCore
 
   @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   @MainActor

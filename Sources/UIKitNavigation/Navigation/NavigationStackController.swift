@@ -1,9 +1,9 @@
 #if canImport(UIKit)
   import UIKit
   @_spi(Internals) import SwiftNavigation
-  @_spi(RuntimeWarn) import SwiftUINavigationCore
+  import SwiftUINavigationCore
 
-  public class NavigationStackController: UINavigationController {
+  open class NavigationStackController: UINavigationController {
     fileprivate var destinations:
       [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
         [:]
@@ -38,7 +38,7 @@
       self.root = root()
     }
 
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
       super.viewDidLoad()
 
       super.delegate = pathDelegate

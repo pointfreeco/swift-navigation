@@ -1,6 +1,6 @@
 #if canImport(SwiftUI)
   import SwiftUI
-  @_spi(RuntimeWarn) import SwiftUINavigationCore
+  import SwiftUINavigationCore
 
   // NB: Deprecated after 1.3.0
 

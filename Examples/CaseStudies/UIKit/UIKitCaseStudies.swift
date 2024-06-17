@@ -5,7 +5,7 @@ struct UIKitCaseStudiesView: View {
   var body: some View {
     List {
       CaseStudyGroupView("Observation") {
-        MinimalObservationViewController() // ✅
+        MinimalObservationViewController()
         // TODO: Animation and transaction
       }
       CaseStudyGroupView("Bindings") {
@@ -13,21 +13,19 @@ struct UIKitCaseStudiesView: View {
         EnumControlsViewController()
       }
       CaseStudyGroupView("Optional navigation") {
-        BasicsNavigationViewController() // ✅
+        BasicsNavigationViewController()
         // TODO: Alert/dialog state
-        ConciseEnumNavigationViewController() // ✅
+        ConciseEnumNavigationViewController()
       }
       CaseStudyGroupView("Stack navigation") {
-        StaticPathStackNavigationController()
-        ErasedPathStackNavigationController()
+        StaticNavigationStackController()  // TODO: do
+        ErasedPathStackNavigationController()  // TODO: do
         // TODO: state restoration
       }
       CaseStudyGroupView("Advanced") {
         // TODO: Deep link
         // TODO: Dismissal (show off from VCs and views)
-        WiFiSettingsViewController(
-          model: WiFiSettingsModel(foundNetworks: .mocks)
-        )
+        WiFiSettingsViewController(model: WiFiSettingsModel(foundNetworks: .mocks))
       }
     }
     .navigationTitle("UIKit")
