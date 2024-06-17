@@ -94,11 +94,18 @@ public struct UIBinding<Value>: Sendable {
     root: Root,
     keyPath: ReferenceWritableKeyPath<Root, Value>,
     transaction: UITransaction,
+    file: StaticString,
     fileID: StaticString,
     line: UInt
   ) {
     self.init(
-      location: _UIBindingWeakRoot(root: root, keyPath: keyPath, fileID: fileID, line: line),
+      location: _UIBindingWeakRoot(
+        root: root,
+        keyPath: keyPath,
+        file: file,
+        fileID: fileID,
+        line: line
+      ),
       transaction: transaction
     )
   }
@@ -388,11 +395,13 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   let objectIdentifier: ObjectIdentifier
   weak var root: Root?
   var value: Value
+  let file: StaticString
   let fileID: StaticString
   let line: UInt
   init(
     root: Root,
     keyPath: ReferenceWritableKeyPath<Root, Value>,
+    file: StaticString,
     fileID: StaticString,
     line: UInt
   ) {
@@ -400,6 +409,7 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
     self.objectIdentifier = ObjectIdentifier(root)
     self.root = root
     self.value = root[keyPath: keyPath]
+    self.file = file 
     self.fileID = fileID
     self.line = line
   }
@@ -415,8 +425,9 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
 
           This usually happens because the bindable model is not strongly held and so is \
           deallocated.
-          """
-          // TODO: pass file/line for test failures?
+          """,
+          file: file,
+          line: line
         )
       }
       value = newValue

@@ -46,16 +46,19 @@ import Perception
 @propertyWrapper
 public struct UIBindable<Value> {
   public var wrappedValue: Value
+  private let file: StaticString
   private let fileID: StaticString
   private let line: UInt
 
   init(
     objectIdentifier: ObjectIdentifier,
     wrappedValue: Value,
+    file: StaticString,
     fileID: StaticString,
     line: UInt
   ) {
     self.wrappedValue = wrappedValue
+    self.file = file
     self.fileID = fileID
     self.line = line
   }
@@ -67,12 +70,14 @@ public struct UIBindable<Value> {
   @_disfavoredOverload
   public init(
     _ wrappedValue: Value,
+    file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
   ) where Value: AnyObject & Perceptible {
     self.init(
       objectIdentifier: ObjectIdentifier(wrappedValue),
       wrappedValue: wrappedValue,
+      file: file,
       fileID: fileID,
       line: line
     )
@@ -85,12 +90,14 @@ public struct UIBindable<Value> {
   @_disfavoredOverload
   public init(
     wrappedValue: Value,
+    file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
   ) where Value: AnyObject & Perceptible {
     self.init(
       objectIdentifier: ObjectIdentifier(wrappedValue),
       wrappedValue: wrappedValue,
+      file: file,
       fileID: fileID,
       line: line
     )
@@ -115,6 +122,7 @@ public struct UIBindable<Value> {
       root: wrappedValue,
       keyPath: keyPath,
       transaction: UITransaction(),
+      file: file,
       fileID: fileID,
       line: line
     )
@@ -130,12 +138,14 @@ public struct UIBindable<Value> {
     /// creating bindable objects nested within other expressions.
     public init(
       _ wrappedValue: Value,
+      file: StaticString = #file,
       fileID: StaticString = #fileID,
       line: UInt = #line
     ) {
       self.init(
         objectIdentifier: ObjectIdentifier(wrappedValue),
         wrappedValue: wrappedValue,
+        file: file,
         fileID: fileID,
         line: line
       )
@@ -147,12 +157,14 @@ public struct UIBindable<Value> {
     /// `@UIBindable` attribute, and provide an initial value.
     public init(
       wrappedValue: Value,
+      file: StaticString = #file,
       fileID: StaticString = #fileID,
       line: UInt = #line
     ) {
       self.init(
         objectIdentifier: ObjectIdentifier(wrappedValue),
         wrappedValue: wrappedValue,
+        file: file,
         fileID: fileID,
         line: line
       )

@@ -100,6 +100,8 @@ final class PresentationTests: XCTestCase {
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
+    print(nav.viewControllers.count)
+
     withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPushed = false
     }
@@ -326,10 +328,10 @@ private class BasicViewController: UIViewController {
       self?.isPresenting = true
       return BasicViewController(model: model)
     }
-    navigationController?.pushViewController(isPresented: $model.isPushed) {
+    pushViewController(isPresented: $model.isPushed) {
       UIViewController()
     }
-    navigationController?.pushViewController(item: $model.pushedChild) { model in
+    pushViewController(item: $model.pushedChild) { model in
       BasicViewController(model: model)
     }
   }

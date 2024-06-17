@@ -248,7 +248,10 @@
           }
           let newController = content(unwrappedItem)
           let onDismiss = { [presentationID = id(unwrappedItem.wrappedValue)] in
-            if presentationID == item.wrappedValue.flatMap(id) {
+            if 
+              let wrappedValue = item.wrappedValue,
+              presentationID == id(wrappedValue)
+            {
               item.wrappedValue = nil
             }
           }
