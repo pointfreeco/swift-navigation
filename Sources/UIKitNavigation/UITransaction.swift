@@ -3,39 +3,43 @@
     /// Creates a transaction and assigns its animation property.
     ///
     /// - Parameter animation: The animation to perform when the current state changes.
-    public init(animation: UIAnimation? = nil) {
+    public init(animation: UIKitAnimation? = nil) {
       self.init()
-      self.animation = animation
+      self.uiKit.animation = animation
     }
 
-    /// The animation, if any, associated with the current state change.
-    public var animation: UIAnimation? {
-      get { self[AnimationKey.self] }
-      set { self[AnimationKey.self] = newValue }
+    /// UIKit-specific data associated with the current state change.
+    public var uiKit: UIKit {
+      get { self[UIKitKey.self] }
+      set { self[UIKitKey.self] = newValue }
     }
 
-    /// A Boolean value that indicates whether views should disable animations.
-    public var disablesAnimations: Bool {
-      get { self[DisablesAnimationsKey.self] }
-      set { self[DisablesAnimationsKey.self] = newValue }
+    private enum UIKitKey: UITransactionKey {
+      static let defaultValue = UIKit()
     }
 
-    /// Adds a completion to run when the animations created with this transaction are all complete.
-    ///
-    /// The completion callback will always be fired exactly one time.
-    public mutating func addAnimationCompletion(_ completion: @escaping @Sendable (Bool?) -> Void) {
-      animationCompletions.append(completion)
-    }
+    /// UIKit-specific data associated with a ``UITransaction``.
+    public struct UIKit: Sendable {
+      /// The animation, if any, associated with the current state change.
+      public var animation: UIKitAnimation?
 
-    var animationCompletions: [@Sendable (Bool?) -> Void] {
-      get { self[AnimationCompletionsKey.self] }
-      set { self[AnimationCompletionsKey.self] = newValue }
+      /// A Boolean value that indicates whether views should disable animations.
+      public var disablesAnimations = false
+
+      var animationCompletions: [@Sendable (Bool?) -> Void] = []
+
+      /// Adds a completion to run when the animations created with this transaction are all
+      /// complete.
+      ///
+      /// The completion callback will always be fired exactly one time.
+      public mutating func addAnimationCompletion(
+        _ completion: @escaping @Sendable (Bool?) -> Void
+      ) {
+        animationCompletions.append(completion)
+      }
     }
   }
 
-  private enum AnimationKey: UITransactionKey {
-    static let defaultValue: UIAnimation? = nil
-  }
 
   private enum AnimationCompletionsKey: UITransactionKey {
     static let defaultValue: [@Sendable (Bool?) -> Void] = []

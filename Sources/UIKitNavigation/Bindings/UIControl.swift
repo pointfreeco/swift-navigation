@@ -60,7 +60,7 @@
         set(
           self,
           binding.wrappedValue,
-          transaction.animation == nil && !transaction.disablesAnimations
+          transaction.uiKit.animation == nil && !transaction.uiKit.disablesAnimations
             ? binding.transaction
             : transaction
         )

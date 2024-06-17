@@ -71,13 +71,13 @@
           case let .insert(newPath.count - 1, navigationID, nil) = difference.first,
           let viewController = viewController(for: navigationID)
         {
-          pushViewController(viewController, animated: !transaction.disablesAnimations)
+          pushViewController(viewController, animated: !transaction.uiKit.disablesAnimations)
         } else if difference.count == 1,
           case .remove(newPath.count, _, nil) = difference.first
         {
-          popViewController(animated: transaction.disablesAnimations)
+          popViewController(animated: transaction.uiKit.disablesAnimations)
         } else if difference.insertions.isEmpty, newPath.isEmpty {
-          popToRootViewController(animated: transaction.disablesAnimations)
+          popToRootViewController(animated: transaction.uiKit.disablesAnimations)
         } else if difference.insertions.isEmpty,
           case let offsets = difference.removals.map(\.offset),
           let first = offsets.first,
@@ -86,7 +86,7 @@
           first == newPath.count
         {
           popToViewController(
-            viewControllers[first], animated: !transaction.disablesAnimations
+            viewControllers[first], animated: !transaction.uiKit.disablesAnimations
           )
         } else {
           var newPath = newPath
@@ -127,7 +127,7 @@
             }
           }
           path.remove(atOffsets: invalidIndices)
-          setViewControllers(newViewControllers, animated: !transaction.disablesAnimations)
+          setViewControllers(newViewControllers, animated: !transaction.uiKit.disablesAnimations)
         }
       }
     }
@@ -147,9 +147,10 @@
         viewController.traitOverrides
           .dismiss = UIDismissAction { [weak self, weak viewController] transaction in
             guard let self, let viewController else { return }
-            popFromViewController(viewController, animated: !transaction.disablesAnimations)
+            popFromViewController(viewController, animated: !transaction.uiKit.disablesAnimations)
           }
       }
+      
       return viewController
     }
 

@@ -23,7 +23,7 @@
     @discardableResult
     public func bind(isOn: UIBinding<Bool>) -> ObservationToken {
       bind(isOn, to: \.isOn, for: .valueChanged) { control, isOn, transaction in
-        control.setOn(isOn, animated: !transaction.disablesAnimations)
+        control.setOn(isOn, animated: !transaction.uiKit.disablesAnimations)
       }
     }
   }

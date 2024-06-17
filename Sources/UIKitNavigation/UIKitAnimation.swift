@@ -14,22 +14,22 @@
   ///   - completion: A completion to run when the animation is complete.
   /// - Returns: The result of executing the closure with the specified animation.
   @MainActor
-  public func withUIAnimation<Result>(
-    _ animation: UIAnimation? = .default,
+  public func withUIKitAnimation<Result>(
+    _ animation: UIKitAnimation? = .default,
     _ body: () throws -> Result,
     completion: (@Sendable (Bool?) -> Void)? = nil
   ) rethrows -> Result {
     var transaction = UITransaction()
-    transaction.animation = animation
+    transaction.uiKit.animation = animation
     if let completion {
-      transaction.addAnimationCompletion(completion)
+      transaction.uiKit.addAnimationCompletion(completion)
     }
     return try withUITransaction(transaction, body)
   }
 
   /// The way a view changes over time to create a smooth visual transition from one state to
   /// another.
-  public struct UIAnimation: Hashable, Sendable {
+  public struct UIKitAnimation: Hashable, Sendable {
     fileprivate let framework: Framework
 
     @MainActor
@@ -156,10 +156,10 @@
     public func delay(_ delay: TimeInterval) -> Self {
       switch framework {
       case let .swiftUI(animation):
-        return UIAnimation(framework: .swiftUI(animation.delay(delay)))
+        return UIKitAnimation(framework: .swiftUI(animation.delay(delay)))
       case var .uiKit(animation):
         animation.delay += delay
-        return UIAnimation(framework: .uiKit(animation))
+        return UIKitAnimation(framework: .uiKit(animation))
       }
     }
 
@@ -177,7 +177,7 @@
     public func repeatCount(_ repeatCount: Int, autoreverses: Bool = true) -> Self {
       switch framework {
       case let .swiftUI(animation):
-        return UIAnimation(
+        return UIKitAnimation(
           framework: .swiftUI(animation.repeatCount(repeatCount, autoreverses: autoreverses))
         )
       case var .uiKit(animation):
@@ -185,7 +185,7 @@
           autoreverses: autoreverses,
           count: CGFloat(repeatCount)
         )
-        return UIAnimation(framework: .uiKit(animation))
+        return UIKitAnimation(framework: .uiKit(animation))
       }
     }
 
@@ -197,7 +197,7 @@
     public func repeatForever(autoreverses: Bool = true) -> Self {
       switch framework {
       case let .swiftUI(animation):
-        return UIAnimation(
+        return UIKitAnimation(
           framework: .swiftUI(animation.repeatForever(autoreverses: autoreverses))
         )
       case var .uiKit(animation):
@@ -205,7 +205,7 @@
           autoreverses: autoreverses,
           count: .infinity
         )
-        return UIAnimation(framework: .uiKit(animation))
+        return UIKitAnimation(framework: .uiKit(animation))
       }
     }
 
@@ -216,21 +216,21 @@
     public func speed(_ speed: Double) -> Self {
       switch framework {
       case let .swiftUI(animation):
-        return UIAnimation(
+        return UIKitAnimation(
           framework: .swiftUI(animation.speed(speed))
         )
       case var .uiKit(animation):
         animation.speed = speed
-        return UIAnimation(framework: .uiKit(animation))
+        return UIKitAnimation(framework: .uiKit(animation))
       }
     }
   }
 
-  extension UIAnimation {
+  extension UIKitAnimation {
     /// Animate changes using the specified duration, delay, and options.
     ///
     /// A value description of `UIView.animate(withDuration:delay:options:animations:completion:)`
-    /// that can be used with ``withUIAnimation(_:_:completion:)``.
+    /// that can be used with ``withUIKitAnimation(_:_:completion:)``.
     ///
     /// - Parameters:
     ///   - duration: The total duration of the animations, measured in seconds. If you specify a
@@ -256,7 +256,7 @@
     ///
     /// A value description of
     /// `UIView.animate(withDuration:delay:dampingRatio:velocity:options:animations:completion:)`
-    /// that can be used with ``withUIAnimation(_:_:completion:)``.
+    /// that can be used with ``withUIKitAnimation(_:_:completion:)``.
     ///
     /// - Parameters:
     ///   - duration: The total duration of the animations, measured in seconds. If you specify a
@@ -305,7 +305,7 @@
     ///
     /// A value description of
     /// `UIView.animate(springDuration:bounce:initialSpringVelocity:delay:options:animations:completion:)`
-    /// that can be used with ``withUIAnimation(_:_:completion:)``.
+    /// that can be used with ``withUIKitAnimation(_:_:completion:)``.
     @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
     public static func animate(
       springDuration duration: TimeInterval = 0.5,

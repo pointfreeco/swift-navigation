@@ -120,15 +120,15 @@
         content($item)
       } present: { [weak self] oldController, newController, transaction in
         if let oldController {
-          oldController.dismiss(animated: !transaction.disablesAnimations) {
+          oldController.dismiss(animated: !transaction.uiKit.disablesAnimations) {
             onDismiss?()
-            self?.present(newController, animated: !transaction.disablesAnimations)
+            self?.present(newController, animated: !transaction.uiKit.disablesAnimations)
           }
         } else {
-          self?.present(newController, animated: !transaction.disablesAnimations)
+          self?.present(newController, animated: !transaction.uiKit.disablesAnimations)
         }
       } dismiss: { controller, transaction in
-        controller.dismiss(animated: !transaction.disablesAnimations) {
+        controller.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
       }
@@ -432,9 +432,13 @@ extension UIViewController {
     destination(item: item) { $item in
       content($item)
     } present: { [weak self] controller, transaction in
-      self?.navigationController?.pushViewController(controller, animated: !transaction.disablesAnimations)
+      self?.navigationController?.pushViewController(
+        controller, animated: !transaction.uiKit.disablesAnimations
+      )
     } dismiss: { [weak self] controller, transaction in
-      self?.navigationController?.popFromViewController(controller, animated: !transaction.disablesAnimations)
+      self?.navigationController?.popFromViewController(
+        controller, animated: !transaction.uiKit.disablesAnimations
+      )
     }
   }
 }

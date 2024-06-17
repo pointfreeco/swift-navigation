@@ -15,8 +15,8 @@ Tools for making UIKit navigation simpler, more ergonomic and more precise.
 
 ### Animations
 
-- ``withUIAnimation(_:_:completion:)``
-- ``UIAnimation``
+- ``withUIKitAnimation(_:_:completion:)``
+- ``UIKitAnimation``
 
 ### Controls
 

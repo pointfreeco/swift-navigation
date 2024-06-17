@@ -1,4 +1,4 @@
-# ``UIKitNavigation/UIAnimation``
+# ``UIKitNavigation/UIKitAnimation``
 
 ## Topics
 
