@@ -183,7 +183,7 @@ final class NavigationStackTests: XCTestCase {
 
     await assertEventuallyEqual(nav.viewControllers.count, 5)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       path = [4, 1, 3, 2]
     }
     await assertEventuallyEqual(nav.viewControllers.count, 5)
@@ -239,21 +239,21 @@ final class NavigationStackTests: XCTestCase {
     try await setUp(controller: nav)
     await assertEventuallyEqual(nav.hasViewAppeared, true)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       path.append(1)
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
     await assertEventuallyEqual(path, [1])
 
     let child = try XCTUnwrap(nav.viewControllers[1] as? ChildViewController)
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       child.isLeafPresented = true
     }
     await assertEventuallyEqual(nav.viewControllers.count, 3)
     await assertEventuallyEqual(path, [1])
 
     try await Task.sleep(for: .seconds(0.1))
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       path.append(2)
     }
     await assertEventuallyEqual(nav.viewControllers.count, 4)
@@ -270,7 +270,7 @@ final class NavigationStackTests: XCTestCase {
     nav.pushViewController(child, animated: false)
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       child.isLeafPresented = true
     }
     await assertEventuallyEqual(nav.viewControllers.count, 3)

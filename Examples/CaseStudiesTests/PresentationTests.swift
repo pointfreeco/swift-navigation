@@ -9,13 +9,13 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyNil(vc.presentedViewController)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPresented = true
     }
     await assertEventuallyNotNil(vc.presentedViewController)
     await assertEventuallyEqual(vc.isPresenting, true)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPresented = false
     }
     await assertEventuallyNil(vc.presentedViewController)
@@ -29,13 +29,13 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyNil(vc.presentedViewController)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.presentedChild = Model()
     }
     await assertEventuallyNotNil(vc.presentedViewController)
     await assertEventuallyEqual(vc.isPresenting, true)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.presentedChild = nil
     }
     await assertEventuallyNil(vc.presentedViewController)
@@ -49,12 +49,12 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyNil(vc.presentedViewController)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPresented = true
     }
     await assertEventuallyNotNil(vc.presentedViewController)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.presentedViewController?.traitCollection.dismiss()
     }
     await assertEventuallyNil(vc.presentedViewController)
@@ -68,7 +68,7 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyNotNil(vc.presentedViewController)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPresented = false
     }
     await assertEventuallyNil(vc.presentedViewController)
@@ -81,7 +81,7 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyNotNil(vc.presentedViewController)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPresented = false
     }
     await assertEventuallyNil(vc.presentedViewController)
@@ -95,12 +95,12 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyEqual(nav.viewControllers.count, 1)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPushed = true
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPushed = false
     }
     await assertEventuallyEqual(nav.viewControllers.count, 1)
@@ -114,12 +114,12 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyEqual(nav.viewControllers.count, 1)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.pushedChild = Model()
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.pushedChild = nil
     }
     await assertEventuallyEqual(nav.viewControllers.count, 1)
@@ -133,7 +133,7 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyEqual(nav.viewControllers.count, 1)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.pushedChild = Model()
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
@@ -144,7 +144,7 @@ final class PresentationTests: XCTestCase {
     await assertEventuallyNil(vc.model.pushedChild)
 
     await Task.yield()
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.pushedChild = Model()
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
@@ -158,12 +158,12 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyEqual(nav.viewControllers.count, 1)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPushed = true
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       nav.viewControllers.last?.traitCollection.dismiss()
     }
     await assertEventuallyEqual(nav.viewControllers.count, 1)
@@ -212,22 +212,22 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyEqual(nav.viewControllers.count, 1)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.pushedChild = Model()
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.pushedChild?.pushedChild = Model()
     }
     await assertEventuallyEqual(nav.viewControllers.count, 3)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.pushedChild?.pushedChild?.pushedChild = Model()
     }
     await assertEventuallyEqual(nav.viewControllers.count, 4)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       nav.viewControllers[1].traitCollection.dismiss()
     }
     await assertEventuallyEqual(nav.viewControllers.count, 1)
@@ -265,12 +265,12 @@ final class PresentationTests: XCTestCase {
 
     await assertEventuallyNil(vc.presentedViewController)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.presentedChild = Model()
     }
     await assertEventuallyNotNil(vc.presentedViewController)
 
-    withUITransaction(\.disablesAnimations, true) {
+    withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.presentedChild = Model()
     }
     await assertEventuallyEqual(
