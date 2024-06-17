@@ -16,14 +16,12 @@ struct EnumNavigation: SwiftUICaseStudy {
   let caseStudyTitle = "Concise enum navigation"
   let caseStudyNavigationTitle = "Enum navigation"
   let readMe = """
-    This case study demonstrates how to power multiple forms of navigation from a single \
-    destination enum that describes all of the possible destinations one can travel to from this \
-    screen.
+    This case study builds upon the previous “optional navigation” case study to demonstrate how \
+    to power multiple forms of navigation from a single destination enum that describes _all_ of \
+    the possible destinations one can travel to from this screen.
 
-    The screen has many possible destinations: an alert, a confirmation dialog, two kinds of \
-    sheets, a full-screen cover, popover, and even a drill-down. The state for every one of these \
-    destinations is held as associated data of an enum, and bindings to the cases of that enum are \
-    derived using the tools in this library.
+    It includes a second sheet that contains no data in order to demonstrate how to transform a \
+    binding of an optional to a binding of a Boolean.
     """
 
   @State var destination: Destination?

@@ -4,11 +4,19 @@ import SwiftUINavigation
 struct OptionalNavigation: SwiftUICaseStudy {
   let caseStudyTitle = "Optional navigation"
   let readMe = """
-    This case study demonstrates how to use powerful overloads of SwiftUI's presentation \
-    modifiers, like `sheet(item:)`. These overloads not only allow you to forego `Identifiable` \
-    conformances by instead providing a key path to an identifier, they also provide a _binding_ \
-    to the data being presented rather than just plain data. This opens up a child-parent \
-    communication “wormhole” that allows the child to write data directly back into the parent.
+    This case study demonstrates how to use powerful overloads of SwiftUI's presentation modifiers \
+    to drive alerts, sheets, and more:
+
+    • This library comes with simplified `alert(item:)` and `confirmationDialog(item:)` modifiers \
+    that take a single binding to some optional data, rather than a binding of a Boolean _and_ \
+    optional data. These modifiers can also customize their title text from the underlying data, a \
+    feature absent in vanilla SwiftUI.
+
+    • This library also comes with enhanced overloads of `sheet(item:)` that not only allow you to \
+    forego `Identifiable` conformances by providing a key path to an identifier instead, they also \
+    provide a _binding_ to the data being presented rather than just plain data. This opens up a \
+    child–parent communication “wormhole” that allows the child to write data directly back into \
+    the parent.
     """
 
   @State var alert: String?
