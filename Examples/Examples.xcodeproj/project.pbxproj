@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		CA26036D2C20973600822CA5 /* DetentsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA26036C2C20973600822CA5 /* DetentsHelper.swift */; };
+		CA3D0E322C20B27B00CCF7CD /* ConnectToNetworkFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9B82C0525980034B757 /* ConnectToNetworkFeature.swift */; };
+		CA3D0E332C20B27B00CCF7CD /* NetworkDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BA2C0525980034B757 /* NetworkDetailFeature.swift */; };
+		CA3D0E342C20B27B00CCF7CD /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9B92C0525980034B757 /* Network.swift */; };
+		CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BB2C0525980034B757 /* WiFiSettingsFeature.swift */; };
 		CA4737CF272F09600012CAC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA4737CE272F09600012CAC3 /* Assets.xcassets */; };
 		CA4737F4272F09780012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA4737F3272F09780012CAC3 /* SwiftUINavigation */; };
 		CA4737F9272F09D00012CAC3 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4737F5272F09D00012CAC3 /* ItemRow.swift */; };
@@ -39,10 +43,6 @@
 		DC5EB9912C0525350034B757 /* UIKitCaseStudiesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9902C0525350034B757 /* UIKitCaseStudiesApp.swift */; };
 		DC5EB9952C0525360034B757 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC5EB9942C0525360034B757 /* Assets.xcassets */; };
 		DC5EB9982C0525360034B757 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC5EB9972C0525360034B757 /* Preview Assets.xcassets */; };
-		DC5EB9BD2C0525980034B757 /* ConnectToNetworkFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9B82C0525980034B757 /* ConnectToNetworkFeature.swift */; };
-		DC5EB9BE2C0525980034B757 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9B92C0525980034B757 /* Network.swift */; };
-		DC5EB9BF2C0525980034B757 /* NetworkDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BA2C0525980034B757 /* NetworkDetailFeature.swift */; };
-		DC5EB9C02C0525980034B757 /* WiFiSettingsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BB2C0525980034B757 /* WiFiSettingsFeature.swift */; };
 		DC5EB9C62C0525D30034B757 /* CollectionFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9C12C0525D30034B757 /* CollectionFeature.swift */; };
 		DC5EB9C72C0525D30034B757 /* NavigationRootFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9C22C0525D30034B757 /* NavigationRootFeature.swift */; };
 		DC5EB9C82C0525D30034B757 /* NavigationStackCaseStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9C32C0525D30034B757 /* NavigationStackCaseStudy.swift */; };
@@ -235,6 +235,7 @@
 		CA9D704A2C1F6431003B672A /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				DC5EB9BC2C0525980034B757 /* WiFiFeature */,
 				CA9D70532C1FB4FA003B672A /* BasicsNavigationViewController.swift */,
 				CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */,
 				CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */,
@@ -273,7 +274,6 @@
 				DC5EB9902C0525350034B757 /* UIKitCaseStudiesApp.swift */,
 				DC5EB9942C0525360034B757 /* Assets.xcassets */,
 				DC5EB9962C0525360034B757 /* Preview Content */,
-				DC5EB9BC2C0525980034B757 /* WiFiFeature */,
 			);
 			path = UIKitCaseStudies;
 			sourceTree = "<group>";
@@ -517,6 +517,10 @@
 				CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */,
 				CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
+				CA3D0E322C20B27B00CCF7CD /* ConnectToNetworkFeature.swift in Sources */,
+				CA3D0E332C20B27B00CCF7CD /* NetworkDetailFeature.swift in Sources */,
+				CA3D0E342C20B27B00CCF7CD /* Network.swift in Sources */,
+				CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */,
 				CA26036D2C20973600822CA5 /* DetentsHelper.swift in Sources */,
 				CA9D705A2C208977003B672A /* UIControlBindingsViewController.swift in Sources */,
 				CA9D70472C1F6108003B672A /* AlertsWithAlertState.swift in Sources */,
@@ -538,13 +542,9 @@
 			files = (
 				DC5EB9C92C0525D30034B757 /* CounterFeature.swift in Sources */,
 				DC5EB9C62C0525D30034B757 /* CollectionFeature.swift in Sources */,
-				DC5EB9BD2C0525980034B757 /* ConnectToNetworkFeature.swift in Sources */,
-				DC5EB9C02C0525980034B757 /* WiFiSettingsFeature.swift in Sources */,
 				DC5EB9C72C0525D30034B757 /* NavigationRootFeature.swift in Sources */,
 				DC5EB9C82C0525D30034B757 /* NavigationStackCaseStudy.swift in Sources */,
 				DC5EB9CA2C0525D30034B757 /* FormFeature.swift in Sources */,
-				DC5EB9BE2C0525980034B757 /* Network.swift in Sources */,
-				DC5EB9BF2C0525980034B757 /* NetworkDetailFeature.swift in Sources */,
 				DC5EB9912C0525350034B757 /* UIKitCaseStudiesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

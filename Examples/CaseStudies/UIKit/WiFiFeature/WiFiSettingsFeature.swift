@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKitNavigation
 
-@Perceptible
+@Observable
 @MainActor
 class WiFiSettingsModel {
   var destination: Destination? {
@@ -69,7 +69,15 @@ class WiFiSettingsModel {
   }
 }
 
-class WiFiSettingsViewController: UICollectionViewController {
+class WiFiSettingsViewController: UICollectionViewController, UIKitCaseStudy {
+  let caseStudyTitle = "Wifi settings"
+  let readMe = """
+    This demo shows how to built a moderately complex feature using the tools of the library. \
+    There are multiple features that communicate with each other, there are multiple navigation \
+    patterns, and the root feature has a complex collection view that updates dynamically.
+    """
+  let isPresentedInSheet = true  
+
   @UIBindable var model: WiFiSettingsModel
   var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
 
@@ -121,7 +129,7 @@ class WiFiSettingsViewController: UICollectionViewController {
       )
     }
 
-    navigationController?.pushViewController(item: $model.destination.detail) { model in
+    pushViewController(item: $model.destination.detail) { model in
       NetworkDetailViewController(model: model)
     }
   }

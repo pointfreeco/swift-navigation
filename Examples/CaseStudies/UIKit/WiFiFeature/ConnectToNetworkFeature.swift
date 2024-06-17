@@ -2,7 +2,7 @@ import SwiftUI
 import UIKitNavigation
 import XCTestDynamicOverlay
 
-@Perceptible
+@Observable
 @MainActor
 class ConnectToNetworkModel: Identifiable {
   var incorrectPasswordAlertIsPresented = false

@@ -25,6 +25,9 @@ struct UIKitCaseStudiesView: View {
       CaseStudyGroupView("Advanced") {
         // TODO: Deep link
         // TODO: Dismissal (show off from VCs and views)
+        WiFiSettingsViewController(
+          model: WiFiSettingsModel(foundNetworks: .mocks)
+        )
       }
     }
     .navigationTitle("UIKit")

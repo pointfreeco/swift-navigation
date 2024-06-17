@@ -6,12 +6,14 @@ protocol CaseStudy {
   var caseStudyTitle: String { get }
   var caseStudyNavigationTitle: String { get }
   var usesOwnLayout: Bool { get }
+  var isPresentedInSheet: Bool { get }
 }
 protocol SwiftUICaseStudy: CaseStudy, View {}
 protocol UIKitCaseStudy: CaseStudy, UIViewController {}
 
 extension CaseStudy {
   var caseStudyNavigationTitle: String { caseStudyTitle }
+  var isPresentedInSheet: Bool { false }
 }
 extension SwiftUICaseStudy {
   var usesOwnLayout: Bool { false }
@@ -25,20 +27,32 @@ extension UIKitCaseStudy {
 enum CaseStudyViewBuilder {
   @ViewBuilder
   static func buildBlock() -> some View {}
+  @ViewBuilder
   static func buildExpression(_ caseStudy: some SwiftUICaseStudy) -> some View {
-    NavigationLink(caseStudy.caseStudyTitle) {
-      CaseStudyView {
-        caseStudy
+    if caseStudy.isPresentedInSheet {
+      Button(caseStudy.caseStudyTitle) {
+
       }
-      .modifier(CaseStudyModifier(caseStudy: caseStudy))
+    } else {
+      NavigationLink(caseStudy.caseStudyTitle) {
+        CaseStudyView {
+          caseStudy
+        }
+        .modifier(CaseStudyModifier(caseStudy: caseStudy))
+      }
     }
   }
+  @ViewBuilder
   static func buildExpression(_ caseStudy: some UIKitCaseStudy) -> some View {
-    NavigationLink(caseStudy.caseStudyTitle) {
-      UIViewControllerRepresenting {
-        caseStudy
+    if caseStudy.isPresentedInSheet {
+      ModalCaseStudyButton(caseStudy: caseStudy)
+    } else {
+      NavigationLink(caseStudy.caseStudyTitle) {
+        UIViewControllerRepresenting {
+          caseStudy
+        }
+        .modifier(CaseStudyModifier(caseStudy: caseStudy))
       }
-      .modifier(CaseStudyModifier(caseStudy: caseStudy))
     }
   }
   static func buildPartialBlock(first: some View) -> some View {
@@ -48,6 +62,22 @@ enum CaseStudyViewBuilder {
   static func buildPartialBlock(accumulated: some View, next: some View) -> some View {
     accumulated
     next
+  }
+}
+
+struct ModalCaseStudyButton<C: UIKitCaseStudy>: View {
+  let caseStudy: C
+  @State var isPresented = false
+  var body: some View {
+    Button(caseStudy.caseStudyTitle) {
+      isPresented = true
+    }
+    .sheet(isPresented: $isPresented) {
+      UIViewControllerRepresenting {
+        UINavigationController(rootViewController: caseStudy)
+      }
+      .modifier(CaseStudyModifier(caseStudy: caseStudy))
+    }
   }
 }
 

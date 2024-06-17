@@ -3,7 +3,7 @@ import UIKitNavigation
 import XCTestDynamicOverlay
 
 @MainActor
-@Perceptible
+@Observable
 class NetworkDetailModel {
   var forgetAlertIsPresented = false
   var onConfirmForget: () -> Void = {

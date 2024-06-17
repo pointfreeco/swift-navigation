@@ -3,6 +3,7 @@ import UIKit
 import UIKitNavigation
 
 class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
+  let caseStudyNavigationTitle = "Enum navigation"
   let caseStudyTitle = "Concise enum navigation"
   let readMe = """
     This case study demonstrates how to navigate to multiple destinations from a single optional \
