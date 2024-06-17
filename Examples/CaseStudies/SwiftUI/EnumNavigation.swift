@@ -9,8 +9,9 @@ enum Destination {
   case sheetWithoutPayload
 }
 
-struct MultipleDestinations: SwiftUICaseStudy {
+struct EnumNavigation: SwiftUICaseStudy {
   let caseStudyTitle = "Concise enum navigation"
+  let caseStudyNavigationTitle = "Enum navigation"
   let readMe = """
     This case study demonstrates how to power multiple forms of navigation from a single \
     destination enum that describes all of the possible destinations one can travel to from this \
@@ -23,22 +24,23 @@ struct MultipleDestinations: SwiftUICaseStudy {
   @State var destination: Destination?
   
   var body: some View {
-    Button("Alert") {
-      destination = .alert("This is an alert!")
+    Section {
+      Button("Alert") {
+        destination = .alert("This is an alert!")
+      }
+
+      Button("Confirmation dialog") {
+        destination = .confirmationDialog("This is a confirmation dialog!")
+      }
+
+      Button("Sheet with payload") {
+        destination = .sheetWithPayload(.random(in: 1...1_000))
+      }
+
+      Button("Sheet without payload") {
+        destination = .sheetWithoutPayload
+      }
     }
-    
-    Button("Confirmation dialog") {
-      destination = .confirmationDialog("This is a confirmation dialog!")
-    }
-    
-    Button("Sheet with payload") {
-      destination = .sheetWithPayload(.random(in: 1...1_000))
-    }
-    
-    Button("Sheet without payload") {
-      destination = .sheetWithoutPayload
-    }
-    .navigationTitle("Routing")
     .alert(item: $destination.alert) { title in
       Text(title)
     } actions: { _ in
@@ -68,7 +70,7 @@ struct MultipleDestinations: SwiftUICaseStudy {
 #Preview {
   NavigationStack {
     CaseStudyView {
-      MultipleDestinations()
+      EnumNavigation()
     }
   }
 }

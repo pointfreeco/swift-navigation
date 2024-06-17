@@ -4,13 +4,20 @@ import UIKitNavigation
 protocol CaseStudy {
   var readMe: String { get }
   var caseStudyTitle: String { get }
+  var caseStudyNavigationTitle: String { get }
   var usesOwnLayout: Bool { get }
 }
 protocol SwiftUICaseStudy: CaseStudy, View {}
 protocol UIKitCaseStudy: CaseStudy, UIViewController {}
 
 extension CaseStudy {
+  var caseStudyNavigationTitle: String { caseStudyTitle }
+}
+extension SwiftUICaseStudy {
   var usesOwnLayout: Bool { false }
+}
+extension UIKitCaseStudy {
+  var usesOwnLayout: Bool { true }
 }
 
 @resultBuilder
@@ -20,7 +27,10 @@ enum CaseStudyViewBuilder {
   static func buildBlock() -> some View {}
   static func buildExpression(_ caseStudy: some SwiftUICaseStudy) -> some View {
     NavigationLink(caseStudy.caseStudyTitle) {
-      CaseStudyView { caseStudy }
+      CaseStudyView {
+        caseStudy
+      }
+      .modifier(CaseStudyModifier(caseStudy: caseStudy))
     }
   }
   static func buildExpression(_ caseStudy: some UIKitCaseStudy) -> some View {
@@ -28,7 +38,7 @@ enum CaseStudyViewBuilder {
       UIViewControllerRepresenting {
         caseStudy
       }
-      .modifier(UIKitCaseStudyModifier(caseStudy: caseStudy))
+      .modifier(CaseStudyModifier(caseStudy: caseStudy))
     }
   }
   static func buildPartialBlock(first: some View) -> some View {
@@ -41,12 +51,12 @@ enum CaseStudyViewBuilder {
   }
 }
 
-struct UIKitCaseStudyModifier<C: CaseStudy>: ViewModifier {
-  @State var isAboutPresented = false
+struct CaseStudyModifier<C: CaseStudy>: ViewModifier {
   let caseStudy: C
+  @State var isAboutPresented = false
   func body(content: Content) -> some View {
     content
-      .navigationTitle(caseStudy.caseStudyTitle)
+      .navigationTitle(caseStudy.caseStudyNavigationTitle)
       .toolbar {
         ToolbarItem {
           Button("About") { isAboutPresented = true }
@@ -63,23 +73,15 @@ struct UIKitCaseStudyModifier<C: CaseStudy>: ViewModifier {
 
 struct CaseStudyView<C: SwiftUICaseStudy>: View {
   @ViewBuilder let caseStudy: C
-
+  @State var isAboutPresented = false
   var body: some View {
-    Group {
-      if caseStudy.usesOwnLayout {
+    if caseStudy.usesOwnLayout {
+      caseStudy
+    } else {
+      Form {
         caseStudy
-      } else {
-        Form {
-          Section {
-            DisclosureGroup("About this case study") {
-              Text(template: caseStudy.readMe)
-            }
-          }
-          caseStudy
-        }
       }
     }
-    .navigationTitle(caseStudy.caseStudyTitle)
   }
 }
 

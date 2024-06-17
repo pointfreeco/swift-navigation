@@ -5,14 +5,14 @@ import SwiftUINavigation
 struct OptionalNavigation: SwiftUICaseStudy {
   let caseStudyTitle = "Optional navigation"
   let readMe = """
-    This case study shows how to use an overload of SwiftUI's 'sheet(item:)' modifier that will \
+    This case study shows how to use an overload of SwiftUI's `sheet(item:)` modifier that will \
     give you a binding to the data being presented, rather than just plain data.
 
     There are also similar view modifiers for the following other forms of navigation:
 
-    * popover(item:)
-    * fullScreenCover(item:)
-    * navigationDestination(item:)
+    • `popover(item:)`
+    • `fullScreenCover(item:)`
+    • `navigationDestination(item:)`
     """
   @State private var model = FeatureModel()
 
@@ -61,7 +61,6 @@ struct OptionalNavigation: SwiftUICaseStudy {
           }
       }
     }
-    .navigationTitle("Sheets")
   }
 }
 

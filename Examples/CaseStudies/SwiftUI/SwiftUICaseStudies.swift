@@ -5,7 +5,7 @@ struct SwiftUICaseStudiesView: View {
     List {
       CaseStudyGroupView("Navigation") {
         OptionalNavigation()
-        MultipleDestinations()
+        EnumNavigation()
         AlertsWithAlertState()
       }
       CaseStudyGroupView("Binding helpers") {
