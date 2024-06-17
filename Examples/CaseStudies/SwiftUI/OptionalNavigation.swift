@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftUINavigation
 
 // TODO: optional destination
-struct Sheets: SwiftUICaseStudy {
+struct OptionalNavigation: SwiftUICaseStudy {
   let caseStudyTitle = "Optional navigation"
   let readMe = """
     This case study shows how to use an overload of SwiftUI's 'sheet(item:)' modifier that will \
@@ -114,7 +114,7 @@ private class FeatureModel {
 #Preview {
   NavigationStack {
     CaseStudyView {
-      Sheets()
+      OptionalNavigation()
     }
   }
 }

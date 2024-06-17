@@ -54,7 +54,7 @@ struct UIKitCaseStudyModifier<C: CaseStudy>: ViewModifier {
       }
       .sheet(isPresented: $isAboutPresented) {
         Form {
-          Text(caseStudy.readMe)
+          Text(template: caseStudy.readMe)
         }
         .presentationDetents([.medium])
       }
@@ -72,7 +72,7 @@ struct CaseStudyView<C: SwiftUICaseStudy>: View {
         Form {
           Section {
             DisclosureGroup("About this case study") {
-              Text(caseStudy.readMe)
+              Text(template: caseStudy.readMe)
             }
           }
           caseStudy
@@ -80,63 +80,6 @@ struct CaseStudyView<C: SwiftUICaseStudy>: View {
       }
     }
     .navigationTitle(caseStudy.caseStudyTitle)
-  }
-}
-
-class CaseStudyViewController<C: UIKitCaseStudy>: UIViewController {
-  let controller: C
-  init(controller: C) {
-    self.controller = controller
-    super.init(nibName: nil, bundle: nil)
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    view.backgroundColor = .systemBackground
-    title = controller.caseStudyTitle
-    navigationItem.rightBarButtonItem = UIBarButtonItem(
-      title: "About",
-      primaryAction: UIAction { [weak self] _ in
-        guard let self else { return }
-        present(AboutViewController(readMe: controller.readMe), animated: true)
-    })
-    addChild(controller)
-    view.addSubview(controller.view)
-    controller.view.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      controller.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      controller.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      controller.view.topAnchor.constraint(equalTo: view.topAnchor),
-    ])
-  }
-
-  private class AboutViewController: UIViewController {
-    let readMe: String
-    init(readMe: String) {
-      self.readMe = readMe
-      super.init(nibName: nil, bundle: nil)
-    }
-    required init?(coder: NSCoder) {
-      fatalError("init(coder:) has not been implemented")
-    }
-    override func viewDidLoad() {
-      super.viewDidLoad()
-      view.backgroundColor = .systemBackground
-      let readMeLabel = UILabel()
-      readMeLabel.text = readMe
-      view.addSubview(readMeLabel)
-      readMeLabel.translatesAutoresizingMaskIntoConstraints = false
-      NSLayoutConstraint.activate([
-        readMeLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-        readMeLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-        readMeLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 12),
-      ])
-    }
   }
 }
 
@@ -172,16 +115,6 @@ extension SwiftUICaseStudy {
     CaseStudyView {
       DemoCaseStudy()
     }
-  }
-}
-
-#Preview("UIKit case study") {
-  UIViewControllerRepresenting {
-    UINavigationController(
-      rootViewController: CaseStudyViewController(
-        controller: DemoCaseStudyController()
-      )
-    )
   }
 }
 

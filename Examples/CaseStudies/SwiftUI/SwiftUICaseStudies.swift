@@ -4,7 +4,7 @@ struct SwiftUICaseStudiesView: View {
   var body: some View {
     List {
       CaseStudyGroupView("Navigation") {
-        Sheets()
+        OptionalNavigation()
         MultipleDestinations()
         AlertsWithAlertState()
       }
