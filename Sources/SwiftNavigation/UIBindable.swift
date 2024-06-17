@@ -46,9 +46,18 @@ import Perception
 @propertyWrapper
 public struct UIBindable<Value> {
   public var wrappedValue: Value
+  private let fileID: StaticString
+  private let line: UInt
 
-  init(objectIdentifier: ObjectIdentifier, wrappedValue: Value) {
+  init(
+    objectIdentifier: ObjectIdentifier,
+    wrappedValue: Value,
+    fileID: StaticString,
+    line: UInt
+  ) {
     self.wrappedValue = wrappedValue
+    self.fileID = fileID
+    self.line = line
   }
 
   /// Creates a bindable object from a perceptible object.
@@ -56,8 +65,17 @@ public struct UIBindable<Value> {
   /// This initializer is equivalent to `init(wrappedValue:)`, but is more succinct when when
   /// creating bindable objects nested within other expressions.
   @_disfavoredOverload
-  public init(_ wrappedValue: Value) where Value: AnyObject & Perceptible {
-    self.init(objectIdentifier: ObjectIdentifier(wrappedValue), wrappedValue: wrappedValue)
+  public init(
+    _ wrappedValue: Value,
+    fileID: StaticString = #fileID,
+    line: UInt = #line
+  ) where Value: AnyObject & Perceptible {
+    self.init(
+      objectIdentifier: ObjectIdentifier(wrappedValue),
+      wrappedValue: wrappedValue,
+      fileID: fileID,
+      line: line
+    )
   }
 
   /// Creates a bindable object from a perceptible object.
@@ -65,8 +83,17 @@ public struct UIBindable<Value> {
   /// You should not call this initializer directly. Instead, declare a property with the
   /// `@UIBindable` attribute, and provide an initial value.
   @_disfavoredOverload
-  public init(wrappedValue: Value) where Value: AnyObject & Perceptible {
-    self.init(objectIdentifier: ObjectIdentifier(wrappedValue), wrappedValue: wrappedValue)
+  public init(
+    wrappedValue: Value,
+    fileID: StaticString = #fileID,
+    line: UInt = #line
+  ) where Value: AnyObject & Perceptible {
+    self.init(
+      objectIdentifier: ObjectIdentifier(wrappedValue),
+      wrappedValue: wrappedValue,
+      fileID: fileID,
+      line: line
+    )
   }
 
   /// Creates a bindable from the value of another bindable.
@@ -84,7 +111,13 @@ public struct UIBindable<Value> {
   public subscript<Member>(
     dynamicMember keyPath: ReferenceWritableKeyPath<Value, Member>
   ) -> UIBinding<Member> where Value: AnyObject {
-    UIBinding(root: wrappedValue, keyPath: keyPath, transaction: UITransaction())
+    UIBinding(
+      root: wrappedValue,
+      keyPath: keyPath,
+      transaction: UITransaction(),
+      fileID: fileID,
+      line: line
+    )
   }
 }
 
@@ -95,16 +128,34 @@ public struct UIBindable<Value> {
     ///
     /// This initializer is equivalent to `init(wrappedValue:)`, but is more succinct when when
     /// creating bindable objects nested within other expressions.
-    public init(_ wrappedValue: Value) {
-      self.init(objectIdentifier: ObjectIdentifier(wrappedValue), wrappedValue: wrappedValue)
+    public init(
+      _ wrappedValue: Value,
+      fileID: StaticString = #fileID,
+      line: UInt = #line
+    ) {
+      self.init(
+        objectIdentifier: ObjectIdentifier(wrappedValue),
+        wrappedValue: wrappedValue,
+        fileID: fileID,
+        line: line
+      )
     }
 
     /// Creates a bindable object from an observable object.
     ///
     /// You should not call this initializer directly. Instead, declare a property with the
     /// `@UIBindable` attribute, and provide an initial value.
-    public init(wrappedValue: Value) {
-      self.init(objectIdentifier: ObjectIdentifier(wrappedValue), wrappedValue: wrappedValue)
+    public init(
+      wrappedValue: Value,
+      fileID: StaticString = #fileID,
+      line: UInt = #line
+    ) {
+      self.init(
+        objectIdentifier: ObjectIdentifier(wrappedValue),
+        wrappedValue: wrappedValue,
+        fileID: fileID,
+        line: line
+      )
     }
   }
 #endif

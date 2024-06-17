@@ -93,10 +93,12 @@ public struct UIBinding<Value>: Sendable {
   init<Root: AnyObject>(
     root: Root,
     keyPath: ReferenceWritableKeyPath<Root, Value>,
-    transaction: UITransaction
+    transaction: UITransaction,
+    fileID: StaticString,
+    line: UInt
   ) {
     self.init(
-      location: _UIBindingWeakRoot(root: root, keyPath: keyPath),
+      location: _UIBindingWeakRoot(root: root, keyPath: keyPath, fileID: fileID, line: line),
       transaction: transaction
     )
   }
@@ -386,21 +388,36 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   let objectIdentifier: ObjectIdentifier
   weak var root: Root?
   var value: Value
+  let fileID: StaticString
+  let line: UInt
   init(
     root: Root,
-    keyPath: ReferenceWritableKeyPath<Root, Value>
+    keyPath: ReferenceWritableKeyPath<Root, Value>,
+    fileID: StaticString,
+    line: UInt
   ) {
     self.keyPath = keyPath
     self.objectIdentifier = ObjectIdentifier(root)
     self.root = root
     self.value = root[keyPath: keyPath]
+    self.fileID = fileID
+    self.line = line
   }
   var wrappedValue: Value {
     get { root?[keyPath: keyPath] ?? value }
     set {
       if root == nil {
-        // TODO: messaging
-        runtimeWarn("Binding failed to write to '\(Root.self)' because it is 'nil'.")
+        // TODO: finesse.
+        runtimeWarn(
+          """
+          Binding failed to write to '@Bindable var \(Root.self)':\(fileID):\(line) because it \
+          is 'nil'.
+
+          This usually happens because the bindable model is not strongly held and so is \
+          deallocated.
+          """
+          // TODO: pass file/line for test failures?
+        )
       }
       value = newValue
       root?[keyPath: keyPath] = value
