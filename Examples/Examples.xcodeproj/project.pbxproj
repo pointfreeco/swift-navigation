@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA26036D2C20973600822CA5 /* DetentsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA26036C2C20973600822CA5 /* DetentsHelper.swift */; };
 		CA4737CF272F09600012CAC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA4737CE272F09600012CAC3 /* Assets.xcassets */; };
 		CA4737F4272F09780012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA4737F3272F09780012CAC3 /* SwiftUINavigation */; };
 		CA4737F9272F09D00012CAC3 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4737F5272F09D00012CAC3 /* ItemRow.swift */; };
@@ -24,14 +25,13 @@
 		CA7403D92C0A595D007FADC0 /* NavigationPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */; };
 		CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */; };
 		CA9D70472C1F6108003B672A /* AlertsWithAlertState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70462C1F6108003B672A /* AlertsWithAlertState.swift */; };
-		CA9D704C2C1F6449003B672A /* AlertsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704B2C1F6449003B672A /* AlertsViewController.swift */; };
-		CA9D704E2C1FAFAD003B672A /* MultipleDestinationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704D2C1FAFAD003B672A /* MultipleDestinationsViewController.swift */; };
+		CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */; };
 		CA9D70502C1FB431003B672A /* StaticPathStackNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */; };
 		CA9D70522C1FB4B7003B672A /* ErasedPathStackNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */; };
-		CA9D70542C1FB4FA003B672A /* SheetsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70532C1FB4FA003B672A /* SheetsViewController.swift */; };
+		CA9D70542C1FB4FA003B672A /* BasicsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70532C1FB4FA003B672A /* BasicsNavigationViewController.swift */; };
 		CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70552C2087DC003B672A /* EnumControls.swift */; };
 		CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */; };
-		CA9D705A2C208977003B672A /* BasicsBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70592C208977003B672A /* BasicsBindingsViewController.swift */; };
+		CA9D705A2C208977003B672A /* UIControlBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */; };
 		CA9D705E2C2089DD003B672A /* EnumControlsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */; };
 		CABE9FC1272F2C0000AFC150 /* EnumNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */; };
 		CADCA3632C1CE75500DE645F /* SwiftUICaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */; };
@@ -72,6 +72,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CA26036C2C20973600822CA5 /* DetentsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetentsHelper.swift; sourceTree = "<group>"; };
 		CA4737C3272F090F0012CAC3 /* swiftui-navigation */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "swiftui-navigation"; path = ..; sourceTree = "<group>"; };
 		CA4737C8272F095F0012CAC3 /* Inventory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inventory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA4737CE272F09600012CAC3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -91,14 +92,13 @@
 		CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPathTests.swift; sourceTree = "<group>"; };
 		CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitCaseStudies.swift; sourceTree = "<group>"; };
 		CA9D70462C1F6108003B672A /* AlertsWithAlertState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsWithAlertState.swift; sourceTree = "<group>"; };
-		CA9D704B2C1F6449003B672A /* AlertsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsViewController.swift; sourceTree = "<group>"; };
-		CA9D704D2C1FAFAD003B672A /* MultipleDestinationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleDestinationsViewController.swift; sourceTree = "<group>"; };
+		CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConciseEnumNavigationViewController.swift; sourceTree = "<group>"; };
 		CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticPathStackNavigationController.swift; sourceTree = "<group>"; };
 		CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErasedPathStackNavigationController.swift; sourceTree = "<group>"; };
-		CA9D70532C1FB4FA003B672A /* SheetsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetsViewController.swift; sourceTree = "<group>"; };
+		CA9D70532C1FB4FA003B672A /* BasicsNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicsNavigationViewController.swift; sourceTree = "<group>"; };
 		CA9D70552C2087DC003B672A /* EnumControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumControls.swift; sourceTree = "<group>"; };
 		CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinimalObservationViewController.swift; sourceTree = "<group>"; };
-		CA9D70592C208977003B672A /* BasicsBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicsBindingsViewController.swift; sourceTree = "<group>"; };
+		CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIControlBindingsViewController.swift; sourceTree = "<group>"; };
 		CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumControlsViewController.swift; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumNavigation.swift; sourceTree = "<group>"; };
 		CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICaseStudies.swift; sourceTree = "<group>"; };
@@ -227,6 +227,7 @@
 				CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */,
 				CA473831272F0D860012CAC3 /* FactClient.swift */,
 				DC86E8702C208D8A003C0EC9 /* Text+Template.swift */,
+				CA26036C2C20973600822CA5 /* DetentsHelper.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -234,15 +235,14 @@
 		CA9D704A2C1F6431003B672A /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				CA9D704B2C1F6449003B672A /* AlertsViewController.swift */,
-				CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */,
-				CA9D704D2C1FAFAD003B672A /* MultipleDestinationsViewController.swift */,
-				CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */,
-				CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */,
+				CA9D70532C1FB4FA003B672A /* BasicsNavigationViewController.swift */,
+				CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */,
 				CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */,
-				CA9D70592C208977003B672A /* BasicsBindingsViewController.swift */,
+				CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */,
 				CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */,
-				CA9D70532C1FB4FA003B672A /* SheetsViewController.swift */,
+				CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */,
+				CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */,
+				CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -511,14 +511,14 @@
 				DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */,
 				CA9D70502C1FB431003B672A /* StaticPathStackNavigationController.swift in Sources */,
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
-				CA9D704E2C1FAFAD003B672A /* MultipleDestinationsViewController.swift in Sources */,
+				CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */,
 				CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */,
 				CA473835272F0D860012CAC3 /* ConfirmationDialogs.swift in Sources */,
 				CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */,
 				CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
-				CA9D704C2C1F6449003B672A /* AlertsViewController.swift in Sources */,
-				CA9D705A2C208977003B672A /* BasicsBindingsViewController.swift in Sources */,
+				CA26036D2C20973600822CA5 /* DetentsHelper.swift in Sources */,
+				CA9D705A2C208977003B672A /* UIControlBindingsViewController.swift in Sources */,
 				CA9D70472C1F6108003B672A /* AlertsWithAlertState.swift in Sources */,
 				CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */,
 				CA473839272F0D860012CAC3 /* Alerts.swift in Sources */,
@@ -526,7 +526,7 @@
 				CA9D705E2C2089DD003B672A /* EnumControlsViewController.swift in Sources */,
 				CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */,
 				CA9D70522C1FB4B7003B672A /* ErasedPathStackNavigationController.swift in Sources */,
-				CA9D70542C1FB4FA003B672A /* SheetsViewController.swift in Sources */,
+				CA9D70542C1FB4FA003B672A /* BasicsNavigationViewController.swift in Sources */,
 				DC86E8712C208D8D003C0EC9 /* Text+Template.swift in Sources */,
 				CA473838272F0D860012CAC3 /* OptionalNavigation.swift in Sources */,
 			);

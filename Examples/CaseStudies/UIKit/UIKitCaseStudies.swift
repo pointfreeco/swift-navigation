@@ -5,16 +5,17 @@ struct UIKitCaseStudiesView: View {
   var body: some View {
     List {
       CaseStudyGroupView("Observation") {
-        MinimalObservationViewController()
+        MinimalObservationViewController() // ✅
         // TODO: Animation and transaction
       }
       CaseStudyGroupView("Bindings") {
-        BasicsBindingsViewController()
+        UIControlBindingsViewController()
         EnumControlsViewController()
       }
       CaseStudyGroupView("Optional navigation") {
-        SheetsViewController()
-        MultipleDestinationsViewController()
+        BasicsNavigationViewController() // ✅
+        // TODO: Alert/dialog state
+        ConciseEnumNavigationViewController() // ✅
       }
       CaseStudyGroupView("Stack navigation") {
         StaticPathStackNavigationController()

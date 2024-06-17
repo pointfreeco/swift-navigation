@@ -1,7 +1,7 @@
 import UIKit
 import UIKitNavigation
 
-class BasicsBindingsViewController: UIViewController, UIKitCaseStudy {
+class UIControlBindingsViewController: UIViewController, UIKitCaseStudy {
   let caseStudyTitle = "UIControl bindings"
   let readMe = """
     TODO
