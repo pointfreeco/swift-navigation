@@ -18,8 +18,8 @@ struct UIKitCaseStudiesView: View {
         ConciseEnumNavigationViewController()
       }
       CaseStudyGroupView("Stack navigation") {
-        StaticNavigationStackController()  // TODO: do
-        ErasedPathStackNavigationController()  // TODO: do
+        StaticNavigationStackController()
+        ErasedNavigationStackController()  // TODO: do
         // TODO: state restoration
       }
       CaseStudyGroupView("Advanced") {

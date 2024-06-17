@@ -166,9 +166,9 @@ final class NavigationPathTests: XCTestCase {
     await assertEventuallyEqual(
       path.elements,
       [
-        .lazy(.init(tag: "Si", item: "1")),
-        .lazy(.init(tag: "SS", item: "\"Blob\"")),
-        .lazy(.init(tag: "Sb", item: "true")),
+        .lazy(.codable(.init(tag: "Si", item: "1"))),
+        .lazy(.codable(.init(tag: "SS", item: "\"Blob\""))),
+        .lazy(.codable(.init(tag: "Sb", item: "true"))),
       ]
     )
 
@@ -205,9 +205,9 @@ final class NavigationPathTests: XCTestCase {
     await assertEventuallyEqual(
       path.elements,
       [
-        .lazy(.init(tag: "Si", item: "1")),
-        .lazy(.init(tag: "SS", item: "\"Blob\"")),
-        .lazy(.init(tag: "Sb", item: "true")),
+        .lazy(.codable(.init(tag: "Si", item: "1"))),
+        .lazy(.codable(.init(tag: "SS", item: "\"Blob\""))),
+        .lazy(.codable(.init(tag: "Sb", item: "true"))),
       ]
     )
 
@@ -244,9 +244,9 @@ final class NavigationPathTests: XCTestCase {
     await assertEventuallyNoDifference(
       path.elements,
       [
-        .lazy(.init(tag: "Si", item: "1")),
-        .lazy(.init(tag: "SS", item: "\"Blob\"")),
-        .lazy(.init(tag: "Sb", item: "true")),
+        .lazy(.codable(.init(tag: "Si", item: "1"))),
+        .lazy(.codable(.init(tag: "SS", item: "\"Blob\""))),
+        .lazy(.codable(.init(tag: "Sb", item: "true"))),
       ]
     )
 
@@ -280,10 +280,10 @@ final class NavigationPathTests: XCTestCase {
     await assertEventuallyNoDifference(
       path.elements,
       [
-        .lazy(.init(tag: "Si", item: "1")),
-        .lazy(.init(tag: User.mangledTypeName, item: "{}")),
-        .lazy(.init(tag: "SS", item: "\"Blob\"")),
-        .lazy(.init(tag: "Sb", item: "true")),
+        .lazy(.codable(.init(tag: "Si", item: "1"))),
+        .lazy(.codable(.init(tag: User.mangledTypeName, item: "{}"))),
+        .lazy(.codable(.init(tag: "SS", item: "\"Blob\""))),
+        .lazy(.codable(.init(tag: "Sb", item: "true"))),
       ]
     )
 
@@ -318,9 +318,11 @@ final class NavigationPathTests: XCTestCase {
       path.elements,
       [
         .lazy(
-          .init(
-            tag: User.mangledTypeName,
-            item: "{}"
+          .codable(
+            .init(
+              tag: User.mangledTypeName,
+              item: "{}"
+            )
           )
         )
       ]

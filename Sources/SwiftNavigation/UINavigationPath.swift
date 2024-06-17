@@ -10,24 +10,46 @@ public struct UINavigationPath: Equatable {
   @_spi(Internals)
   public enum Element: Equatable {
     case eager(AnyHashable)
-    case lazy(CodableRepresentation.Element)
+    case lazy(Lazy)
+
+    package var element: AnyHashable? {
+      switch self {
+      case .eager(let element), .lazy(.element(let element)):
+        return element
+      case .lazy:
+        return nil
+      }
+    }
+
+    public enum Lazy: Equatable {
+      case codable(CodableRepresentation.Element)
+      case element(AnyHashable)
+    }
 
     package var elementType: Any.Type? {
       switch self {
-      case let .eager(value):
+      case let .eager(value), let .lazy(.element(value)):
         return type(of: value.base)
-      case let .lazy(value):
+      case let .lazy(.codable(value)):
         return value.decodableType
       }
     }
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
       switch (lhs, rhs) {
-      case let (.eager(lhs), .eager(rhs)):
+      case 
+        let (.eager(lhs), .eager(rhs)),
+        let (.lazy(.element(lhs)), .eager(rhs)),
+        let (.lazy(.element(lhs)), .lazy(.element(rhs))),
+        let (.eager(lhs), .lazy(.element(rhs))):
         return lhs == rhs
-      case let (.lazy(lhs), .lazy(rhs)):
+      case let (.lazy(.codable(lhs)), .lazy(.codable(rhs))):
         return lhs == rhs
-      case let (.eager(eager), .lazy(lazy)), let (.lazy(lazy), .eager(eager)):
+      case 
+        let (.eager(eager), .lazy(.codable(lazy))),
+        let (.lazy(.codable(lazy)), .eager(eager)),
+        let (.lazy(.element(eager)), .lazy(.codable(lazy))),
+        let (.lazy(.codable(lazy)), .lazy(.element(eager))):
         guard #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) else { fatalError() }
         return CodableRepresentation.Element(eager) == lazy
       }
@@ -60,7 +82,7 @@ public struct UINavigationPath: Equatable {
   ///
   /// - Parameter elements: A sequence used to create the navigation path.
   public init<S: Sequence>(_ elements: S) where S.Element: Hashable {
-    self.elements = elements.map { .eager(AnyHashable($0)) }
+    self.elements = elements.map { .lazy(.element(AnyHashable($0))) }
   }
 
   /// Creates a new navigation path from a serializable version.
@@ -68,12 +90,12 @@ public struct UINavigationPath: Equatable {
   /// - Parameter codable: A value describing the contents of the new path in a serializable format.
   @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
   public init(_ codable: CodableRepresentation) {
-    self.elements = codable.elements.map { .lazy($0) }
+    self.elements = codable.elements.map { .lazy(.codable($0)) }
   }
 
   /// Appends a new value to the end of this path.
   public mutating func append<V: Hashable>(_ value: V) {
-    elements.append(.eager(value))
+    elements.append(.lazy(.element(value)))
   }
 
   /// Removes values from the end of this path.
@@ -167,10 +189,12 @@ public struct UINavigationPath: Equatable {
       elements.reserveCapacity(path.elements.count)
       for element in path.elements {
         switch element {
-        case let .eager(value):
+        case
+          let .eager(value),
+          let .lazy(.element(value)):
           guard let element = Element(value) else { return nil }
           elements.append(element)
-        case let .lazy(element):
+        case let .lazy(.codable(element)):
           elements.append(element)
         }
       }

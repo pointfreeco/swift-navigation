@@ -138,11 +138,12 @@
       guard
         let destinationType = navigationID.elementType,
         let destination = destinations[DestinationType(destinationType)],
-        let viewController = destination(navigationID)
+        let viewController = destination(navigationID),
+        let element = navigationID.element
       else {
         return nil
       }
-      viewController.navigationID = navigationID
+      viewController.navigationID = .eager(element)
       if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
         viewController.traitOverrides
           .dismiss = UIDismissAction { [weak self, weak viewController] transaction in
@@ -288,7 +289,7 @@
         )
         return
       }
-      stackController.path.append(.eager(value))
+      stackController.path.append(.lazy(.element(value)))
     }
 
     public func navigationDestination<D: Hashable>(
@@ -312,7 +313,7 @@
         switch element {
         case let .eager(value):
           return destination(value as! D)
-        case let .lazy(value):
+        case let .lazy(.codable(value)):
           let index = stackController.path.firstIndex(of: element)!
           guard let value = value.decode()
           else {
@@ -327,9 +328,19 @@
           }
           stackController.path[index] = .eager(value)
           return destination(value as! D)
+        case let .lazy(.element(value)):
+          let index = stackController.path.firstIndex(of: element)!
+          stackController.path[index] = .eager(value)
+          return destination(value as! D)
         }
       }
-      if stackController.path.contains(where: { $0.elementType == D.self }) {
+      if stackController.path.contains(where: {
+        if case .lazy = $0, $0.elementType == D.self {
+          return true
+        } else {
+          return false
+        }
+      }) {
         stackController.path = stackController.path
       }
     }

@@ -8,6 +8,9 @@ final class StaticNavigationStackController: NavigationStackController, UIKitCas
   let readMe = """
     This case study demonstrates how to use the `NavigationStackController` class, which is a \
     UIKit replacement for SwiftUI's `NavigationStack`.
+
+    Each screen can push a new element onto the stack by using the `push(value:)` trait, and \
+    each feature can dismiss itself using the `dismiss()` trait.
     """
   let isPresentedInSheet = true
   private var model: Model!
@@ -28,10 +31,6 @@ final class StaticNavigationStackController: NavigationStackController, UIKitCas
       }
     }
     self.model = model
-  }
-
-  deinit {
-    print(Self.self, "deinit")
   }
 
   @Observable

@@ -29,23 +29,11 @@ enum CaseStudyViewBuilder {
   static func buildBlock() -> some View {}
   @ViewBuilder
   static func buildExpression(_ caseStudy: some SwiftUICaseStudy) -> some View {
-    if caseStudy.isPresentedInSheet {
-      // TODO: do
-      Button(caseStudy.caseStudyTitle) {
-        
-      }
-    } else {
-      NavigationLink(caseStudy.caseStudyTitle) {
-        CaseStudyView {
-          caseStudy
-        }
-        .modifier(CaseStudyModifier(caseStudy: caseStudy))
-      }
-    }
+    SwiftUICaseStudyButton(caseStudy: caseStudy)
   }
   @ViewBuilder
   static func buildExpression(_ caseStudy: some UIKitCaseStudy) -> some View {
-    CaseStudyButton(caseStudy: caseStudy)
+    UIKitCaseStudyButton(caseStudy: caseStudy)
   }
   static func buildPartialBlock(first: some View) -> some View {
     first
@@ -57,7 +45,32 @@ enum CaseStudyViewBuilder {
   }
 }
 
-struct CaseStudyButton<C: UIKitCaseStudy>: View {
+struct SwiftUICaseStudyButton<C: SwiftUICaseStudy>: View {
+  let caseStudy: C
+  @State var isPresented = false
+  var body: some View {
+    if caseStudy.isPresentedInSheet {
+      Button(caseStudy.caseStudyTitle) {
+        isPresented = true
+      }
+      .sheet(isPresented: $isPresented) {
+        CaseStudyView {
+          caseStudy
+        }
+        .modifier(CaseStudyModifier(caseStudy: caseStudy))
+      }
+    } else {
+      NavigationLink(caseStudy.caseStudyTitle) {
+        CaseStudyView {
+          caseStudy
+        }
+        .modifier(CaseStudyModifier(caseStudy: caseStudy))
+      }
+    }
+  }
+}
+
+struct UIKitCaseStudyButton<C: UIKitCaseStudy>: View {
   let caseStudy: C
   @State var isPresented = false
   var body: some View {
