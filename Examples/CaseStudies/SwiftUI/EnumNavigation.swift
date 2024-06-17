@@ -4,8 +4,11 @@ import SwiftUINavigation
 @CasePathable
 enum Destination {
   case alert(String)
+  case drillDown(Int)
   case confirmationDialog(String)
-  case sheetWithPayload(Int)
+  case fullScreenCover(Int)
+  case popover(Int)
+  case sheet(Int)
   case sheetWithoutPayload
 }
 
@@ -21,6 +24,7 @@ struct EnumNavigation: SwiftUICaseStudy {
     of sheets. The state for each of these destinations is held as associated data of an enum, and \
     bindings to the cases of that enum are derived using the tools in this library.
     """
+
   @State var destination: Destination?
   
   var body: some View {
@@ -28,41 +32,93 @@ struct EnumNavigation: SwiftUICaseStudy {
       Button("Alert") {
         destination = .alert("This is an alert!")
       }
+      .alert(item: $destination.alert) { title in
+        Text(title)
+      } actions: { _ in
+      }
 
       Button("Confirmation dialog") {
         destination = .confirmationDialog("This is a confirmation dialog!")
       }
-
-      Button("Sheet with payload") {
-        destination = .sheetWithPayload(.random(in: 1...1_000))
+      .alert(item: $destination.confirmationDialog) { title in
+        Text(title)
+      } actions: { _ in
       }
 
-      Button("Sheet without payload") {
+      Button("Sheet (with payload)") {
+        destination = .sheet(.random(in: 1...1_000))
+      }
+      .sheet(item: $destination.sheet, id: \.self) { $count in
+        Form {
+          Text(count.description)
+          Button("Change count") {
+            count = .random(in: 1...1_000)
+          }
+        }
+        .navigationTitle("Sheet with payload")
+      }
+
+      Button("Sheet (without payload)") {
         destination = .sheetWithoutPayload
       }
-    }
-    .alert(item: $destination.alert) { title in
-      Text(title)
-    } actions: { _ in
-    }
-    .alert(item: $destination.confirmationDialog) { title in
-      Text(title)
-    } actions: { _ in
-    }
-    .sheet(item: $destination.sheetWithPayload, id: \.self) { $count in
-      Form {
-        Text(count.description)
-        Button("Change count") {
-          count = .random(in: 1...1_000)
+      .sheet(isPresented: Binding($destination.sheetWithoutPayload)) {
+        Form {
+          Text("Hello!")
+        }
+        .navigationTitle("Sheet with payload")
+      }
+
+      Button("Full-screen cover") {
+        destination = .fullScreenCover(.random(in: 1...1_000))
+      }
+      .fullScreenCover(item: $destination.fullScreenCover, id: \.self) { $count in
+        NavigationStack {
+          Form {
+            Text(count.description)
+            Button("Change count") {
+              count = .random(in: 1...1_000)
+            }
+          }
+          .navigationTitle("Full-screen cover")
+          .toolbar {
+            ToolbarItem {
+              Button("Dismiss") {
+                destination = nil
+              }
+            }
+          }
         }
       }
-      .navigationTitle("Sheet with payload")
-    }
-    .sheet(isPresented: Binding($destination.sheetWithoutPayload)) {
-      Form {
-        Text("Hello!")
+
+      Button("Popover") {
+        destination = .popover(.random(in: 1...1_000))
       }
-      .navigationTitle("Sheet with payload")
+      .popover(item: $destination.popover, id: \.self) { $count in
+        Form {
+          Text(count.description)
+          Button("Change count") {
+            count = .random(in: 1...1_000)
+          }
+        }
+        .navigationTitle("Popover")
+        .frame(idealWidth: 200, idealHeight: 160)
+      }
+
+      Button("Drill-down") {
+        destination = .drillDown(.random(in: 1...1_000))
+      }
+      // NB: `navigationDestination` logs warning when applied directly in a "lazy" view like `Form`
+      .background {
+        EmptyView().navigationDestination(item: $destination.drillDown) { $count in
+          Form {
+            Text(count.description)
+            Button("Change count") {
+              count = .random(in: 1...1_000)
+            }
+          }
+          .navigationTitle("Drill-down")
+        }
+      }
     }
   }
 }

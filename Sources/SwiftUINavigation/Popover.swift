@@ -63,8 +63,8 @@
         item: item[id: id],
         attachmentAnchor: attachmentAnchor,
         arrowEdge: arrowEdge
-      ) { _ in
-        Binding(unwrapping: item).map(content)
+      ) {
+        content(Binding(unwrapping: item, default: $0.initialValue))
       }
     }
 

@@ -76,7 +76,9 @@ struct CaseStudyView<C: SwiftUICaseStudy>: View {
   @State var isAboutPresented = false
   var body: some View {
     if caseStudy.usesOwnLayout {
-      caseStudy
+      VStack {
+        caseStudy
+      }
     } else {
       Form {
         caseStudy

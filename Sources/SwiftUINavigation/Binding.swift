@@ -47,6 +47,10 @@
     /// - Returns: A new binding or `nil` when `base` is `nil`.
     public init?(unwrapping base: Binding<Value?>) {
       guard let value = base.wrappedValue else { return nil }
+      self.init(unwrapping: base, default: value)
+    }
+
+    public init(unwrapping base: Binding<Value?>, default value: Value) {
       self = base[default: DefaultSubscript(value)]
     }
 

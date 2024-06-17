@@ -1,7 +1,6 @@
 import SwiftUI
 import SwiftUINavigation
 
-// TODO: optional destination
 struct OptionalNavigation: SwiftUICaseStudy {
   let caseStudyTitle = "Optional navigation"
   let readMe = """
@@ -14,99 +13,97 @@ struct OptionalNavigation: SwiftUICaseStudy {
     • `fullScreenCover(item:)`
     • `navigationDestination(item:)`
     """
-  @State private var model = FeatureModel()
+
+  @State var alert: String?
+  @State var drillDown: Int?
+  @State var confirmationDialog: String?
+  @State var fullScreenCover: Int?
+  @State var popover: Int?
+  @State var sheet: Int?
 
   var body: some View {
     Section {
-      Stepper("Number: \(model.count)", value: $model.count)
-
-      HStack {
-        Button("Get number fact") {
-          Task { await model.numberFactButtonTapped() }
-        }
-
-        if model.isLoading {
-          Spacer()
-          ProgressView()
-        }
+      Button("Alert") {
+        alert = "This is an alert!"
       }
-    } header: {
-      Text("Fact Finder")
-    }
-
-    Section {
-      ForEach(model.savedFacts) { fact in
-        Text(fact.description)
+      .alert(item: $alert) { title in
+        Text(title)
+      } actions: { _ in
       }
-      .onDelete { model.removeSavedFacts(atOffsets: $0) }
-    } header: {
-      Text("Saved Facts")
-    }
-    .sheet(item: $model.fact) { $fact in
-      NavigationStack {
-        FactEditor(fact: $fact.description)
-          .disabled(model.isLoading)
-          .foregroundColor(model.isLoading ? .gray : nil)
-          .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-              Button("Cancel") {
-                model.cancelButtonTapped()
-              }
+
+      Button("Confirmation dialog") {
+        confirmationDialog = "This is a confirmation dialog!"
+      }
+      .alert(item: $confirmationDialog) { title in
+        Text(title)
+      } actions: { _ in
+      }
+
+      Button("Sheet") {
+        sheet = .random(in: 1...1_000)
+      }
+      .sheet(item: $sheet, id: \.self) { $count in
+        Form {
+          Text(count.description)
+          Button("Change count") {
+            count = .random(in: 1...1_000)
+          }
+        }
+        .navigationTitle("Sheet")
+      }
+
+      Button("Full-screen cover") {
+        fullScreenCover = .random(in: 1...1_000)
+      }
+      .fullScreenCover(item: $fullScreenCover, id: \.self) { $count in
+        NavigationStack {
+          Form {
+            Text(count.description)
+            Button("Change count") {
+              count = .random(in: 1...1_000)
             }
-            ToolbarItem(placement: .confirmationAction) {
-              Button("Save") {
-                model.saveButtonTapped(fact: fact)
+          }
+          .navigationTitle("Full-screen cover")
+          .toolbar {
+            ToolbarItem {
+              Button("Dismiss") {
+                fullScreenCover = nil
               }
             }
           }
+        }
+      }
+
+      Button("Popover") {
+        popover = .random(in: 1...1_000)
+      }
+      .popover(item: $popover, id: \.self) { $count in
+        Form {
+          Text(count.description)
+          Button("Change count") {
+            count = .random(in: 1...1_000)
+          }
+        }
+        .navigationTitle("Popover")
+        .frame(idealWidth: 200, idealHeight: 160)
+      }
+
+      Button("Drill-down") {
+        drillDown = .random(in: 1...1_000)
+      }
+      // NB: `navigationDestination` logs warning when applied directly in a "lazy" view like `Form`
+      .background {
+        EmptyView().navigationDestination(item: $drillDown) { $count in
+          Form {
+            Text(count.description)
+            Button("Change count") {
+              count = .random(in: 1...1_000)
+            }
+          }
+          .navigationTitle("Drill-down")
+        }
       }
     }
-  }
-}
-
-private struct FactEditor: View {
-  @Binding var fact: String
-  @FocusState var isFocused: Bool
-
-  var body: some View {
-    VStack {
-      TextEditor(text: $fact)
-        .focused($isFocused)
-    }
-    .padding()
-    .navigationTitle("Fact editor")
-    .onAppear { isFocused = true }
-  }
-}
-
-@Observable
-private class FeatureModel {
-  var count = 0
-  var fact: Fact?
-  var isLoading = false
-  var savedFacts: [Fact] = []
-
-  @MainActor
-  func numberFactButtonTapped() async {
-    isLoading = true
-    defer { isLoading = false }
-    self.fact = await getNumberFact(self.count)
-  }
-
-  @MainActor
-  func cancelButtonTapped() {
-    fact = nil
-  }
-
-  @MainActor
-  func saveButtonTapped(fact: Fact) {
-    savedFacts.append(fact)
-    self.fact = nil
-  }
-
-  @MainActor
-  func removeSavedFacts(atOffsets offsets: IndexSet) {
-    savedFacts.remove(atOffsets: offsets)
   }
 }
 
