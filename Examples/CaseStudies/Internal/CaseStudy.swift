@@ -67,9 +67,11 @@ struct CaseStudyButton<C: UIKitCaseStudy>: View {
       }
       .sheet(isPresented: $isPresented) {
         UIViewControllerRepresenting {
-          caseStudy is UINavigationController
-              ? caseStudy
-              : UINavigationController(rootViewController: caseStudy)
+          (
+            (caseStudy as? UINavigationController)
+              ?? UINavigationController(rootViewController: caseStudy)
+          )
+          .setUp(caseStudy: caseStudy)
         }
         .modifier(CaseStudyModifier(caseStudy: caseStudy))
       }
@@ -81,6 +83,26 @@ struct CaseStudyButton<C: UIKitCaseStudy>: View {
         .modifier(CaseStudyModifier(caseStudy: caseStudy))
       }
     }
+  }
+}
+
+extension UINavigationController {
+  func setUp(caseStudy: some CaseStudy) -> Self {
+    self.viewControllers[0].title = caseStudy.caseStudyNavigationTitle
+    self.viewControllers[0].navigationItem.rightBarButtonItem = UIBarButtonItem(
+      title: "About",
+      primaryAction: UIAction { [weak self] _ in
+        self?.present(
+          UIHostingController(
+            rootView: Form {
+              Text(template: caseStudy.readMe)
+            }
+              .presentationDetents([.medium])
+          ),
+          animated: true
+        )
+      })
+    return self
   }
 }
 

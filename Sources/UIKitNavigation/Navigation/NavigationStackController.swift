@@ -24,7 +24,9 @@
     ) where Data.Element: Hashable {
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
       self._path = path.path
-      self.root = root()
+      let root = root()
+      self.root = root
+      self.viewControllers = [root]
     }
 
     public convenience init(
@@ -35,7 +37,9 @@
     ) {
       self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
       self._path = path.elements
-      self.root = root()
+      let root = root()
+      self.root = root
+      self.viewControllers = [root]
     }
 
     open override func viewDidLoad() {

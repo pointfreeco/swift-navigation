@@ -6,7 +6,8 @@ final class StaticNavigationStackController: NavigationStackController, UIKitCas
   let caseStudyNavigationTitle = "Static path"
   let caseStudyTitle = "Statically typed path"
   let readMe = """
-    TODO
+    This case study demonstrates how to use the `NavigationStackController` class, which is a \
+    UIKit replacement for SwiftUI's `NavigationStack`.
     """
   let isPresentedInSheet = true
   private var model: Model!
@@ -14,19 +15,19 @@ final class StaticNavigationStackController: NavigationStackController, UIKitCas
   convenience init() {
     @UIBindable var model = Model()
     self.init(path: $model.path) {
-      RootViewController()
+      RootViewController(model: model)
     }
     self.navigationDestination(for: Model.Path.self) { path in
       switch path {
       case .feature1:
-        Feature1ViewController()
+        FeatureViewController(number: 1)
       case .feature2:
-        Feature1ViewController()
+        FeatureViewController(number: 2)
       case .feature3:
-        Feature1ViewController()
+        FeatureViewController(number: 3)
       }
     }
-    //self.model = model
+    self.model = model
   }
 
   deinit {
@@ -46,16 +47,47 @@ final class StaticNavigationStackController: NavigationStackController, UIKitCas
 }
 
 private class RootViewController: UIViewController {
+  let model: StaticNavigationStackController.Model
+  init(model: StaticNavigationStackController.Model) {
+    self.model = model
+    super.init(nibName: nil, bundle: nil)
+  }
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   override func viewDidLoad() {
     super.viewDidLoad()
+    view.backgroundColor = .systemBackground
 
     let feature1Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
       self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature1)
     })
     feature1Button.setTitle("Push feature 1", for: .normal)
 
+    let feature2Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
+      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature2)
+    })
+    feature2Button.setTitle("Push feature 2", for: .normal)
+
+    let feature3Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
+      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature3)
+    })
+    feature3Button.setTitle("Push feature 3", for: .normal)
+
+    let feature123Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
+      self?.model.path.append(contentsOf: [
+        .feature1,
+        .feature2,
+        .feature3,
+      ])
+    })
+    feature123Button.setTitle("Push feature 1 → 2 → 3", for: .normal)
+
     let stack = UIStackView(arrangedSubviews: [
       feature1Button,
+      feature2Button,
+      feature3Button,
+      feature123Button,
     ])
     stack.axis = .vertical
     stack.spacing = 12
@@ -69,17 +101,45 @@ private class RootViewController: UIViewController {
   }
 }
 
-private class Feature1ViewController: UIViewController {
+private class FeatureViewController: UIViewController {
+  let number: Int
+  init(number: Int) {
+    self.number = number
+    super.init(nibName: nil, bundle: nil)
+    title = "Feature \(number)"
+  }
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   override func viewDidLoad() {
     super.viewDidLoad()
+    view.backgroundColor = .systemBackground
 
     let feature1Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
       self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature1)
     })
-    feature1Button.setTitle("Push feature 1 with traitCollection.push", for: .normal)
+    feature1Button.setTitle("Push feature 1", for: .normal)
+
+    let feature2Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
+      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature2)
+    })
+    feature2Button.setTitle("Push feature 2", for: .normal)
+
+    let feature3Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
+      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature3)
+    })
+    feature3Button.setTitle("Push feature 3", for: .normal)
+
+    let dismissButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
+      self?.traitCollection.dismiss()
+    })
+    dismissButton.setTitle("Dismiss", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [
       feature1Button,
+      feature2Button,
+      feature3Button,
+      dismissButton,
     ])
     stack.axis = .vertical
     stack.spacing = 12
