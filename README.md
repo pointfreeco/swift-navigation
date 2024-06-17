@@ -119,7 +119,7 @@ dependencies: [
 ## Documentation
 
 The latest documentation for the SwiftUI Navigation APIs is available
-[here](http://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/).
+[here](https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation).
 
 ## License
 

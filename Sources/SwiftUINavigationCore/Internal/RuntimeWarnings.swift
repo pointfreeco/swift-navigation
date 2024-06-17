@@ -12,7 +12,7 @@
       let message = message()
       let category = category ?? "Runtime Warning"
       if _XCTIsTesting {
-        if let file = file, let line = line {
+        if let file, let line {
           XCTFail(message, file: file, line: line)
         } else {
           XCTFail(message)

@@ -12,12 +12,11 @@
       message:
         "Use the 'fullScreenCover(item:)' (or 'fullScreenCover(item:id:)') overload that passes a binding"
     )
-    public func fullScreenCover<Value, Content>(
+    public func fullScreenCover<Value, Content: View>(
       unwrapping value: Binding<Value?>,
       onDismiss: (() -> Void)? = nil,
       @ViewBuilder content: @escaping (Binding<Value>) -> Content
-    ) -> some View
-    where Content: View {
+    ) -> some View {
       self.fullScreenCover(
         isPresented: Binding(value),
         onDismiss: onDismiss
@@ -106,12 +105,11 @@
       *, deprecated,
       message: "Use the 'sheet(item:)' (or 'sheet(item:id:)') overload that passes a binding"
     )
-    public func sheet<Value, Content>(
+    public func sheet<Value, Content: View>(
       unwrapping value: Binding<Value?>,
       onDismiss: (() -> Void)? = nil,
       @ViewBuilder content: @escaping (Binding<Value>) -> Content
-    ) -> some View
-    where Content: View {
+    ) -> some View {
       self.sheet(isPresented: Binding(value), onDismiss: onDismiss) {
         Binding(unwrapping: value).map(content)
       }
@@ -363,13 +361,12 @@
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
-    public func fullScreenCover<Enum, Case, Content>(
+    public func fullScreenCover<Enum, Case, Content: View>(
       unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, Case>,
       onDismiss: (() -> Void)? = nil,
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
-    ) -> some View
-    where Content: View {
+    ) -> some View {
       fullScreenCover(
         unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
     }
@@ -399,13 +396,13 @@
       message:
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
-    public func popover<Enum, Case, Content>(
+    public func popover<Enum, Case, Content: View>(
       unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, Case>,
       attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
       arrowEdge: Edge = .top,
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
-    ) -> some View where Content: View {
+    ) -> some View {
       popover(
         unwrapping: `enum`.case(casePath),
         attachmentAnchor: attachmentAnchor,
@@ -420,13 +417,12 @@
         "Chain a '@CasePathable' enum binding into a case directly instead of specifying a case path."
     )
     @MainActor
-    public func sheet<Enum, Case, Content>(
+    public func sheet<Enum, Case, Content: View>(
       unwrapping enum: Binding<Enum?>,
       case casePath: AnyCasePath<Enum, Case>,
       onDismiss: (() -> Void)? = nil,
       @ViewBuilder content: @escaping (Binding<Case>) -> Content
-    ) -> some View
-    where Content: View {
+    ) -> some View {
       sheet(unwrapping: `enum`.case(casePath), onDismiss: onDismiss, content: content)
     }
   }
@@ -528,8 +524,7 @@
     }
   }
 
-  public struct IfCaseLet<Enum, Case: Sendable, IfContent, ElseContent>: View
-  where IfContent: View, ElseContent: View {
+  public struct IfCaseLet<Enum, Case: Sendable, IfContent: View, ElseContent: View>: View {
     public let `enum`: Binding<Enum>
     public let casePath: AnyCasePath<Enum, Case>
     public let ifContent: (Binding<Case>) -> IfContent
@@ -605,8 +600,7 @@
     }
   }
 
-  public struct IfLet<Value, IfContent, ElseContent>: View
-  where IfContent: View, ElseContent: View {
+  public struct IfLet<Value, IfContent: View, ElseContent: View>: View {
     public let value: Binding<Value?>
     public let ifContent: (Binding<Value>) -> IfContent
     public let elseContent: ElseContent
@@ -770,8 +764,7 @@
     message:
       "Switch over a '@CasePathable' enum and derive bindings from each case using '$enum.case.map { $case in … }', instead."
   )
-  public struct CaseLet<Enum, Case: Sendable, Content>: Sendable, View
-  where Content: View {
+  public struct CaseLet<Enum, Case: Sendable, Content: View>: Sendable, View {
     @EnvironmentObject private var `enum`: BindingObject<Enum>
     public let casePath: AnyCasePath<Enum, Case>
     public let content: (Binding<Case>) -> Content
@@ -1855,7 +1848,7 @@
       action handler: @escaping @Sendable (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       alert(value) { (value: Value?) in
-        if let value = value {
+        if let value {
           await handler(value)
         }
       }
@@ -1874,7 +1867,7 @@
       action handler: @escaping @Sendable (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       alert(unwrapping: `enum`, case: casePath) { (value: Value?) async in
-        if let value = value {
+        if let value {
           await handler(value)
         }
       }
@@ -1892,7 +1885,7 @@
       action handler: @escaping @Sendable (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       confirmationDialog(unwrapping: value) { (value: Value?) in
-        if let value = value {
+        if let value {
           await handler(value)
         }
       }
@@ -1911,7 +1904,7 @@
       action handler: @escaping @Sendable (Value) async -> Void = { (_: Void) async in }
     ) -> some View {
       confirmationDialog(unwrapping: `enum`, case: casePath) { (value: Value?) async in
-        if let value = value {
+        if let value {
           await handler(value)
         }
       }
