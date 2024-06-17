@@ -20,7 +20,6 @@
 		CA4737FC272F09D00012CAC3 /* Inventory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4737F8272F09D00012CAC3 /* Inventory.swift */; };
 		CA47380B272F0D340012CAC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA47380A272F0D340012CAC3 /* Assets.xcassets */; };
 		CA473834272F0D860012CAC3 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47382E272F0D860012CAC3 /* RootView.swift */; };
-		CA473835272F0D860012CAC3 /* ConfirmationDialogs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47382F272F0D860012CAC3 /* ConfirmationDialogs.swift */; };
 		CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */; };
 		CA473837272F0D860012CAC3 /* FactClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473831272F0D860012CAC3 /* FactClient.swift */; };
 		CA473838272F0D860012CAC3 /* OptionalNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473832272F0D860012CAC3 /* OptionalNavigation.swift */; };
@@ -82,7 +81,6 @@
 		CA473804272F0D330012CAC3 /* CaseStudies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CaseStudies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA47380A272F0D340012CAC3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA47382E272F0D860012CAC3 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		CA47382F272F0D860012CAC3 /* ConfirmationDialogs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfirmationDialogs.swift; sourceTree = "<group>"; };
 		CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaseStudiesApp.swift; sourceTree = "<group>"; };
 		CA473831272F0D860012CAC3 /* FactClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FactClient.swift; sourceTree = "<group>"; };
 		CA473832272F0D860012CAC3 /* OptionalNavigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalNavigation.swift; sourceTree = "<group>"; };
@@ -250,7 +248,6 @@
 			isa = PBXGroup;
 			children = (
 				CA9D70462C1F6108003B672A /* AlertDialogState.swift */,
-				CA47382F272F0D860012CAC3 /* ConfirmationDialogs.swift */,
 				CA9D70552C2087DC003B672A /* EnumControls.swift */,
 				CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */,
 				CA473832272F0D860012CAC3 /* OptionalNavigation.swift */,
@@ -510,7 +507,6 @@
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
 				CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */,
 				CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */,
-				CA473835272F0D860012CAC3 /* ConfirmationDialogs.swift in Sources */,
 				CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */,
 				CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,

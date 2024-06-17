@@ -77,7 +77,7 @@ struct ItemView: View {
         self.$item.status.outOfStock.map { $isOnBackOrder in
           Section {
             Toggle("Is on back order?", isOn: $isOnBackOrder)
-            Button("Is back in stock!") {
+            Button("Back in stock!") {
               withAnimation {
                 self.item.status = .inStock(quantity: 1)
               }
