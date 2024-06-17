@@ -15,12 +15,11 @@ concurrency:
 
 jobs:
   library:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
       matrix:
         xcode:
-          - '15.0'
-          - '14.3.1'
+          - '15.4'
 
     steps:
       - uses: actions/checkout@v4
@@ -42,8 +41,8 @@ jobs:
     steps:
       - uses: compnerd/gha-setup-swift@main
         with:
-          branch: swift-5.9.1-release
-          tag: 5.9.1-RELEASE
+          branch: swift-5.10-release
+          tag: 5.10-RELEASE
       - uses: actions/checkout@v4
       - name: Build
         run: swift build -c ${{ matrix.config }}

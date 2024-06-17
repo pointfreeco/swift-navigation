@@ -188,7 +188,7 @@
       if !self.buttons.isEmpty {
         children.append(("actions", self.buttons))
       }
-      if let message = self.message {
+      if let message {
         children.append(("message", message))
       }
       return Mirror(
