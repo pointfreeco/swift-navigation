@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftUINavigation
 
 struct AlertsWithAlertState: SwiftUICaseStudy {
-  let caseStudyTitle = "Alerts with AlertState"
+  let caseStudyTitle = "Alert/dialog state"
   let readMe = """
     The 'AlertState' type is a purely data description of all the properties of an alert, such \
     as its title, message and even actions. You can use 'AlertState' to make your alerts more \

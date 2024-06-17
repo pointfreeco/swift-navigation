@@ -13,11 +13,11 @@ extension CaseStudy {
   var usesOwnLayout: Bool { false }
 }
 
-
 @resultBuilder
 @MainActor
 enum CaseStudyViewBuilder {
-  @MainActor
+  @ViewBuilder
+  static func buildBlock() -> some View {}
   static func buildExpression(_ caseStudy: some SwiftUICaseStudy) -> some View {
     NavigationLink(caseStudy.caseStudyTitle) {
       CaseStudyView { caseStudy }

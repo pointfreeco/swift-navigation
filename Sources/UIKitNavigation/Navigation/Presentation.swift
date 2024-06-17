@@ -294,80 +294,72 @@
     private static let presentedKey = malloc(1)!
   }
 
-  extension UINavigationController {
-    /// Pushes a view controller onto the receiver's stack when a binding to a Boolean value you
-    /// provide is true.
-    ///
-    /// Like SwiftUI's `navigationDestination(isPresented:)` view modifier, but for UIKit.
-    ///
-    /// - Parameters:
-    ///   - isPresented: A binding to a Boolean value that determines whether to push the view
-    ///     controller.
-    ///   - content: A closure that returns the view controller to display onto the receiver's
-    ///     stack.
-    @discardableResult
-    public func pushViewController(
-      isPresented: UIBinding<Bool>,
-      content: @escaping () -> UIViewController
-    ) -> ObservationToken {
-      pushViewController(item: isPresented.toOptionalUnit) { _ in content() }
-    }
-
-    /// Pushes a view controller onto the receiver's stack using the given item as a data source for
-    /// its content.
-    ///
-    /// Like SwiftUI's `navigationDestination(item:)` view modifier, but for UIKit.
-    ///
-    /// - Parameters:
-    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
-    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user.
-    ///   - content: A closure that returns the view controller to display onto the receiver's
-    ///     stack.
-    @discardableResult
-    public func pushViewController<Item>(
-      item: UIBinding<Item?>,
-      content: @escaping (Item) -> UIViewController
-    ) -> ObservationToken {
-      pushViewController(item: item) {
-        content($0.wrappedValue)
-      }
-    }
-
-    /// Pushes a view controller onto the receiver's stack using the given item as a data source for
-    /// its content.
-    ///
-    /// Like SwiftUI's `navigationDestination(item:)` view modifier, but for UIKit.
-    ///
-    /// - Parameters:
-    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
-    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user.
-    ///   - content: A closure that returns the view controller to display onto the receiver's
-    ///     stack.
-    @_disfavoredOverload
-    @discardableResult
-    public func pushViewController<Item>(
-      item: UIBinding<Item?>,
-      content: @escaping (UIBinding<Item>) -> UIViewController
-    ) -> ObservationToken {
-      destination(item: item) { $item in
-        content($item)
-      } present: { [weak self] controller, transaction in
-        self?.pushViewController(controller, animated: !transaction.disablesAnimations)
-      } dismiss: { [weak self] controller, transaction in
-        self?.popFromViewController(controller, animated: !transaction.disablesAnimations)
-      }
-    }
-
-    @discardableResult
-    func popFromViewController(
-      _ controller: UIViewController, animated: Bool
-    ) -> [UIViewController]? {
-      guard let index = viewControllers.firstIndex(of: controller), index != 0 else { return nil }
-      return popToViewController(viewControllers[index - 1], animated: animated)
-    }
-  }
+//  extension UINavigationController {
+//    /// Pushes a view controller onto the receiver's stack when a binding to a Boolean value you
+//    /// provide is true.
+//    ///
+//    /// Like SwiftUI's `navigationDestination(isPresented:)` view modifier, but for UIKit.
+//    ///
+//    /// - Parameters:
+//    ///   - isPresented: A binding to a Boolean value that determines whether to push the view
+//    ///     controller.
+//    ///   - content: A closure that returns the view controller to display onto the receiver's
+//    ///     stack.
+//    @discardableResult
+//    public func pushViewController(
+//      isPresented: UIBinding<Bool>,
+//      content: @escaping () -> UIViewController
+//    ) -> ObservationToken {
+//      pushViewController(item: isPresented.toOptionalUnit) { _ in content() }
+//    }
+//
+//    /// Pushes a view controller onto the receiver's stack using the given item as a data source for
+//    /// its content.
+//    ///
+//    /// Like SwiftUI's `navigationDestination(item:)` view modifier, but for UIKit.
+//    ///
+//    /// - Parameters:
+//    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+//    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+//    ///     content in a view controller that you create that is displayed to the user.
+//    ///   - content: A closure that returns the view controller to display onto the receiver's
+//    ///     stack.
+//    @discardableResult
+//    public func pushViewController<Item>(
+//      item: UIBinding<Item?>,
+//      content: @escaping (Item) -> UIViewController
+//    ) -> ObservationToken {
+//      pushViewController(item: item) {
+//        content($0.wrappedValue)
+//      }
+//    }
+//
+//    /// Pushes a view controller onto the receiver's stack using the given item as a data source for
+//    /// its content.
+//    ///
+//    /// Like SwiftUI's `navigationDestination(item:)` view modifier, but for UIKit.
+//    ///
+//    /// - Parameters:
+//    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+//    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+//    ///     content in a view controller that you create that is displayed to the user.
+//    ///   - content: A closure that returns the view controller to display onto the receiver's
+//    ///     stack.
+//    @_disfavoredOverload
+//    @discardableResult
+//    public func pushViewController<Item>(
+//      item: UIBinding<Item?>,
+//      content: @escaping (UIBinding<Item>) -> UIViewController
+//    ) -> ObservationToken {
+//      destination(item: item) { $item in
+//        content($item)
+//      } present: { [weak self] controller, transaction in
+//        self?.pushViewController(controller, animated: !transaction.disablesAnimations)
+//      } dismiss: { [weak self] controller, transaction in
+//        self?.popFromViewController(controller, animated: !transaction.disablesAnimations)
+//      }
+//    }
+//  }
 
   private class Presented {
     weak var controller: UIViewController?
@@ -378,3 +370,71 @@
     }
   }
 #endif
+
+
+extension UIViewController {
+  /// Pushes a view controller onto the receiver's stack when a binding to a Boolean value you
+  /// provide is true.
+  ///
+  /// Like SwiftUI's `navigationDestination(isPresented:)` view modifier, but for UIKit.
+  ///
+  /// - Parameters:
+  ///   - isPresented: A binding to a Boolean value that determines whether to push the view
+  ///     controller.
+  ///   - content: A closure that returns the view controller to display onto the receiver's
+  ///     stack.
+  @discardableResult
+  public func pushViewController(
+    isPresented: UIBinding<Bool>,
+    content: @escaping () -> UIViewController
+  ) -> ObservationToken {
+    pushViewController(item: isPresented.toOptionalUnit) { _ in content() }
+  }
+
+  /// Pushes a view controller onto the receiver's stack using the given item as a data source for
+  /// its content.
+  ///
+  /// Like SwiftUI's `navigationDestination(item:)` view modifier, but for UIKit.
+  ///
+  /// - Parameters:
+  ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+  ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+  ///     content in a view controller that you create that is displayed to the user.
+  ///   - content: A closure that returns the view controller to display onto the receiver's
+  ///     stack.
+  @discardableResult
+  public func pushViewController<Item>(
+    item: UIBinding<Item?>,
+    content: @escaping (Item) -> UIViewController
+  ) -> ObservationToken {
+    pushViewController(item: item) {
+      content($0.wrappedValue)
+    }
+  }
+
+  /// Pushes a view controller onto the receiver's stack using the given item as a data source for
+  /// its content.
+  ///
+  /// Like SwiftUI's `navigationDestination(item:)` view modifier, but for UIKit.
+  ///
+  /// - Parameters:
+  ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+  ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+  ///     content in a view controller that you create that is displayed to the user.
+  ///   - content: A closure that returns the view controller to display onto the receiver's
+  ///     stack.
+  @_disfavoredOverload
+  @discardableResult
+  public func pushViewController<Item>(
+    item: UIBinding<Item?>,
+    content: @escaping (UIBinding<Item>) -> UIViewController
+  ) -> ObservationToken {
+    destination(item: item) { $item in
+      content($item)
+    } present: { [weak self] controller, transaction in
+      self?.navigationController?.pushViewController(controller, animated: !transaction.disablesAnimations)
+    } dismiss: { [weak self] controller, transaction in
+      self?.navigationController?.popFromViewController(controller, animated: !transaction.disablesAnimations)
+    }
+  }
+}

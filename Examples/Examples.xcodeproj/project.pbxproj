@@ -21,11 +21,18 @@
 		CA473838272F0D860012CAC3 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473832272F0D860012CAC3 /* Sheets.swift */; };
 		CA473839272F0D860012CAC3 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473833272F0D860012CAC3 /* Alerts.swift */; };
 		CA47383B272F0DD60012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA47383A272F0DD60012CAC3 /* SwiftUINavigation */; };
-		CA47383E272F0F9B0012CAC3 /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47383D272F0F9B0012CAC3 /* CustomComponents.swift */; };
 		CA7403D92C0A595D007FADC0 /* NavigationPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */; };
 		CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */; };
 		CA9D70472C1F6108003B672A /* AlertsWithAlertState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70462C1F6108003B672A /* AlertsWithAlertState.swift */; };
 		CA9D704C2C1F6449003B672A /* AlertsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704B2C1F6449003B672A /* AlertsViewController.swift */; };
+		CA9D704E2C1FAFAD003B672A /* MultipleDestinationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704D2C1FAFAD003B672A /* MultipleDestinationsViewController.swift */; };
+		CA9D70502C1FB431003B672A /* StaticPathStackNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */; };
+		CA9D70522C1FB4B7003B672A /* ErasedPathStackNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */; };
+		CA9D70542C1FB4FA003B672A /* SheetsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70532C1FB4FA003B672A /* SheetsViewController.swift */; };
+		CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70552C2087DC003B672A /* EnumControls.swift */; };
+		CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */; };
+		CA9D705A2C208977003B672A /* BasicsBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70592C208977003B672A /* BasicsBindingsViewController.swift */; };
+		CA9D705E2C2089DD003B672A /* EnumControlsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */; };
 		CABE9FC1272F2C0000AFC150 /* MultipleDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* MultipleDestinations.swift */; };
 		CADCA3632C1CE75500DE645F /* SwiftUICaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */; };
 		CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */; };
@@ -49,7 +56,6 @@
 		DC5EB9D72C0526330034B757 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DC5EB9D62C0526330034B757 /* IdentifiedCollections */; };
 		DC5EB9D92C0526540034B757 /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = DC5EB9D82C0526540034B757 /* UIKitNavigation */; };
 		DC5EB9DC2C05276F0034B757 /* UIKitCaseStudies.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = DC5EB9DB2C05276F0034B757 /* UIKitCaseStudies.xctestplan */; };
-		DC609AD6291D76150052647F /* NavigationDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC609AD5291D76150052647F /* NavigationDestination.swift */; };
 		DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */; };
 		DCE73E0A2947D090004EE92E /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DCE73E092947D090004EE92E /* IdentifiedCollections */; };
 /* End PBXBuildFile section */
@@ -81,11 +87,18 @@
 		CA473832272F0D860012CAC3 /* Sheets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
 		CA473833272F0D860012CAC3 /* Alerts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		CA47383C272F0F0D0012CAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		CA47383D272F0F9B0012CAC3 /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPathTests.swift; sourceTree = "<group>"; };
 		CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitCaseStudies.swift; sourceTree = "<group>"; };
 		CA9D70462C1F6108003B672A /* AlertsWithAlertState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsWithAlertState.swift; sourceTree = "<group>"; };
 		CA9D704B2C1F6449003B672A /* AlertsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsViewController.swift; sourceTree = "<group>"; };
+		CA9D704D2C1FAFAD003B672A /* MultipleDestinationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleDestinationsViewController.swift; sourceTree = "<group>"; };
+		CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticPathStackNavigationController.swift; sourceTree = "<group>"; };
+		CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErasedPathStackNavigationController.swift; sourceTree = "<group>"; };
+		CA9D70532C1FB4FA003B672A /* SheetsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetsViewController.swift; sourceTree = "<group>"; };
+		CA9D70552C2087DC003B672A /* EnumControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumControls.swift; sourceTree = "<group>"; };
+		CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinimalObservationViewController.swift; sourceTree = "<group>"; };
+		CA9D70592C208977003B672A /* BasicsBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicsBindingsViewController.swift; sourceTree = "<group>"; };
+		CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumControlsViewController.swift; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* MultipleDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleDestinations.swift; sourceTree = "<group>"; };
 		CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICaseStudies.swift; sourceTree = "<group>"; };
 		CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudy.swift; sourceTree = "<group>"; };
@@ -109,7 +122,6 @@
 		DC5EB9D22C0525FA0034B757 /* PresentationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentationTests.swift; sourceTree = "<group>"; };
 		DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
 		DC5EB9DB2C05276F0034B757 /* UIKitCaseStudies.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIKitCaseStudies.xctestplan; sourceTree = "<group>"; };
-		DC609AD5291D76150052647F /* NavigationDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDestination.swift; sourceTree = "<group>"; };
 		DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedBindings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -219,8 +231,15 @@
 		CA9D704A2C1F6431003B672A /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */,
 				CA9D704B2C1F6449003B672A /* AlertsViewController.swift */,
+				CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */,
+				CA9D704D2C1FAFAD003B672A /* MultipleDestinationsViewController.swift */,
+				CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */,
+				CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */,
+				CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */,
+				CA9D70592C208977003B672A /* BasicsBindingsViewController.swift */,
+				CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */,
+				CA9D70532C1FB4FA003B672A /* SheetsViewController.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -231,9 +250,8 @@
 				CA473833272F0D860012CAC3 /* Alerts.swift */,
 				CA9D70462C1F6108003B672A /* AlertsWithAlertState.swift */,
 				CA47382F272F0D860012CAC3 /* ConfirmationDialogs.swift */,
-				CA47383D272F0F9B0012CAC3 /* CustomComponents.swift */,
+				CA9D70552C2087DC003B672A /* EnumControls.swift */,
 				CABE9FC0272F2C0000AFC150 /* MultipleDestinations.swift */,
-				DC609AD5291D76150052647F /* NavigationDestination.swift */,
 				CA473832272F0D860012CAC3 /* Sheets.swift */,
 				CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */,
 				DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */,
@@ -488,18 +506,24 @@
 			files = (
 				CABE9FC1272F2C0000AFC150 /* MultipleDestinations.swift in Sources */,
 				DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */,
+				CA9D70502C1FB431003B672A /* StaticPathStackNavigationController.swift in Sources */,
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
+				CA9D704E2C1FAFAD003B672A /* MultipleDestinationsViewController.swift in Sources */,
+				CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */,
 				CA473835272F0D860012CAC3 /* ConfirmationDialogs.swift in Sources */,
-				CA47383E272F0F9B0012CAC3 /* CustomComponents.swift in Sources */,
+				CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */,
 				CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
 				CA9D704C2C1F6449003B672A /* AlertsViewController.swift in Sources */,
+				CA9D705A2C208977003B672A /* BasicsBindingsViewController.swift in Sources */,
 				CA9D70472C1F6108003B672A /* AlertsWithAlertState.swift in Sources */,
 				CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */,
 				CA473839272F0D860012CAC3 /* Alerts.swift in Sources */,
 				CADCA3632C1CE75500DE645F /* SwiftUICaseStudies.swift in Sources */,
+				CA9D705E2C2089DD003B672A /* EnumControlsViewController.swift in Sources */,
 				CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */,
-				DC609AD6291D76150052647F /* NavigationDestination.swift in Sources */,
+				CA9D70522C1FB4B7003B672A /* ErasedPathStackNavigationController.swift in Sources */,
+				CA9D70542C1FB4FA003B672A /* SheetsViewController.swift in Sources */,
 				CA473838272F0D860012CAC3 /* Sheets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

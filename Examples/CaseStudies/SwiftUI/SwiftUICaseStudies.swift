@@ -1,22 +1,16 @@
 import SwiftUI
-import SwiftUINavigation
 
 struct SwiftUICaseStudiesView: View {
   var body: some View {
     List {
-      CaseStudyGroupView("Optional-based navigation") {
-        Alerts()
-        AlertsWithAlertState()
-        ConfirmationDialogs()
+      CaseStudyGroupView("Navigation") {
         Sheets()
-        NavigationDestinations()
-      }
-      CaseStudyGroupView("Enum-based navigation") {
         MultipleDestinations()
+        AlertsWithAlertState()
       }
-      CaseStudyGroupView("Miscellaneous") {
+      CaseStudyGroupView("Binding helpers") {
         SynchronizedBindings()
-        CustomComponents()
+        EnumControls()
       }
     }
     .navigationTitle("SwiftUI")

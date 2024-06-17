@@ -1,10 +1,11 @@
+import SwiftUI
 import UIKit
 import UIKitNavigation
 
-class AlertsViewController: UIViewController, UIKitCaseStudy {
-  let caseStudyTitle = "Alerts"
+class SheetsViewController: UIViewController, UIKitCaseStudy {
+  let caseStudyTitle = "Basics"
   let readMe = """
-    This case study demonstrates how to present an alert using the 'present(item:)' method.
+    TODO
     """
   @UIBindable var model = Alerts.Model()
 
@@ -58,17 +59,14 @@ class AlertsViewController: UIViewController, UIKitCaseStudy {
     }
 
     present(item: $model.fact) { fact in
-      let alert = UIAlertController.init(
-        title: "Fact about \(fact.number)",
-        message: fact.description,
-        preferredStyle: .alert
+      UIHostingController(
+        rootView: Text(fact.description)
+          .padding()
       )
-      alert.addAction(UIAlertAction(title: "OK", style: .default))
-      return alert
     }
   }
 }
 
 #Preview {
-  UINavigationController(rootViewController: AlertsViewController())
+  UINavigationController(rootViewController: SheetsViewController())
 }

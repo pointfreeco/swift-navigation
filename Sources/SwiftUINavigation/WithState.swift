@@ -29,6 +29,11 @@
   ///   }
   /// }
   /// ```
+  @available(iOS, deprecated: 18, message: "Use @Previewable instead.")
+  @available(macOS, deprecated: 15, message: "Use @Previewable instead.")
+  @available(watchOS, deprecated: 11, message: "Use @Previewable instead.")
+  @available(tvOS, deprecated: 18, message: "Use @Previewable instead.")
+  @available(visionOS, deprecated: 2, message: "Use @Previewable instead.")
   public struct WithState<Value, Content: View>: View {
     @State var value: Value
     @ViewBuilder let content: (Binding<Value>) -> Content
