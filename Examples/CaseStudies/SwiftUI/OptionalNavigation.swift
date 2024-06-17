@@ -4,14 +4,11 @@ import SwiftUINavigation
 struct OptionalNavigation: SwiftUICaseStudy {
   let caseStudyTitle = "Optional navigation"
   let readMe = """
-    This case study shows how to use an overload of SwiftUI's `sheet(item:)` modifier that will \
-    give you a binding to the data being presented, rather than just plain data.
-
-    There are also similar view modifiers for the following other forms of navigation:
-
-    • `popover(item:)`
-    • `fullScreenCover(item:)`
-    • `navigationDestination(item:)`
+    This case study demonstrates how to use powerful overloads of SwiftUI's presentation \
+    modifiers, like `sheet(item:)`. These overloads not only allow you to forego `Identifiable` \
+    conformances by instead providing a key path to an identifier, they also provide a _binding_ \
+    to the data being presented rather than just plain data. This opens up a child-parent \
+    communication “wormhole” that allows the child to write data directly back into the parent.
     """
 
   @State var alert: String?

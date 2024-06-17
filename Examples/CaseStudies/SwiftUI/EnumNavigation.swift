@@ -19,10 +19,11 @@ struct EnumNavigation: SwiftUICaseStudy {
     This case study demonstrates how to power multiple forms of navigation from a single \
     destination enum that describes all of the possible destinations one can travel to from this \
     screen.
-    
-    The screen has four possible destinations: an alert, a confirmation dialog, and two kinds \
-    of sheets. The state for each of these destinations is held as associated data of an enum, and \
-    bindings to the cases of that enum are derived using the tools in this library.
+
+    The screen has many possible destinations: an alert, a confirmation dialog, two kinds of \
+    sheets, a full-screen cover, popover, and even a drill-down. The state for every one of these \
+    destinations is held as associated data of an enum, and bindings to the cases of that enum are \
+    derived using the tools in this library.
     """
 
   @State var destination: Destination?
