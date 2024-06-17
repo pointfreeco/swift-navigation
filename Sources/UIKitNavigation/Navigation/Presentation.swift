@@ -428,6 +428,7 @@ extension UIViewController {
   ///     stack.
   @_disfavoredOverload
   @discardableResult
+  // TODO: should we rename to navigationDestination(item:)?
   public func pushViewController<Item>(
     item: UIBinding<Item?>,
     content: @escaping (UIBinding<Item>) -> UIViewController
@@ -435,6 +436,7 @@ extension UIViewController {
     destination(item: item) { $item in
       content($item)
     } present: { [weak self] controller, transaction in
+      // TODO: warn if self is UINavigationController
       self?.navigationController?.pushViewController(
         controller, animated: !transaction.uiKit.disablesAnimations
       )

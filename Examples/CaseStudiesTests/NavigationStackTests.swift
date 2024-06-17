@@ -295,7 +295,7 @@ private final class ChildViewController: UIViewController {
   }
   override func viewDidLoad() {
     super.viewDidLoad()
-    navigationController?.pushViewController(isPresented: $isLeafPresented) { [weak self] in
+    pushViewController(isPresented: $isLeafPresented) { [weak self] in
       ChildViewController(number: self?.number ?? 0)
     }
   }
