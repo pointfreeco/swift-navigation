@@ -24,11 +24,10 @@
 		CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */; };
 		CA473837272F0D860012CAC3 /* FactClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473831272F0D860012CAC3 /* FactClient.swift */; };
 		CA473838272F0D860012CAC3 /* OptionalNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473832272F0D860012CAC3 /* OptionalNavigation.swift */; };
-		CA473839272F0D860012CAC3 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473833272F0D860012CAC3 /* Alerts.swift */; };
 		CA47383B272F0DD60012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA47383A272F0DD60012CAC3 /* SwiftUINavigation */; };
 		CA7403D92C0A595D007FADC0 /* NavigationPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */; };
 		CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */; };
-		CA9D70472C1F6108003B672A /* AlertsWithAlertState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70462C1F6108003B672A /* AlertsWithAlertState.swift */; };
+		CA9D70472C1F6108003B672A /* AlertDialogState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70462C1F6108003B672A /* AlertDialogState.swift */; };
 		CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */; };
 		CA9D70502C1FB431003B672A /* StaticPathStackNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */; };
 		CA9D70522C1FB4B7003B672A /* ErasedPathStackNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */; };
@@ -87,11 +86,10 @@
 		CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaseStudiesApp.swift; sourceTree = "<group>"; };
 		CA473831272F0D860012CAC3 /* FactClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FactClient.swift; sourceTree = "<group>"; };
 		CA473832272F0D860012CAC3 /* OptionalNavigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalNavigation.swift; sourceTree = "<group>"; };
-		CA473833272F0D860012CAC3 /* Alerts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		CA47383C272F0F0D0012CAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPathTests.swift; sourceTree = "<group>"; };
 		CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitCaseStudies.swift; sourceTree = "<group>"; };
-		CA9D70462C1F6108003B672A /* AlertsWithAlertState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsWithAlertState.swift; sourceTree = "<group>"; };
+		CA9D70462C1F6108003B672A /* AlertDialogState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDialogState.swift; sourceTree = "<group>"; };
 		CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConciseEnumNavigationViewController.swift; sourceTree = "<group>"; };
 		CA9D704F2C1FB431003B672A /* StaticPathStackNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticPathStackNavigationController.swift; sourceTree = "<group>"; };
 		CA9D70512C1FB4B7003B672A /* ErasedPathStackNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErasedPathStackNavigationController.swift; sourceTree = "<group>"; };
@@ -251,8 +249,7 @@
 		CADCA3642C1CE80B00DE645F /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				CA473833272F0D860012CAC3 /* Alerts.swift */,
-				CA9D70462C1F6108003B672A /* AlertsWithAlertState.swift */,
+				CA9D70462C1F6108003B672A /* AlertDialogState.swift */,
 				CA47382F272F0D860012CAC3 /* ConfirmationDialogs.swift */,
 				CA9D70552C2087DC003B672A /* EnumControls.swift */,
 				CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */,
@@ -523,9 +520,8 @@
 				CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */,
 				CA26036D2C20973600822CA5 /* DetentsHelper.swift in Sources */,
 				CA9D705A2C208977003B672A /* UIControlBindingsViewController.swift in Sources */,
-				CA9D70472C1F6108003B672A /* AlertsWithAlertState.swift in Sources */,
+				CA9D70472C1F6108003B672A /* AlertDialogState.swift in Sources */,
 				CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */,
-				CA473839272F0D860012CAC3 /* Alerts.swift in Sources */,
 				CADCA3632C1CE75500DE645F /* SwiftUICaseStudies.swift in Sources */,
 				CA9D705E2C2089DD003B672A /* EnumControlsViewController.swift in Sources */,
 				CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */,

@@ -6,7 +6,7 @@ struct SwiftUICaseStudiesView: View {
       CaseStudyGroupView("Navigation") {
         OptionalNavigation()
         EnumNavigation()
-        AlertsWithAlertState()
+        AlertDialogState()
       }
       CaseStudyGroupView("Binding helpers") {
         SynchronizedBindings()

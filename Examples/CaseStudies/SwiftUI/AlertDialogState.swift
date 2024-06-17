@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftUINavigation
 
-struct AlertsWithAlertState: SwiftUICaseStudy {
+struct AlertDialogState: SwiftUICaseStudy {
   let caseStudyTitle = "Alert/dialog state"
   let readMe = """
     This case study shows how to drive alerts and dialog using the `AlertState` and \
@@ -27,8 +27,8 @@ struct AlertsWithAlertState: SwiftUICaseStudy {
       }
     }
     .disabled(model.isLoading)
-    .alert($model.alert) {
-      await model.alertButtonTapped($0)
+    .alert($model.alert) { action in
+      await model.alertButtonTapped(action)
     }
   }
 }
@@ -79,7 +79,7 @@ private class FeatureModel {
 #Preview {
   NavigationStack {
     CaseStudyView {
-      AlertsWithAlertState()
+      AlertDialogState()
     }
   }
 }
