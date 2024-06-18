@@ -1,7 +1,7 @@
 #if canImport(UIKit)
   import UIKit
 
-  @available(iOS 14, *)
+  @available(iOS 14, tvOS 14, *)
   extension UITextField {
     /// Creates a new text field with the specified frame and registers the binding against its
     /// text.

@@ -1,7 +1,7 @@
 #if canImport(UIKit)
   import UIKit
 
-  @available(iOS 14, *)
+  @available(iOS 14, tvOS 14, *)
   extension UIPageControl {
     /// Creates a new page control with the specified frame and registers the binding against the
     /// current page.

@@ -1,7 +1,9 @@
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(tvOS) && !os(watchOS)
   import UIKit
 
   @available(iOS 14, *)
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
   extension UIDatePicker {
     /// Creates a new date picker with the specified frame and registers the binding against the
     /// selected date.

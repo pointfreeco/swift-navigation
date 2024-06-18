@@ -1,7 +1,7 @@
 #if swift(>=6) && canImport(UIKit)
   import UIKit
 
-  @available(iOS 18, *)
+  @available(iOS 18, tvOS 18, visionOS 2, *)
   extension UITabBarController {
     public func bind(selectedTab: UIBinding<String?>) -> ObservationToken {
       let token = observe { [weak self] in

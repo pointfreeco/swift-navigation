@@ -9,7 +9,7 @@
 
   extension UIControl: UIControlProtocol {}
 
-  @available(iOS 14, *)
+  @available(iOS 14, tvOS 14, *)
   extension UIControlProtocol {
     /// Establishes a two-way connection between a source of truth and a property of this control.
     ///

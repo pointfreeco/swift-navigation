@@ -2,7 +2,7 @@
   import UIKit
   import SwiftUINavigationCore
 
-  @available(iOS 14, *)
+  @available(iOS 14, tvOS 14, *)
   extension UISegmentedControl {
     /// Creates a new color well with the specified frame and registers the binding against the
     /// selected color.

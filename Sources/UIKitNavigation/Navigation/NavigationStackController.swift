@@ -47,7 +47,7 @@
 
       super.delegate = pathDelegate
 
-      if #available(iOS 17, *) {
+      if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
         traitOverrides.push = UIPushAction { [weak self] value in
           self?.push(value: value)
         }
@@ -239,21 +239,23 @@
         }
       }
 
-      func navigationControllerSupportedInterfaceOrientations(
-        _ navigationController: UINavigationController
-      ) -> UIInterfaceOrientationMask {
-        base?.navigationControllerSupportedInterfaceOrientations?(navigationController)
-          ?? viewController.supportedInterfaceOrientations
-      }
+      #if !os(tvOS) && !os(watchOS)
+        func navigationControllerSupportedInterfaceOrientations(
+          _ navigationController: UINavigationController
+        ) -> UIInterfaceOrientationMask {
+          base?.navigationControllerSupportedInterfaceOrientations?(navigationController)
+            ?? viewController.supportedInterfaceOrientations
+        }
 
-      func navigationControllerPreferredInterfaceOrientationForPresentation(
-        _ navigationController: UINavigationController
-      ) -> UIInterfaceOrientation {
-        base?.navigationControllerPreferredInterfaceOrientationForPresentation?(
-          navigationController
-        )
-          ?? viewController.preferredInterfaceOrientationForPresentation
-      }
+        func navigationControllerPreferredInterfaceOrientationForPresentation(
+          _ navigationController: UINavigationController
+        ) -> UIInterfaceOrientation {
+          base?.navigationControllerPreferredInterfaceOrientationForPresentation?(
+            navigationController
+          )
+            ?? viewController.preferredInterfaceOrientationForPresentation
+        }
+      #endif
 
       func navigationController(
         _ navigationController: UINavigationController,

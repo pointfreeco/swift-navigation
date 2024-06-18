@@ -138,7 +138,7 @@ public struct UINavigationPath: Equatable {
         _typeByName(tag) as? any Decodable.Type
       }
 
-      @available(iOS 14, macOS 11, tvOS 15, watchOS 7, *)
+      @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
       init?(_ value: AnyHashable) {
         func item() -> String? {
           guard let value = value as? any Encodable else { return nil }
@@ -184,7 +184,7 @@ public struct UINavigationPath: Equatable {
 
     fileprivate var elements: [Element] = []
 
-    @available(iOS 14, macOS 11, tvOS 15, watchOS 7, *)
+    @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
     fileprivate init?(_ path: UINavigationPath) {
       elements.reserveCapacity(path.elements.count)
       for element in path.elements {
