@@ -49,7 +49,7 @@
 
       if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
         traitOverrides.push = UIPushAction { [weak self] value in
-          self?.push(value: value)
+          self?._push(value: value)
         }
       }
 
@@ -285,6 +285,10 @@
     @available(tvOS, deprecated: 17, message: "Use 'traitCollection.push(value:)', instead.")
     @available(watchOS, deprecated: 10, message: "Use 'traitCollection.push(value:)', instead.")
     public func push<Element: Hashable>(value: Element) {
+      _push(value: value)
+    }
+
+    fileprivate func _push<Element: Hashable>(value: Element) {
       guard let navigationController = navigationController ?? self as? UINavigationController
       else {
         runtimeWarn(
