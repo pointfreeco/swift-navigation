@@ -28,7 +28,7 @@ struct EnumNavigation: SwiftUICaseStudy {
   
   var body: some View {
     Section {
-      Button("Alert") {
+      Button("Alert is presented: \(destination.is(\.alert) ? "✅" : "❌")") {
         destination = .alert("This is an alert!")
       }
       .alert(item: $destination.alert) { title in
@@ -36,7 +36,7 @@ struct EnumNavigation: SwiftUICaseStudy {
       } actions: { _ in
       }
 
-      Button("Confirmation dialog") {
+      Button("Dialog is presented: \(destination.is(\.confirmationDialog) ? "✅" : "❌")") {
         destination = .confirmationDialog("This is a confirmation dialog!")
       }
       .alert(item: $destination.confirmationDialog) { title in
@@ -44,7 +44,7 @@ struct EnumNavigation: SwiftUICaseStudy {
       } actions: { _ in
       }
 
-      Button("Sheet (with payload)") {
+      Button("Sheet (with payload) is presented: \(destination.is(\.sheet) ? "✅" : "❌")") {
         destination = .sheet(.random(in: 1...1_000))
       }
       .sheet(item: $destination.sheet, id: \.self) { $count in
@@ -54,10 +54,13 @@ struct EnumNavigation: SwiftUICaseStudy {
             count = .random(in: 1...1_000)
           }
         }
-        .navigationTitle("Sheet with payload")
+        .navigationTitle("Sheet")
+        .presentationDetents([.medium])
       }
 
-      Button("Sheet (without payload)") {
+      Button(
+        "Sheet (no payload) is presented: \(destination.is(\.sheetWithoutPayload) ? "✅" : "❌")"
+      ) {
         destination = .sheetWithoutPayload
       }
       .sheet(isPresented: Binding($destination.sheetWithoutPayload)) {
@@ -65,9 +68,10 @@ struct EnumNavigation: SwiftUICaseStudy {
           Text("Hello!")
         }
         .navigationTitle("Sheet with payload")
+        .presentationDetents([.medium])
       }
 
-      Button("Full-screen cover") {
+      Button("Cover is presented: \(destination.is(\.fullScreenCover) ? "✅" : "❌")") {
         destination = .fullScreenCover(.random(in: 1...1_000))
       }
       .fullScreenCover(item: $destination.fullScreenCover, id: \.self) { $count in
@@ -89,7 +93,7 @@ struct EnumNavigation: SwiftUICaseStudy {
         }
       }
 
-      Button("Popover") {
+      Button("Popover is presented: \(destination.is(\.popover) ? "✅" : "❌")") {
         destination = .popover(.random(in: 1...1_000))
       }
       .popover(item: $destination.popover, id: \.self) { $count in
@@ -103,7 +107,7 @@ struct EnumNavigation: SwiftUICaseStudy {
         .frame(idealWidth: 200, idealHeight: 160)
       }
 
-      Button("Drill-down") {
+      Button("Drill-down is presented: \(destination.is(\.drillDown) ? "✅" : "❌")") {
         destination = .drillDown(.random(in: 1...1_000))
       }
       // NB: `navigationDestination` logs warning when applied directly in a "lazy" view like `Form`

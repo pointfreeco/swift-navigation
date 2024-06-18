@@ -388,8 +388,12 @@
         replaceSubrange(
           startIndex..<endIndex,
           with: newValue.map {
-            guard case let .eager(element) = $0 else { fatalError() }
-            return element.base as! Element
+            switch $0 {
+            case let .eager(element), let .lazy(.element(element)):
+              return element.base as! Element
+            case .lazy(.codable):
+              fatalError()
+            }
           }
         )
       }

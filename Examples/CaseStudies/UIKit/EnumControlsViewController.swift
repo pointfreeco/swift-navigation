@@ -10,7 +10,7 @@ class EnumControlsViewController: UIViewController, UIKitCaseStudy {
 
     • An integer quantity for when an item is in stock, which can drive a stepper.
     • A Boolean for whether an item is on back order when it is _not_ in stock, which can drive a \
-    toggle.
+    switch.
 
     This library provides tools to chain deeper into a binding's case by applying the \
     `@CasePathable` macro.

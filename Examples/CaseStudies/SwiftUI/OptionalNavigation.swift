@@ -28,7 +28,7 @@ struct OptionalNavigation: SwiftUICaseStudy {
 
   var body: some View {
     Section {
-      Button("Alert") {
+      Button("Alert is presented: \(alert != nil ? "✅" : "❌")") {
         alert = "This is an alert!"
       }
       .alert(item: $alert) { title in
@@ -36,7 +36,7 @@ struct OptionalNavigation: SwiftUICaseStudy {
       } actions: { _ in
       }
 
-      Button("Confirmation dialog") {
+      Button("Dialog is presented: \(confirmationDialog != nil ? "✅" : "❌")") {
         confirmationDialog = "This is a confirmation dialog!"
       }
       .alert(item: $confirmationDialog) { title in
@@ -44,7 +44,7 @@ struct OptionalNavigation: SwiftUICaseStudy {
       } actions: { _ in
       }
 
-      Button("Sheet") {
+      Button("Sheet is presented: \(sheet != nil ? "✅" : "❌")") {
         sheet = .random(in: 1...1_000)
       }
       .sheet(item: $sheet, id: \.self) { $count in
@@ -55,9 +55,10 @@ struct OptionalNavigation: SwiftUICaseStudy {
           }
         }
         .navigationTitle("Sheet")
+        .presentationDetents([.medium])
       }
 
-      Button("Full-screen cover") {
+      Button("Cover is presented: \(fullScreenCover != nil ? "✅" : "❌")") {
         fullScreenCover = .random(in: 1...1_000)
       }
       .fullScreenCover(item: $fullScreenCover, id: \.self) { $count in
@@ -79,7 +80,7 @@ struct OptionalNavigation: SwiftUICaseStudy {
         }
       }
 
-      Button("Popover") {
+      Button("Popover is presented: \(popover != nil ? "✅" : "❌")") {
         popover = .random(in: 1...1_000)
       }
       .popover(item: $popover, id: \.self) { $count in
@@ -93,7 +94,7 @@ struct OptionalNavigation: SwiftUICaseStudy {
         .frame(idealWidth: 200, idealHeight: 160)
       }
 
-      Button("Drill-down") {
+      Button("Drill-down is presented: \(drillDown != nil ? "✅" : "❌")") {
         drillDown = .random(in: 1...1_000)
       }
       // NB: `navigationDestination` logs warning when applied directly in a "lazy" view like `Form`
