@@ -70,7 +70,7 @@ class WiFiSettingsModel {
 }
 
 class WiFiSettingsViewController: UICollectionViewController, UIKitCaseStudy {
-  let caseStudyTitle = "Wifi settings"
+  let caseStudyTitle = "Wi-Fi Settings"
   let readMe = """
     This demo shows how to built a moderately complex feature using the tools of the library. \
     There are multiple features that communicate with each other, there are multiple navigation \
@@ -129,7 +129,7 @@ class WiFiSettingsViewController: UICollectionViewController, UIKitCaseStudy {
       )
     }
 
-    pushViewController(item: $model.destination.detail) { model in
+    navigationDestination(item: $model.destination.detail) { model in
       NetworkDetailViewController(model: model)
     }
   }

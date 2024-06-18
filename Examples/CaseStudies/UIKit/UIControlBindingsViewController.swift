@@ -28,11 +28,6 @@ class UIControlBindingsViewController: UIViewController, UIKitCaseStudy {
     myTextField.bind(focus: $model.focus, equals: .text)
     myTextField.bind(selection: $model.textSelection)
     myTextField.borderStyle = .roundedRect
-    let myAttributedTextField = UITextField(attributedText: $model.attributedText)
-    myAttributedTextField.allowsEditingTextAttributes = true
-    myAttributedTextField.bind(focus: $model.focus, equals: .attributedText)
-    myAttributedTextField.bind(selection: $model.attributedTextSelection)
-    myAttributedTextField.borderStyle = .roundedRect
     let myLabel = UILabel()
     myLabel.numberOfLines = 0
 
@@ -44,7 +39,6 @@ class UIControlBindingsViewController: UIViewController, UIKitCaseStudy {
       myStepper,
       mySwitch,
       myTextField,
-      myAttributedTextField,
       myLabel,
     ])
     stack.axis = .vertical
@@ -76,18 +70,12 @@ class UIControlBindingsViewController: UIViewController, UIKitCaseStudy {
 
       view.backgroundColor = model.color
 
-      let attributedTextSelection = model.attributedTextSelection.map {
-        self.model.attributedText.string.range(for: $0.range)
-      }
       let textSelection = model.textSelection.map {
         self.model.text.range(for: $0.range)
       }
 
       myLabel.text = """
         MyModel(
-          attributedText: \(model.attributedText.string.debugDescription),
-          attributedTextSelection: \
-        \(attributedTextSelection.map(String.init(describing:)) ?? "nil"),
           color: \(model.color.map(String.init(describing:)) ?? "nil"),
           date: \(model.date),
           focus: \(model.focus.map(String.init(describing:)) ?? "nil"),
@@ -105,8 +93,6 @@ class UIControlBindingsViewController: UIViewController, UIKitCaseStudy {
   @MainActor
   @Observable
   final class Model: HashableObject {
-    var attributedText: NSAttributedString = .mock
-    var attributedTextSelection: UITextSelection?
     var color: UIColor? = .white
     var date = Date()
     var focus: Focus?
@@ -134,60 +120,6 @@ private extension String {
     distance(from: startIndex, to: range.lowerBound)
     ..<
     distance(from: startIndex, to: range.upperBound)
-  }
-}
-
-final class ChildController: UIViewController {
-  let text: String
-  init(text: String = "Hello!") {
-    self.text = text
-    super.init(nibName: nil, bundle: nil)
-  }
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  override func viewDidLoad() {
-    super.viewDidLoad()
-
-    view.backgroundColor = .systemBackground
-    let label = UILabel()
-    label.text = text
-    label.translatesAutoresizingMaskIntoConstraints = false
-    view.addSubview(label)
-    NSLayoutConstraint.activate([
-      label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-    ])
-  }
-
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-
-    // NB: Parent traits aren't propagated yet in `viewDidLoad`
-    if #available(iOS 17, *), traitCollection.isPresented {
-      var dismissButton: UIBarButtonItem {
-        UIBarButtonItem(
-          title: "Dismiss",
-          primaryAction: UIAction { [weak self] _ in self?.traitCollection.dismiss() }
-        )
-      }
-      navigationItem.rightBarButtonItem = traitCollection.isPresented ? dismissButton : nil
-    }
-  }
-}
-
-extension NSAttributedString {
-  fileprivate static var mock: NSAttributedString {
-    let base = UIFont.preferredFont(forTextStyle: .body)
-    let font = UIFont(
-      descriptor: base.fontDescriptor.withSymbolicTraits(.traitBold) ?? base.fontDescriptor,
-      size: base.pointSize
-    )
-    let name = NSAttributedString(string: "Blob, Jr.", attributes: [.font: font])
-    let string = NSMutableAttributedString(string: "Hello, ")
-    string.append(name)
-    string.append(NSAttributedString(string: "!"))
-    return string
   }
 }
 

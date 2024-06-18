@@ -328,10 +328,10 @@ private class BasicViewController: UIViewController {
       self?.isPresenting = true
       return BasicViewController(model: model)
     }
-    pushViewController(isPresented: $model.isPushed) {
+    navigationDestination(isPresented: $model.isPushed) {
       UIViewController()
     }
-    pushViewController(item: $model.pushedChild) { model in
+    navigationDestination(item: $model.pushedChild) { model in
       BasicViewController(model: model)
     }
   }

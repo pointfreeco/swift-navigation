@@ -278,6 +278,7 @@
   }
 
   extension UINavigationController {
+    // TODO: Should this be on UIViewController and runtimeWarn if navigationController == nil?
     @available(iOS, deprecated: 9999, message: "Use 'traitCollection.push(value:)', instead.")
     public func push<Element: Hashable>(value: Element) {
       guard let stackController = self as? NavigationStackController
@@ -292,6 +293,7 @@
       stackController.path.append(.lazy(.element(value)))
     }
 
+    // TODO: Should this be on UIViewController and runtimeWarn if navigationController == nil?
     public func navigationDestination<D: Hashable>(
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
@@ -344,11 +346,6 @@
         stackController.path = stackController.path
       }
     }
-  }
-
-  @Perceptible
-  private final class DefaultPath {
-    var elements: [AnyHashable] = []
   }
 
   extension UIViewController {

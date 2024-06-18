@@ -90,7 +90,7 @@ class BasicsNavigationViewController: UIViewController, UIKitCaseStudy {
       vc.mediumDetents()
       return vc
     }
-    pushViewController(item: $model.drillDown) { count in
+    navigationDestination(item: $model.drillDown) { count in
       UIHostingController(
         rootView: Form {
           Text(count.description)

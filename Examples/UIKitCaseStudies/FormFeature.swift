@@ -170,7 +170,7 @@ final class FormViewController: UIViewController {
         """
     }
 
-    navigationController?.pushViewController(isPresented: $model.isDrillDownPresented) {
+    navigationController?.navigationDestination(isPresented: $model.isDrillDownPresented) {
       ChildController()
     }
 

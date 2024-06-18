@@ -100,7 +100,7 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
       vc.mediumDetents()
       return vc
     }
-    pushViewController(item: $model.destination.drillDown) { count in
+    navigationDestination(item: $model.destination.drillDown) { count in
       UIHostingController(
         rootView: Form {
           Text(count.description)
