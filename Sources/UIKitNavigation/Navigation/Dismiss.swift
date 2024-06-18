@@ -15,7 +15,7 @@
 
           'UITraitCollection.dismiss()' must be called from an object that was presented using a \
           binding, for example 'UIViewController.present(item:)', and \
-          'UINavigationController.pushViewController(item:)'.
+          'UIViewController.navigationDestination(item:)'.
           """
         )
         return

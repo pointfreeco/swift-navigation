@@ -31,6 +31,7 @@
 		CA49D9652C20EB0C00E6C5BB /* AssertEventually.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9CB2C0525E80034B757 /* AssertEventually.swift */; };
 		CA49D9662C20EB0C00E6C5BB /* SetUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9CC2C0525E80034B757 /* SetUp.swift */; };
 		CA49D9672C20EB0C00E6C5BB /* XCTTODO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9CD2C0525E80034B757 /* XCTTODO.swift */; };
+		CA601BAC2C21ED95006B0C5F /* RuntimeWarningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA601BAB2C21ED95006B0C5F /* RuntimeWarningTests.swift */; };
 		CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */; };
 		CA9D70472C1F6108003B672A /* AlertDialogState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70462C1F6108003B672A /* AlertDialogState.swift */; };
 		CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */; };
@@ -77,6 +78,7 @@
 		CA49D9532C20D4DF00E6C5BB /* ErasedNavigationStackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErasedNavigationStackController.swift; sourceTree = "<group>"; };
 		CA49D9592C20EAA400E6C5BB /* CaseStudiesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaseStudiesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA49D9682C20EB7200E6C5BB /* CaseStudies.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CaseStudies.xctestplan; sourceTree = "<group>"; };
+		CA601BAB2C21ED95006B0C5F /* RuntimeWarningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeWarningTests.swift; sourceTree = "<group>"; };
 		CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPathTests.swift; sourceTree = "<group>"; };
 		CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitCaseStudies.swift; sourceTree = "<group>"; };
 		CA9D70462C1F6108003B672A /* AlertDialogState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDialogState.swift; sourceTree = "<group>"; };
@@ -189,11 +191,12 @@
 		CA49D95A2C20EAA400E6C5BB /* CaseStudiesTests */ = {
 			isa = PBXGroup;
 			children = (
+				CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */,
+				DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */,
+				DC5EB9D22C0525FA0034B757 /* PresentationTests.swift */,
+				CA601BAB2C21ED95006B0C5F /* RuntimeWarningTests.swift */,
 				CA49D9682C20EB7200E6C5BB /* CaseStudies.xctestplan */,
 				DC5EB9CE2C0525E80034B757 /* Internal */,
-				DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */,
-				CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */,
-				DC5EB9D22C0525FA0034B757 /* PresentationTests.swift */,
 			);
 			path = CaseStudiesTests;
 			sourceTree = "<group>";
@@ -449,6 +452,7 @@
 				CA49D9642C20EAB000E6C5BB /* NavigationPathTests.swift in Sources */,
 				CA49D9632C20EAB000E6C5BB /* NavigationStackTests.swift in Sources */,
 				CA49D9622C20EAB000E6C5BB /* PresentationTests.swift in Sources */,
+				CA601BAC2C21ED95006B0C5F /* RuntimeWarningTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
