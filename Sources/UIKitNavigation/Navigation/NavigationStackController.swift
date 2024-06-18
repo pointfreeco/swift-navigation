@@ -278,9 +278,12 @@
   }
 
   extension UIViewController {
-    @available(iOS, deprecated: 9999, message: "Use 'traitCollection.push(value:)', instead.")
+    @available(iOS, deprecated: 17, message: "Use 'traitCollection.push(value:)', instead.")
+    @available(macOS, deprecated: 14, message: "Use 'traitCollection.push(value:)', instead.")
+    @available(tvOS, deprecated: 17, message: "Use 'traitCollection.push(value:)', instead.")
+    @available(watchOS, deprecated: 10, message: "Use 'traitCollection.push(value:)', instead.")
     public func push<Element: Hashable>(value: Element) {
-      guard let navigationController = navigationController
+      guard let navigationController = navigationController ?? self as? UINavigationController
       else {
         runtimeWarn(
           """
@@ -289,7 +292,7 @@
         )
         return
       }
-      guard let stackController = self as? NavigationStackController
+      guard let stackController = navigationController as? NavigationStackController
       else {
         runtimeWarn(
           """
@@ -305,7 +308,7 @@
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
     ) {
-      guard let navigationController = navigationController
+      guard let navigationController = navigationController ?? self as? UINavigationController
       else {
         // TODO: Should `UIViewController` be able to lazily register?
         runtimeWarn(

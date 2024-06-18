@@ -38,7 +38,7 @@ private class RootViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
 
-    self.navigationController?.navigationDestination(for: Int.self) { number in
+    navigationDestination(for: Int.self) { number in
       NumberFeatureViewController(number: number)
     }
 
@@ -84,7 +84,7 @@ private class NumberFeatureViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
 
-    navigationController?.navigationDestination(for: String.self) { string in
+    navigationDestination(for: String.self) { string in
       StringFeatureViewController(string: string)
     }
 
@@ -134,7 +134,7 @@ private class StringFeatureViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
 
-    navigationController?.navigationDestination(for: Bool.self) { bool in
+    navigationDestination(for: Bool.self) { bool in
       BoolFeatureViewController(bool: bool)
     }
 

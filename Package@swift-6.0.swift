@@ -41,6 +41,7 @@ let package = Package(
     .target(
       name: "SwiftNavigation",
       dependencies: [
+        "SwiftUINavigationCore",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "Perception", package: "swift-perception"),

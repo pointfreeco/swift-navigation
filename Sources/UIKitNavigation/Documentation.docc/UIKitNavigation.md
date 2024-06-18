@@ -33,6 +33,5 @@ Tools for making UIKit navigation simpler, more ergonomic and more precise.
 ### Navigation
 
 - ``UIKit/UIViewController``
-- ``UIKit/UINavigationController``
 - ``UIKit/UIAlertController``
 - ``UIKit/UITraitCollection``

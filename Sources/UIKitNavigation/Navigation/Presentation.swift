@@ -364,17 +364,32 @@ extension UIViewController {
     item: UIBinding<Item?>,
     content: @escaping (UIBinding<Item>) -> UIViewController
   ) -> ObservationToken {
-    // TODO: runtimeWarn if self is UINavigationController?
     destination(item: item) { $item in
       content($item)
     } present: { [weak self] controller, transaction in
-      // TODO: runtimeWarn if navigationController == nil?
-      self?.navigationController?.pushViewController(
+      guard let navigationController = self?.navigationController ?? self as? UINavigationController
+      else {
+        runtimeWarn(
+          """
+          Can't present navigation item: "navigationController" is "nil".
+          """
+        )
+        return
+      }
+      navigationController.pushViewController(
         controller, animated: !transaction.uiKit.disablesAnimations
       )
     } dismiss: { [weak self] controller, transaction in
-      // TODO: runtimeWarn if navigationController == nil?
-      self?.navigationController?.popFromViewController(
+      guard let navigationController = self?.navigationController ?? self as? UINavigationController
+      else {
+        runtimeWarn(
+          """
+          Can't dismiss navigation item: "navigationController" is "nil".
+          """
+        )
+        return
+      }
+      navigationController.popFromViewController(
         controller, animated: !transaction.uiKit.disablesAnimations
       )
     }
