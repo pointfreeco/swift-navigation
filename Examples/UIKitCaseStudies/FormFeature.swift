@@ -113,8 +113,8 @@ final class FormViewController: UIViewController {
     ])
     stack.axis = .vertical
     stack.isLayoutMarginsRelativeArrangement = true
-    stack.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-    stack.spacing = 8
+    stack.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+    stack.spacing = 12
     stack.translatesAutoresizingMaskIntoConstraints = false
 
     let scroll = UIScrollView()
