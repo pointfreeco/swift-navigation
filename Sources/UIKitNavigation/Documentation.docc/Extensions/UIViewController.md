@@ -13,8 +13,14 @@
 - ``UIKit/UIViewController/navigationDestination(item:content:)-367r6``
 - ``UIKit/UIViewController/navigationDestination(item:content:)-4pmzx``
 
-### Custom transitions
+### Custom tree-based navigation
 
 - ``UIKit/UIViewController/destination(isPresented:content:present:dismiss:)``
 - ``UIKit/UIViewController/destination(item:content:present:dismiss:)``
 - ``UIKit/UIViewController/destination(item:id:content:present:dismiss:)``
+
+### Stack-based navigation
+
+- ``NavigationStackController``
+- ``UIKit/UIViewController/navigationDestination(for:destination:)``
+- ``UIKit/UIViewController/push(value:)``

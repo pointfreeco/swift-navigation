@@ -277,10 +277,18 @@
     }
   }
 
-  extension UINavigationController {
-    // TODO: Should this be on UIViewController and runtimeWarn if navigationController == nil?
+  extension UIViewController {
     @available(iOS, deprecated: 9999, message: "Use 'traitCollection.push(value:)', instead.")
     public func push<Element: Hashable>(value: Element) {
+      guard let navigationController = navigationController
+      else {
+        runtimeWarn(
+          """
+          Can't push value: "navigationController" is "nil".
+          """
+        )
+        return
+      }
       guard let stackController = self as? NavigationStackController
       else {
         runtimeWarn(
@@ -293,12 +301,21 @@
       stackController.path.append(.lazy(.element(value)))
     }
 
-    // TODO: Should this be on UIViewController and runtimeWarn if navigationController == nil?
     public func navigationDestination<D: Hashable>(
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
     ) {
-      guard let stackController = self as? NavigationStackController
+      guard let navigationController = navigationController
+      else {
+        // TODO: Should `UIViewController` be able to lazily register?
+        runtimeWarn(
+          """
+          Can't register navigation destination: "navigationController" is "nil".
+          """
+        )
+        return
+      }
+      guard let stackController = navigationController as? NavigationStackController
       else {
         runtimeWarn(
           """
@@ -337,18 +354,13 @@
         }
       }
       if stackController.path.contains(where: {
-        if case .lazy = $0, $0.elementType == D.self {
-          return true
-        } else {
-          return false
-        }
+        guard case .lazy = $0, $0.elementType == D.self else { return false }
+        return true
       }) {
         stackController.path = stackController.path
       }
     }
-  }
 
-  extension UIViewController {
     fileprivate var navigationID: UINavigationPath.Element? {
       get {
         objc_getAssociatedObject(self, Self.navigationIDKey) as? UINavigationPath.Element
