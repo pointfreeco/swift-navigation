@@ -251,7 +251,7 @@ final class NavigationPathTests: XCTestCase {
     )
 
     let nav = NavigationStackController(path: $path) {
-      RootViewController()
+      LazyRootViewController()
     }
 
     try await setUp(controller: nav)
@@ -294,7 +294,7 @@ final class NavigationPathTests: XCTestCase {
         """
     }
     let nav = NavigationStackController(path: $path) {
-      RootViewController()
+      LazyRootViewController()
     }
     try await setUp(controller: nav)
 
@@ -342,6 +342,73 @@ final class NavigationPathTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 1)
     await assertEventuallyEqual(path.elements, [])
   }
+
+  @MainActor
+  func testPushMultipleFeaturesAtOnce_LazyNavigationDestination() async throws {
+    @UIBinding var path = UINavigationPath()
+
+    let nav = NavigationStackController(path: $path) {
+      LazyRootViewController()
+    }
+
+    try await setUp(controller: nav)
+
+    path.append(1)
+    path.append("Hello")
+    path.append(true)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyNoDifference(nav.values, [1, "Hello", true] as [AnyHashable])
+    await assertEventuallyNoDifference(path.elements, [.eager(1), .eager("Hello"), .eager(true)])
+  }
+
+  @MainActor
+  func testPushMultipleFeaturesAtOnce_EagerNavigationDestination() async throws {
+    @UIBinding var path = UINavigationPath()
+
+    let nav = NavigationStackController(path: $path) {
+      EagerRootViewController()
+    }
+
+    try await setUp(controller: nav)
+
+    path.append(1)
+    path.append("Hello")
+    path.append(true)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyNoDifference(nav.titles, ["1", "Hello", "true"])
+    await assertEventuallyNoDifference(path.elements, [.eager(1), .eager("Hello"), .eager(true)])
+  }
+
+  @MainActor
+  func testRegisterNavigationDestinationTypeMultipleTimes_LastOneWins() async throws {
+    @UIBinding var path = UINavigationPath()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { int in
+      let vc = UIViewController()
+      vc.title = "First: \(int)"
+      return vc
+    }
+    nav.navigationDestination(for: Int.self) { int in
+      let vc = UIViewController()
+      vc.title = "Second: \(int)"
+      return vc
+    }
+
+    try await setUp(controller: nav)
+
+    path.append(1)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyNoDifference(nav.titles, ["Second: 1"])
+    await assertEventuallyNoDifference(path.elements, [.eager(1)])
+    path.append(2)
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    await assertEventuallyNoDifference(nav.titles, ["Second: 1", "Second: 2"])
+    await assertEventuallyNoDifference(path.elements, [.eager(1), .eager(2)])
+  }
 }
 
 @MainActor
@@ -364,13 +431,37 @@ extension UINavigationController {
   var values: [AnyHashable] {
     viewControllers.compactMap { ($0 as? any _ValueViewController)?.value as? AnyHashable }
   }
+  var titles: [String] {
+    viewControllers.compactMap(\.title)
+  }
 }
 
-private final class RootViewController: UIViewController {
+private final class LazyRootViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     navigationController?.navigationDestination(for: Int.self) { int in
       IntegerViewController(value: int)
+    }
+  }
+}
+
+private final class EagerRootViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    navigationController?.navigationDestination(for: Int.self) { int in
+      let vc = UIViewController()
+      vc.title = int.description
+      return vc
+    }
+    navigationController?.navigationDestination(for: String.self) { string in
+      let vc = UIViewController()
+      vc.title = string
+      return vc
+    }
+    navigationController?.navigationDestination(for: Bool.self) { bool in
+      let vc = UIViewController()
+      vc.title = "\(bool)"
+      return vc
     }
   }
 }

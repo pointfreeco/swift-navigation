@@ -48,12 +48,9 @@ private class RootViewController: UIViewController {
     numberButton.setTitle("Push number feature", for: .normal)
 
     let deepLinkButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      withUITransaction(\.uiKit.disablesAnimations, true) {
-        self?.traitCollection.push(value: Int.random(in: 1...1_000))
-        self?.traitCollection.push(value: "Hello!")
-        self?.traitCollection.push(value: Bool.random())
-      }
-
+      self?.traitCollection.push(value: Int.random(in: 1...1_000))
+      self?.traitCollection.push(value: "Hello!")
+      self?.traitCollection.push(value: Bool.random())
     })
     deepLinkButton.setTitle("Push features: number → string → bool", for: .normal)
 
