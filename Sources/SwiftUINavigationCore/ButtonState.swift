@@ -72,7 +72,8 @@
     /// > animated, a runtime warning will be emitted.
     ///
     /// - Parameter perform: Unwraps and passes a button's action to a closure to be performed.
-    public func withAction(_ perform: (Action?) async -> Void) async {
+    @MainActor
+    public func withAction(_ perform: @MainActor (Action?) async -> Void) async {
       switch self.action.type {
       case let .send(action):
         await perform(action)

@@ -7,7 +7,18 @@
     fileprivate var destinations:
       [DestinationType: (UINavigationPath.Element) -> (UIViewController, AnyHashable)?] =
         [:]
-    @UIBinding fileprivate var path: [UINavigationPath.Element] = []
+    @UIBinding fileprivate var path: [UINavigationPath.Element] = [] {
+      didSet {
+        for (index, navigationID) in path.enumerated() {
+          if case .lazy = navigationID,
+            let viewController = viewControllers.first(where: { $0.navigationID == navigationID }),
+            let eagerID = viewController.navigationID
+          {
+            path[index] = eagerID
+          }
+        }
+      }
+    }
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
 
@@ -110,26 +121,29 @@
             }
           }
           var invalidIndices = IndexSet()
+          var didPushNewViewController = false
           for (index, navigationID) in newPath.enumerated() {
-            if let viewController = viewControllers.first(where: { $0.navigationID == navigationID }
-            ) {
+            if let viewController = viewControllers
+              .first(where: { $0.navigationID == navigationID })
+            {
               newViewControllers.append(viewController)
             } else if let viewController = viewController(for: navigationID) {
               newViewControllers.append(viewController)
-            } else if 
-              //navigationID.element != nil,
-              case .eager = navigationID,
-                let elementType = navigationID.elementType
-            {
-              runtimeWarn(
-                """
-                No "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
-                found among the view controllers on the path.
-                """
-              )
-              invalidIndices.insert(index)
-            } else {
-              // TODO: what does this mean?
+              didPushNewViewController = true
+            } else if case .lazy(.element) = navigationID {
+              if !didPushNewViewController {
+                if let elementType = navigationID.elementType {
+                  runtimeWarn(
+                    """
+                    No "navigationDestination(for: \(String(customDumping: elementType))) { … }" \
+                    was found among the view controllers on the path.
+                    """
+                  )
+                  invalidIndices.insert(index)
+                } else {
+                  // TODO: runtimeWarn?
+                }
+              }
             }
           }
           path.remove(atOffsets: invalidIndices)
@@ -145,8 +159,6 @@
         let destinationType = navigationID.elementType,
         let destination = destinations[DestinationType(destinationType)],
         let (viewController, element) = destination(navigationID)
-          //,
-        //let element = navigationID.element
       else {
         return nil
       }
@@ -206,8 +218,8 @@
         }
         let navigationController = navigationController as! NavigationStackController
         if let nextIndex = navigationController.path.firstIndex(where: {
-          guard case .lazy = $0 else { return true }
-          return false
+          guard case .lazy = $0 else { return false }
+          return true
         }) {
           let nextElement = navigationController.path[nextIndex]
           let canPushElement =
@@ -296,9 +308,6 @@
     }
 
     fileprivate func _push<Element: Hashable>(value: Element) {
-      // TODO: Is it possible for these two guards to fail? Only a NavigationStackController can
-      //       set up the `push` trait, so it seems we are always guaranteed to have a
-      //       stack controller.
       guard let navigationController = navigationController ?? self as? UINavigationController
       else {
         runtimeWarn(
@@ -349,7 +358,7 @@
         guard let stackController else { fatalError() }
 
         switch element {
-        case let .eager(value):
+        case let .eager(value), let .lazy(.element(value)):
           return (destination(value as! D), value)
         case let .lazy(.codable(value)):
           let index = stackController.path.firstIndex(of: element)!
@@ -364,11 +373,6 @@
             stackController.path.remove(at: index)
             return nil
           }
-          stackController.path[index] = .eager(value)
-          return (destination(value as! D), value)
-        case let .lazy(.element(value)):
-          let index = stackController.path.firstIndex(of: element)!
-          stackController.path[index] = .eager(value)
           return (destination(value as! D), value)
         }
       }

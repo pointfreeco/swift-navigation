@@ -256,7 +256,7 @@ final class NavigationPathTests: XCTestCase {
 
     try await setUp(controller: nav)
 
-    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyEqual(nav.viewControllers.count, 4, timeout: 2)
     await assertEventuallyNoDifference(nav.values, [1, "Blob", true] as [AnyHashable])
     await assertEventuallyNoDifference(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
   }
@@ -355,16 +355,16 @@ final class NavigationPathTests: XCTestCase {
 
     path.append(2)
     path.append("Hello")
-    path.append(User(id: 42))
+    path.append(true)
 
     await assertEventuallyEqual(nav.viewControllers.count, 4, timeout: 2)
     await assertEventuallyNoDifference(
       nav.values,
-      [2, "Hello", User(id: 42)] as [AnyHashable]
+      [2, "Hello", true] as [AnyHashable]
     )
     await assertEventuallyNoDifference(
       path.elements,
-      [.eager(2), .eager("Hello"), .eager(User(id: 42))]
+      [.eager(2), .eager("Hello"), .eager(true)]
     )
   }
 
@@ -502,9 +502,6 @@ private final class StringViewController: UIViewController, _ValueViewController
     super.viewDidLoad()
     navigationDestination(for: Bool.self) { bool in
       BoolViewController(value: bool)
-    }
-    navigationDestination(for: User.self) { user in
-      UserViewController(value: user)
     }
   }
 }

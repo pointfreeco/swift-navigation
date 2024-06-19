@@ -3,33 +3,31 @@
   import SwiftUI
 
   extension Binding {
-    #if swift(>=5.9)
-      /// Returns a binding to the associated value of a given case key path.
-      ///
-      /// Useful for producing bindings to values held in enum state.
-      ///
-      /// - Parameter keyPath: A case key path to a specific associated value.
-      /// - Returns: A new binding.
-      public subscript<Member>(
-        dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
-      ) -> Binding<Member>?
-      where Value: CasePathable {
-        Binding<Member>(unwrapping: self[keyPath])
-      }
+    /// Returns a binding to the associated value of a given case key path.
+    ///
+    /// Useful for producing bindings to values held in enum state.
+    ///
+    /// - Parameter keyPath: A case key path to a specific associated value.
+    /// - Returns: A new binding.
+    public subscript<Member>(
+      dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+    ) -> Binding<Member>?
+    where Value: CasePathable {
+      Binding<Member>(unwrapping: self[keyPath])
+    }
 
-      /// Returns a binding to the associated value of a given case key path.
-      ///
-      /// Useful for driving navigation off an optional enumeration of destinations.
-      ///
-      /// - Parameter keyPath: A case key path to a specific associated value.
-      /// - Returns: A new binding.
-      public subscript<Enum: CasePathable, Member>(
-        dynamicMember keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Member>>
-      ) -> Binding<Member?>
-      where Value == Enum? {
-        self[keyPath]
-      }
-    #endif
+    /// Returns a binding to the associated value of a given case key path.
+    ///
+    /// Useful for driving navigation off an optional enumeration of destinations.
+    ///
+    /// - Parameter keyPath: A case key path to a specific associated value.
+    /// - Returns: A new binding.
+    public subscript<Enum: CasePathable, Member>(
+      dynamicMember keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Member>>
+    ) -> Binding<Member?>
+    where Value == Enum? {
+      self[keyPath]
+    }
 
     /// Creates a binding by projecting the base value to an unwrapped value.
     ///

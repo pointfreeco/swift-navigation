@@ -142,17 +142,7 @@ public struct UINavigationPath: Equatable {
       init?(_ value: AnyHashable) {
         func item() -> String? {
           guard let value = value as? any Encodable else { return nil }
-          #if swift(<5.7)
-            func open<A: Encodable>(_: A.Type) throws -> Data {
-              try Self.encoder.encode(element as! A)
-            }
-            return try? String(
-              decoding: _openExistential(type(of: element), do: open),
-              as: UTF8.self
-            )
-          #else
-            return try? String(decoding: Self.encoder.encode(value), as: UTF8.self)
-          #endif
+          return try? String(decoding: Self.encoder.encode(value), as: UTF8.self)
         }
         guard
           let tag = _mangledTypeName(type(of: value.base)),
@@ -163,14 +153,7 @@ public struct UINavigationPath: Equatable {
 
       package func decode() -> AnyHashable? {
         func value(as type: any Decodable.Type) -> AnyHashable? {
-          #if swift(<5.7)
-            func open<A: Decodable>(_: A.Type)  A? {
-              try Self.decoder.decode(A.self, from: Data(item.utf8)) as? AnyHashable
-            }
-            return try? _openExistential(type, do: open)
-          #else
-            return try? Self.decoder.decode(type, from: Data(item.utf8)) as? AnyHashable
-          #endif
+          try? Self.decoder.decode(type, from: Data(item.utf8)) as? AnyHashable
         }
         guard
           let type = decodableType,
