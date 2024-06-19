@@ -79,7 +79,7 @@
       ) { _ in
         button.withAction(handler)
       }
-      if #available(iOS 15, *) {
+      if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
         self.accessibilityLabel = button.label.accessibilityLabel.map { String(state: $0) }
       }
     }
