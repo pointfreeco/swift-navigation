@@ -3,10 +3,11 @@ import UIKit
 import UIKitNavigation
 
 class FocusViewController: UIViewController, UIKitCaseStudy {
-  let caseStudyTitle = "Basics"
+  let caseStudyTitle = "Focus"
   let readMe = """
-    This case study demonstrates how to perform every major form of navigation in UIKit (alerts, \
-    sheets, drill-downs) by driving navigation off of optional and boolean state.
+    This case study demonstrates how to handle `UITextField` focus in a state-driven manner. The \
+    focus in the UI is kept in sync with the focus value held in an observable model so that \
+    changes in one are immediately reflected in the other.
     """
   @UIBindable var model = Model()
 
@@ -49,6 +50,13 @@ class FocusViewController: UIViewController, UIKitCaseStudy {
       self?.model.focus = .username
     })
     focusUsernameButton.setTitle("Focus username", for: .normal)
+    let resignFirstResponder = UIButton(type: .system, primaryAction: UIAction { _ in
+      bioTextField.resignFirstResponder()
+      emailTextField.resignFirstResponder()
+      passwordTextField.resignFirstResponder()
+      usernameTextField.resignFirstResponder()
+    })
+    resignFirstResponder.setTitle("Resign first responder", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [
       usernameTextField,
@@ -60,9 +68,9 @@ class FocusViewController: UIViewController, UIKitCaseStudy {
       focusEmailButton,
       focusPasswordButton,
       focusBioButton,
+      resignFirstResponder,
     ])
     stack.axis = .vertical
-    stack.spacing = 12
     stack.translatesAutoresizingMaskIntoConstraints = false
 
     view.addSubview(stack)
