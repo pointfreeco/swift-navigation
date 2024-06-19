@@ -5,7 +5,7 @@
 
   open class NavigationStackController: UINavigationController {
     fileprivate var destinations:
-      [DestinationType: (UINavigationPath.Element) -> UIViewController?] =
+      [DestinationType: (UINavigationPath.Element) -> (UIViewController, AnyHashable)?] =
         [:]
     @UIBinding fileprivate var path: [UINavigationPath.Element] = []
     private let pathDelegate = PathDelegate()
@@ -138,8 +138,9 @@
       guard
         let destinationType = navigationID.elementType,
         let destination = destinations[DestinationType(destinationType)],
-        let viewController = destination(navigationID),
-        let element = navigationID.element
+        let (viewController, element) = destination(navigationID)
+          //,
+        //let element = navigationID.element
       else {
         return nil
       }
@@ -343,7 +344,7 @@
 
         switch element {
         case let .eager(value):
-          return destination(value as! D)
+          return (destination(value as! D), value)
         case let .lazy(.codable(value)):
           let index = stackController.path.firstIndex(of: element)!
           guard let value = value.decode()
@@ -358,11 +359,11 @@
             return nil
           }
           stackController.path[index] = .eager(value)
-          return destination(value as! D)
+          return (destination(value as! D), value)
         case let .lazy(.element(value)):
           let index = stackController.path.firstIndex(of: element)!
           stackController.path[index] = .eager(value)
-          return destination(value as! D)
+          return (destination(value as! D), value)
         }
       }
       if stackController.path.contains(where: {

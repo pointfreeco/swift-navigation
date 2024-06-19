@@ -186,8 +186,6 @@ final class NavigationPathTests: XCTestCase {
     }
     try await setUp(controller: nav)
 
-    // TODO: This is failing because in 'viewController(…)' we are checking 'let element = navigationID.element' and that fails because the state is 'nil'. Maybe 'destinations' should return a tuple (UIViewController, AnyHashable)?
-    
     await assertEventuallyEqual(nav.viewControllers.count, 4)
     await assertEventuallyEqual(nav.values, [1, "Blob", true] as [AnyHashable])
     await assertEventuallyEqual(path.elements, [.eager(1), .eager("Blob"), .eager(true)])
