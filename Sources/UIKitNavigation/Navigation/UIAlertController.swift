@@ -53,7 +53,7 @@
   @available(tvOS 13, *)
   @available(watchOS, unavailable)
   extension UIAlertAction.Style {
-    init(_ role: ButtonStateRole) {
+    public init(_ role: ButtonStateRole) {
       switch role {
       case .cancel:
         self = .cancel
@@ -69,7 +69,7 @@
   @available(tvOS 13, *)
   @available(watchOS, unavailable)
   extension UIAlertAction {
-    convenience init<Action>(
+    public convenience init<Action>(
       _ button: ButtonState<Action>,
       action handler: @escaping (_ action: Action?) -> Void
     ) {
@@ -78,6 +78,9 @@
         style: button.role.map(UIAlertAction.Style.init) ?? .default
       ) { _ in
         button.withAction(handler)
+      }
+      if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+        self.accessibilityLabel = button.label.accessibilityLabel.map { String(state: $0) }
       }
     }
   }
