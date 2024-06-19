@@ -287,10 +287,10 @@
   }
 
   extension UIViewController {
-    @available(iOS, deprecated: 17, message: "Use 'traitCollection.push(value:)', instead.")
-    @available(macOS, deprecated: 14, message: "Use 'traitCollection.push(value:)', instead.")
-    @available(tvOS, deprecated: 17, message: "Use 'traitCollection.push(value:)', instead.")
-    @available(watchOS, deprecated: 10, message: "Use 'traitCollection.push(value:)', instead.")
+    @available(iOS, deprecated: 17, renamed: "traitCollection.push")
+    @available(macOS, deprecated: 14, renamed: "traitCollection.push")
+    @available(tvOS, deprecated: 17, renamed: "traitCollection.push")
+    @available(watchOS, deprecated: 10, renamed: "traitCollection.push")
     public func push<Element: Hashable>(value: Element) {
       _push(value: value)
     }

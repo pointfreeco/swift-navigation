@@ -148,7 +148,7 @@ final class NavigationPathTests: XCTestCase {
         """
       )
     }
-    nav.push(value: "blob")
+    nav.traitCollection.push(value: "blob")
     await assertEventuallyEqual(path.elements, [])
   }
 
