@@ -141,13 +141,4 @@ final class RuntimeWarningTests: XCTestCase {
     let vc = UINavigationController(rootViewController: VC())
     try await setUp(controller: vc)
   }
-
-  @MainActor
-  func testFoo() async throws {
-    @UIBinding var path = UINavigationPath([1])
-    let nav = NavigationStackController(path: $path) {
-      UIViewController()
-    }
-    try await setUp(controller: nav)
-  }
 }
