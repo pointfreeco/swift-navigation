@@ -79,6 +79,9 @@
       ) { _ in
         button.withAction(handler)
       }
+      if #available(iOS 15, *) {
+        self.accessibilityLabel = button.label.accessibilityLabel.map { String(state: $0) }
+      }
     }
   }
 #endif

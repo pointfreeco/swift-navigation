@@ -380,6 +380,15 @@
       return `self`
     }
 
+    public var accessibilityLabel: TextState? {
+      for modifier in self.modifiers.reversed() {
+        if case let .accessibilityLabel(accessibilityLabel) = modifier {
+          return accessibilityLabel
+        }
+      }
+      return nil
+    }
+
     public func accessibilityTextContentType(_ type: AccessibilityTextContentType) -> Self {
       var `self` = self
       `self`.modifiers.append(.accessibilityTextContentType(type))
