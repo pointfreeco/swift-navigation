@@ -353,13 +353,19 @@ final class NavigationPathTests: XCTestCase {
 
     try await setUp(controller: nav)
 
-    path.append(1)
+    path.append(2)
     path.append("Hello")
-    path.append(true)
+    path.append(User(id: 42))
 
-    await assertEventuallyEqual(nav.viewControllers.count, 4)
-    await assertEventuallyNoDifference(nav.values, [1, "Hello", true] as [AnyHashable])
-    await assertEventuallyNoDifference(path.elements, [.eager(1), .eager("Hello"), .eager(true)])
+    await assertEventuallyEqual(nav.viewControllers.count, 4, timeout: 2)
+    await assertEventuallyNoDifference(
+      nav.values,
+      [2, "Hello", User(id: 42)] as [AnyHashable]
+    )
+    await assertEventuallyNoDifference(
+      path.elements,
+      [.eager(2), .eager("Hello"), .eager(User(id: 42))]
+    )
   }
 
   @MainActor
@@ -439,7 +445,7 @@ extension UINavigationController {
 private final class LazyRootViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
-    navigationController?.navigationDestination(for: Int.self) { int in
+    navigationDestination(for: Int.self) { int in
       IntegerViewController(value: int)
     }
   }
@@ -448,17 +454,17 @@ private final class LazyRootViewController: UIViewController {
 private final class EagerRootViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
-    navigationController?.navigationDestination(for: Int.self) { int in
+    navigationDestination(for: Int.self) { int in
       let vc = UIViewController()
       vc.title = int.description
       return vc
     }
-    navigationController?.navigationDestination(for: String.self) { string in
+    navigationDestination(for: String.self) { string in
       let vc = UIViewController()
       vc.title = string
       return vc
     }
-    navigationController?.navigationDestination(for: Bool.self) { bool in
+    navigationDestination(for: Bool.self) { bool in
       let vc = UIViewController()
       vc.title = "\(bool)"
       return vc
@@ -477,7 +483,7 @@ private final class IntegerViewController: UIViewController, _ValueViewControlle
   }
   override func viewDidLoad() {
     super.viewDidLoad()
-    navigationController?.navigationDestination(for: String.self) { string in
+    navigationDestination(for: String.self) { string in
       StringViewController(value: string)
     }
   }
@@ -494,8 +500,11 @@ private final class StringViewController: UIViewController, _ValueViewController
   }
   override func viewDidLoad() {
     super.viewDidLoad()
-    navigationController?.navigationDestination(for: Bool.self) { bool in
+    navigationDestination(for: Bool.self) { bool in
       BoolViewController(value: bool)
+    }
+    navigationDestination(for: User.self) { user in
+      UserViewController(value: user)
     }
   }
 }
@@ -514,7 +523,22 @@ private final class BoolViewController: UIViewController, _ValueViewController {
   }
 }
 
+private final class UserViewController: UIViewController, _ValueViewController {
+  let value: User
+  init(value: User) {
+    self.value = value
+    super.init(nibName: nil, bundle: nil)
+  }
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}
+
 private struct User: Hashable, Codable {
+  let id: Int
   static let mangledTypeName =
     "21UIKitCaseStudiesTests014NavigationPathD0C10$10685e7e0yXZ10$10685e7ecyXZ4UserV"
 }

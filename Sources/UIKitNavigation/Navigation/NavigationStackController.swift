@@ -116,7 +116,11 @@
               newViewControllers.append(viewController)
             } else if let viewController = viewController(for: navigationID) {
               newViewControllers.append(viewController)
-            } else if navigationID.element != nil, let elementType = navigationID.elementType {
+            } else if 
+              //navigationID.element != nil,
+              case .eager = navigationID,
+                let elementType = navigationID.elementType
+            {
               runtimeWarn(
                 """
                 No "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
@@ -124,6 +128,8 @@
                 """
               )
               invalidIndices.insert(index)
+            } else {
+              // TODO: what does this mean?
             }
           }
           path.remove(atOffsets: invalidIndices)
@@ -200,8 +206,8 @@
         }
         let navigationController = navigationController as! NavigationStackController
         if let nextIndex = navigationController.path.firstIndex(where: {
-          guard case .lazy = $0 else { return false }
-          return true
+          guard case .lazy = $0 else { return true }
+          return false
         }) {
           let nextElement = navigationController.path[nextIndex]
           let canPushElement =
