@@ -6,20 +6,17 @@
     public let id: UUID
     public let action: ButtonStateAction<Action>
     public let label: TextState
-    public let accessibilityLabel: TextState?
     public let role: ButtonStateRole?
 
     init(
       id: UUID,
       action: ButtonStateAction<Action>,
       label: TextState,
-      accessibilityLabel: TextState? = nil,
       role: ButtonStateRole?
     ) {
       self.id = id
       self.action = action
       self.label = label
-      self.accessibilityLabel = accessibilityLabel
       self.role = role
     }
 
@@ -33,16 +30,9 @@
     public init(
       role: ButtonStateRole? = nil,
       action: ButtonStateAction<Action> = .send(nil),
-      accessibilityLabel: () -> TextState?,
       label: () -> TextState
     ) {
-      self.init(
-        id: UUID(),
-        action: action,
-        label: label(),
-        accessibilityLabel: accessibilityLabel(),
-        role: role
-      )
+      self.init(id: UUID(), action: action, label: label(), role: role)
     }
 
     /// Creates button state.
@@ -55,16 +45,9 @@
     public init(
       role: ButtonStateRole? = nil,
       action: Action,
-      accessibilityLabel: () -> TextState?,
       label: () -> TextState
     ) {
-      self.init(
-        id: UUID(),
-        action: .send(action),
-        label: label(),
-        accessibilityLabel: accessibilityLabel(),
-        role: role
-      )
+      self.init(id: UUID(), action: .send(action), label: label(), role: role)
     }
 
     /// Handle the button's action in a closure.
@@ -121,7 +104,6 @@
         id: self.id,
         action: self.action.map(transform),
         label: self.label,
-        accessibilityLabel: self.accessibilityLabel,
         role: self.role
       )
     }
@@ -185,7 +167,6 @@
         children.append(("role", role))
       }
       children.append(("action", self.action))
-      children.append(("accessibilityLabel", self.accessibilityLabel))
       children.append(("label", self.label))
       return Mirror(
         self,
@@ -224,7 +205,6 @@
   extension ButtonState: Equatable where Action: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
       lhs.action == rhs.action
-        && lhs.accessibilityLabel == rhs.accessibilityLabel
         && lhs.label == rhs.label
         && lhs.role == rhs.role
     }
@@ -243,7 +223,6 @@
   extension ButtonState: Hashable where Action: Hashable {
     public func hash(into hasher: inout Hasher) {
       hasher.combine(self.action)
-      hasher.combine(self.accessibilityLabel)
       hasher.combine(self.label)
       hasher.combine(self.role)
     }

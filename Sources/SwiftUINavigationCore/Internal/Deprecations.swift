@@ -170,31 +170,25 @@
   )
   extension ButtonState {
     public static func cancel(
-      _ label: TextState,
-      accessibilityLabel: TextState? = nil,
-      action: ButtonStateAction<Action> = .send(nil)
+      _ label: TextState, action: ButtonStateAction<Action> = .send(nil)
     ) -> Self {
-      Self(role: .cancel, action: action, accessibilityLabel: { accessibilityLabel }) {
+      Self(role: .cancel, action: action) {
         label
       }
     }
 
     public static func `default`(
-      _ label: TextState,
-      accessibilityLabel: TextState? = nil,
-      action: ButtonStateAction<Action> = .send(nil)
+      _ label: TextState, action: ButtonStateAction<Action> = .send(nil)
     ) -> Self {
-      Self(action: action, accessibilityLabel: { accessibilityLabel }) {
+      Self(action: action) {
         label
       }
     }
 
     public static func destructive(
-      _ label: TextState,
-      accessibilityLabel: TextState? = nil,
-      action: ButtonStateAction<Action> = .send(nil)
+      _ label: TextState, action: ButtonStateAction<Action> = .send(nil)
     ) -> Self {
-      Self(role: .destructive, action: action, accessibilityLabel: { accessibilityLabel }) {
+      Self(role: .destructive, action: action) {
         label
       }
     }
