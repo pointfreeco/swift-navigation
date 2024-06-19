@@ -11,6 +11,7 @@ struct UIKitCaseStudiesView: View {
       CaseStudyGroupView("Bindings") {
         UIControlBindingsViewController()
         EnumControlsViewController()
+        FocusViewController()
       }
       CaseStudyGroupView("Optional navigation") {
         BasicsNavigationViewController()

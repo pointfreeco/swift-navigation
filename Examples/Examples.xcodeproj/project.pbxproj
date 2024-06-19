@@ -33,6 +33,7 @@
 		CA49D9672C20EB0C00E6C5BB /* XCTTODO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9CD2C0525E80034B757 /* XCTTODO.swift */; };
 		CA601BAC2C21ED95006B0C5F /* RuntimeWarningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA601BAB2C21ED95006B0C5F /* RuntimeWarningTests.swift */; };
 		CA601BAE2C234613006B0C5F /* AnimationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA601BAD2C234613006B0C5F /* AnimationsViewController.swift */; };
+		CA601BB02C236544006B0C5F /* FocusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA601BAF2C236544006B0C5F /* FocusViewController.swift */; };
 		CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */; };
 		CA9D70472C1F6108003B672A /* AlertDialogState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70462C1F6108003B672A /* AlertDialogState.swift */; };
 		CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */; };
@@ -81,6 +82,7 @@
 		CA49D9682C20EB7200E6C5BB /* CaseStudies.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CaseStudies.xctestplan; sourceTree = "<group>"; };
 		CA601BAB2C21ED95006B0C5F /* RuntimeWarningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeWarningTests.swift; sourceTree = "<group>"; };
 		CA601BAD2C234613006B0C5F /* AnimationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationsViewController.swift; sourceTree = "<group>"; };
+		CA601BAF2C236544006B0C5F /* FocusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusViewController.swift; sourceTree = "<group>"; };
 		CA7403D82C0A595D007FADC0 /* NavigationPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPathTests.swift; sourceTree = "<group>"; };
 		CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitCaseStudies.swift; sourceTree = "<group>"; };
 		CA9D70462C1F6108003B672A /* AlertDialogState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDialogState.swift; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 				CA9D704D2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift */,
 				CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */,
 				CA49D9532C20D4DF00E6C5BB /* ErasedNavigationStackController.swift */,
+				CA601BAF2C236544006B0C5F /* FocusViewController.swift */,
 				CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */,
 				CA9D704F2C1FB431003B672A /* StaticNavigationStackController.swift */,
 				CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */,
@@ -433,6 +436,7 @@
 				CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */,
 				CA26036D2C20973600822CA5 /* DetentsHelper.swift in Sources */,
 				CA9D705A2C208977003B672A /* UIControlBindingsViewController.swift in Sources */,
+				CA601BB02C236544006B0C5F /* FocusViewController.swift in Sources */,
 				CA9D70472C1F6108003B672A /* AlertDialogState.swift in Sources */,
 				CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */,
 				CADCA3632C1CE75500DE645F /* SwiftUICaseStudies.swift in Sources */,

@@ -56,6 +56,57 @@ final class RuntimeWarningTests: XCTestCase {
   }
 
   @MainActor
+  func testPushValue_WithoutNavigationController() async throws {
+    XCTExpectFailure {
+      $0.compactDescription == """
+        Tried to push a value from outside of a navigation stack.
+
+        'UITraitCollection.push(value:)' must be called from an object in a \
+        'NavigationStackController'.
+        """
+    }
+    class VC: UIViewController {
+      override func viewDidLoad() {
+        traitCollection.push(value: 1)
+      }
+    }
+    let vc = UINavigationController(rootViewController: VC())
+    try await setUp(controller: vc)
+  }
+
+  @MainActor
+  func testPush_WithoutNavigationController() async throws {
+    XCTExpectFailure {
+      $0.compactDescription == """
+        Can't push value: "navigationController" is "nil".
+        """
+    }
+    class VC: UIViewController {
+      override func viewDidLoad() {
+        push(value: 1)
+      }
+    }
+    let vc = VC()
+    try await setUp(controller: vc)
+  }
+
+  @MainActor
+  func testPush_WithoutNavigationStack() async throws {
+    XCTExpectFailure {
+      $0.compactDescription == """
+        Tried to push a value to a non-"NavigationStackController".
+        """
+    }
+    class VC: UIViewController {
+      override func viewDidLoad() {
+        push(value: 1)
+      }
+    }
+    let vc = UINavigationController(rootViewController: VC())
+    try await setUp(controller: vc)
+  }
+
+  @MainActor
   func testNavigationDestinationFor_WithoutNavigationController() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
@@ -89,5 +140,14 @@ final class RuntimeWarningTests: XCTestCase {
     }
     let vc = UINavigationController(rootViewController: VC())
     try await setUp(controller: vc)
+  }
+
+  @MainActor
+  func testFoo() async throws {
+    @UIBinding var path = UINavigationPath([1])
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    try await setUp(controller: nav)
   }
 }
