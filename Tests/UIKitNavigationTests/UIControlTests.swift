@@ -122,4 +122,49 @@ final class UIControlTests: XCTestCase {
     XCTAssertEqual(text, "Blob, Jr.")
     XCTAssertEqual(textField.text, "Blob, Jr.")
   }
+
+  @MainActor
+  func testReBindControl() async throws {
+    @UIBinding var text = ""
+    let textField = UITextField(text: $text)
+
+    @UIBinding var otherText = "Blob"
+    textField.bind(text: $otherText)
+    XCTAssertEqual(textField.text, "Blob")
+
+    otherText += " Jr"
+    await Task.yield()
+    XCTAssertEqual(textField.text, "Blob Jr")
+
+    text += "!!!"
+    await Task.yield()
+    XCTAssertEqual(textField.text, "Blob Jr")
+
+    textField.text? += ", Esq."
+    XCTAssertEqual(text, "!!!")
+    XCTAssertEqual(otherText, "Blob Jr, Esq.")
+  }
+
+  @MainActor
+  func testUnbind() async throws {
+    @UIBinding var text = ""
+    let textField = UITextField(text: $text)
+    XCTAssertEqual(text, "")
+    XCTAssertEqual(textField.text, "")
+
+    text += "Blob"
+    await Task.yield()
+    XCTAssertEqual(text, "Blob")
+    XCTAssertEqual(textField.text, "Blob")
+
+    textField.unbind(\.text)
+
+    text += "!"
+    XCTAssertEqual(text, "Blob!")
+    XCTAssertEqual(textField.text, "Blob")
+
+    textField.text? += ", Esq."
+    XCTAssertEqual(text, "Blob!")
+    XCTAssertEqual(textField.text, "Blob, Esq.")
+  }
 }
