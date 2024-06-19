@@ -48,6 +48,7 @@ final class ConnectToNetworkViewController: UIViewController {
     passwordTextField.borderStyle = .line
     passwordTextField.isSecureTextEntry = true
     passwordTextField.becomeFirstResponder()
+    passwordTextField.placeholder = "The password is 'blob'"
     let joinButton = UIButton(
       type: .system,
       primaryAction: UIAction { [weak self] _ in

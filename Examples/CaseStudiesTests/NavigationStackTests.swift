@@ -261,8 +261,35 @@ final class NavigationStackTests: XCTestCase {
   }
 
   @MainActor
-  func testPushAction() {
+  func testPushAction() async throws {
+    @UIBinding var path = [Int]()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ChildViewController(number: number)
+    }
+    try await setUp(controller: nav)
+    
+    try await Task.sleep(for: .seconds(0.3))
+    nav.traitCollection.push(value: 1)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(path, [1])
 
+    try await Task.sleep(for: .seconds(0.3))
+    nav.viewControllers[0].traitCollection.push(value: 2)
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    await assertEventuallyEqual(path, [1, 2])
+
+    try await Task.sleep(for: .seconds(0.3))
+    nav.viewControllers[1].traitCollection.push(value: 3)
+    await assertEventuallyEqual(nav.viewControllers.count, 4)
+    await assertEventuallyEqual(path, [1, 2, 3])
+
+    try await Task.sleep(for: .seconds(0.3))
+    try XCTUnwrap(nav.viewControllers.last).traitCollection.push(value: 4)
+    await assertEventuallyEqual(nav.viewControllers.count, 5)
+    await assertEventuallyEqual(path, [1, 2, 3, 4])
   }
 }
 

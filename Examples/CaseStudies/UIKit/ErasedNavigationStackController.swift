@@ -6,7 +6,8 @@ final class ErasedNavigationStackController: NavigationStackController, UIKitCas
   let caseStudyNavigationTitle = "Type-erased path"
   let caseStudyTitle = "Type-erased path"
   let readMe = """
-    TODO
+    This case study demonstrates how to use the type erased `UINavigationPath` type to drive \
+    navigation in a stack controller.
     """
   let isPresentedInSheet = true
   private var model: Model!
