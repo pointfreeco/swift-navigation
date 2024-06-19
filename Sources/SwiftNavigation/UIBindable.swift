@@ -24,7 +24,7 @@ import Perception
 ///
 ///
 /// final class BookEditViewController: UIViewController {
-///   @Bindable var book: Book
+///   @UIBindable var book: Book
 ///
 ///   // ...
 ///
