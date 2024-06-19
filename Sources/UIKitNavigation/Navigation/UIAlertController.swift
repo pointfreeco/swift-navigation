@@ -8,11 +8,11 @@
   @available(tvOS 13, *)
   @available(watchOS, unavailable)
   extension UIAlertController {
-    // TODO: Document
+    /// Creates and returns a view controller for displaying an alert using a data description.
     ///
     /// - Parameters:
-    ///   - state: <#state description#>
-    ///   - handler: <#handler description#>
+    ///   - state: A data description of the alert.
+    ///   - handler: A closure that is invoked with an action held in `state`.
     public convenience init<Action>(
       state: AlertState<Action>,
       handler: @escaping (_ action: Action?) -> Void
@@ -27,11 +27,12 @@
       }
     }
 
-    // TODO: Document
+    /// Creates and returns a view controller for displaying an action sheet using a data
+    /// description.
     ///
     /// - Parameters:
-    ///   - state: <#state description#>
-    ///   - handler: <#handler description#>
+    ///   - state: A data description of the alert.
+    ///   - handler: A closure that is invoked with an action held in `state`.
     public convenience init<Action>(
       state: ConfirmationDialogState<Action>,
       handler: @escaping (_ action: Action?) -> Void
