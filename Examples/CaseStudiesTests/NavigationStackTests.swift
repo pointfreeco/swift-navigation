@@ -261,19 +261,8 @@ final class NavigationStackTests: XCTestCase {
   }
 
   @MainActor
-  func testLazyNavigation_AppendToPath() async throws {
-    let nav = UINavigationController(rootViewController: UIViewController())
-    try await setUp(controller: nav)
-    await assertEventuallyEqual(nav.viewControllers.count, 1)
+  func testPushAction() {
 
-    let child = ChildViewController(number: 1)
-    nav.pushViewController(child, animated: false)
-    await assertEventuallyEqual(nav.viewControllers.count, 2)
-
-    withUITransaction(\.uiKit.disablesAnimations, true) {
-      child.isLeafPresented = true
-    }
-    await assertEventuallyEqual(nav.viewControllers.count, 3)
   }
 }
 

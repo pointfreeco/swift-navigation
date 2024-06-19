@@ -20,8 +20,74 @@ final class RuntimeWarningTests: XCTestCase {
 
   @MainActor
   func testNavigationDestination_WithoutNavigationController() async throws {
-    class VC: UIViewController {
-      
+    XCTExpectFailure {
+      $0.compactDescription == """
+      Can't present navigation item: "navigationController" is "nil".
+      """
     }
+    class VC: UIViewController {
+      override func viewDidLoad() {
+        navigationDestination(item: .constant(0 as Int?)) { _ in
+          UIViewController()
+        }
+      }
+    }
+    let vc = VC()
+    try await setUp(controller: vc)
+  }
+
+  @MainActor
+  func testPushValue_WithoutNavigationStack() async throws {
+    XCTExpectFailure {
+      $0.compactDescription == """
+        Tried to push a value from outside of a navigation stack.
+
+        'UITraitCollection.push(value:)' must be called from an object in a \
+        'NavigationStackController'.
+        """
+    }
+    class VC: UIViewController {
+      override func viewDidLoad() {
+        traitCollection.push(value: 1)
+      }
+    }
+    let vc = VC()
+    try await setUp(controller: vc)
+  }
+
+  @MainActor
+  func testNavigationDestinationFor_WithoutNavigationController() async throws {
+    XCTExpectFailure {
+      $0.compactDescription == """
+      Can't register navigation destination: "navigationController" is "nil".
+      """
+    }
+    class VC: UIViewController {
+      override func viewDidLoad() {
+        navigationDestination(for: Int.self) { _ in
+          UIViewController()
+        }
+      }
+    }
+    let vc = VC()
+    try await setUp(controller: vc)
+  }
+
+  @MainActor
+  func testNavigationDestinationFor_WithoutNavigationStackController() async throws {
+    XCTExpectFailure {
+      $0.compactDescription == """
+        Tried to apply a "navigationDestination" to a non-"NavigationStackController".
+        """
+    }
+    class VC: UIViewController {
+      override func viewDidLoad() {
+        navigationDestination(for: Int.self) { _ in
+          UIViewController()
+        }
+      }
+    }
+    let vc = UINavigationController(rootViewController: VC())
+    try await setUp(controller: vc)
   }
 }

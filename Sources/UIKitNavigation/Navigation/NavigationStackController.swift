@@ -116,7 +116,7 @@
               newViewControllers.append(viewController)
             } else if let viewController = viewController(for: navigationID) {
               newViewControllers.append(viewController)
-            } else if case .eager = navigationID, let elementType = navigationID.elementType {
+            } else if navigationID.element != nil, let elementType = navigationID.elementType {
               runtimeWarn(
                 """
                 No "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
@@ -289,6 +289,9 @@
     }
 
     fileprivate func _push<Element: Hashable>(value: Element) {
+      // TODO: Is it possible for these two guards to fail? Only a NavigationStackController can
+      //       set up the `push` trait, so it seems we are always guaranteed to have a
+      //       stack controller.
       guard let navigationController = navigationController ?? self as? UINavigationController
       else {
         runtimeWarn(

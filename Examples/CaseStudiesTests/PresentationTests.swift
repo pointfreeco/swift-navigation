@@ -280,6 +280,26 @@ final class PresentationTests: XCTestCase {
       vc.model.presentedChild?.id
     )
   }
+
+  @MainActor
+  func testPushFireAndForget_PushStateDriven() async throws {
+    let nav = UINavigationController(rootViewController: UIViewController())
+    try await setUp(controller: nav)
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+
+    let child = BasicViewController(model: Model())
+    nav.pushViewController(child, animated: false)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      child.model.isPushed = true
+    }
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      nav.viewControllers[2].traitCollection.dismiss()
+    }
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+  }
 }
 
 @Observable
