@@ -6,7 +6,7 @@ struct UIKitCaseStudiesView: View {
     List {
       CaseStudyGroupView("Observation") {
         MinimalObservationViewController()
-        // TODO: Animation and transaction
+        AnimationsViewController()
       }
       CaseStudyGroupView("Bindings") {
         UIControlBindingsViewController()

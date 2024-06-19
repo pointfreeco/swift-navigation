@@ -404,20 +404,5 @@
     public static func easeInOut(duration: TimeInterval) -> Self {
       .animate(withDuration: duration, options: .curveEaseInOut)
     }
-
-    #if canImport(SwiftUI)
-      /// An interpolating spring animation that uses a damped spring model to produce values in the
-      /// range of one to zero.
-      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
-      public static func interpolatingSpring(
-        _ spring: Spring, initialVelocity: Double = 0
-      ) -> Self {
-        .animate(
-          springDuration: spring.damping,
-          bounce: spring.bounce,
-          initialSpringVelocity: initialVelocity
-        )
-      }
-    #endif
   }
 #endif
