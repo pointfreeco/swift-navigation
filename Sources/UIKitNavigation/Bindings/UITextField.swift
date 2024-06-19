@@ -126,7 +126,6 @@
       }
     }
 
-    // TODO: Should this be `bind(focus:equals:)`?
     /// Modifies this text field by binding its focus state to the given state value.
     ///
     /// Use this modifier to cause the text field to receive focus whenever the the `binding` equals

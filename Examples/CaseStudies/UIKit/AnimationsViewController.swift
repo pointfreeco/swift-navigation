@@ -14,11 +14,10 @@ class AnimationsViewController: UIViewController, UIKitCaseStudy {
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    let circleView = UIView(frame: .init(x: 0, y: 0, width: 100, height: 100))
-    circleView.layer.masksToBounds = true
-    circleView.layer.cornerRadius = 50
+    let circleView = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
     circleView.backgroundColor = .black
     circleView.isUserInteractionEnabled = false
+    circleView.layer.cornerRadius = 50
     view.addSubview(circleView)
 
     let scaleLabel = UILabel()
@@ -52,15 +51,20 @@ class AnimationsViewController: UIViewController, UIKitCaseStudy {
     observe { [weak self] in
       guard let self else { return }
 
-      circleView.frame.origin = model.position
-      circleView.transform = model.isScaled ? .init(scaleX: 2, y: 2) : .identity
+      var transform = CGAffineTransform(translationX: model.position.x, y: model.position.y)
+      if model.isScaled {
+        transform = transform.scaledBy(x: 2, y: 2)
+      }
+      circleView.transform = transform
       circleView.backgroundColor = model.color
     }
   }
 
   override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
     withUIKitAnimation(.animate(springDuration: 0.4, bounce: 0.75)) {
-      model.position = touches.first!.location(in: view).applying(.init(translationX: -50, y: -50))
+      model.position = touches.first!
+        .location(in: view)
+        .applying(CGAffineTransform(translationX: -50, y: -50))
     }
   }
 
