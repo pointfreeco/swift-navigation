@@ -127,7 +127,7 @@
         } else {
           self?.present(newController, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { parent, child, transaction in
+      } dismiss: { parent, _, transaction in
         parent.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
