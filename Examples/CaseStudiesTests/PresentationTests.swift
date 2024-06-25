@@ -300,6 +300,64 @@ final class PresentationTests: XCTestCase {
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
   }
+
+  @MainActor
+  func testDismissMultiplePresentations() async throws {
+    class VC: UIViewController {
+      @UIBinding var isPresented = false
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        present(isPresented: $isPresented) { VC() }
+      }
+    }
+
+    let vc = VC()
+    try await setUp(controller: vc)
+
+    vc.isPresented = true
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    try XCTUnwrap(vc.presentedViewController as? VC).isPresented = true
+    await assertEventuallyNotNil(vc.presentedViewController?.presentedViewController)
+
+    vc.isPresented = false
+    await assertEventuallyNil(vc.presentedViewController, timeout: 2)
+  }
+
+  @MainActor
+  func testDismissMiddlePresentation() async throws {
+    class VC: UIViewController {
+      @UIBinding var isPresented = false
+      override func loadView() {
+        super.loadView()
+        view.backgroundColor = .init(red: .random(in: 0...1), green: .random(in: 0...1), blue: .random(in: 0...1), alpha: 1)
+      }
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        present(isPresented: $isPresented) { VC() }
+      }
+    }
+
+    let vc = VC()
+    try await setUp(controller: vc)
+
+    vc.isPresented = true
+    try await Task.sleep(for: .seconds(0.5))
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    try XCTUnwrap(vc.presentedViewController as? VC).isPresented = true
+    try await Task.sleep(for: .seconds(0.5))
+    await assertEventuallyNotNil(vc.presentedViewController?.presentedViewController)
+
+    try XCTUnwrap(vc.presentedViewController?.presentedViewController as? VC).isPresented = true
+    try await Task.sleep(for: .seconds(0.5))
+    await assertEventuallyNotNil(vc.presentedViewController?.presentedViewController)
+
+    try XCTUnwrap(vc.presentedViewController as? VC).isPresented = false
+    try await Task.sleep(for: .seconds(0.5))
+    await assertEventuallyNotNil(vc.presentedViewController as? VC)
+    await assertEventuallyNil(vc.presentedViewController?.presentedViewController, timeout: 2)
+  }
 }
 
 @Observable

@@ -127,8 +127,8 @@
         } else {
           self?.present(newController, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { controller, transaction in
-        controller.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+      } dismiss: { parent, child, transaction in
+        parent.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
       }
@@ -151,7 +151,11 @@
       isPresented: UIBinding<Bool>,
       content: @escaping () -> UIViewController,
       present: @escaping (UIViewController, UITransaction) -> Void,
-      dismiss: @escaping (UIViewController, UITransaction) -> Void
+      dismiss: @escaping (
+        _ parent: UIViewController,
+        _ child: UIViewController,
+        _ transaction: UITransaction
+      ) -> Void
     ) -> ObservationToken {
       destination(
         item: isPresented.toOptionalUnit,
@@ -178,7 +182,11 @@
       item: UIBinding<Item?>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
       present: @escaping (UIViewController, UITransaction) -> Void,
-      dismiss: @escaping (UIViewController, UITransaction) -> Void
+      dismiss: @escaping (
+        _ parent: UIViewController,
+        _ child: UIViewController,
+        _ transaction: UITransaction
+      ) -> Void
     ) -> ObservationToken {
       destination(
         item: item,
@@ -212,7 +220,11 @@
       present: @escaping (
         _ oldValue: UIViewController?, _ newValue: UIViewController, _ transaction: UITransaction
       ) -> Void,
-      dismiss: @escaping (UIViewController, UITransaction) -> Void
+      dismiss: @escaping (
+        _ parent: UIViewController,
+        _ child: UIViewController,
+        _ transaction: UITransaction
+      ) -> Void
     ) -> ObservationToken {
       destination(
         item: item,
@@ -230,14 +242,18 @@
       present: @escaping (
         _ oldValue: UIViewController?, _ newValue: UIViewController, _ transaction: UITransaction
       ) -> Void,
-      dismiss: @escaping (UIViewController, UITransaction) -> Void
+      dismiss: @escaping (
+        _ parent: UIViewController,
+        _ child: UIViewController,
+        _ transaction: UITransaction
+      ) -> Void
     ) -> ObservationToken {
       let key = UIBindingIdentifier(item)
       return observe { [weak self] transaction in
         guard let self else { return }
         if let unwrappedItem = UIBinding(item) {
           var oldController: UIViewController?
-          if let presented = presented[key] {
+          if let presented = presentedByID[key] {
             if let presentationID = presented.presentationID,
               presentationID != id(unwrappedItem.wrappedValue)
             {
@@ -261,7 +277,7 @@
               onDismiss()
             }
           }
-          self.presented[key] = Presented(newController, id: id(unwrappedItem.wrappedValue))
+          self.presentedByID[key] = Presented(newController, id: id(unwrappedItem.wrappedValue))
           let work = {
             withUITransaction(transaction) {
               present(oldController, newController, transaction)
@@ -272,16 +288,16 @@
           } else {
             onViewAppear.append(work)
           }
-        } else if let presented = presented[key] {
+        } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
-            dismiss(controller, transaction)
+            dismiss(self, controller, transaction)
           }
-          self.presented[key] = nil
+          self.presentedByID[key] = nil
         }
       }
     }
 
-    fileprivate var presented: [UIBindingIdentifier: Presented] {
+    fileprivate var presentedByID: [UIBindingIdentifier: Presented] {
       get {
         (objc_getAssociatedObject(self, Self.presentedKey)
           as? [UIBindingIdentifier: Presented])
@@ -379,7 +395,7 @@ extension UIViewController {
       navigationController.pushViewController(
         controller, animated: !transaction.uiKit.disablesAnimations
       )
-    } dismiss: { [weak self] controller, transaction in
+    } dismiss: { [weak self] _, child, transaction in
       guard let navigationController = self?.navigationController ?? self as? UINavigationController
       else {
         runtimeWarn(
@@ -390,7 +406,7 @@ extension UIViewController {
         return
       }
       navigationController.popFromViewController(
-        controller, animated: !transaction.uiKit.disablesAnimations
+        child, animated: !transaction.uiKit.disablesAnimations
       )
     }
   }
