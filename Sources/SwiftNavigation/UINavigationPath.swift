@@ -115,13 +115,6 @@ public struct UINavigationPath: Equatable {
   public struct CodableRepresentation: Codable, Equatable {
     @_spi(Internals)
     public struct Element: Hashable {
-      static let decoder = JSONDecoder()
-      static let encoder: JSONEncoder = {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .sortedKeys
-        return encoder
-      }()
-
       let tag: String
       let item: String
 
@@ -140,9 +133,11 @@ public struct UINavigationPath: Equatable {
 
       @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
       init?(_ value: AnyHashable) {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
         func item() -> String? {
           guard let value = value as? any Encodable else { return nil }
-          return try? String(decoding: Self.encoder.encode(value), as: UTF8.self)
+          return try? String(decoding: encoder.encode(value), as: UTF8.self)
         }
         guard
           let tag = _mangledTypeName(type(of: value.base)),
@@ -153,7 +148,7 @@ public struct UINavigationPath: Equatable {
 
       package func decode() -> AnyHashable? {
         func value(as type: any Decodable.Type) -> AnyHashable? {
-          try? Self.decoder.decode(type, from: Data(item.utf8)) as? AnyHashable
+          try? JSONDecoder().decode(type, from: Data(item.utf8)) as? AnyHashable
         }
         guard
           let type = decodableType,
