@@ -42,21 +42,21 @@ binding to that enum.
 Explore all of the tools this library comes with by checking out the [documentation][docs], and
 reading these articles:
 
-* **[What is navigation?](https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/whatisnavigation)**:
+* **[What is navigation?](what-is-article)**:
   Learn how one can think of navigation as a domain modeling problem, and how that leads to the
   creation of concise and testable APIs for navigation.
 
-* **[Navigation links and destinations](https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/navigation)**:
+* **[Navigation links and destinations](nav-links-dests-article)**:
   Learn how to drive navigation in NavigationView and NavigationStack in a concise and testable 
   manner.
 
-* **[Sheets, popovers, and covers](https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/sheetspopoverscovers)**:
+* **[Sheets, popovers, and covers](sheets-popovers-covers-article)**:
   Learn how to present sheets, popovers and covers in a concise and testable manner.
 
-* **[Alerts and dialogs](https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/alertsdialogs)**:
+* **[Alerts and dialogs](alerts-dialogs-article)**:
   Learn how to present alerts and confirmation dialogs in a concise and testable manner.
   
-* **[Bindings](https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/bindings)**:
+* **[Bindings](bindings)**:
   Learn how to manage certain view state, such as `@FocusState` directly in your observable classes.
   
 ## Examples
@@ -124,9 +124,9 @@ This library is released under the MIT license. See [LICENSE](LICENSE) for detai
 [NavigationLink.init]: https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-27n7s
 [TabView.init]: https://developer.apple.com/documentation/swiftui/tabview/init(content:)
 [case-paths-gh]: https://github.com/pointfreeco/swift-case-paths
-[what-is-article]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/whatisnavigation
-[nav-links-dests-article]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/navigation
-[sheets-popovers-covers-article]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/sheetspopoverscovers
-[alerts-dialogs-article]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/alertsdialogs
-[bindings]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/bindings
-[docs]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/
+[what-is-article]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/whatisnavigation
+[nav-links-dests-article]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/navigation
+[sheets-popovers-covers-article]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/sheetspopoverscovers
+[alerts-dialogs-article]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/alertsdialogs
+[bindings]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/bindings
+[docs]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation
