@@ -1,6 +1,6 @@
 #if canImport(SwiftUI)
+  import IssueReporting
   import SwiftUI
-  @_spi(RuntimeWarn) import SwiftUINavigationCore
 
   // NB: Deprecated after 1.3.0
 
@@ -862,8 +862,7 @@
 
     public init<Case1: Sendable, Content1>(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> CaseLet<Enum, Case1, Content1>
     )
     where
@@ -874,7 +873,7 @@
     {
       self.init(`enum`) {
         content()
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
 
@@ -911,8 +910,7 @@
 
     public init<Case1: Sendable, Content1, Case2: Sendable, Content2>(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -933,7 +931,7 @@
       self.init(`enum`) {
         content.value.0
         content.value.1
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
 
@@ -981,8 +979,7 @@
 
     public init<Case1: Sendable, Content1, Case2: Sendable, Content2, Case3: Sendable, Content3>(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1008,7 +1005,7 @@
         content.value.0
         content.value.1
         content.value.2
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
 
@@ -1068,8 +1065,7 @@
       Case4: Sendable, Content4
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1100,7 +1096,7 @@
         content.value.1
         content.value.2
         content.value.3
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
 
@@ -1168,8 +1164,7 @@
       Case5: Sendable, Content5
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1205,7 +1200,7 @@
         content.value.2
         content.value.3
         content.value.4
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
 
@@ -1281,8 +1276,7 @@
       Case6: Sendable, Content6
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1323,7 +1317,7 @@
         content.value.3
         content.value.4
         content.value.5
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
 
@@ -1407,8 +1401,7 @@
       Case7: Sendable, Content7
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1454,7 +1447,7 @@
         content.value.4
         content.value.5
         content.value.6
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
 
@@ -1546,8 +1539,7 @@
       Case8: Sendable, Content8
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1598,7 +1590,7 @@
         content.value.5
         content.value.6
         content.value.7
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
 
@@ -1698,8 +1690,7 @@
       Case9: Sendable, Content9
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
-      line: UInt = #line,
+      context issueContext: IssueContext = .issueContext(),
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1755,20 +1746,19 @@
         content.value.6
         content.value.7
         content.value.8
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default { _ExhaustivityCheckView<Enum>(issueContext: issueContext) }
       }
     }
   }
 
   public struct _ExhaustivityCheckView<Enum>: View {
     @EnvironmentObject private var `enum`: BindingObject<Enum>
-    let file: StaticString
-    let line: UInt
+    let issueContext: IssueContext
 
     public var body: some View {
       #if DEBUG
         let message = """
-          Warning: Switch.body@\(self.file):\(self.line)
+          Warning: Switch.body@\(issueContext.fileID):\(issueContext.line)
 
           "Switch" did not handle "\(describeCase(self.enum.wrappedValue.wrappedValue))"
 
@@ -1785,7 +1775,7 @@
         .foregroundColor(.white)
         .padding()
         .background(Color.red.edgesIgnoringSafeArea(.all))
-        .onAppear { runtimeWarn(message, file: self.file, line: self.line) }
+        .onAppear { reportIssue(message, context: issueContext) }
       #else
         EmptyView()
       #endif

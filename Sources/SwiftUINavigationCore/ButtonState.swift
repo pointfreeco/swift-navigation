@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
   import CustomDump
+  import IssueReporting
   import SwiftUI
 
   public struct ButtonState<Action>: Identifiable {
@@ -79,7 +80,7 @@
       case let .animatedSend(action, _):
         var output = ""
         customDump(self.action, to: &output, indent: 4)
-        runtimeWarn(
+        reportIssue(
           """
           An animated action was performed asynchronously: …
 
