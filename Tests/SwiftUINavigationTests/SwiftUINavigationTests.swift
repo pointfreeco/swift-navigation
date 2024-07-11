@@ -5,6 +5,7 @@
   @testable import SwiftUINavigation
 
   final class SwiftUINavigationTests: XCTestCase {
+    @MainActor
     func testBindingUnwrap() throws {
       var value: Int?
       let binding = Binding(get: { value }, set: { value = $0 })
@@ -29,6 +30,7 @@
       XCTAssertEqual(unwrapped.wrappedValue, 1729)
     }
 
+    @MainActor
     func testBindingCase() throws {
       struct MyError: Error, Equatable {}
       var value: Result<Int, MyError>? = nil
