@@ -140,12 +140,12 @@ final class PresentationTests: XCTestCase {
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
-    await Task.yield()
+    try await Task.sleep(for: .seconds(1))
     nav.popViewController(animated: false)
     await assertEventuallyEqual(nav.viewControllers.count, 1)
     await assertEventuallyNil(vc.model.pushedChild)
 
-    await Task.yield()
+    try await Task.sleep(for: .seconds(1))
     withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.pushedChild = Model()
     }
@@ -355,11 +355,10 @@ final class PresentationTests: XCTestCase {
 
     vc.presentedViewController?.presentedViewController?.dismiss(animated: false)
     try await Task.sleep(for: .seconds(0.5))
-    await assertEventuallyNotNil(vc.presentedViewController timeout: 2)
+    await assertEventuallyNotNil(vc.presentedViewController, timeout: 2)
   }
 
-  @MainActor
-  func testDismissMiddlePresentation() async throws {
+  @MainActor func testDismissMiddlePresentation() async throws {
     class VC: UIViewController {
       @UIBinding var isPresented = false
       override func loadView() {
@@ -396,6 +395,10 @@ final class PresentationTests: XCTestCase {
     try await Task.sleep(for: .seconds(0.5))
     await assertEventuallyNotNil(vc.presentedViewController as? VC)
     await assertEventuallyNil(vc.presentedViewController?.presentedViewController, timeout: 2)
+  }
+
+  @MainActor func testDoublePresentation_ChangeRootBinding() async throws {
+
   }
 }
 
