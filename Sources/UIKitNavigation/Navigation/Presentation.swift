@@ -120,7 +120,7 @@
         content($item)
       } present: { [weak self] oldController, newController, transaction in
         if let oldController {
-          oldController.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+          self?.dismiss(animated: !transaction.uiKit.disablesAnimations) {
             onDismiss?()
             self?.present(newController, animated: !transaction.uiKit.disablesAnimations)
           }
