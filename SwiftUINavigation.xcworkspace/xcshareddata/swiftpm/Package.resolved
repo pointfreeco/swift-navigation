@@ -91,6 +91,15 @@
       }
     },
     {
+      "identity" : "swift-issue-reporting",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
+      "state" : {
+        "branch" : "1.2.0",
+        "revision" : "926f43898706eaa127db79ac42138e1ad7e85a3f"
+      }
+    },
+    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax",
@@ -113,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "branch" : "swift-testing",
-        "revision" : "116d8f8bd3a56a418e88c8438c6114c2236a33ab"
+        "revision" : "926f43898706eaa127db79ac42138e1ad7e85a3f",
+        "version" : "1.2.0"
       }
     }
   ],
