@@ -12,6 +12,7 @@
       case outOfStock(isOnBackOrder: Bool)
     }
 
+    @MainActor
     func testCaseLookup() throws {
       @Binding var status: Status
       _status = Binding(initialValue: .inStock(quantity: 1))
@@ -22,6 +23,7 @@
       XCTAssertEqual(status, .inStock(quantity: 2))
     }
 
+    @MainActor
     func testCaseCannotReplaceOtherCase() throws {
       @Binding var status: Status
       _status = Binding(initialValue: .inStock(quantity: 1))
@@ -34,6 +36,7 @@
       XCTAssertEqual(status, .outOfStock(isOnBackOrder: true))
     }
 
+    @MainActor
     func testDestinationCannotReplaceOtherDestination() throws {
       #if os(iOS) || os(macOS)
         try XCTSkipIf(ProcessInfo.processInfo.environment["CI"] != nil)
@@ -52,6 +55,7 @@
   }
 
   extension Binding {
+    @MainActor
     fileprivate init(initialValue: Value) {
       var value = initialValue
       self.init(

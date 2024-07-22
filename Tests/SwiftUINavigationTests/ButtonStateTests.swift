@@ -5,11 +5,10 @@
   import XCTest
 
   final class ButtonStateTests: XCTestCase {
-    @MainActor
     func testAsyncAnimationWarning() async {
       XCTExpectFailure {
         $0.compactDescription == """
-          An animated action was performed asynchronously: …
+          failed - An animated action was performed asynchronously: …
 
             Action:
               ButtonStateAction.send(
