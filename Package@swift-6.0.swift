@@ -3,6 +3,7 @@
 import PackageDescription
 
 let package = Package(
+  // NB: Keep this for backwards compatibility. Will rename to 'swift-navigation' in 2.0.
   name: "swiftui-navigation",
   platforms: [
     .iOS(.v13),

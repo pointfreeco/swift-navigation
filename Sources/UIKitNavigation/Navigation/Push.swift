@@ -1,4 +1,5 @@
 #if canImport(UIKit)
+  import IssueReporting
   import UIKit
   import SwiftUINavigationCore
 
@@ -9,7 +10,7 @@
 
     public func callAsFunction<Element: Hashable>(value: Element) {
       guard let run else {
-        runtimeWarn(
+        reportIssue(
           """
           Tried to push a value from outside of a navigation stack.
 

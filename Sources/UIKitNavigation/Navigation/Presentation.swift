@@ -1,4 +1,5 @@
 #if canImport(UIKit)
+  import IssueReporting
   @_spi(Internals) import SwiftNavigation
   import UIKit
   import UIKitNavigationShim
@@ -196,7 +197,7 @@
         guard
           let navigationController = self?.navigationController ?? self as? UINavigationController
         else {
-          runtimeWarn(
+          reportIssue(
             """
             Can't present navigation item: "navigationController" is "nil".
             """
@@ -210,7 +211,7 @@
         guard
           let navigationController = self?.navigationController ?? self as? UINavigationController
         else {
-          runtimeWarn(
+          reportIssue(
             """
             Can't dismiss navigation item: "navigationController" is "nil".
             """

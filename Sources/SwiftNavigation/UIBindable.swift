@@ -46,21 +46,24 @@ import Perception
 @propertyWrapper
 public struct UIBindable<Value> {
   public var wrappedValue: Value
-  private let file: StaticString
   private let fileID: StaticString
+  private let filePath: StaticString
   private let line: UInt
+  private let column: UInt
 
   init(
     objectIdentifier: ObjectIdentifier,
     wrappedValue: Value,
-    file: StaticString,
     fileID: StaticString,
-    line: UInt
+    filePath: StaticString,
+    line: UInt,
+    column: UInt
   ) {
     self.wrappedValue = wrappedValue
-    self.file = file
+    self.filePath = filePath
     self.fileID = fileID
     self.line = line
+    self.column = column
   }
 
   /// Creates a bindable object from a perceptible object.
@@ -70,16 +73,18 @@ public struct UIBindable<Value> {
   @_disfavoredOverload
   public init(
     _ wrappedValue: Value,
-    file: StaticString = #file,
     fileID: StaticString = #fileID,
-    line: UInt = #line
+    filePath: StaticString = #filePath,
+    line: UInt = #line,
+    column: UInt = #column
   ) where Value: AnyObject & Perceptible {
     self.init(
       objectIdentifier: ObjectIdentifier(wrappedValue),
       wrappedValue: wrappedValue,
-      file: file,
       fileID: fileID,
-      line: line
+      filePath: filePath,
+      line: line,
+      column: column
     )
   }
 
@@ -90,16 +95,18 @@ public struct UIBindable<Value> {
   @_disfavoredOverload
   public init(
     wrappedValue: Value,
-    file: StaticString = #file,
     fileID: StaticString = #fileID,
-    line: UInt = #line
+    filePath: StaticString = #filePath,
+    line: UInt = #line,
+    column: UInt = #column
   ) where Value: AnyObject & Perceptible {
     self.init(
       objectIdentifier: ObjectIdentifier(wrappedValue),
       wrappedValue: wrappedValue,
-      file: file,
       fileID: fileID,
-      line: line
+      filePath: filePath,
+      line: line,
+      column: column
     )
   }
 
@@ -122,9 +129,10 @@ public struct UIBindable<Value> {
       root: wrappedValue,
       keyPath: keyPath,
       transaction: UITransaction(),
-      file: file,
       fileID: fileID,
-      line: line
+      filePath: filePath,
+      line: line,
+      column: column
     )
   }
 }
@@ -138,16 +146,18 @@ public struct UIBindable<Value> {
     /// creating bindable objects nested within other expressions.
     public init(
       _ wrappedValue: Value,
-      file: StaticString = #file,
       fileID: StaticString = #fileID,
-      line: UInt = #line
+      filePath: StaticString = #file,
+      line: UInt = #line,
+      column: UInt = #column
     ) {
       self.init(
         objectIdentifier: ObjectIdentifier(wrappedValue),
         wrappedValue: wrappedValue,
-        file: file,
         fileID: fileID,
-        line: line
+        filePath: filePath,
+        line: line,
+        column: column
       )
     }
 
@@ -157,16 +167,18 @@ public struct UIBindable<Value> {
     /// `@UIBindable` attribute, and provide an initial value.
     public init(
       wrappedValue: Value,
-      file: StaticString = #file,
       fileID: StaticString = #fileID,
-      line: UInt = #line
+      filePath: StaticString = #file,
+      line: UInt = #line,
+      column: UInt = #column
     ) {
       self.init(
         objectIdentifier: ObjectIdentifier(wrappedValue),
         wrappedValue: wrappedValue,
-        file: file,
         fileID: fileID,
-        line: line
+        filePath: filePath,
+        line: line,
+        column: column
       )
     }
   }
