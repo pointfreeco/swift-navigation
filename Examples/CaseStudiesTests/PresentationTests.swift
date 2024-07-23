@@ -88,6 +88,26 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor
+  func testPresents_Nested_ParentItemChanges() async throws {
+    let vc = BasicViewController(model: Model(presentedChild: Model()))
+    try await setUp(controller: vc)
+
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    let firstPresented = try XCTUnwrap(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.presentedChild?.presentedChild = Model()
+    }
+    await assertEventuallyNotNil(vc.presentedViewController?.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.presentedChild = Model()
+    }
+    await assertEventuallyNotEqual(firstPresented, vc.presentedViewController)
+  }
+
+  @MainActor
   func testPushViewController_IsPushed() async throws {
     let vc = BasicViewController()
     let nav = UINavigationController(rootViewController: vc)
