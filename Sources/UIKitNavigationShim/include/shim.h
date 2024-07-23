@@ -1,4 +1,4 @@
-#if __has_include(<UIKit/UIKit.h>)
+#if __has_include(<UIKit/UIKit.h>) && !TARGET_OS_WATCH
   @import UIKit;
 
   NS_ASSUME_NONNULL_BEGIN

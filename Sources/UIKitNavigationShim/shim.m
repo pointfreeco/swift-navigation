@@ -1,4 +1,4 @@
-#if __has_include(<UIKit/UIKit.h>)
+#if __has_include(<UIKit/UIKit.h>) && !TARGET_OS_WATCH
   @import ObjectiveC;
   @import UIKit;
   #import "shim.h"
