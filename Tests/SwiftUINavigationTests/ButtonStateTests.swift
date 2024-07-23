@@ -1,15 +1,23 @@
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && canImport(Testing)
   import CustomDump
   import SwiftUI
   import SwiftUINavigation
-  import XCTest
+  import Testing
 
-  final class ButtonStateTests: XCTestCase {
-    @MainActor
+  struct ButtonStateTests {
+    @Test
     func testAsyncAnimationWarning() async {
-      XCTExpectFailure {
-        $0.compactDescription == """
-          An animated action was performed asynchronously: …
+      let button = ButtonState(action: .send((), animation: .easeInOut)) {
+        TextState("Animate!")
+      }
+
+      await withKnownIssue {
+        await button.withAction { _ in
+          await Task.yield()
+        }
+      } matching: { issue in
+        issue.description == """
+          Expectation failed: An animated action was performed asynchronously: …
 
             Action:
               ButtonStateAction.send(
@@ -17,17 +25,9 @@
                 animation: Animation.easeInOut
               )
 
-          Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, or \
-          use 'SwiftUI.withAnimation' explicitly.
+          Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, \
+          or use 'SwiftUI.withAnimation' explicitly.
           """
-      }
-
-      let button = ButtonState(action: .send((), animation: .easeInOut)) {
-        TextState("Animate!")
-      }
-
-      await button.withAction { _ in
-        await Task.yield()
       }
     }
   }

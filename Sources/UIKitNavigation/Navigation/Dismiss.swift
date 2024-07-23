@@ -1,6 +1,7 @@
 #if canImport(UIKit)
-  import UIKit
+  import IssueReporting
   import SwiftUINavigationCore
+  import UIKit
 
   @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   @MainActor
@@ -9,7 +10,7 @@
 
     public func callAsFunction() {
       guard let run else {
-        runtimeWarn(
+        reportIssue(
           """
           A view controller requested dismissal, but couldn't be dismissed.
 

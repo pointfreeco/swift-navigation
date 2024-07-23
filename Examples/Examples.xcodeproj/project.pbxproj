@@ -23,7 +23,11 @@
 		CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */; };
 		CA473837272F0D860012CAC3 /* FactClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473831272F0D860012CAC3 /* FactClient.swift */; };
 		CA473838272F0D860012CAC3 /* OptionalNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473832272F0D860012CAC3 /* OptionalNavigation.swift */; };
-		CA47383B272F0DD60012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA47383A272F0DD60012CAC3 /* SwiftUINavigation */; };
+		CA48F2FA2C49645100BE2C3C /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F2F92C49645100BE2C3C /* SwiftUINavigation */; };
+		CA48F2FC2C49645100BE2C3C /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F2FB2C49645100BE2C3C /* UIKitNavigation */; };
+		CA48F3022C49650100BE2C3C /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F3012C49650100BE2C3C /* IdentifiedCollections */; };
+		CA48F3052C49650F00BE2C3C /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F3042C49650F00BE2C3C /* Tagged */; };
+		CA48F3082C49651700BE2C3C /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F3072C49651700BE2C3C /* ConcurrencyExtras */; };
 		CA49D9542C20D4DF00E6C5BB /* ErasedNavigationStackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA49D9532C20D4DF00E6C5BB /* ErasedNavigationStackController.swift */; };
 		CA49D9622C20EAB000E6C5BB /* PresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9D22C0525FA0034B757 /* PresentationTests.swift */; };
 		CA49D9632C20EAB000E6C5BB /* NavigationStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */; };
@@ -48,7 +52,6 @@
 		CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */; };
 		DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */; };
 		DC86E8712C208D8D003C0EC9 /* Text+Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC86E8702C208D8A003C0EC9 /* Text+Template.swift */; };
-		DCE73E0A2947D090004EE92E /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DCE73E092947D090004EE92E /* IdentifiedCollections */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,7 +66,6 @@
 
 /* Begin PBXFileReference section */
 		CA26036C2C20973600822CA5 /* DetentsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetentsHelper.swift; sourceTree = "<group>"; };
-		CA4737C3272F090F0012CAC3 /* swiftui-navigation */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "swiftui-navigation"; path = ..; sourceTree = "<group>"; };
 		CA4737C8272F095F0012CAC3 /* Inventory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inventory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA4737CE272F09600012CAC3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA4737F5272F09D00012CAC3 /* ItemRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 		CA473831272F0D860012CAC3 /* FactClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FactClient.swift; sourceTree = "<group>"; };
 		CA473832272F0D860012CAC3 /* OptionalNavigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalNavigation.swift; sourceTree = "<group>"; };
 		CA47383C272F0F0D0012CAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CA48F2F82C49644000BE2C3C /* swiftui-navigation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "swiftui-navigation"; path = ..; sourceTree = "<group>"; };
 		CA49D9532C20D4DF00E6C5BB /* ErasedNavigationStackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErasedNavigationStackController.swift; sourceTree = "<group>"; };
 		CA49D9592C20EAA400E6C5BB /* CaseStudiesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaseStudiesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA49D9682C20EB7200E6C5BB /* CaseStudies.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CaseStudies.xctestplan; sourceTree = "<group>"; };
@@ -115,7 +118,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA4737F4272F09780012CAC3 /* SwiftUINavigation in Frameworks */,
-				DCE73E0A2947D090004EE92E /* IdentifiedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,7 +125,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA47383B272F0DD60012CAC3 /* SwiftUINavigation in Frameworks */,
+				CA48F3082C49651700BE2C3C /* ConcurrencyExtras in Frameworks */,
+				CA48F3022C49650100BE2C3C /* IdentifiedCollections in Frameworks */,
+				CA48F2FA2C49645100BE2C3C /* SwiftUINavigation in Frameworks */,
+				CA48F3052C49650F00BE2C3C /* Tagged in Frameworks */,
+				CA48F2FC2C49645100BE2C3C /* UIKitNavigation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,7 +146,7 @@
 		CA47378B272F08EF0012CAC3 = {
 			isa = PBXGroup;
 			children = (
-				CA4737C3272F090F0012CAC3 /* swiftui-navigation */,
+				CA48F2F82C49644000BE2C3C /* swiftui-navigation */,
 				CA473805272F0D330012CAC3 /* CaseStudies */,
 				CA49D95A2C20EAA400E6C5BB /* CaseStudiesTests */,
 				CA4737F2272F09780012CAC3 /* Frameworks */,
@@ -286,7 +292,6 @@
 			name = Inventory;
 			packageProductDependencies = (
 				CA4737F3272F09780012CAC3 /* SwiftUINavigation */,
-				DCE73E092947D090004EE92E /* IdentifiedCollections */,
 			);
 			productName = Inventory;
 			productReference = CA4737C8272F095F0012CAC3 /* Inventory.app */;
@@ -306,7 +311,11 @@
 			);
 			name = CaseStudies;
 			packageProductDependencies = (
-				CA47383A272F0DD60012CAC3 /* SwiftUINavigation */,
+				CA48F2F92C49645100BE2C3C /* SwiftUINavigation */,
+				CA48F2FB2C49645100BE2C3C /* UIKitNavigation */,
+				CA48F3012C49650100BE2C3C /* IdentifiedCollections */,
+				CA48F3042C49650F00BE2C3C /* Tagged */,
+				CA48F3072C49651700BE2C3C /* ConcurrencyExtras */,
 			);
 			productName = CaseStudies;
 			productReference = CA473804272F0D330012CAC3 /* CaseStudies.app */;
@@ -364,9 +373,10 @@
 			);
 			mainGroup = CA47378B272F08EF0012CAC3;
 			packageReferences = (
-				DCE73E032947D063004EE92E /* XCRemoteSwiftPackageReference "swift-tagged" */,
-				DCE73E062947D082004EE92E /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
 				CA6453982968A06E00802931 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				CA48F3002C49650100BE2C3C /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
+				CA48F3032C49650F00BE2C3C /* XCRemoteSwiftPackageReference "swift-tagged" */,
+				CA48F3062C49651700BE2C3C /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
 			);
 			productRefGroup = CA473795272F08EF0012CAC3 /* Products */;
 			projectDirPath = "";
@@ -796,28 +806,36 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CA48F3002C49650100BE2C3C /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-identified-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+		CA48F3032C49650F00BE2C3C /* XCRemoteSwiftPackageReference "swift-tagged" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-tagged.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.0;
+			};
+		};
+		CA48F3062C49651700BE2C3C /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-concurrency-extras.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 		CA6453982968A06E00802931 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "http://github.com/pointfreeco/swift-dependencies";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-		DCE73E032947D063004EE92E /* XCRemoteSwiftPackageReference "swift-tagged" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-tagged.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.7.0;
-			};
-		};
-		DCE73E062947D082004EE92E /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-identified-collections.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.3.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -827,14 +845,28 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftUINavigation;
 		};
-		CA47383A272F0DD60012CAC3 /* SwiftUINavigation */ = {
+		CA48F2F92C49645100BE2C3C /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftUINavigation;
 		};
-		DCE73E092947D090004EE92E /* IdentifiedCollections */ = {
+		CA48F2FB2C49645100BE2C3C /* UIKitNavigation */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DCE73E062947D082004EE92E /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
+			productName = UIKitNavigation;
+		};
+		CA48F3012C49650100BE2C3C /* IdentifiedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA48F3002C49650100BE2C3C /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
 			productName = IdentifiedCollections;
+		};
+		CA48F3042C49650F00BE2C3C /* Tagged */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA48F3032C49650F00BE2C3C /* XCRemoteSwiftPackageReference "swift-tagged" */;
+			productName = Tagged;
+		};
+		CA48F3072C49651700BE2C3C /* ConcurrencyExtras */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA48F3062C49651700BE2C3C /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
+			productName = ConcurrencyExtras;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

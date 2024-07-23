@@ -1,7 +1,8 @@
 #if canImport(UIKit)
-  import UIKit
+  import IssueReporting
   @_spi(Internals) import SwiftNavigation
   import SwiftUINavigationCore
+  import UIKit
 
   open class NavigationStackController: UINavigationController {
     fileprivate var destinations:
@@ -133,7 +134,7 @@
             } else if case .lazy(.element) = navigationID {
               if !didPushNewViewController {
                 if let elementType = navigationID.elementType {
-                  runtimeWarn(
+                  reportIssue(
                     """
                     No "navigationDestination(for: \(String(customDumping: elementType))) { … }" \
                     was found among the view controllers on the path.
@@ -141,7 +142,7 @@
                   )
                   invalidIndices.insert(index)
                 } else {
-                  // TODO: runtimeWarn?
+                  // TODO: reportIssue?
                 }
               }
             }
@@ -227,14 +228,14 @@
             .map { navigationController.destinations.keys.contains(DestinationType($0)) }
             ?? false
           if !canPushElement {
-            runtimeWarn(
+            reportIssue(
               """
               Failed to decode item in navigation path at index \(nextIndex). Perhaps the \
               "navigationDestination" declarations have changed since the path was encoded?
               """
             )
             if let elementType = nextElement.elementType {
-              runtimeWarn(
+              reportIssue(
                 """
                 Missing navigation destination while decoding a "UINavigationPath". No \
                 "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
@@ -310,7 +311,7 @@
     fileprivate func _push<Element: Hashable>(value: Element) {
       guard let navigationController = navigationController ?? self as? UINavigationController
       else {
-        runtimeWarn(
+        reportIssue(
           """
           Can't push value: "navigationController" is "nil".
           """
@@ -319,7 +320,7 @@
       }
       guard let stackController = navigationController as? NavigationStackController
       else {
-        runtimeWarn(
+        reportIssue(
           """
           Tried to push a value to a non-"NavigationStackController".
           """
@@ -336,7 +337,7 @@
       guard let navigationController = navigationController ?? self as? UINavigationController
       else {
         // TODO: Should `UIViewController` be able to lazily register?
-        runtimeWarn(
+        reportIssue(
           """
           Can't register navigation destination: "navigationController" is "nil".
           """
@@ -345,7 +346,7 @@
       }
       guard let stackController = navigationController as? NavigationStackController
       else {
-        runtimeWarn(
+        reportIssue(
           """
           Tried to apply a "navigationDestination" to a non-"NavigationStackController".
           """
@@ -364,7 +365,7 @@
           let index = stackController.path.firstIndex(of: element)!
           guard let value = value.decode()
           else {
-            runtimeWarn(
+            reportIssue(
               """
               Failed to decode item in navigation path at index \(index). Perhaps the \
               "navigationDestination" declarations have changed since the path was encoded?

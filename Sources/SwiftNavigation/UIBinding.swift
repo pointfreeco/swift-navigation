@@ -1,4 +1,5 @@
-import SwiftUINavigationCore 
+import IssueReporting
+import SwiftUINavigationCore
 
 /// A property wrapper type that can read and write an observable value.
 ///
@@ -94,17 +95,19 @@ public struct UIBinding<Value>: Sendable {
     root: Root,
     keyPath: ReferenceWritableKeyPath<Root, Value>,
     transaction: UITransaction,
-    file: StaticString,
     fileID: StaticString,
-    line: UInt
+    filePath: StaticString,
+    line: UInt,
+    column: UInt
   ) {
     self.init(
       location: _UIBindingWeakRoot(
         root: root,
         keyPath: keyPath,
-        file: file,
         fileID: fileID,
-        line: line
+        filePath: filePath,
+        line: line,
+        column: column
       ),
       transaction: transaction
     )
@@ -395,30 +398,32 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   let objectIdentifier: ObjectIdentifier
   weak var root: Root?
   var value: Value
-  let file: StaticString
   let fileID: StaticString
+  let filePath: StaticString
   let line: UInt
+  let column: UInt
   init(
     root: Root,
     keyPath: ReferenceWritableKeyPath<Root, Value>,
-    file: StaticString,
     fileID: StaticString,
-    line: UInt
+    filePath: StaticString,
+    line: UInt,
+    column: UInt
   ) {
     self.keyPath = keyPath
     self.objectIdentifier = ObjectIdentifier(root)
     self.root = root
     self.value = root[keyPath: keyPath]
-    self.file = file 
     self.fileID = fileID
+    self.filePath = filePath
     self.line = line
+    self.column = column
   }
   var wrappedValue: Value {
     get { root?[keyPath: keyPath] ?? value }
     set {
       if root == nil {
-        // TODO: finesse.
-        runtimeWarn(
+        reportIssue(
           """
           Binding failed to write to '@Bindable var \(Root.self)':\(fileID):\(line) because it \
           is 'nil'.
@@ -426,8 +431,10 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
           This usually happens because the bindable model is not strongly held and so is \
           deallocated.
           """,
-          file: file,
-          line: line
+          fileID: fileID,
+          filePath: filePath,
+          line: line,
+          column: column
         )
       }
       value = newValue
