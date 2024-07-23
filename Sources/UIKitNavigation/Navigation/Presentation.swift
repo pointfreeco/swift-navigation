@@ -121,7 +121,7 @@
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
-        if self.presentedViewController != nil {
+        if let presentedViewController {
           self.dismiss(animated: !transaction.uiKit.disablesAnimations) {
             onDismiss?()
             self.present(child, animated: !transaction.uiKit.disablesAnimations)
@@ -129,10 +129,9 @@
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { [weak self] _, transaction, completion in
+      } dismiss: { [weak self] _, transaction in
         self?.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
-          completion?()
         }
       }
     }
@@ -209,7 +208,7 @@
         navigationController.pushViewController(
           child, animated: !transaction.uiKit.disablesAnimations
         )
-      } dismiss: { [weak self] child, transaction, completion in
+      } dismiss: { [weak self] child, transaction in
         guard
           let navigationController = self?.navigationController ?? self as? UINavigationController
         else {
@@ -222,9 +221,7 @@
         }
         navigationController.popFromViewController(
           child, animated: !transaction.uiKit.disablesAnimations
-        ) {
-          completion?()
-        }
+        )
       }
     }
 
@@ -244,11 +241,10 @@
     public func destination(
       isPresented: UIBinding<Bool>,
       content: @escaping () -> UIViewController,
-      present: @escaping @MainActor (UIViewController, UITransaction) -> Void,
-      dismiss: @escaping @MainActor (
+      present: @escaping (UIViewController, UITransaction) -> Void,
+      dismiss: @escaping (
         _ child: UIViewController,
-        _ transaction: UITransaction,
-        _ completion: (() -> Void)?
+        _ transaction: UITransaction
       ) -> Void
     ) -> ObservationToken {
       destination(
@@ -275,11 +271,10 @@
     public func destination<Item>(
       item: UIBinding<Item?>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
-      present: @escaping @MainActor (UIViewController, UITransaction) -> Void,
-      dismiss: @escaping @MainActor (
+      present: @escaping (UIViewController, UITransaction) -> Void,
+      dismiss: @escaping (
         _ child: UIViewController,
-        _ transaction: UITransaction,
-        _ completion: (() -> Void)?
+        _ transaction: UITransaction
       ) -> Void
     ) -> ObservationToken {
       destination(
@@ -311,14 +306,13 @@
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
-      present: @escaping @MainActor (
+      present: @escaping (
         _ child: UIViewController,
         _ transaction: UITransaction
       ) -> Void,
-      dismiss: @escaping @MainActor (
+      dismiss: @escaping (
         _ child: UIViewController,
-        _ transaction: UITransaction,
-        _ completion: (() -> Void)?
+        _ transaction: UITransaction
       ) -> Void
     ) -> ObservationToken {
       destination(
@@ -334,35 +328,30 @@
       item: UIBinding<Item?>,
       id: @escaping (Item) -> AnyHashable?,
       content: @escaping (UIBinding<Item>) -> UIViewController,
-      present: @escaping @MainActor (
+      present: @escaping (
         _ child: UIViewController,
         _ transaction: UITransaction
       ) -> Void,
-      dismiss: @escaping @MainActor (
+      dismiss: @escaping (
         _ child: UIViewController,
-        _ transaction: UITransaction,
-        _ completion: (() -> Void)?
+        _ transaction: UITransaction
       ) -> Void
     ) -> ObservationToken {
       let key = UIBindingIdentifier(item)
       return observe { [weak self] transaction in
         guard let self else { return }
-        var childToFirstDismiss: UIViewController?
         if let unwrappedItem = UIBinding(item) {
           if let presented = presentedByID[key] {
-            if let presentationID = presented.presentationID,
-               presentationID == id(unwrappedItem.wrappedValue)
-            {
+            guard let presentationID = presented.presentationID,
+              presentationID != id(unwrappedItem.wrappedValue)
+            else {
               return
-            } else {
-              childToFirstDismiss = presented.controller
             }
           }
           let childController = content(unwrappedItem)
           let onDismiss = { [presentationID = id(unwrappedItem.wrappedValue)] in
-            if
+            if 
               let wrappedValue = item.wrappedValue,
-              let presentationID,
               presentationID == id(wrappedValue)
             {
               item.wrappedValue = nil
@@ -376,18 +365,8 @@
           }
           self.presentedByID[key] = Presented(childController, id: id(unwrappedItem.wrappedValue))
           let work = {
-            if let childToFirstDismiss {
-              withUITransaction(transaction) {
-                dismiss(childToFirstDismiss, transaction) {
-                  withUITransaction(transaction) {
-                    present(childController, transaction)
-                  }
-                }
-              }
-            } else {
-              withUITransaction(transaction) {
-                present(childController, transaction)
-              }
+            withUITransaction(transaction) {
+              present(childController, transaction)
             }
           }
           if hasViewAppeared {
@@ -397,7 +376,7 @@
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
-            dismiss(controller, transaction, nil)
+            dismiss(controller, transaction)
           }
           self.presentedByID[key] = nil
         }
