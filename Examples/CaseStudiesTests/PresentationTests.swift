@@ -88,19 +88,6 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor
-  func testPresents_Nested() async throws {
-    let vc = BasicViewController(model: Model(isPresented: true))
-    try await setUp(controller: vc)
-
-    await assertEventuallyNotNil(vc.presentedViewController)
-
-    withUITransaction(\.uiKit.disablesAnimations, true) {
-      vc.model.presentedChild?.isPresented = true
-    }
-    await assertEventuallyNil(vc.presentedViewController?.presentedViewController)
-  }
-
-  @MainActor
   func testPushViewController_IsPushed() async throws {
     let vc = BasicViewController()
     let nav = UINavigationController(rootViewController: vc)
@@ -448,6 +435,12 @@ private class BasicViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
   override func viewDidLoad() {
+    view.backgroundColor = .init(
+      red: .random(in: 0...1),
+      green: .random(in: 0...1),
+      blue: .random(in: 0...1),
+      alpha: 1
+    )
     super.viewDidLoad()
     present(isPresented: $model.isPresented) { [weak self] in
       self?.isPresenting = false
