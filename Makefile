@@ -9,24 +9,24 @@ default: test
 
 test:
 	xcodebuild test \
-		-workspace SwiftUINavigation.xcworkspace \
+		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_IOS)"
 	xcodebuild test \
-		-workspace SwiftUINavigation.xcworkspace \
+		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_MACOS)"
 	xcodebuild test \
-		-workspace SwiftUINavigation.xcworkspace \
+		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_TVOS)"
 	xcodebuild test \
-		-workspace SwiftUINavigation.xcworkspace \
+		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_WATCHOS)"
 test-examples:
 	xcodebuild test \
-		-workspace SwiftUINavigation.xcworkspace \
+		-workspace SwiftNavigation.xcworkspace \
 		-scheme Standups \
 		-destination platform="$(PLATFORM_IOS)"
 
