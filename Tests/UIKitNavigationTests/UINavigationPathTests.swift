@@ -1,5 +1,4 @@
-import SwiftUI
-import UIKitNavigation
+import SwiftNavigation
 import XCTest
 
 final class UINavigationPathTests: XCTestCase {

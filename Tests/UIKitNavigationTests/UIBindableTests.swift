@@ -1,4 +1,4 @@
-import UIKitNavigation
+import SwiftNavigation
 import XCTest
 
 @Perceptible
