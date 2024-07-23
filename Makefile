@@ -20,7 +20,7 @@ test:
 		-workspace SwiftUINavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_TVOS)"
-	xcodebuild \
+	xcodebuild test \
 		-workspace SwiftUINavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_WATCHOS)"

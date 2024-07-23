@@ -1,4 +1,5 @@
 #if canImport(SwiftUI)
+  import IssueReporting
   import SwiftUI
   import SwiftUINavigationCore
 
@@ -862,8 +863,10 @@
 
     public init<Case1: Sendable, Content1>(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> CaseLet<Enum, Case1, Content1>
     )
     where
@@ -874,7 +877,11 @@
     {
       self.init(`enum`) {
         content()
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
 
@@ -911,8 +918,10 @@
 
     public init<Case1: Sendable, Content1, Case2: Sendable, Content2>(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -933,7 +942,11 @@
       self.init(`enum`) {
         content.value.0
         content.value.1
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
 
@@ -981,8 +994,10 @@
 
     public init<Case1: Sendable, Content1, Case2: Sendable, Content2, Case3: Sendable, Content3>(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1008,7 +1023,11 @@
         content.value.0
         content.value.1
         content.value.2
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
 
@@ -1068,8 +1087,10 @@
       Case4: Sendable, Content4
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1100,7 +1121,11 @@
         content.value.1
         content.value.2
         content.value.3
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
 
@@ -1168,8 +1193,10 @@
       Case5: Sendable, Content5
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1205,7 +1232,11 @@
         content.value.2
         content.value.3
         content.value.4
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
 
@@ -1281,8 +1312,10 @@
       Case6: Sendable, Content6
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1323,7 +1356,11 @@
         content.value.3
         content.value.4
         content.value.5
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
 
@@ -1407,8 +1444,10 @@
       Case7: Sendable, Content7
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1454,7 +1493,11 @@
         content.value.4
         content.value.5
         content.value.6
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
 
@@ -1546,8 +1589,10 @@
       Case8: Sendable, Content8
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1598,7 +1643,11 @@
         content.value.5
         content.value.6
         content.value.7
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
 
@@ -1698,8 +1747,10 @@
       Case9: Sendable, Content9
     >(
       _ enum: Binding<Enum>,
-      file: StaticString = #fileID,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
       line: UInt = #line,
+      column: UInt = #column,
       @ViewBuilder content: () -> TupleView<
         (
           CaseLet<Enum, Case1, Content1>,
@@ -1755,25 +1806,32 @@
         content.value.6
         content.value.7
         content.value.8
-        Default { _ExhaustivityCheckView<Enum>(file: file, line: line) }
+        Default {
+          _ExhaustivityCheckView<Enum>(
+            fileID: fileID, filePath: filePath, line: line, column: column
+          )
+        }
       }
     }
   }
 
   public struct _ExhaustivityCheckView<Enum>: View {
     @EnvironmentObject private var `enum`: BindingObject<Enum>
-    let file: StaticString
+    let fileID: StaticString
+    let filePath: StaticString
     let line: UInt
+    let column: UInt
 
     public var body: some View {
       #if DEBUG
         let message = """
-          Warning: Switch.body@\(self.file):\(self.line)
+          Warning: Switch.body@\(fileID):\(line)
 
           "Switch" did not handle "\(describeCase(self.enum.wrappedValue.wrappedValue))"
 
-          Make sure that you exhaustively provide a "CaseLet" view for each case in "\(Enum.self)", \
-          provide a "Default" view at the end of the "Switch", or use an "IfCaseLet" view instead.
+          Make sure that you exhaustively provide a "CaseLet" view for each case in \
+          "\(Enum.self)", provide a "Default" view at the end of the "Switch", or use an \
+          "IfCaseLet" view instead.
           """
         VStack(spacing: 17) {
           self.exclamation()
@@ -1785,7 +1843,15 @@
         .foregroundColor(.white)
         .padding()
         .background(Color.red.edgesIgnoringSafeArea(.all))
-        .onAppear { runtimeWarn(message, file: self.file, line: self.line) }
+        .onAppear {
+          reportIssue(
+            message,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+          )
+        }
       #else
         EmptyView()
       #endif
