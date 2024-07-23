@@ -124,9 +124,9 @@ This library is released under the MIT license. See [LICENSE](LICENSE) for detai
 [NavigationLink.init]: https://developer.apple.com/documentation/swiftui/navigationlink/init(destination:label:)-27n7s
 [TabView.init]: https://developer.apple.com/documentation/swiftui/tabview/init(content:)
 [case-paths-gh]: https://github.com/pointfreeco/swift-case-paths
-[what-is-article]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/whatisnavigation
-[nav-links-dests-article]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/navigation
-[sheets-popovers-covers-article]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/sheetspopoverscovers
-[alerts-dialogs-article]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/alertsdialogs
-[bindings]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/bindings
-[docs]: https://pointfreeco.github.io/swiftui-navigation/main/documentation/swiftuinavigation/
+[what-is-article]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/whatisnavigation
+[nav-links-dests-article]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/navigation
+[sheets-popovers-covers-article]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/sheetspopoverscovers
+[alerts-dialogs-article]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/alertsdialogs
+[bindings]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation/bindings
+[docs]: https://swiftpackageindex.com/pointfreeco/swiftui-navigation/main/documentation/swiftuinavigation
