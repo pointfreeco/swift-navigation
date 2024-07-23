@@ -2,7 +2,7 @@
   import UIKitNavigation
   import XCTest
 
-  @available(iOS 16.0, *)
+  @available(iOS 14, tvOS 14, *)
   final class MemoryManagementTests: XCTestCase {
     @MainActor
     func testPresentIsPresented_ObservationDoesNotRetainModel() {
