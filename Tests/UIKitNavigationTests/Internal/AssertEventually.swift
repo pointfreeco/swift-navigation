@@ -10,8 +10,8 @@ func assertEventuallyEqual<T: Equatable>(
   line: UInt = #line
 ) async {
   await _assertEventually(
-    expression1(),
-    expression2(),
+    expression1,
+    expression2,
     condition: { $0 == $1 },
     assert: XCTAssertEqual,
     timeout: timeout,
@@ -29,8 +29,8 @@ func assertEventuallyNoDifference<T: Equatable>(
   line: UInt = #line
 ) async {
   await _assertEventually(
-    expression1(),
-    expression2(),
+    expression1,
+    expression2,
     condition: { $0 == $1 },
     assert: XCTAssertNoDifference,
     timeout: timeout,
@@ -48,8 +48,8 @@ func assertEventuallyNotEqual<T: Equatable>(
   line: UInt = #line
 ) async {
   await _assertEventually(
-    expression1(),
-    expression2(),
+    expression1,
+    expression2,
     condition: { $0 != $1 },
     assert: XCTAssertNotEqual,
     timeout: timeout,
@@ -66,7 +66,7 @@ func assertEventuallyNil<T>(
   line: UInt = #line
 ) async {
   await _assertEventually(
-    expression(),
+    expression,
     condition: { $0 == nil },
     assert: XCTAssertNil,
     timeout: timeout,
@@ -83,7 +83,7 @@ func assertEventuallyNotNil<T>(
   line: UInt = #line
 ) async {
   await _assertEventually(
-    expression(),
+    expression,
     condition: { $0 != nil },
     assert: XCTAssertNotNil,
     timeout: timeout,
@@ -94,8 +94,8 @@ func assertEventuallyNotNil<T>(
 
 @MainActor
 private func _assertEventually<T>(
-  _ expression1: @autoclosure @escaping @MainActor () -> T,
-  _ expression2: @autoclosure @escaping @MainActor () -> T,
+  _ expression1: @escaping @MainActor () -> T,
+  _ expression2: @escaping @MainActor () -> T,
   condition: (T, T) -> Bool,
   assert: (
     @autoclosure () -> T,
@@ -127,7 +127,7 @@ private func _assertEventually<T>(
 
 @MainActor
 private func _assertEventually<T>(
-  _ expression: @autoclosure @escaping @MainActor () -> T,
+  _ expression: @escaping @MainActor () -> T,
   condition: (T) -> Bool,
   assert: (@autoclosure () -> T, @autoclosure () -> String, StaticString, UInt) -> Void,
   timeout: TimeInterval,

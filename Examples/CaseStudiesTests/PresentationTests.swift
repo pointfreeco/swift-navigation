@@ -88,6 +88,19 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor
+  func testPresents_Nested() async throws {
+    let vc = BasicViewController(model: Model(isPresented: true))
+    try await setUp(controller: vc)
+
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.presentedChild?.isPresented = true
+    }
+    await assertEventuallyNil(vc.presentedViewController?.presentedViewController)
+  }
+
+  @MainActor
   func testPushViewController_IsPushed() async throws {
     let vc = BasicViewController()
     let nav = UINavigationController(rootViewController: vc)

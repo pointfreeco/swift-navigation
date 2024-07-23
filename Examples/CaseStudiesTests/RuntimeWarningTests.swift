@@ -9,7 +9,7 @@ final class RuntimeWarningTests: XCTestCase {
       vc.traitCollection.dismiss()
     } issueMatcher: {
       $0.compactDescription == """
-        A view controller requested dismissal, but couldn't be dismissed.
+        failed - A view controller requested dismissal, but couldn't be dismissed.
 
         'UITraitCollection.dismiss()' must be called from an object that was presented using a \
         binding, for example 'UIViewController.present(item:)', and \
@@ -22,7 +22,7 @@ final class RuntimeWarningTests: XCTestCase {
   func testNavigationDestination_WithoutNavigationController() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-      Can't present navigation item: "navigationController" is "nil".
+      failed - Can't present navigation item: "navigationController" is "nil".
       """
     }
     class VC: UIViewController {
@@ -40,7 +40,7 @@ final class RuntimeWarningTests: XCTestCase {
   func testPushValue_WithoutNavigationStack() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-        Tried to push a value from outside of a navigation stack.
+        failed - Tried to push a value from outside of a navigation stack.
 
         'UITraitCollection.push(value:)' must be called from an object in a \
         'NavigationStackController'.
@@ -59,7 +59,7 @@ final class RuntimeWarningTests: XCTestCase {
   func testPushValue_WithoutNavigationController() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-        Tried to push a value from outside of a navigation stack.
+        failed - Tried to push a value from outside of a navigation stack.
 
         'UITraitCollection.push(value:)' must be called from an object in a \
         'NavigationStackController'.
@@ -78,7 +78,7 @@ final class RuntimeWarningTests: XCTestCase {
   func testPush_WithoutNavigationController() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-        Can't push value: "navigationController" is "nil".
+        failed - Can't push value: "navigationController" is "nil".
         """
     }
     class VC: UIViewController {
@@ -94,7 +94,7 @@ final class RuntimeWarningTests: XCTestCase {
   func testPush_WithoutNavigationStack() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-        Tried to push a value to a non-"NavigationStackController".
+        failed - Tried to push a value to a non-"NavigationStackController".
         """
     }
     class VC: UIViewController {
@@ -110,7 +110,7 @@ final class RuntimeWarningTests: XCTestCase {
   func testNavigationDestinationFor_WithoutNavigationController() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-      Can't register navigation destination: "navigationController" is "nil".
+      failed - Can't register navigation destination: "navigationController" is "nil".
       """
     }
     class VC: UIViewController {
@@ -128,7 +128,7 @@ final class RuntimeWarningTests: XCTestCase {
   func testNavigationDestinationFor_WithoutNavigationStackController() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-        Tried to apply a "navigationDestination" to a non-"NavigationStackController".
+        failed - Tried to apply a "navigationDestination" to a non-"NavigationStackController".
         """
     }
     class VC: UIViewController {

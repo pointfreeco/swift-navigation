@@ -83,8 +83,8 @@ final class NavigationPathTests: XCTestCase {
     XCTExpectFailure {
       $0.compactDescription.hasPrefix(
         """
-        No "navigationDestination(for: String.self) { … }" was found among the view controllers on \
-        the path.
+        failed - No "navigationDestination(for: String.self) { … }" was found among the view \
+        controllers on the path.
         """
       )
     }
@@ -117,8 +117,8 @@ final class NavigationPathTests: XCTestCase {
     XCTExpectFailure {
       $0.compactDescription.hasPrefix(
         """
-        No "navigationDestination(for: String.self) { … }" was found among the view controllers on \
-        the path.
+        failed - No "navigationDestination(for: String.self) { … }" was found among the view \
+        controllers on the path.
         """
       )
     }
@@ -143,8 +143,8 @@ final class NavigationPathTests: XCTestCase {
     XCTExpectFailure {
       $0.compactDescription.hasPrefix(
         """
-        No "navigationDestination(for: String.self) { … }" was found among the view controllers on \
-        the path.
+        failed - No "navigationDestination(for: String.self) { … }" was found among the view \
+        controllers on the path.
         """
       )
     }
@@ -289,8 +289,8 @@ final class NavigationPathTests: XCTestCase {
 
     XCTExpectFailure {
       $0.compactDescription == """
-        Failed to decode item in navigation path at index 1. Perhaps the "navigationDestination" \
-        declarations have changed since the path was encoded?
+        failed - Failed to decode item in navigation path at index 1. Perhaps the \
+        "navigationDestination" declarations have changed since the path was encoded?
         """
     }
     let nav = NavigationStackController(path: $path) {
@@ -330,8 +330,8 @@ final class NavigationPathTests: XCTestCase {
 
     XCTExpectFailure {
       $0.compactDescription == """
-        Failed to decode item in navigation path at index 0. Perhaps the "navigationDestination" \
-        declarations have changed since the path was encoded?
+        failed - Failed to decode item in navigation path at index 0. Perhaps the \
+        "navigationDestination" declarations have changed since the path was encoded?
         """
     }
     let nav = NavigationStackController(path: $path) {

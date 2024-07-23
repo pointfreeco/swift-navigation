@@ -43,7 +43,11 @@ final class MemoryManagementTests: XCTestCase {
 
   @MainActor
   func testNavigationStackController_ObservationDoesNotRetainModel() async {
-    weak var weakModel: Model?
+    #if swift(>=5.10)
+      weak nonisolated(unsafe) var weakModel: Model?
+    #else
+      weak var weakModel: Model?
+    #endif
     do {
       @UIBindable var model = Model()
       weakModel = model
