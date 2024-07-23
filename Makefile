@@ -1,7 +1,7 @@
-PLATFORM_IOS = iOS Simulator,name=iPhone 13 Pro Max
+PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iOS 17.5,iPhone \d\+ Pro [^M])
 PLATFORM_MACOS = macOS
-PLATFORM_TVOS = tvOS Simulator,name=Apple TV
-PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
+PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,tvOS 17.5,TV)
+PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,watchOS 10.5,Watch)
 
 TEST_RUNNER_CI = $(CI)
 
@@ -10,24 +10,25 @@ default: test
 test:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
-		-scheme SwiftUINavigation \
+		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_IOS)"
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
-		-scheme SwiftUINavigation \
+		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_MACOS)"
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
-		-scheme SwiftUINavigation \
+		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_TVOS)"
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
-		-scheme SwiftUINavigation \
+		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_WATCHOS)"
+
 test-examples:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
-		-scheme Standups \
+		-scheme CaseStudies \
 		-destination platform="$(PLATFORM_IOS)"
 
 DOC_WARNINGS := $(shell xcodebuild clean docbuild \
@@ -52,3 +53,7 @@ format:
 		./Examples ./Package.swift ./Sources ./Tests
 
 .PHONY: format test-all test-docs
+
+define udid_for
+$(shell xcrun simctl list devices available '$(1)' | grep '$(2)' | sort -r | head -1 | awk -F '[()]' '{ print $$(NF-3) }')
+endef
