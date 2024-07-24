@@ -1,4 +1,4 @@
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
   extension UIBinding {
     /// Specifies an animation to perform when the binding value changes.
     ///

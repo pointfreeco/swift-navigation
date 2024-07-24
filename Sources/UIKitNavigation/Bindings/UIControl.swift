@@ -1,4 +1,4 @@
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
   import ConcurrencyExtras
   @_spi(Internals) import SwiftNavigation
   import UIKit

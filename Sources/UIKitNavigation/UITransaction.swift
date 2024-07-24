@@ -1,4 +1,4 @@
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
   extension UITransaction {
     /// Creates a transaction and assigns its animation property.
     ///

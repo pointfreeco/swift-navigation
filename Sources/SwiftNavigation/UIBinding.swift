@@ -1,5 +1,4 @@
 import IssueReporting
-import SwiftUINavigationCore
 
 /// A property wrapper type that can read and write an observable value.
 ///
