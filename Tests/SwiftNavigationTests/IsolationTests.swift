@@ -1,3 +1,4 @@
+#if canImport(Testing)
 import SwiftNavigation
 import Testing
 
@@ -16,31 +17,20 @@ struct IsolationTests {
   }
 
   @Test
-  @GA
+  @GlobalActorIsolated
   func isolationOnGlobalActor() async {
     let model = GlobalActorModel()
     let token = observe { _ in
       _ = model.count
-      GA.assertIsolated()
+      GlobalActorIsolated.assertIsolated()
     }
     model.count += 1
     _ = token
   }
-
-//  @Test
-//  func nonIsolated() async {
-//    let model = NonIsolatedModel()
-//    let token = observe { _ in
-//      _ = model.count
-//      GA.assertIsolated()
-//    }
-//    model.count += 1
-//    _ = token
-//  }
 }
 
-@globalActor actor GA: GlobalActor {
-  static let shared = GA()
+@globalActor private actor GlobalActorIsolated: GlobalActor {
+  static let shared = GlobalActorIsolated()
 }
 
 @Perceptible
@@ -50,12 +40,8 @@ class MainActorModel {
 }
 
 @Perceptible
-@GA
-class GlobalActorModel {
+@GlobalActorIsolated
+private class GlobalActorModel {
   var count = 0
 }
-
-@Perceptible
-class NonIsolatedModel {
-  var count = 0
-}
+#endif
