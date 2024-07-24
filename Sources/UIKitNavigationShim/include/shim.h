@@ -1,17 +1,19 @@
-#include <TargetConditionals.h>
+#if __has_include(<TargetConditionals.h>)
+  #include <TargetConditionals.h>
 
-#if __has_include(<UIKit/UIKit.h>) && !TARGET_OS_WATCH
-  @import UIKit;
+  #if __has_include(<UIKit/UIKit.h>) && !TARGET_OS_WATCH
+    @import UIKit;
 
-  NS_ASSUME_NONNULL_BEGIN
+    NS_ASSUME_NONNULL_BEGIN
 
-  @interface UIViewController (UIKitNavigation)
+    @interface UIViewController (UIKitNavigation)
 
-  @property BOOL hasViewAppeared;
-  @property (nullable) void (^onDismiss)();
-  @property NSArray<void(^)()> *onViewAppear;
+    @property BOOL hasViewAppeared;
+    @property (nullable) void (^onDismiss)();
+    @property NSArray<void(^)()> *onViewAppear;
 
-  @end
+    @end
 
-  NS_ASSUME_NONNULL_END
+    NS_ASSUME_NONNULL_END
+  #endif
 #endif
