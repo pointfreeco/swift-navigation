@@ -36,6 +36,9 @@
          <TestPlanReference
             reference = "container:Tests/UIKitNavigation.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/SwiftNavigationTests/SwiftNavigation.xctestplan">
+         </TestPlanReference>
       </TestPlans>
    </TestAction>
    <LaunchAction

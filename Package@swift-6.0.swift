@@ -48,6 +48,12 @@ let package = Package(
         .product(name: "Perception", package: "swift-perception"),
       ]
     ),
+    .testTarget(
+      name: "SwiftNavigationTests",
+      dependencies: [
+        "SwiftNavigation"
+      ]
+    ),
     .target(
       name: "SwiftUINavigation",
       dependencies: [

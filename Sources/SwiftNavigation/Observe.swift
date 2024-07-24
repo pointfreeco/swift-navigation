@@ -52,25 +52,39 @@ import ConcurrencyExtras
 /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
 /// is deallocated.
 public func observe(
-  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+  @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  isolation: (any Actor)? = #isolation
 ) -> ObservationToken {
-  let token = ObservationToken()
-  onChange(
-    { transaction in
-      guard !token.isCancelled else { return }
-      apply(transaction)
-    },
+  let actor = ActorProxy(base: isolation)
+
+  return observe(
+    apply,
     task: { transaction, operation in
-      Task { operation() }
+      Task {
+        await actor.perform {
+          operation()
+        }
+      }
     }
   )
-  return token
+}
+
+actor ActorProxy {
+  let base: (any Actor)?
+  init(base: (any Actor)?) {
+    self.base = base
+  }
+  nonisolated var unownedExecutor: UnownedSerialExecutor {
+    (base ?? MainActor.shared).unownedExecutor
+  }
+  func perform(_ operation: @Sendable () -> Void) {
+    operation()
+  }
 }
 
 @_spi(Internals)
 public func observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  // TODO: Can we clean this up with an executor?
   task: @escaping @Sendable (
     _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
   ) -> Void = {
