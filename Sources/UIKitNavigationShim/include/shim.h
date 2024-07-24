@@ -1,3 +1,5 @@
+#include <TargetConditionals.h>
+
 #if __has_include(<UIKit/UIKit.h>) && !TARGET_OS_WATCH
   @import UIKit;
 
