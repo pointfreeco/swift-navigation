@@ -1,5 +1,6 @@
 import ConcurrencyExtras
 
+#if swift(>=6)
 /// Tracks access to properties of an observable model.
 ///
 /// This function allows one to minimally observe changes in a model in order to
@@ -56,7 +57,6 @@ public func observe(
   isolation: (any Actor)? = #isolation
 ) -> ObservationToken {
   let actor = ActorProxy(base: isolation)
-
   return observe(
     apply,
     task: { transaction, operation in
@@ -68,6 +68,7 @@ public func observe(
     }
   )
 }
+#endif
 
 actor ActorProxy {
   let base: (any Actor)?
