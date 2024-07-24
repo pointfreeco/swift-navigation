@@ -1,5 +1,72 @@
 import ConcurrencyExtras
 
+/// Tracks access to properties of an observable model.
+///
+/// This function allows one to minimally observe changes in a model in order to
+/// react to those changes. For example, if you had an observable model like so:
+///
+/// ```swift
+/// @Observable
+/// class FeatureModel {
+///   var count = 0
+/// }
+/// ```
+///
+/// Then you can use ``observe(_:)`` to observe changes in the model. For example, in UIKit you can
+/// update a `UILabel`:
+///
+/// ```swift
+/// observe { [weak self] in
+///   guard let self else { return }
+///
+///   countLabel.text = "Count: \(model.count)"
+/// }
+/// ```
+///
+/// Anytime the `count` property of the model changes the trailing closure will be invoked again,
+/// allowing you to update the view. Further, only changes to properties accessed in the trailing
+/// closure will be observed.
+///
+/// > Note: If you are targeting Apple's older platforms (anything before iOS 17, macOS 14, tvOS 17,
+/// watchOS 10), then you can use our [Perception](http://github.com/pointfreeco/swift-perception)
+/// library to replace Swift's Observation framework.
+///
+/// This function also works on non-Apple platforms, such as Windows, Linux, Wasm, and more. For
+/// example, in a Wasm app you could observe chnages to the `count` property to update the inner
+/// HTML of a tag:
+///
+/// ```swift
+/// import JavaScriptKit
+/// 
+/// var countLabel = document.createElement("span")
+/// _ = document.body.appendChild(countLabel)
+///
+/// let token = observe { _ in
+///   countLabel.innerText = .string("Count: \(model.count)")
+/// }
+/// ```
+///
+/// And you can also build your own tools on top of ``observe(_:)``.
+///
+/// - Parameter apply: A closure that contains properties to track.
+/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+/// is deallocated.
+public func observe(
+  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+) -> ObservationToken {
+  let token = ObservationToken()
+  onChange(
+    { transaction in
+      guard !token.isCancelled else { return }
+      apply(transaction)
+    },
+    task: { transaction, operation in
+      Task { operation() }
+    }
+  )
+  return token
+}
+
 @_spi(Internals)
 public func observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,

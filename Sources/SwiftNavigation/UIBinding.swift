@@ -2,7 +2,14 @@ import IssueReporting
 
 /// A property wrapper type that can read and write an observable value.
 ///
-/// Like SwiftUI's `Binding`, but for UIKit and other paradigms.
+/// Like SwiftUI's `Binding`, but works for UIKit, AppKit, and non-Apple platforms such as
+/// Windows, Linux, Wasm, and more.
+///
+/// ``UIBinding`` has two primary use cases: a two-way connection between a property of an
+/// observable model and a UI component (e.g. text field, toggle, etc.), and as a means to drive
+/// navigation from state.
+///
+/// ### UI component bindings
 ///
 /// Use a binding to create a two-way connection between a property that stores data, and a view
 /// that displays and changes the data. A binding connects a property to a source of truth stored
@@ -67,13 +74,56 @@ import IssueReporting
 ///
 /// When `PlayerViewController` initializes `PlayButton`, it passes a binding of its `isPlaying`
 /// state along. Applying the `$` prefix to a property wrapped value returns its ``projectedValue``,
-/// which returns a binding to the value.
-///
-/// Whenever the user taps the `PlayButton`, the `PlayerViewController`` updates its `isPlaying`
-/// state.
+/// which returns a binding to the value. Whenever the user taps the `PlayButton`, the
+///  `PlayerViewController` updates its `isPlaying` state.
 ///
 /// > Note: To create bindings to properties of a type that conforms to the `Observable` or
-/// > `Perceptible`protocols, use the ``UIBindable`` property wrapper.
+/// > `Perceptible` protocols, use the [`@UIBindable`](<doc:UIBindable>) property wrapper.
+///
+/// It is also possible to use bindings for UI components on other platforms beyond Apple's
+/// platforms. For example, in Wasm
+///
+/// ```swift
+/// @UIBindable var model = Model()
+///
+/// let textField = // TODO
+/// ```
+///
+/// This makes it so that any changes to the text field in the DOM are immediately played back
+/// to the model, and vice-versa.
+///
+/// ### State-driven navigation
+///
+/// Bindings are also useful for creating navigation APIs that are driven off of state. For example,
+/// in UIKit you can have an observable model that presents a sheet with some boolean state:
+///
+/// ```swift
+/// @Observable
+/// class FeatureModel {
+///   var isPresented = false
+/// }
+/// ```
+///
+/// And then in a view controller you can drive navigation to the sheet by using a ``UIBinding``:
+///
+/// ```swift
+/// @UIBindable var model = FeatureModel()
+///
+/// present(isPresented: $model.isPresented) {
+///   SheetViewController()
+/// }
+/// ```
+///
+/// And you can also build your own navigation tools by utilizing ``UIBinding`` and ``observe(_:)``.
+/// You can even build navigation tools for non-Apple platforms, such as Windows, Linux, Wasm
+/// and more.
+///
+/// For example, it is possible to build a tool that drives alerts in HTML from a binding of a
+/// boolean:
+///
+/// ```swift
+/// alert(isPresented: $model.isPresented) // TODO
+/// ```
 @dynamicMemberLookup
 @propertyWrapper
 public struct UIBinding<Value>: Sendable {
