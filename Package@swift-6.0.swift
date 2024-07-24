@@ -45,7 +45,7 @@ let package = Package(
       name: "SwiftUINavigationCore",
       dependencies: [
         .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "IssueReporting", package: "swift-issue-reporting"),
+        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
     ),
   ],
