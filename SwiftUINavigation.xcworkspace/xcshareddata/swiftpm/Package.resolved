@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/combine-schedulers",
       "state" : {
-        "revision" : "487a4d151e795a5e076a7e7aedcd13c2ebff6c31",
-        "version" : "1.0.1"
+        "revision" : "9fa31f4403da54855f1e2aeaeff478f4f0e40b13",
+        "version" : "1.0.2"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "031704ba0634b45e02fe875b8ddddc7f30a07f49",
-        "version" : "1.5.3"
+        "branch" : "xct-name",
+        "revision" : "593151ec13a564a79dc930cf57c82a67355b76c2"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-clocks",
       "state" : {
-        "revision" : "eb64eacfed55635a771e3410f9c91de46cf5c6a0",
-        "version" : "1.0.3"
+        "revision" : "3581e280bf0d90c3fb9236fb23e75a5d8c46b533",
+        "version" : "1.0.4"
       }
     },
     {
@@ -39,7 +39,7 @@
     {
       "identity" : "swift-concurrency-extras",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
+      "location" : "https://github.com/pointfreeco/swift-concurrency-extras.git",
       "state" : {
         "revision" : "bb5059bde9022d69ac516803f4f227d8ac967f71",
         "version" : "1.1.0"
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-custom-dump",
       "state" : {
-        "revision" : "d237304f42af07f22563aa4cc2d7e2cfb25da82e",
-        "version" : "1.3.1"
+        "branch" : "xct-name",
+        "revision" : "3af72bba805d9d91aecdc5c0df15d5f8b89de8de"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "http://github.com/pointfreeco/swift-dependencies",
       "state" : {
-        "revision" : "52018827ce21e482a36e3795bea2666b3898164c",
-        "version" : "1.3.4"
+        "revision" : "cc26d06125dbc913c6d9e8a905a5db0b994509e0",
+        "version" : "1.3.5"
       }
     },
     {
@@ -91,15 +91,6 @@
       }
     },
     {
-      "identity" : "swift-issue-reporting",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
-      "state" : {
-        "revision" : "926f43898706eaa127db79ac42138e1ad7e85a3f",
-        "version" : "1.2.0"
-      }
-    },
-    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax",
@@ -115,6 +106,15 @@
       "state" : {
         "revision" : "3907a9438f5b57d317001dc99f3f11b46882272b",
         "version" : "0.10.0"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "357ca1e5dd31f613a1d43320870ebc219386a495",
+        "version" : "1.2.2"
       }
     }
   ],
