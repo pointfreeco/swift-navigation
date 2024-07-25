@@ -32,11 +32,11 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.3"),
+    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.4"),
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.1.0"),
-    .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.1"),
-    .package(url: "https://github.com/pointfreeco/swift-issue-reporting", from: "1.2.0"),
-    .package(url: "https://github.com/pointfreeco/swift-perception", from: "1.3.3"),
+    .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
+    .package(url: "https://github.com/pointfreeco/swift-perception", from: "1.3.4"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.2.2"),
   ],
   targets: [
     .target(
@@ -60,7 +60,7 @@ let package = Package(
         "SwiftUINavigationCore",
         "UIKitNavigation",
         .product(name: "CasePaths", package: "swift-case-paths"),
-        .product(name: "IssueReporting", package: "swift-issue-reporting"),
+        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
@@ -73,7 +73,7 @@ let package = Package(
       name: "SwiftUINavigationCore",
       dependencies: [
         .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "IssueReporting", package: "swift-issue-reporting"),
+        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
     ),
     .target(
