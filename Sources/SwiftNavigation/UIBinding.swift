@@ -378,6 +378,23 @@ public struct UIBinding<Value>: Sendable {
     return UIBinding<Member>(open(location))
   }
 
+  /// Returns an optional binding to the associated value of a given key path.
+  ///
+  /// - Parameter keyPath: A key path to a specific value.
+  /// - Returns: A new binding.
+  public subscript<Wrapped, Member>(
+    dynamicMember keyPath: WritableKeyPath<Wrapped, Member>
+  ) -> UIBinding<Member?>
+  where Value == Wrapped? {
+    func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
+      UIBinding<Member?>(
+        location: _UIBindingOptionalToMember(base: location, keyPath: keyPath),
+        transaction: transaction
+      )
+    }
+    return open(location)
+  }
+
   /// Returns an optional binding to the associated value of a given case key path.
   ///
   /// - Parameter keyPath: A case key path to a specific associated value.
@@ -639,6 +656,36 @@ where Base.Value: CasePathable {
     }
   }
   static func == (lhs: _UIBindingEnumToOptionalCase, rhs: _UIBindingEnumToOptionalCase) -> Bool {
+    lhs.base == rhs.base && lhs.keyPath == rhs.keyPath
+  }
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(base)
+    hasher.combine(keyPath)
+  }
+}
+
+private final class _UIBindingOptionalToMember<
+  Base: _UIBinding<Wrapped?>, Wrapped, Value
+>: _UIBinding, @unchecked Sendable {
+  let base: Base
+  let keyPath: WritableKeyPath<Wrapped, Value>
+  init(base: Base, keyPath: WritableKeyPath<Wrapped, Value>) {
+    self.base = base
+    self.keyPath = keyPath
+  }
+  var wrappedValue: Value? {
+    get {
+      base.wrappedValue?[keyPath: keyPath]
+    }
+    set {
+      if let newValue {
+        base.wrappedValue?[keyPath: keyPath] = newValue
+      } else {
+        base.wrappedValue = nil
+      }
+    }
+  }
+  static func == (lhs: _UIBindingOptionalToMember, rhs: _UIBindingOptionalToMember) -> Bool {
     lhs.base == rhs.base && lhs.keyPath == rhs.keyPath
   }
   func hash(into hasher: inout Hasher) {
