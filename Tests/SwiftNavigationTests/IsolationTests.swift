@@ -1,30 +1,34 @@
-#if canImport(Testing)
 import SwiftNavigation
-import Testing
+import XCTest
 
-@Suite
-struct IsolationTests {
-  @Test
+class IsolationTests: XCTestCase {
   @MainActor
-  func isolationOnMinActor() async {
+  func testIsolationOnMinActor() async {
     let model = MainActorModel()
-    let token = observe { _ in
+    let expectation = expectation(description: "observation")
+    expectation.expectedFulfillmentCount = 2
+    let token = SwiftNavigation.observe { _ in
       _ = model.count
       MainActor.assertIsolated()
+      expectation.fulfill()
     }
     model.count += 1
+    await fulfillment(of: [expectation], timeout: 1)
     _ = token
   }
 
-  @Test
   @GlobalActorIsolated
-  func isolationOnGlobalActor() async {
+  func testIsolationOnGlobalActor() async {
     let model = GlobalActorModel()
-    let token = observe { _ in
+    let expectation = expectation(description: "observation")
+    expectation.expectedFulfillmentCount = 2
+    let token = SwiftNavigation.observe { _ in
       _ = model.count
       GlobalActorIsolated.assertIsolated()
+      expectation.fulfill()
     }
     model.count += 1
+    await fulfillment(of: [expectation], timeout: 1)
     _ = token
   }
 }
@@ -44,4 +48,3 @@ class MainActorModel {
 private class GlobalActorModel {
   var count = 0
 }
-#endif

@@ -94,8 +94,11 @@ public func observe(
 ) -> ObservationToken {
   let token = ObservationToken()
   onChange(
-    { transaction in
-      guard !token.isCancelled else { return }
+    { [weak token] transaction in
+      guard
+        let token,
+        !token.isCancelled
+      else { return }
       apply(transaction)
     },
     task: task
