@@ -122,9 +122,9 @@ private func onChange(
 }
 
 /// A token for cancelling observation.
-public final class ObservationToken: Sendable, HashableObject {
+public final class ObservationToken: @unchecked Sendable, HashableObject {
   fileprivate let _isCancelled = LockIsolated(false)
-  private let onCancel: @Sendable () -> Void
+  public var onCancel: @Sendable () -> Void
 
   public var isCancelled: Bool {
     _isCancelled.withValue { $0 }
