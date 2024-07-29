@@ -3,8 +3,7 @@
 import PackageDescription
 
 let package = Package(
-  // NB: Keep this for backwards compatibility. Will rename to 'swift-navigation' in 2.0.
-  name: "swiftui-navigation",
+  name: "swift-navigation",
   platforms: [
     .iOS(.v13),
     .macOS(.v10_15),
@@ -20,11 +19,11 @@ let package = Package(
       name: "SwiftUINavigation",
       targets: ["SwiftUINavigation"]
     ),
-    // TODO: Should this be reorganized and renamed to `SwiftNavigationState`?
-    .library(
-      name: "SwiftUINavigationCore",
-      targets: ["SwiftUINavigationCore"]
-    ),
+//    // TODO: Should this be reorganized and renamed to `SwiftNavigationState`?
+//    .library(
+//      name: "SwiftUINavigationCore",
+//      targets: ["SwiftUINavigationCore"]
+//    ),
     .library(
       name: "UIKitNavigation",
       targets: ["UIKitNavigation"]
@@ -42,7 +41,7 @@ let package = Package(
     .target(
       name: "SwiftNavigation",
       dependencies: [
-        "SwiftUINavigationCore",
+//        "SwiftUINavigationCore",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "Perception", package: "swift-perception"),
@@ -57,7 +56,7 @@ let package = Package(
     .target(
       name: "SwiftUINavigation",
       dependencies: [
-        "SwiftUINavigationCore",
+//        "SwiftUINavigationCore",
         "UIKitNavigation",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
@@ -69,18 +68,18 @@ let package = Package(
         "SwiftUINavigation"
       ]
     ),
-    .target(
-      name: "SwiftUINavigationCore",
-      dependencies: [
-        .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-      ]
-    ),
+//    .target(
+//      name: "SwiftUINavigationCore",
+//      dependencies: [
+//        .product(name: "CustomDump", package: "swift-custom-dump"),
+//        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
+//      ]
+//    ),
     .target(
       name: "UIKitNavigation",
       dependencies: [
         "SwiftNavigation",
-        "SwiftUINavigationCore",
+//        "SwiftUINavigationCore",
         "UIKitNavigationShim",
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
       ]
