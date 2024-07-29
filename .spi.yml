@@ -4,5 +4,4 @@ builder:
   - documentation_targets:
     - SwiftNavigation
     - SwiftUINavigation
-    - SwiftUINavigationCore
     - UIKitNavigation
