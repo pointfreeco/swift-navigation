@@ -48,7 +48,7 @@
           + TextState("\n") + TextState("Not underlined purple").underline(false, color: .pink),
         to: &dump
       )
-      XCTAssertNoDifference(
+      expectNoDifference(
         dump,
         #"""
         """

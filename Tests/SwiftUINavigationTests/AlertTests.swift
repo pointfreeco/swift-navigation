@@ -12,7 +12,7 @@
         primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .easeInOut)),
         secondaryButton: .cancel(.init("Cancel"), action: .send(false))
       )
-      XCTAssertNoDifference(
+      expectNoDifference(
         alert,
         AlertState(
           title: .init("Alert!"),
@@ -24,7 +24,7 @@
 
       var dump = ""
       customDump(alert, to: &dump)
-      XCTAssertNoDifference(
+      expectNoDifference(
         dump,
         """
         AlertState(
@@ -64,7 +64,7 @@
           ),
           to: &dump
         )
-        XCTAssertNoDifference(
+        expectNoDifference(
           dump,
           """
           ConfirmationDialogState(
