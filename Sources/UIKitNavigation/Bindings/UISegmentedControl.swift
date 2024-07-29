@@ -1,6 +1,5 @@
 #if canImport(UIKit) && !os(watchOS)
   import UIKit
-  import SwiftUINavigationCore
 
   @available(iOS 14, tvOS 14, *)
   extension UISegmentedControl {

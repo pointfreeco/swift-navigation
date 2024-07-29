@@ -1,7 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
   import IssueReporting
   import UIKit
-  import SwiftUINavigationCore
 
   @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   @MainActor

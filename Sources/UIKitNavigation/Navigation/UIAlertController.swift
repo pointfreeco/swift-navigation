@@ -1,5 +1,4 @@
 #if canImport(UIKit) && !os(watchOS)
-  import SwiftUINavigationCore
   import UIKit
 
   @available(iOS 13, *)

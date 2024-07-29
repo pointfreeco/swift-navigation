@@ -1,7 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
   import IssueReporting
   @_spi(Internals) import SwiftNavigation
-  import SwiftUINavigationCore
   import UIKit
 
   open class NavigationStackController: UINavigationController {
