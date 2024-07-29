@@ -835,27 +835,7 @@
 			repositoryURL = "http://github.com/pointfreeco/swift-dependencies";
 			requirement = {
 				kind = upToNextMajorVersion;
-<<<<<<< HEAD
-				minimumVersion = 1.3.3;
-=======
 				minimumVersion = 1.3.5;
-			};
-		};
-		DCE73E032947D063004EE92E /* XCRemoteSwiftPackageReference "swift-tagged" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-tagged.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.7.0;
-			};
-		};
-		DCE73E062947D082004EE92E /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-identified-collections.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
->>>>>>> main
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

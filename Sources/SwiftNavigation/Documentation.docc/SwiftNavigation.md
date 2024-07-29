@@ -6,7 +6,7 @@ Tools for making navigation in Swift applications simpler, more precise, and mor
 
 This library contains a suite of tools that form the foundation for building powerful state
 management and navigation APIs for Apple platforms, such as SwiftUI, UIKit, AppKit, and on non-Apple 
-platforms, such as Windows, Linux, WASM and more.
+platforms, such as Windows, Linux, Wasm and more.
 
 The SwiftNavigation library forms the foundation that more advanced tools can be built upon, such
 as the UIKitNavigation and SwiftUINavigation libraries. There are two primary tools provided:
@@ -25,7 +25,7 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms:
 #### SwiftUI
 
 > Important: To get access to the tools described below you must depend on the SwiftUINavigation 
-package and import SwiftUINavigation.
+> package and import SwiftUINavigation.
 
 SwiftUI already comes with incredibly powerful navigation APIs, but there are a few areas lacking
 that can be filled. In particular, driving navigation from enum state so that you can have
@@ -37,7 +37,7 @@ item. One can technically model this with 3 separate optionals:
 
 ```swift
 @Observable
-class FeatureeModel {
+class FeatureModel {
   var addItem: AddItemModel?
   var deleteItemAlertIsPresented: Bool
   var editItem: EditItemModel?
@@ -76,7 +76,7 @@ optionals as an enum with 3 cases, and then hold onto a single piece of optional
 
 ```swift
 @Observable
-class FeatureeModel {
+class FeatureModel {
   var destination: Destination?
 
   enum Destination {
