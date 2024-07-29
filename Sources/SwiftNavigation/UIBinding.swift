@@ -114,9 +114,9 @@ import IssueReporting
 /// }
 /// ```
 ///
-/// And you can also build your own navigation tools by utilizing ``UIBinding`` and ``observe(_:)``.
-/// You can even build navigation tools for non-Apple platforms, such as Windows, Linux, Wasm
-/// and more.
+/// And you can also build your own navigation tools by utilizing ``UIBinding`` and
+/// ``observe(_:isolation:)``. You can even build navigation tools for non-Apple platforms, such as
+/// Windows, Linux, Wasm and more.
 ///
 /// For example, it is possible to build a tool that drives alerts in HTML from a binding of a
 /// boolean:
@@ -173,6 +173,7 @@ public struct UIBinding<Value>: Sendable {
   ///   // ...
   /// }
   /// ```
+  /// 
   /// > Note: SwiftUI's `Binding` type has no such initializer because a view is reinitialized many,
   /// > many times in an application as its parent's body is recomputed, and so Swift has a separate
   /// > `@State` property wrapper that is used to create local, mutable state for a view, and you
@@ -182,7 +183,7 @@ public struct UIBinding<Value>: Sendable {
   /// > state directly. Because of this, it's also totally appropriate to create bindings to these
   /// > properties directly.
   ///
-  /// - Parameter wrappedValue: An initial value to store in the state property.
+  /// - Parameter value: An initial value to store in the state property.
   public init(wrappedValue value: Value) {
     self.init(
       location: _UIBindingAppendKeyPath(

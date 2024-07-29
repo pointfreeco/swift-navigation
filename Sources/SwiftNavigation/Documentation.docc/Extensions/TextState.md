@@ -1,4 +1,4 @@
-# ``SwiftUINavigationCore/TextState``
+# ``SwiftNavigation/TextState``
 
 ## Topics
 

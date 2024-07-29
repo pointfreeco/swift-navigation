@@ -121,7 +121,7 @@
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
-        if let presentedViewController {
+        if presentedViewController != nil {
           self.dismiss(animated: !transaction.uiKit.disablesAnimations) {
             onDismiss?()
             self.present(child, animated: !transaction.uiKit.disablesAnimations)

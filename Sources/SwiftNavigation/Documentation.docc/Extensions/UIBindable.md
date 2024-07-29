@@ -4,10 +4,10 @@
 
 ### Creating a bindable value
 
-- ``init(_:)-5c2tn``
-- ``init(_:)-71edk``
-- ``init(wrappedValue:)-1649m``
-- ``init(wrappedValue:)-5szq0``
+- ``init(_:fileID:filePath:line:column:)-6gjp6``
+- ``init(_:fileID:filePath:line:column:)-49wmd``
+- ``init(wrappedValue:fileID:filePath:line:column:)-3t841``
+- ``init(wrappedValue:fileID:filePath:line:column:)-20n7u``
 - ``init(projectedValue:)``
 
 ### Getting the value

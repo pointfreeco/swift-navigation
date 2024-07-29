@@ -213,6 +213,13 @@ struct ContentView: View {
 
 ## Topics
 
+### Alerts and dialogs
+
+- ``SwiftUI/View/alert(item:title:actions:message:)``
+- ``SwiftUI/View/alert(item:title:actions:)``
+- ``SwiftUI/View/confirmationDialog(item:titleVisibility:title:actions:message:)``
+- ``SwiftUI/View/confirmationDialog(item:titleVisibility:title:actions:)``
+
 ### Alert state and dialog state
 
 - ``SwiftUI/View/alert(_:action:)-sgyk``

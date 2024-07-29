@@ -11,7 +11,7 @@ platforms, such as Windows, Linux, Wasm and more.
 The SwiftNavigation library forms the foundation that more advanced tools can be built upon, such
 as the UIKitNavigation and SwiftUINavigation libraries. There are two primary tools provided:
 
-* ``observe(_:)``: Minimally observe changes in a model.
+* ``observe(_:isolation:)``: Minimally observe changes in a model.
 * ``UIBinding``: Two-way binding for connecting navigation and UI components to an observable model.
 
 In addition to these tools there are some supplementary concepts that allow you to build more 
@@ -206,8 +206,8 @@ These tools can also form the foundation of building navigation tools for non-Ap
 such as Windows, Linux, Wasm and more. We do not currently provide any such tools at this moment,
 but it is possible for them to be built externally.
 
-For example, in Wasm it is possible to use the ``observe(_:)`` function to observe changes to a 
-model and update the DOM:
+For example, in Wasm it is possible to use the ``observe(_:isolation:)`` function to observe changes
+to a  model and update the DOM:
 
 ```swift
 import JavaScriptKit
@@ -236,7 +236,7 @@ alert(isPresented: $model.isAlertPresented) // TODO
 
 ### Observing changes to state
 
-- ``observe(_:)``
+- ``observe(_:isolation:)``
 - ``ObservationToken``
 
 ### Creating and sharing state
@@ -255,3 +255,10 @@ alert(isPresented: $model.isAlertPresented) // TODO
 
 - ``UINavigationPath``
 - ``HashableObject``
+
+### UI state
+
+- ``TextState``
+- ``AlertState``
+- ``ConfirmationDialogState``
+- ``ButtonState``

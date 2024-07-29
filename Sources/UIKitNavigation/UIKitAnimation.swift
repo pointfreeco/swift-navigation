@@ -8,8 +8,8 @@
   /// Executes a closure with the specified animation and returns the result.
   ///
   /// - Parameters:
-  ///   - animation: An animation, set as the the ``UITransaction/animation`` property of the
-  ///     thread's current ``UITransaction``.
+  ///   - animation: An animation, set in the ``UITransaction/uiKit`` property of the thread's
+  ///     current transaction.
   ///   - body: A closure to execute.
   ///   - completion: A completion to run when the animation is complete.
   /// - Returns: The result of executing the closure with the specified animation.

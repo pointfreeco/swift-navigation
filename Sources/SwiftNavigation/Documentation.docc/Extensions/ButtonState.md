@@ -1,11 +1,11 @@
-# ``SwiftUINavigationCore/ButtonState``
+# ``SwiftNavigation/ButtonState``
 
 ## Topics
 
 ### Creating buttons
 
-- ``init(role:action:label:)-99wi3``
-- ``init(role:action:label:)-2ixoi``
+- ``init(role:action:label:)-65t48``
+- ``init(role:action:label:)-8tmop``
 - ``ButtonStateRole``
 - ``ButtonStateAction``
 
@@ -22,15 +22,11 @@
 
 ### Performing actions
 
-- ``withAction(_:)-56ifj``
-- ``withAction(_:)-71nj4``
+- ``withAction(_:)-64bph``
+- ``withAction(_:)-t2w``
 
 ### Transforming buttons
 
 - ``SwiftUI/Button``
 - ``SwiftUI/ButtonRole``
 - ``map(_:)``
-
-### Deprecations
-
-- <doc:ButtonStateDeprecations>

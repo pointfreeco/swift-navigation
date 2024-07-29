@@ -20,10 +20,6 @@
 - ``easeInOut``
 - ``easeInOut(duration:)``
 
-### Customizing spring animations
-
-- ``interpolatingSpring(_:initialVelocity:)``
-
 ### Creating custom animations
 
 - ``animate(withDuration:delay:options:)``

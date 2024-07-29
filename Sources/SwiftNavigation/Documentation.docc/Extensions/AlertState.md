@@ -1,4 +1,4 @@
-# ``SwiftUINavigationCore/AlertState``
+# ``SwiftNavigation/AlertState``
 
 ## Topics
 
@@ -16,7 +16,3 @@
 ### Transforming alerts
 
 - ``map(_:)``
-
-### Deprecations
-
-- <doc:AlertStateDeprecations>

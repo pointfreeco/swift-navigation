@@ -78,9 +78,10 @@ struct SignInView: View {
 
 ### Binding transformations
 
+- ``SwiftUI/Binding/init(_:)``
 - ``SwiftUI/Binding/removeDuplicates()``
 - ``SwiftUI/Binding/removeDuplicates(by:)``
 
 ### Supporting views
 
-- ``WithState``
+- ``SwiftUI/View/bind(_:to:)``

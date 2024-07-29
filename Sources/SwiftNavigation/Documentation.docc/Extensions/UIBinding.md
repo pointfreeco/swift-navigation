@@ -8,7 +8,7 @@
 - ``init(_:)-1p53m``
 - ``init(_:)-3ww0m``
 - ``init(_:)-9wed9``
-- ``init(projectedValue:)
+- ``init(projectedValue:)``
 - ``constant(_:)``
 
 ### Getting the value

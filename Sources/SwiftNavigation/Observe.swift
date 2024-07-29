@@ -1,73 +1,76 @@
 import ConcurrencyExtras
 
 #if swift(>=6)
-/// Tracks access to properties of an observable model.
-///
-/// This function allows one to minimally observe changes in a model in order to
-/// react to those changes. For example, if you had an observable model like so:
-///
-/// ```swift
-/// @Observable
-/// class FeatureModel {
-///   var count = 0
-/// }
-/// ```
-///
-/// Then you can use ``observe(_:)`` to observe changes in the model. For example, in UIKit you can
-/// update a `UILabel`:
-///
-/// ```swift
-/// observe { [weak self] in
-///   guard let self else { return }
-///
-///   countLabel.text = "Count: \(model.count)"
-/// }
-/// ```
-///
-/// Anytime the `count` property of the model changes the trailing closure will be invoked again,
-/// allowing you to update the view. Further, only changes to properties accessed in the trailing
-/// closure will be observed.
-///
-/// > Note: If you are targeting Apple's older platforms (anything before iOS 17, macOS 14, tvOS 17,
-/// watchOS 10), then you can use our [Perception](http://github.com/pointfreeco/swift-perception)
-/// library to replace Swift's Observation framework.
-///
-/// This function also works on non-Apple platforms, such as Windows, Linux, Wasm, and more. For
-/// example, in a Wasm app you could observe chnages to the `count` property to update the inner
-/// HTML of a tag:
-///
-/// ```swift
-/// import JavaScriptKit
-/// 
-/// var countLabel = document.createElement("span")
-/// _ = document.body.appendChild(countLabel)
-///
-/// let token = observe { _ in
-///   countLabel.innerText = .string("Count: \(model.count)")
-/// }
-/// ```
-///
-/// And you can also build your own tools on top of ``observe(_:)``.
-///
-/// - Parameter apply: A closure that contains properties to track.
-/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
-/// is deallocated.
-public func observe(
-  @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  isolation: (any Actor)? = #isolation
-) -> ObservationToken {
-  let actor = ActorProxy(base: isolation)
-  return observe(
-    apply,
-    task: { transaction, operation in
-      Task {
-        await actor.perform {
-          operation()
+  /// Tracks access to properties of an observable model.
+  ///
+  /// This function allows one to minimally observe changes in a model in order to
+  /// react to those changes. For example, if you had an observable model like so:
+  ///
+  /// ```swift
+  /// @Observable
+  /// class FeatureModel {
+  ///   var count = 0
+  /// }
+  /// ```
+  ///
+  /// Then you can use `observe` to observe changes in the model. For example, in UIKit you can
+  /// update a `UILabel`:
+  ///
+  /// ```swift
+  /// observe { [weak self] in
+  ///   guard let self else { return }
+  ///
+  ///   countLabel.text = "Count: \(model.count)"
+  /// }
+  /// ```
+  ///
+  /// Anytime the `count` property of the model changes the trailing closure will be invoked again,
+  /// allowing you to update the view. Further, only changes to properties accessed in the trailing
+  /// closure will be observed.
+  ///
+  /// > Note: If you are targeting Apple's older platforms (anything before iOS 17, macOS 14,
+  /// > tvOS 17, watchOS 10), then you can use our
+  /// > [Perception](http://github.com/pointfreeco/swift-perception) library to replace Swift's
+  /// > Observation framework.
+  ///
+  /// This function also works on non-Apple platforms, such as Windows, Linux, Wasm, and more. For
+  /// example, in a Wasm app you could observe chnages to the `count` property to update the inner
+  /// HTML of a tag:
+  ///
+  /// ```swift
+  /// import JavaScriptKit
+  ///
+  /// var countLabel = document.createElement("span")
+  /// _ = document.body.appendChild(countLabel)
+  ///
+  /// let token = observe { _ in
+  ///   countLabel.innerText = .string("Count: \(model.count)")
+  /// }
+  /// ```
+  ///
+  /// And you can also build your own tools on top of ``observe(_:isolation:)``.
+  ///
+  /// - Parameters:
+  ///   - apply: A closure that contains properties to track.
+  ///   - isolation: The isolation of the observation.
+  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+  /// is deallocated.
+  public func observe(
+    @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+    isolation: (any Actor)? = #isolation
+  ) -> ObservationToken {
+    let actor = ActorProxy(base: isolation)
+    return observe(
+      apply,
+      task: { transaction, operation in
+        Task {
+          await actor.perform {
+            operation()
+          }
         }
       }
-    }
-  )
-}
+    )
+  }
 #endif
 
 actor ActorProxy {
@@ -138,7 +141,7 @@ public final class ObservationToken: @unchecked Sendable, HashableObject {
     cancel()
   }
 
-  /// Cancels observation that was created with ``UIKitNavigation/observe(_:)``.
+  /// Cancels observation that was created with ``observe(_:isolation:)``.
   ///
   /// > Note: This cancellation is lazy and cooperative. It does not cancel the observation
   /// > immediately, but rather next time a change is detected by `observe` it will cease any future

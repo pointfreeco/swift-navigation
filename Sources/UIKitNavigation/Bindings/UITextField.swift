@@ -179,10 +179,10 @@
     /// }
     /// ```
     ///
-    /// To control focus using a Boolean, use the ``UIKit/UITextField/focus(_:)`` method instead.
+    /// To control focus using a Boolean, use the ``UIKit/UITextField/bind(focus:)`` method instead.
     ///
     /// - Parameters:
-    ///   - binding: The state binding to register. When focus moves to the text field, the binding
+    ///   - focus: The state binding to register. When focus moves to the text field, the binding
     ///     sets the bound value to the corresponding match value. If a caller sets the state value
     ///     programmatically to the matching value, then focus moves to the text field. When focus
     ///     leaves the text field, the binding sets the bound value to `nil`. If a caller sets the
@@ -265,8 +265,8 @@
     /// }
     /// ```
     ///
-    /// To control focus by matching a value, use the ``UIKit/UITextField/focus(_:equals:)`` method
-    /// instead.
+    /// To control focus by matching a value, use the ``UIKit/UITextField/bind(focus:equals:)``
+    /// method instead.
     ///
     /// - Parameter condition: The focus state to bind. When focus moves to the text field, the
     ///   binding sets the bound value to `true`. If a caller sets the value to  `true`

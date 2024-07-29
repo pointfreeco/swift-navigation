@@ -1,4 +1,4 @@
-# ``SwiftUINavigationCore/ConfirmationDialogState``
+# ``SwiftNavigation/ConfirmationDialogState``
 
 ## Topics
 
@@ -20,7 +20,3 @@
 
 - ``map(_:)``
 - ``SwiftUI/Visibility``
-
-### Deprecations
-
-- <doc:ConfirmationDialogStateDeprecations>
