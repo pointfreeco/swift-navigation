@@ -19,11 +19,6 @@ let package = Package(
       name: "SwiftUINavigation",
       targets: ["SwiftUINavigation"]
     ),
-    // TODO: Should this be reorganized and renamed to `SwiftNavigationState`?
-    .library(
-      name: "SwiftUINavigationCore",
-      targets: ["SwiftUINavigationCore"]
-    ),
     .library(
       name: "UIKitNavigation",
       targets: ["UIKitNavigation"]
@@ -56,7 +51,6 @@ let package = Package(
     .target(
       name: "SwiftUINavigation",
       dependencies: [
-        "SwiftUINavigationCore",
         "UIKitNavigation",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
@@ -69,17 +63,9 @@ let package = Package(
       ]
     ),
     .target(
-      name: "SwiftUINavigationCore",
-      dependencies: [
-        .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-      ]
-    ),
-    .target(
       name: "UIKitNavigation",
       dependencies: [
         "SwiftNavigation",
-        "SwiftUINavigationCore",
         "UIKitNavigationShim",
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
       ]
