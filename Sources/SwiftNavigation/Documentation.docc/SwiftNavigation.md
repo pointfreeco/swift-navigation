@@ -152,7 +152,7 @@ the <doc:SwiftNavigation#SwiftUI> section:
 
 ```swift
 @Observable
-class FeatureeModel {
+class FeatureModel {
   var destination: Destination?
 
   enum Destination {

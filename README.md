@@ -29,8 +29,9 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms:
 
 #### SwiftUI
 
-> Important: To get access to the tools described below you must depend on the SwiftUINavigation 
-> package and import SwiftUINavigation.
+> [!IMPORTANT]
+> To get access to the tools described below you must depend on the SwiftUINavigation package and
+> import SwiftUINavigation.
 
 SwiftUI already comes with incredibly powerful navigation APIs, but there are a few areas lacking
 that can be filled. In particular, driving navigation from enum state so that you can have
@@ -122,16 +123,18 @@ the `destination` property:
 }
 ```
 
-> Note: For the alert we are using the special `Binding` initializer that turns a `Binding<Void?>`
-into a `Binding<Bool>`.
+> [!NOTE]
+> For the alert we are using the special `Binding` initializer that turns a `Binding<Void?>` into a
+> `Binding<Bool>`.
 
 We now have a concise way of describing all of the destinations a feature can navigate to, and
 we can still use SwiftUI's navigation APIs.
 
 #### UIKit
 
-> Important: To get access to the tools described below you must depend on the UIKitNavigation 
-package and import UIKitNavigation.
+> [!IMPORTANT]
+> To get access to the tools described below you must depend on the UIKitNavigation package and
+> import UIKitNavigation.
 
 Unlike SwiftUI, UIKit does not come with state-driven navigation tools. Its navigation tools are
 "fire-and-forget", meaning you simply invoke a method to trigger a navigation, but there is 
@@ -157,7 +160,7 @@ the <doc:SwiftNavigation#SwiftUI> section:
 
 ```swift
 @Observable
-class FeatureeModel {
+class FeatureModel {
   var destination: Destination?
 
   enum Destination {
@@ -247,7 +250,7 @@ alerts, all driven by state and deep-linkable.
 
 ## Learn More
 
-SwiftUI Navigation's tools were motivated and designed over the course of many episodes on
+Swift Navigation's tools were motivated and designed over the course of many episodes on
 [Point-Free](https://www.pointfree.co), a video series exploring functional programming and the 
 Swift language, hosted by [Brandon Williams](https://twitter.com/mbrandonw) and
 [Stephen Celis](https://twitter.com/stephencelis).
