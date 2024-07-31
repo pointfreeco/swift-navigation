@@ -115,7 +115,3 @@ Button {
 - ``SwiftUI/View/navigationDestination(item:destination:)``
 - ``SwiftUI/View/navigationDestination(item:destination:)``
 - ``SwiftUI/NavigationLink/init(item:onNavigate:destination:label:)``
-
-### Supporting types
-
-- ``HashableObject``

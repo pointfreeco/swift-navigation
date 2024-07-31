@@ -2,6 +2,20 @@
   import SwiftUI
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+  extension Visibility {
+    public init(_ visibility: ConfirmationDialogStateTitleVisibility) {
+      switch visibility {
+      case .automatic:
+        self = .automatic
+      case .hidden:
+        self = .hidden
+      case .visible:
+        self = .visible
+      }
+    }
+  }
+
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension View {
     /// Presents a confirmation dialog from a binding to an optional value.
     ///

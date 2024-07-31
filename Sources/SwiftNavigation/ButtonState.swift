@@ -94,8 +94,8 @@ public struct ButtonState<Action>: Identifiable {
             Action:
           \((output))
 
-          Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, or \
-          use 'SwiftUI.withAnimation' explicitly.
+          Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, \
+          or use 'SwiftUI.withAnimation' explicitly.
           """
         )
         await perform(action)
