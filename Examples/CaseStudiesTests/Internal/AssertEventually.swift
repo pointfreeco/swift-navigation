@@ -32,7 +32,17 @@ func assertEventuallyNoDifference<T: Equatable>(
     expression1(),
     expression2(),
     condition: { $0 == $1 },
-    assert: XCTAssertNoDifference,
+    assert: { lhs, rhs, message, file, line in
+      expectNoDifference(
+        lhs(),
+        rhs(),
+        message(),
+        fileID: file,
+        filePath: file,
+        line: line,
+        column: 0
+      )
+    },
     timeout: timeout,
     file: file,
     line: line

@@ -43,7 +43,7 @@
     }
 
     @MainActor
-    func testNavigationStackController_ObservationDoesNotRetainModel() async {
+    func testNavigationStackController_ObservationDoesNotRetainModel() {
       #if swift(>=5.10)
         weak nonisolated(unsafe) var weakModel: Model?
       #else
@@ -55,7 +55,7 @@
         let vc = NavigationStackController(path: $model.path) { UIViewController() }
         _ = vc.view!
       }
-      await assertEventuallyNil(weakModel)
+      XCTAssertNil(weakModel)
     }
   }
 

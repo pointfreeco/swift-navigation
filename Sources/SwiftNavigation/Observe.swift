@@ -73,7 +73,7 @@ import ConcurrencyExtras
   }
 #endif
 
-actor ActorProxy {
+private actor ActorProxy {
   let base: (any Actor)?
   init(base: (any Actor)?) {
     self.base = base
