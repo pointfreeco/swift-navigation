@@ -1,25 +1,40 @@
 #if canImport(SwiftUI)
   import CustomDump
   import SwiftUI
+  import SwiftNavigation
   import SwiftUINavigation
   import XCTest
 
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   final class AlertTests: XCTestCase {
     func testAlertState() {
-      let alert = AlertState(
-        title: .init("Alert!"),
-        message: .init("Something went wrong..."),
-        primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .easeInOut)),
-        secondaryButton: .cancel(.init("Cancel"), action: .send(false))
-      )
+      let alert = AlertState {
+        TextState("Alert!")
+      } actions: {
+        ButtonState(role: .destructive, action: .send(true, animation: .easeInOut)) {
+          TextState("Destroy")
+        }
+        ButtonState(role: .cancel) {
+          TextState("Cancel")
+        }
+      } message: {
+        TextState("Something went wrong...")
+      }
+
       expectNoDifference(
         alert,
-        AlertState(
-          title: .init("Alert!"),
-          message: .init("Something went wrong..."),
-          primaryButton: .destructive(.init("Destroy"), action: .send(true, animation: .easeInOut)),
-          secondaryButton: .cancel(.init("Cancel"), action: .send(false))
-        )
+        AlertState {
+          TextState("Alert!")
+        } actions: {
+          ButtonState(role: .destructive, action: .send(true, animation: .easeInOut)) {
+            TextState("Destroy")
+          }
+          ButtonState(role: .cancel) {
+            TextState("Cancel")
+          }
+        } message: {
+          TextState("Something went wrong...")
+        }
       )
 
       var dump = ""
@@ -40,9 +55,7 @@
             ),
             [1]: ButtonState(
               role: .cancel,
-              action: .send(
-                false
-              ),
+              action: .send(nil),
               label: "Cancel"
             )
           ],
@@ -51,46 +64,46 @@
         """
       )
 
-      if #available(iOS 13, macOS 12, tvOS 13, watchOS 6, *) {
-        dump = ""
-        customDump(
-          ConfirmationDialogState(
-            title: .init("Alert!"),
-            message: .init("Something went wrong..."),
-            buttons: [
-              .destructive(.init("Destroy"), action: .send(true, animation: .easeInOut)),
-              .cancel(.init("Cancel"), action: .send(false)),
-            ]
-          ),
-          to: &dump
-        )
-        expectNoDifference(
-          dump,
-          """
-          ConfirmationDialogState(
-            title: "Alert!",
-            actions: [
-              [0]: ButtonState(
-                role: .destructive,
-                action: .send(
-                  true,
-                  animation: Animation.easeInOut
-                ),
-                label: "Destroy"
+      dump = ""
+      customDump(
+        ConfirmationDialogState {
+          TextState("Alert!")
+        } actions: {
+          ButtonState(role: .destructive, action: .send(true, animation: .easeInOut)) {
+            TextState("Destroy")
+          }
+          ButtonState(role: .cancel) {
+            TextState("Cancel")
+          }
+        } message: {
+          TextState("Something went wrong...")
+        },
+        to: &dump
+      )
+      expectNoDifference(
+        dump,
+        """
+        ConfirmationDialogState(
+          title: "Alert!",
+          actions: [
+            [0]: ButtonState(
+              role: .destructive,
+              action: .send(
+                true,
+                animation: Animation.easeInOut
               ),
-              [1]: ButtonState(
-                role: .cancel,
-                action: .send(
-                  false
-                ),
-                label: "Cancel"
-              )
-            ],
-            message: "Something went wrong..."
-          )
-          """
+              label: "Destroy"
+            ),
+            [1]: ButtonState(
+              role: .cancel,
+              action: .send(nil),
+              label: "Cancel"
+            )
+          ],
+          message: "Something went wrong..."
         )
-      }
+        """
+      )
     }
   }
 
