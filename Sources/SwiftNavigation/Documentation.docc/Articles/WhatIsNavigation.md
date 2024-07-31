@@ -48,17 +48,12 @@ Driving navigation from state like this can be incredibly powerful:
     above is SwiftUI-specific. These ideas apply to all view paradigms (SwiftUI, UIKit, AppKit, 
     etc.), and all platforms (Windows, Linux, Wasm, etc.).
 
-This is why state-driven navigation is so great. So, what are tools are at our disposal in Swift to
-embrace this pattern?
+This is why state-driven navigation is so great, and SwiftUI does a pretty great job at providing
+these tools. However, there are ways to improve SwiftUI's tools, _and_ its possible to bring
+state-driven tools to other Apple frameworks such as UIKit and AppKit, and even to other non-Apple
+_platforms_, such as Windows, Linux, Wasm and more.
 
 ## Topics
 
 - <doc:SwiftUINavigationTools>
 - <doc:UIKitNavigationTools>
-
-<!--- <doc:Navigation>-->
-<!--- <doc:SheetsPopoversCovers>-->
-<!--- <doc:AlertsDialogs>-->
-<!--- <doc:Bindings>-->
-<!---->
-<!--[case-paths-gh]: http://github.com/pointfreeco/swift-case-paths-->

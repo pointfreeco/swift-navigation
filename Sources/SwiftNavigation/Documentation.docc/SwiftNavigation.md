@@ -1,6 +1,6 @@
 # ``SwiftNavigation``
 
-Tools for making navigation in Swift applications simpler, more precise, and more ergonomic.
+Bringing simple and powerful navigation tools to all Swift platforms, inspired by SwiftUI.
 
 ## Overview
 
@@ -25,7 +25,7 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms.
 #### SwiftUI
 
 > Important: To get access to the tools described below you must depend on the SwiftNavigation 
-> package and import SwiftUINavigation.
+> package and import the SwiftUINavigation library.
 
 SwiftUI already comes with incredibly powerful navigation APIs, but there are a few areas lacking
 that can be filled. In particular, driving navigation from enum state so that you can have
@@ -41,6 +41,7 @@ class FeatureModel {
   var addItem: AddItemModel?
   var deleteItemAlertIsPresented: Bool
   var editItem: EditItemModel?
+  // ...
 }
 ```
 
@@ -66,7 +67,7 @@ be non-`nil`, two could be non-`nil`, or all three could be non-`nil`. But only 
 are valid: either all are `nil` or exactly one is non-`nil`.
 
 By allowing these 4 other invalid states we can accidentally tell SwiftUI to both present a sheet
-and alert at the same time, but that is not a valid thing to do in SwiftUI, and SwiftUI will even
+and alert at the same time, but that is not a valid thing to do in SwiftUI. The framework will even
 print a message to the console letting you know that in the future it may actually crash your app.
 
 Luckily Swift comes with the perfect tool for dealing with this kind of situation: enums! They
@@ -125,7 +126,7 @@ we can still use SwiftUI's navigation APIs.
 #### UIKit
 
 > Important: To get access to the tools described below you must depend on the SwiftNavigation 
-> package and import UIKitNavigation.
+> package and import the UIKitNavigation library.
 
 Unlike SwiftUI, UIKit does not come with state-driven navigation tools. Its navigation tools are
 "fire-and-forget", meaning you simply invoke a method to trigger a navigation, but there is 
@@ -143,7 +144,7 @@ This makes it easy to get started with navigation, but as SwiftUI has taught us,
 powerful to be able to drive navigation from state. It allows you to encapsulate more of your 
 feature's logic in an isolated and testable domain, and it unlocks deep linking for free since one
 just needs to construct a piece of state that represents where you want to navigate to, hand it to
-SwiftUI, and let SwiftUI handle the rest.
+SwiftUI, and let SwiftUI do the rest.
 
 The UIKitNavigation library brings a powerful suite of navigation tools to UIKit that are heavily
 inspired by SwiftUI. For example, if you have a feature model like the one discussed above in
@@ -154,6 +155,7 @@ the <doc:SwiftNavigation#SwiftUI> section:
 class FeatureModel {
   var destination: Destination?
 
+  @CasePathable
   enum Destination {
     case addItem(AddItemModel)
     case deleteItemAlert
@@ -193,6 +195,31 @@ By using the libraries navigation tools we can be guaranteed that the model will
 with the view. When the state becomes non-`nil` the corresponding form of navigation will be 
 triggered, and when the presented view is dismissed, the state will be `nil`'d out.
 
+Another powerful aspect of SwiftUI is its ability to update its UI whenever state in an observable
+model changes. And thanks to Swift's observation tools this can be done done implicitly and 
+minimally: whichever fields are accessed in the `body` of the view are automatically tracked 
+so that when they change the view updates.
+
+Our UIKitNavigation library comes with a tool that brings this power to UIKit, and it's called
+``observe(_:isolation:)``:
+
+```swift
+observe { [weak self] in
+  guard let self else { return }
+  
+  countLabel.text = "Count: \(model.count)"
+  factLabel.isHidden = model.fact == nil 
+  if let fact = model.fact {
+    factLabel.text = fact
+  }
+  activityIndicator.isHidden = !model.isLoadingFact
+}
+```
+
+Whichever fields are accessed inside `observe` (such as `count`, `fact` and `isLoadingFact` above)
+are automatically tracked, so that whenever they are mutated the trailing closure of `observe`
+will be invoked again, allowing us to update the UI with the freshest data.
+
 All of these tools are built on top of Swift's powerful Observation framework. However, that 
 framework only works on newer versions of Apple's platforms: iOS 17+, macOS 14+, tvOS 17+ and
 watchOS 10+. However, thanks to our back-port of Swift's observation tools (see 
@@ -222,7 +249,9 @@ let token = observe { _ in
 And it's possible to drive navigation from state, such as an alert:
 
 ```swift
-alert(isPresented: $model.isAlertPresented) // TODO
+alert(isPresented: $model.isShowingErrorAlert) {
+  "Something went wrong"
+}
 ```
 
 ## Topics

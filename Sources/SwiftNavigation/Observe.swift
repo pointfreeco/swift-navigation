@@ -125,6 +125,24 @@ private func onChange(
 }
 
 /// A token for cancelling observation.
+///
+/// When this token is deallocated it cancels the observation it was associated with. Store this
+/// token in another object to keep the observation alive. You can do with this with a set of
+/// ``ObservationToken``s and the ``store(in:)-1hsqo`` method:
+///
+/// ```swift
+/// class Coordinator {
+///   let model = Model()
+///   var tokens: Set<ObservationToken> = []
+///
+///   func start() {
+///     observe { [weak self] in
+///       // ...
+///     }
+///     .store(in: &tokens)
+///   }
+/// }
+/// ```
 public final class ObservationToken: @unchecked Sendable, HashableObject {
   fileprivate let _isCancelled = LockIsolated(false)
   public var onCancel: @Sendable () -> Void

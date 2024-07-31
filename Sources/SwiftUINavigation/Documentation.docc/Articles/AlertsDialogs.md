@@ -150,8 +150,7 @@ argument for specifying which case of the enum drives the presentation of the al
 ```
 
 Note that the `case` argument is specified via a concept known as "case paths", which are like
-key paths except tuned specifically for enums and cases rather than structs and properties. See
-<doc:WhatIsNavigation> for more information.
+key paths except tuned specifically for enums and cases rather than structs and properties.
 
 ### Confirmation dialogs
 

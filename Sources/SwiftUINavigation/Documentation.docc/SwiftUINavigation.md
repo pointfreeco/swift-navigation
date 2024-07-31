@@ -37,20 +37,12 @@ to that enum.
 
 ## Topics
 
-### Essentials
-
-- <doc:WhatIsNavigation>
-
 ### Tools
 
 - <doc:Navigation>
 - <doc:SheetsPopoversCovers>
 - <doc:AlertsDialogs>
 - <doc:Bindings>
-
-### Deprecated interfaces
-
-- <doc:Deprecations>
 
 ## See Also
 
