@@ -1,4 +1,4 @@
-#if swift(>=5.9) && canImport(SwiftUI)
+#if canImport(SwiftUI)
   import CustomDump
   import SwiftUI
   import SwiftUINavigation
@@ -40,7 +40,6 @@
     func testDestinationCannotReplaceOtherDestination() throws {
       #if os(iOS) || os(macOS)
         try XCTSkipIf(ProcessInfo.processInfo.environment["CI"] != nil)
-
         @Binding var destination: Status?
         _destination = Binding(initialValue: .inStock(quantity: 1))
 

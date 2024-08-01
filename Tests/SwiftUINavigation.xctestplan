@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "1F0BEC23-36F2-4E22-84D6-3171B50B578F",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SwiftUINavigationTests",
+        "name" : "SwiftUINavigationTests"
+      }
+    }
+  ],
+  "version" : 1
+}

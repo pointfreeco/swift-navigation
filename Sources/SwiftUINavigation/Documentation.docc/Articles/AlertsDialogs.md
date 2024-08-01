@@ -150,8 +150,7 @@ argument for specifying which case of the enum drives the presentation of the al
 ```
 
 Note that the `case` argument is specified via a concept known as "case paths", which are like
-key paths except tuned specifically for enums and cases rather than structs and properties. See
-<doc:WhatIsNavigation> for more information.
+key paths except tuned specifically for enums and cases rather than structs and properties.
 
 ### Confirmation dialogs
 
@@ -212,6 +211,13 @@ struct ContentView: View {
 ```
 
 ## Topics
+
+### Alerts and dialogs
+
+- ``SwiftUI/View/alert(item:title:actions:message:)``
+- ``SwiftUI/View/alert(item:title:actions:)``
+- ``SwiftUI/View/confirmationDialog(item:titleVisibility:title:actions:message:)``
+- ``SwiftUI/View/confirmationDialog(item:titleVisibility:title:actions:)``
 
 ### Alert state and dialog state
 

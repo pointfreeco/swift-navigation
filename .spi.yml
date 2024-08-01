@@ -1,4 +1,7 @@
 version: 1
 builder:
   configs:
-  - documentation_targets: [SwiftUINavigation, SwiftUINavigationCore]
+  - documentation_targets:
+    - SwiftNavigation
+    - SwiftUINavigation
+    - UIKitNavigation

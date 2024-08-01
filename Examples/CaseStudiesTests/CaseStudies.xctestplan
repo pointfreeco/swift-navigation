@@ -1,0 +1,42 @@
+{
+  "configurations" : [
+    {
+      "id" : "3B7DC92D-69DF-45D0-8C61-861272A12D83",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Examples.xcodeproj",
+      "identifier" : "CA473803272F0D330012CAC3",
+      "name" : "CaseStudies"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Examples.xcodeproj",
+        "identifier" : "CA49D9582C20EAA400E6C5BB",
+        "name" : "CaseStudiesTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..",
+        "identifier" : "SwiftUINavigationTests",
+        "name" : "SwiftUINavigationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..",
+        "identifier" : "UIKitNavigationTests",
+        "name" : "UIKitNavigationTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -5,63 +5,11 @@ struct RootView: View {
   var body: some View {
     NavigationStack {
       List {
-        Section {
-          NavigationLink("Optional-driven alerts") {
-            OptionalAlerts()
-          }
-          NavigationLink("Optional confirmation dialogs") {
-            OptionalConfirmationDialogs()
-          }
-        } header: {
-          Text("Alerts and confirmation dialogs")
+        NavigationLink("SwiftUI") {
+          SwiftUICaseStudiesView()
         }
-
-        Section {
-          NavigationLink("Optional sheets") {
-            OptionalSheets()
-          }
-          NavigationLink("Optional popovers") {
-            OptionalPopovers()
-          }
-          NavigationLink("Optional full-screen covers") {
-            OptionalFullScreenCovers()
-          }
-        } header: {
-          Text("Sheets and full-screen covers")
-        }
-
-        Section {
-          NavigationLink("Optional destinations") {
-            NavigationStack {
-              NavigationDestinations()
-            }
-            .navigationTitle("Navigation stack")
-          }
-          NavigationLink("Optional navigation links") {
-            OptionalNavigationLinks()
-          }
-        } header: {
-          Text("Navigation links")
-        }
-
-        Section {
-          NavigationLink("Routing") {
-            Routing()
-          }
-          NavigationLink("Custom components") {
-            CustomComponents()
-          }
-          NavigationLink("Synchronized bindings") {
-            SynchronizedBindings()
-          }
-          NavigationLink("Optional bindings") {
-            IfLetCaseStudy()
-          }
-          NavigationLink("Enum bindings") {
-            IfCaseLetCaseStudy()
-          }
-        } header: {
-          Text("Advanced")
+        NavigationLink("UIKit") {
+          UIKitCaseStudiesView()
         }
       }
       .navigationTitle("Case studies")

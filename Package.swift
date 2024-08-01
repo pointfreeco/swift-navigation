@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "swiftui-navigation",
+  name: "swift-navigation",
   platforms: [
     .iOS(.v13),
     .macOS(.v10_15),
@@ -12,25 +12,46 @@ let package = Package(
   ],
   products: [
     .library(
+      name: "SwiftNavigation",
+      targets: ["SwiftNavigation"]
+    ),
+    .library(
       name: "SwiftUINavigation",
       targets: ["SwiftUINavigation"]
     ),
     .library(
-      name: "SwiftUINavigationCore",
-      targets: ["SwiftUINavigationCore"]
+      name: "UIKitNavigation",
+      targets: ["UIKitNavigation"]
     ),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.4"),
+    .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.1.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
+    .package(url: "https://github.com/pointfreeco/swift-perception", from: "1.3.4"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.2.2"),
   ],
   targets: [
     .target(
+      name: "SwiftNavigation",
+      dependencies: [
+        .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(name: "CustomDump", package: "swift-custom-dump"),
+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
+        .product(name: "Perception", package: "swift-perception"),
+      ]
+    ),
+    .testTarget(
+      name: "SwiftNavigationTests",
+      dependencies: [
+        "SwiftNavigation"
+      ]
+    ),
+    .target(
       name: "SwiftUINavigation",
       dependencies: [
-        "SwiftUINavigationCore",
+        "UIKitNavigation",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
@@ -42,10 +63,20 @@ let package = Package(
       ]
     ),
     .target(
-      name: "SwiftUINavigationCore",
+      name: "UIKitNavigation",
       dependencies: [
-        .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
+        "SwiftNavigation",
+        "UIKitNavigationShim",
+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
+      ]
+    ),
+    .target(
+      name: "UIKitNavigationShim"
+    ),
+    .testTarget(
+      name: "UIKitNavigationTests",
+      dependencies: [
+        "UIKitNavigation"
       ]
     ),
   ]
@@ -56,4 +87,9 @@ for target in package.targets {
   target.swiftSettings!.append(contentsOf: [
     .enableExperimentalFeature("StrictConcurrency")
   ])
+  // target.swiftSettings?.append(
+  //   .unsafeFlags([
+  //     "-enable-library-evolution",
+  //   ])
+  // )
 }

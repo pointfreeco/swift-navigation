@@ -36,8 +36,8 @@
       var value: Result<Int, MyError>? = nil
       let binding = Binding(get: { value }, set: { value = $0 })
 
-      let success = binding.case(/Result.success)
-      let failure = binding.case(/Result.failure)
+      let success = binding.success
+      let failure = binding.failure
       XCTAssertEqual(binding.wrappedValue, nil)
       XCTAssertEqual(success.wrappedValue, nil)
       XCTAssertEqual(failure.wrappedValue, nil)
@@ -53,11 +53,21 @@
       XCTAssertEqual(failure.wrappedValue, nil)
 
       failure.wrappedValue = MyError()
+      XCTAssertEqual(binding.wrappedValue, .success(42))
+      XCTAssertEqual(success.wrappedValue, 42)
+      XCTAssertEqual(failure.wrappedValue, nil)
+
+      success.wrappedValue = nil
+      XCTAssertEqual(binding.wrappedValue, nil)
+      XCTAssertEqual(success.wrappedValue, nil)
+      XCTAssertEqual(failure.wrappedValue, nil)
+
+      binding.wrappedValue = .failure(MyError())
       XCTAssertEqual(binding.wrappedValue, .failure(MyError()))
       XCTAssertEqual(success.wrappedValue, nil)
       XCTAssertEqual(failure.wrappedValue, MyError())
 
-      success.wrappedValue = nil
+      failure.wrappedValue = nil
       XCTAssertEqual(binding.wrappedValue, nil)
       XCTAssertEqual(success.wrappedValue, nil)
       XCTAssertEqual(failure.wrappedValue, nil)

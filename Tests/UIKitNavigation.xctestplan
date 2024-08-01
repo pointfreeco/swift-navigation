@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "9177EACB-0097-4DE7-958E-53C15B3A0725",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "UIKitNavigationTests",
+        "name" : "UIKitNavigationTests"
+      }
+    }
+  ],
+  "version" : 1
+}
