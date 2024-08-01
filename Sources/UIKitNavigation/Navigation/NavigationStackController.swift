@@ -222,11 +222,12 @@
           return true
         }) {
           let nextElement = navigationController.path[nextIndex]
-          let canPushElement =
+          let hasSeenDestinationType =
             nextElement.elementType
             .map { navigationController.destinations.keys.contains(DestinationType($0)) }
             ?? false
-          if !canPushElement {
+          guard hasSeenDestinationType
+          else {
             reportIssue(
               """
               Failed to decode item in navigation path at index \(nextIndex). Perhaps the \
@@ -243,6 +244,14 @@
               )
             }
             navigationController.path.removeSubrange(nextIndex...)
+            return
+          }
+
+          switch navigationController.path[nextIndex] {
+          case .eager, .lazy(.codable):
+            break
+          case .lazy(.element(let element)):
+            navigationController.path[nextIndex] = .eager(element)
           }
           return
         }

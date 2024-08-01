@@ -78,6 +78,100 @@ final class NavigationPathTests: XCTestCase {
   }
 
   @MainActor
+  func testPushAndPopStaticPath() async throws {
+    @UIBinding var path: [Int] = []
+
+    let nav = NavigationStackController(path: $path) {
+      let controller = UIViewController()
+      controller.view.backgroundColor = .init(
+        red: .random(in: 0...1),
+        green: .random(in: 0...1),
+        blue: .random(in: 0...1),
+        alpha: 1
+      )
+      return controller
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ValueViewController(value: number)
+    }
+    try await setUp(controller: nav)
+
+    path.append(1)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(nav.values, [1])
+    await assertEventuallyEqual(path, [1])
+
+    nav.popViewController(animated: true)
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(nav.values, [])
+    await assertEventuallyEqual(path, [])
+
+    path.append(1)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(nav.values, [1])
+    await assertEventuallyEqual(path, [1])
+
+    nav.popViewController(animated: true)
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(nav.values, [])
+    await assertEventuallyEqual(path, [])
+  }
+
+  @MainActor
+  func testPushAndPopTypeErasedPath() async throws {
+    @UIBinding var path = UINavigationPath()
+
+    let nav = NavigationStackController(path: $path) {
+      let controller = UIViewController()
+      controller.view.backgroundColor = .init(
+        red: .random(in: 0...1),
+        green: .random(in: 0...1),
+        blue: .random(in: 0...1),
+        alpha: 1
+      )
+      return controller
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ValueViewController(value: number)
+    }
+    try await setUp(controller: nav)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      path.append(1)
+    }
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(nav.values, [1])
+    await assertEventuallyEqual(path.elements, [.lazy(.element(1))])
+
+    try await Task.sleep(for: .seconds(0.1))
+
+    _ = withUITransaction(\.uiKit.disablesAnimations, true) {
+      nav.popViewController(animated: true)
+    }
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(nav.values, [])
+    await assertEventuallyEqual(path.elements, [])
+
+    try await Task.sleep(for: .seconds(0.1))
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      path.append(1)
+    }
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(nav.values, [1])
+    await assertEventuallyEqual(path.elements, [.lazy(.element(1))])
+
+    try await Task.sleep(for: .seconds(0.1))
+
+    _ = withUITransaction(\.uiKit.disablesAnimations, true) {
+      nav.popViewController(animated: true)
+    }
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyEqual(nav.values, [])
+    await assertEventuallyEqual(path.elements, [])
+  }
+
+  @MainActor
   func testDeepLink_UnrecognizedType() async throws {
     @UIBinding var path = UINavigationPath(["blob"])
     XCTExpectFailure {
@@ -353,9 +447,11 @@ final class NavigationPathTests: XCTestCase {
 
     try await setUp(controller: nav)
 
-    path.append(2)
-    path.append("Hello")
-    path.append(true)
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      path.append(2)
+      path.append("Hello")
+      path.append(true)
+    }
 
     await assertEventuallyEqual(nav.viewControllers.count, 4, timeout: 2)
     await assertEventuallyNoDifference(
@@ -430,6 +526,15 @@ private final class ValueViewController<Value>: UIViewController, _ValueViewCont
   }
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .init(
+      red: .random(in: 0...1),
+      green: .random(in: 0...1),
+      blue: .random(in: 0...1),
+      alpha: 1
+    )
   }
 }
 

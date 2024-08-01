@@ -120,8 +120,6 @@ final class PresentationTests: XCTestCase {
     }
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
-    print(nav.viewControllers.count)
-
     withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.model.isPushed = false
     }

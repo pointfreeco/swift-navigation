@@ -31,7 +31,7 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms.
 
 > [!IMPORTANT]
 > To get access to the tools described below you must depend on the SwiftNavigation package and
-> import SwiftUINavigation.
+> import the SwiftUINavigation library.
 
 SwiftUI already comes with incredibly powerful navigation APIs, but there are a few areas lacking
 that can be filled. In particular, driving navigation from enum state so that you can have
@@ -133,7 +133,7 @@ we can still use SwiftUI's navigation APIs.
 
 > [!IMPORTANT]
 > To get access to the tools described below you must depend on the SwiftNavigation package and
-> import UIKitNavigation.
+> import the UIKitNavigation library.
 
 Unlike SwiftUI, UIKit does not come with state-driven navigation tools. Its navigation tools are
 "fire-and-forget", meaning you simply invoke a method to trigger a navigation, but there is 
@@ -201,6 +201,31 @@ By using the libraries navigation tools we can be guaranteed that the model will
 with the view. When the state becomes non-`nil` the corresponding form of navigation will be 
 triggered, and when the presented view is dismissed, the state will be `nil`'d out.
 
+Another powerful aspect of SwiftUI is its ability to update its UI whenever state in an observable
+model changes. And thanks to Swift's observation tools this can be done done implicitly and 
+minimally: whichever fields are accessed in the `body` of the view are automatically tracked 
+so that when they change the view updates.
+
+Our UIKitNavigation library comes with a tool that brings this power to UIKit, and it's called
+`observe`:
+
+```swift
+observe { [weak self] in
+  guard let self else { return }
+  
+  countLabel.text = "Count: \(model.count)"
+  factLabel.isHidden = model.fact == nil 
+  if let fact = model.fact {
+    factLabel.text = fact
+  }
+  activityIndicator.isHidden = !model.isLoadingFact
+}
+```
+
+Whichever fields are accessed inside `observe` (such as `count`, `fact` and `isLoadingFact` above)
+are automatically tracked, so that whenever they are mutated the trailing closure of `observe`
+will be invoked again, allowing us to update the UI with the freshest data.
+
 All of these tools are built on top of Swift's powerful Observation framework. However, that 
 framework only works on newer versions of Apple's platforms: iOS 17+, macOS 14+, tvOS 17+ and
 watchOS 10+. However, thanks to our back-port of Swift's observation tools (see 
@@ -209,12 +234,12 @@ right away, going all the way back to the iOS 13 era of platforms.
 
 #### Non-Apple platforms
 
-These tools can also form the foundation of building navigation tools for non-Apple platforms, such
-as Windows, Linux, Wasm and more. We do not currently provide any such tools at this moment, but it
-is possible for them to be built externally.
+The tools provided by this library can also form the foundation of building navigation tools for
+non-Apple platforms, such as Windows, Linux, Wasm and more. We do not currently provide any such
+tools at this moment, but it is possible for them to be built externally.
 
-For example, in Wasm it is possible to use the `observe` function to observe changes to a model and
-update the DOM:
+For example, in Wasm it is possible to use the ``observe(_:isolation:)`` function to observe changes
+to a model and update the DOM:
 
 ```swift
 import JavaScriptKit
@@ -230,8 +255,12 @@ let token = observe { _ in
 And it's possible to drive navigation from state, such as an alert:
 
 ```swift
-alert(isPresented: $model.isAlertPresented) // TODO
+alert(isPresented: $model.isShowingErrorAlert) {
+  "Something went wrong"
+}
 ```
+
+And you can build more advanced tools for presenting and dismissing `<dialog>`'s in the browser.
   
 ## Examples
 
@@ -253,7 +282,7 @@ Swift language, hosted by [Brandon Williams](https://twitter.com/mbrandonw) and
 You can watch all of the episodes [here](https://www.pointfree.co/collections/swiftui/navigation).
 
 <a href="https://www.pointfree.co/collections/swiftui/navigation">
-  <img alt="video poster image" src="https://d3rccdn33rt8ze.cloudfront.net/episodes/0211.jpeg" width="600">
+  <img alt="video poster image" src="https://d3rccdn33rt8ze.cloudfront.net/email-assets/pf-email-header.png" width="600">
 </a>
 
 ## Community
