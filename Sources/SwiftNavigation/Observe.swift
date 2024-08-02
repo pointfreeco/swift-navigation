@@ -55,6 +55,7 @@ import ConcurrencyExtras
   ///   - isolation: The isolation of the observation.
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   /// is deallocated.
+  @_disfavoredOverload
   public func observe(
     @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
     isolation: (any Actor)? = #isolation
