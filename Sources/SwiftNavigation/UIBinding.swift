@@ -115,8 +115,8 @@ import IssueReporting
 /// ```
 ///
 /// And you can also build your own navigation tools by utilizing ``UIBinding`` and
-/// ``observe(isolation:_:)-93yzu``. You can even build navigation tools for non-Apple platforms, such as
-/// Windows, Linux, Wasm and more.
+/// ``observe(isolation:_:)-93yzu``. You can even build navigation tools for non-Apple platforms,
+/// such as Windows, Linux, Wasm and more.
 ///
 /// For example, it is possible to build a tool that drives alerts in HTML from a binding of a
 /// boolean:

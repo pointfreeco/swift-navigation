@@ -200,7 +200,6 @@
         focus.wrappedValue = nil
       }
       addAction(editingDidBeginAction, for: .editingDidBegin)
-      // TODO: Is this right? Should we only do `.editingDidEnd`?
       addAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
       let innerToken = observe { [weak self] in
         guard let self else { return }

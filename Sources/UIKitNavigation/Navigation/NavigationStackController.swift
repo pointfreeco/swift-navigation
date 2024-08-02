@@ -130,20 +130,17 @@
             } else if let viewController = viewController(for: navigationID) {
               newViewControllers.append(viewController)
               didPushNewViewController = true
-            } else if case .lazy(.element) = navigationID {
-              if !didPushNewViewController {
-                if let elementType = navigationID.elementType {
-                  reportIssue(
-                    """
-                    No "navigationDestination(for: \(String(customDumping: elementType))) { … }" \
-                    was found among the view controllers on the path.
-                    """
-                  )
-                  invalidIndices.insert(index)
-                } else {
-                  // TODO: reportIssue?
-                }
-              }
+            } else if case .lazy(.element) = navigationID,
+              !didPushNewViewController,
+              let elementType = navigationID.elementType
+            {
+              reportIssue(
+                """
+                No "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
+                found among the view controllers on the path.
+                """
+              )
+              invalidIndices.insert(index)
             }
           }
           path.remove(atOffsets: invalidIndices)
@@ -344,7 +341,6 @@
     ) {
       guard let navigationController = navigationController ?? self as? UINavigationController
       else {
-        // TODO: Should `UIViewController` be able to lazily register?
         reportIssue(
           """
           Can't register navigation destination: "navigationController" is "nil".

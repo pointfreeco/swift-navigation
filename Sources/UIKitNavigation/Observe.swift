@@ -172,6 +172,5 @@
     }
   }
 
-  // TODO: Isolate?
   private nonisolated(unsafe) let tokensKey = malloc(1)!
 #endif
