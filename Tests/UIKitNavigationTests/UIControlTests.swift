@@ -172,5 +172,15 @@
       XCTAssertEqual(text, "Blob!")
       XCTAssertEqual(textField.text, "Blob, Esq.")
     }
+
+    @MainActor
+    func testDeinitIsolation() async {
+      await Task.detached {
+        @UIBinding var text = ""
+        let textField = await UITextField(text: $text)
+        _ = textField
+      }
+      .value
+    }
   }
 #endif

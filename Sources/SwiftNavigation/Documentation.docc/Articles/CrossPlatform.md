@@ -9,8 +9,8 @@ The tools provided by this library can also form the foundation of building navi
 non-Apple platforms, such as Windows, Linux, Wasm and more. We do not currently provide any such
 tools at this moment, but it is possible for them to be built externally.
 
-For example, in Wasm it is possible to use the ``observe(_:isolation:)`` function to observe changes
-to a model and update the DOM:
+For example, in Wasm it is possible to use the ``observe(isolation:_:)-93yzu`` function to observe
+changes to a model and update the DOM:
 
 ```swift
 import JavaScriptKit
@@ -18,7 +18,7 @@ import JavaScriptKit
 var countLabel = document.createElement("span")
 _ = document.body.appendChild(countLabel)
 
-let token = observe { _ in
+let token = observe {
   countLabel.innerText = .string("Count: \(model.count)")
 }
 ```

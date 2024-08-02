@@ -17,7 +17,7 @@ for non-Apple platforms, such as Windows, Linux, Wasm, and more.
 The SwiftNavigation library forms the foundation that more advanced tools can be built upon, such
 as the UIKitNavigation and SwiftUINavigation libraries. There are two primary tools provided:
 
-* ``observe(_:isolation:)``: Minimally observe changes in a model.
+* ``observe(isolation:_:)-93yzu``: Minimally observe changes in a model.
 * ``UIBinding``: Two-way binding for connecting navigation and UI components to an observable model.
 
 In addition to these tools there are some supplementary concepts that allow you to build more 
@@ -36,7 +36,7 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms.
 
 ### Observing changes to state
 
-- ``observe(_:isolation:)``
+- ``observe(isolation:_:)-93yzu``
 - ``ObservationToken``
 
 ### Creating and sharing state

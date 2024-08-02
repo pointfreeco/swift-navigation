@@ -7,7 +7,7 @@ class IsolationTests: XCTestCase {
     let model = MainActorModel()
     let expectation = expectation(description: "observation")
     expectation.expectedFulfillmentCount = 2
-    let token = SwiftNavigation.observe { _ in
+    let token = SwiftNavigation.observe {
       _ = model.count
       MainActor.assertIsolated()
       expectation.fulfill()
@@ -22,7 +22,7 @@ class IsolationTests: XCTestCase {
     let model = GlobalActorModel()
     let expectation = expectation(description: "observation")
     expectation.expectedFulfillmentCount = 2
-    let token = SwiftNavigation.observe { _ in
+    let token = SwiftNavigation.observe {
       _ = model.count
       GlobalActorIsolated.assertIsolated()
       expectation.fulfill()

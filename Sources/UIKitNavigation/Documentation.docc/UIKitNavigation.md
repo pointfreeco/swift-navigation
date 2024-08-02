@@ -109,7 +109,7 @@ minimally: whichever fields are accessed in the `body` of the view are automatic
 so that when they change the view updates.
 
 Our UIKitNavigation library comes with a tool that brings this power to UIKit, and it's called
-``observe(_:isolation:)``:
+``observe(isolation:_:)-93yzu``:
 
 ```swift
 observe { [weak self] in

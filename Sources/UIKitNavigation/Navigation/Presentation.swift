@@ -257,8 +257,8 @@
 
     /// Presents a view controller using the given item as a data source for its content.
     ///
-    /// This helper powers ``UIKit/UINavigationController/pushViewController(item:content:)-4u68r)``
-    /// and can be used to define custom transitions.
+    /// This helper powers ``navigationDestination(item:content:)-367r6`` and can be used to define
+    /// custom transitions.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
@@ -288,7 +288,7 @@
 
     /// Presents a view controller using the given item as a data source for its content.
     ///
-    /// This helper powers ``present(item:onDismiss:content:)-1zfb1`` and can be used to define
+    /// This helper powers ``present(item:onDismiss:content:)-34iup`` and can be used to define
     /// custom transitions.
     ///
     /// - Parameters:

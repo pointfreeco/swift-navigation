@@ -74,7 +74,9 @@
         }
       }
       let observationToken = ObservationToken { [weak self] in
-        MainActor.assumeIsolated { self?.removeAction(action, for: .allEvents) }
+        MainActor.assumeIsolated {
+          self?.removeAction(action, for: .allEvents)
+        }
         token.cancel()
         observation.invalidate()
       }
