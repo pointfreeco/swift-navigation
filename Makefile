@@ -7,6 +7,8 @@ TEST_RUNNER_CI = $(CI)
 
 default: test
 
+test: test-ios test-macos test-tvos test-watchos test-examples
+
 test-ios:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
