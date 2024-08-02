@@ -1,9 +1,16 @@
 #if swift(>=6) && canImport(UIKit) && !os(tvOS) && !os(watchOS)
+  import IssueReporting
   import UIKit
 
   @available(iOS 18, tvOS 18, visionOS 2, *)
   extension UITabBarController {
-    public func bind(selectedTab: UIBinding<String?>) -> ObservationToken {
+    public func bind(
+      selectedTab: UIBinding<String?>,
+      fileID: StaticString = #fileID,
+      filePath: StaticString = #filePath,
+      line: UInt = #line,
+      column: UInt = #column
+    ) -> ObservationToken {
       let token = observe { [weak self] in
         guard let self else { return }
         guard let identifier = selectedTab.wrappedValue else {
@@ -12,7 +19,17 @@
         }
         guard let tab = tabs.first(where: { $0.identifier == identifier })
         else {
-          // TODO: runtimeWarn
+          reportIssue(
+            """
+            Tab bar controller binding attempted to write an invalid identifier ('\(identifier)').
+
+            Valid identifiers: \(tabs.map(\.identifier))
+            """,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+          )
           self.selectedTab = nil
           return
         }
