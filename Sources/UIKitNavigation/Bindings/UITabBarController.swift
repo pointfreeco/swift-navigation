@@ -1,4 +1,4 @@
-#if swift(>=6) && canImport(UIKit)
+#if swift(>=6) && canImport(UIKit) && !os(tvOS) && !os(watchOS)
   import UIKit
 
   @available(iOS 18, tvOS 18, visionOS 2, *)

@@ -34,7 +34,7 @@ import ConcurrencyExtras
   /// > Observation framework.
   ///
   /// This function also works on non-Apple platforms, such as Windows, Linux, Wasm, and more. For
-  /// example, in a Wasm app you could observe chnages to the `count` property to update the inner
+  /// example, in a Wasm app you could observe changes to the `count` property to update the inner
   /// HTML of a tag:
   ///
   /// ```swift
@@ -43,21 +43,37 @@ import ConcurrencyExtras
   /// var countLabel = document.createElement("span")
   /// _ = document.body.appendChild(countLabel)
   ///
-  /// let token = observe { _ in
+  /// let token = observe {
   ///   countLabel.innerText = .string("Count: \(model.count)")
   /// }
   /// ```
   ///
-  /// And you can also build your own tools on top of ``observe(_:isolation:)``.
+  /// And you can also build your own tools on top of `observe`.
   ///
   /// - Parameters:
-  ///   - apply: A closure that contains properties to track.
   ///   - isolation: The isolation of the observation.
+  ///   - apply: A closure that contains properties to track.
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
-  /// is deallocated.
+  ///   is deallocated.
   public func observe(
-    @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-    isolation: (any Actor)? = #isolation
+    isolation: (any Actor)? = #isolation,
+    @_inheritActorContext _ apply: @escaping @Sendable () -> Void
+  ) -> ObservationToken {
+    observe(isolation: isolation) { _ in apply() }
+  }
+
+  /// Tracks access to properties of an observable model.
+  ///
+  /// A version of ``observe(isolation:_:)`` that is handed the current ``UITransaction``.
+  ///
+  /// - Parameters:
+  ///   - isolation: The isolation of the observation.
+  ///   - apply: A closure that contains properties to track.
+  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+  ///   is deallocated.
+  public func observe(
+    isolation: (any Actor)? = #isolation,
+    @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObservationToken {
     let actor = ActorProxy(base: isolation)
     return observe(
@@ -159,7 +175,7 @@ public final class ObservationToken: @unchecked Sendable, HashableObject {
     cancel()
   }
 
-  /// Cancels observation that was created with ``observe(_:isolation:)``.
+  /// Cancels observation that was created with ``observe(isolation:_:)-93yzu``.
   ///
   /// > Note: This cancellation is lazy and cooperative. It does not cancel the observation
   /// > immediately, but rather next time a change is detected by `observe` it will cease any future

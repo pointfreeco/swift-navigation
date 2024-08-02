@@ -8,7 +8,7 @@ final class LifetimeTests: XCTestCase {
     var counts = [Int]()
     var token: ObservationToken?
     do {
-      token = SwiftNavigation.observe { _ in
+      token = SwiftNavigation.observe {
         counts.append(model.count)
       }
     }

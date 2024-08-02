@@ -8,7 +8,7 @@
     ///
     /// - Parameters:
     ///   - frame: The frame rectangle for the view, measured in points.
-    ///   - selectedColor: The binding to read from for the selected color, and write to when the
+    ///   - selectedSegment: The binding to read from for the selected color, and write to when the
     ///     selected color is changes.
     public convenience init(
       frame: CGRect = .zero, selectedSegment: UIBinding<some RawRepresentable<Int>>
@@ -19,7 +19,7 @@
 
     /// Establishes a two-way connection between a binding and the color well's selected color.
     ///
-    /// - Parameter selectedColor: The binding to read from for the selected color, and write to
+    /// - Parameter selectedSegment: The binding to read from for the selected color, and write to
     ///   when the selected color changes.
     /// - Returns: A cancel token.
     @discardableResult

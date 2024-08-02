@@ -51,4 +51,4 @@ Driving navigation from state like this can be incredibly powerful:
 This is why state-driven navigation is so great, and SwiftUI does a pretty great job at providing
 these tools. However, there are ways to improve SwiftUI's tools, _and_ its possible to bring
 state-driven tools to other Apple frameworks such as UIKit and AppKit, and even to other non-Apple
-_platforms_, such as Windows, Linux, Wasm and more.
+_platforms_, such as Windows, Linux, Wasm, and more.
