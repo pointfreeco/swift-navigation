@@ -241,8 +241,23 @@ public struct UIBinding<Value>: Sendable {
   /// Creates a binding by projecting the base optional value to a Boolean value.
   ///
   /// - Parameter base: A value to project to a Boolean value.
-  public init<V>(_ base: UIBinding<V?>) where Value == Bool {
-    self = base.isPresented
+  public init<V>(
+    _ base: UIBinding<V?>,
+    fileID: StaticString = #fileID,
+    filePath: StaticString = #filePath,
+    line: UInt = #line,
+    column: UInt = #column
+  ) where Value == Bool {
+    func open(_ location: some _UIBinding<V?>) -> any _UIBinding<Value> {
+      _UIBindingOptionalToBool(
+        base: location,
+        fileID: fileID,
+        filePath: filePath,
+        line: line,
+        column: column
+      )
+    }
+    self.init(location: open(base.location), transaction: base.transaction)
   }
 
   /// Creates a binding by projecting the base value to an optional value.
@@ -665,6 +680,57 @@ where Base.Value: CasePathable {
   }
 }
 
+private final class _UIBindingOptionalToBool<
+  Base: _UIBinding<Wrapped?>, Wrapped
+>: _UIBinding, @unchecked Sendable {
+  let base: Base
+  let fileID: StaticString
+  let filePath: StaticString
+  let line: UInt
+  let column: UInt
+  init(
+    base: Base,
+    fileID: StaticString,
+    filePath: StaticString,
+    line: UInt,
+    column: UInt
+  ) {
+    self.base = base
+    self.fileID = fileID
+    self.filePath = filePath
+    self.line = line
+    self.column = column
+  }
+  var wrappedValue: Bool {
+    get { base.wrappedValue != nil }
+    set {
+      if newValue {
+        reportIssue(
+          """
+          Boolean presentation binding attempted to write 'true' to a generic 'UIBinding<Item?>' \
+          (i.e., 'UIBinding<\(Wrapped.self)?>').
+          
+          This is not a valid thing to do, as there is no way to convert 'true' to a new instance \
+          of '\(Wrapped.self)'.
+          """,
+          fileID: fileID,
+          filePath: filePath,
+          line: line,
+          column: column
+        )
+      } else {
+        base.wrappedValue = nil
+      }
+    }
+  }
+  static func == (lhs: _UIBindingOptionalToBool, rhs: _UIBindingOptionalToBool) -> Bool {
+    lhs.base == rhs.base
+  }
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(base)
+  }
+}
+
 private final class _UIBindingOptionalToMember<
   Base: _UIBinding<Wrapped?>, Wrapped, Value
 >: _UIBinding, @unchecked Sendable {
@@ -722,18 +788,5 @@ private final class _UIBindingOptionalEnumToCase<
   func hash(into hasher: inout Hasher) {
     hasher.combine(base)
     hasher.combine(keyPath)
-  }
-}
-
-extension Optional {
-  fileprivate var isPresented: Bool {
-    get { self != nil }
-    set {
-      guard !newValue else {
-        // TODO: runtimeWarn?
-        return
-      }
-      self = nil
-    }
   }
 }
