@@ -4,6 +4,7 @@
 
   @available(iOS 18, tvOS 18, visionOS 2, *)
   extension UITabBarController {
+    @discardableResult
     public func bind(
       selectedTab: UIBinding<String?>,
       fileID: StaticString = #fileID,
@@ -44,8 +45,21 @@
         token.cancel()
         observation.invalidate()
       }
-      // TODO: Hold onto token
+      self.observationToken = observationToken
       return observationToken
     }
+
+    private var observationToken: ObservationToken? {
+      get {
+        objc_getAssociatedObject(self, Self.observationTokenKey) as? ObservationToken
+      }
+      set {
+        objc_setAssociatedObject(
+          self, Self.observationTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+      }
+    }
+
+    private static let observationTokenKey = malloc(1)!
   }
 #endif
