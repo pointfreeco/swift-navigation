@@ -298,7 +298,7 @@ problem, there are a number of places you can discuss with fellow
 
 ## Installation
 
-You can add SwiftUI Navigation to an Xcode project by adding it as a package dependency.
+You can add Swift Navigation to an Xcode project by adding it as a package dependency.
 
 > https://github.com/pointfreeco/swift-navigation
 
