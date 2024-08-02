@@ -81,12 +81,13 @@ import IssueReporting
 /// > `Perceptible` protocols, use the [`@UIBindable`](<doc:UIBindable>) property wrapper.
 ///
 /// It is also possible to use bindings for UI components on other platforms beyond Apple's
-/// platforms. For example, in Wasm
+/// platforms. For example, in Wasm you can bind an HTML text field to a field of the model:
 ///
 /// ```swift
 /// @UIBindable var model = Model()
 ///
-/// let textField = // TODO
+/// let searchField = document.createElement("input")
+/// searchField.bind(text: $model.searchText)
 /// ```
 ///
 /// This makes it so that any changes to the text field in the DOM are immediately played back
@@ -122,7 +123,9 @@ import IssueReporting
 /// boolean:
 ///
 /// ```swift
-/// alert(isPresented: $model.isPresented) // TODO
+/// alert(isPresented: $model.isErrorAlertPresented) {
+///   "Something went wrong."
+/// }
 /// ```
 @dynamicMemberLookup
 @propertyWrapper
