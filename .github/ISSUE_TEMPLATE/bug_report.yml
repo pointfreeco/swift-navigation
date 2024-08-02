@@ -25,7 +25,7 @@ body:
       required: false
     - label: If possible, I've reproduced the issue using the `main` branch of this package.
       required: false
-    - label: This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/swiftui-navigation/issues) or [discussion](https://github.com/pointfreeco/swiftui-navigation/discussions).
+    - label: This issue hasn't been addressed in an [existing GitHub issue](https://github.com/pointfreeco/swift-navigation/issues) or [discussion](https://github.com/pointfreeco/swiftui-navigation/discussions).
       required: true
 - type: textarea
   attributes:
