@@ -19,9 +19,11 @@ class MinimalObservationViewController: UIViewController, UIKitCaseStudy {
     super.viewDidLoad()
 
     let countLabel = UILabel()
-    let incrementButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.count += 1
-    })
+    let incrementButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.count += 1
+      })
     incrementButton.setTitle("Increment", for: .normal)
     let isCountHiddenSwitch = UISwitch(isOn: $model.isCountHidden)
     let isCountHiddenLabel = UILabel()

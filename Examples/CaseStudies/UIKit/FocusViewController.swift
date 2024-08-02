@@ -34,28 +34,38 @@ class FocusViewController: UIViewController, UIKitCaseStudy {
 
     let currentFocusLabel = UILabel()
 
-    let focusBioButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.focus = .bio
-    })
+    let focusBioButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.focus = .bio
+      })
     focusBioButton.setTitle("Focus bio", for: .normal)
-    let focusEmailButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.focus = .email
-    })
+    let focusEmailButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.focus = .email
+      })
     focusEmailButton.setTitle("Focus email", for: .normal)
-    let focusPasswordButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.focus = .password
-    })
+    let focusPasswordButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.focus = .password
+      })
     focusPasswordButton.setTitle("Focus password", for: .normal)
-    let focusUsernameButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.focus = .username
-    })
+    let focusUsernameButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.focus = .username
+      })
     focusUsernameButton.setTitle("Focus username", for: .normal)
-    let resignFirstResponder = UIButton(type: .system, primaryAction: UIAction { _ in
-      bioTextField.resignFirstResponder()
-      emailTextField.resignFirstResponder()
-      passwordTextField.resignFirstResponder()
-      usernameTextField.resignFirstResponder()
-    })
+    let resignFirstResponder = UIButton(
+      type: .system,
+      primaryAction: UIAction { _ in
+        bioTextField.resignFirstResponder()
+        emailTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
+        usernameTextField.resignFirstResponder()
+      })
     resignFirstResponder.setTitle("Resign first responder", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [

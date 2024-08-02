@@ -46,7 +46,7 @@
     public func bind(attributedText: UIBinding<NSAttributedString>) -> ObservationToken {
       bind(UIBinding(attributedText), to: \.attributedText, for: .editingChanged)
     }
-    
+
     /// Establishes a two-way connection between a binding and the text field's current selection.
     ///
     /// - Parameter selection: The binding to read from for the current selection, and write to when
@@ -90,16 +90,18 @@
         else {
           return nil
         }
-        let lowerBound = text.index(
-          text.startIndex,
-          offsetBy: offset(from: beginningOfDocument, to: textRange.start),
-          limitedBy: text.endIndex
-        ) ?? text.endIndex
-        let upperBound = text.index(
-          text.startIndex,
-          offsetBy: offset(from: beginningOfDocument, to: textRange.end),
-          limitedBy: text.endIndex
-        ) ?? text.endIndex
+        let lowerBound =
+          text.index(
+            text.startIndex,
+            offsetBy: offset(from: beginningOfDocument, to: textRange.start),
+            limitedBy: text.endIndex
+          ) ?? text.endIndex
+        let upperBound =
+          text.index(
+            text.startIndex,
+            offsetBy: offset(from: beginningOfDocument, to: textRange.end),
+            limitedBy: text.endIndex
+          ) ?? text.endIndex
         return UITextSelection(range: lowerBound..<upperBound)
       }
       set {

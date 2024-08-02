@@ -342,7 +342,6 @@ final class PresentationTests: XCTestCase {
     await assertEventuallyNil(vc.presentedViewController, timeout: 2)
   }
 
-
   @MainActor
   func testDismissLeafPresentationDirectly() async throws {
     class VC: UIViewController {

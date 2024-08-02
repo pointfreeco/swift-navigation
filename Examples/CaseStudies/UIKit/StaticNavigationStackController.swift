@@ -58,28 +58,36 @@ private class RootViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
 
-    let feature1Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature1)
-    })
+    let feature1Button = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature1)
+      })
     feature1Button.setTitle("Push feature 1", for: .normal)
 
-    let feature2Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature2)
-    })
+    let feature2Button = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature2)
+      })
     feature2Button.setTitle("Push feature 2", for: .normal)
 
-    let feature3Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature3)
-    })
+    let feature3Button = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature3)
+      })
     feature3Button.setTitle("Push feature 3", for: .normal)
 
-    let feature123Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.path.append(contentsOf: [
-        .feature1,
-        .feature2,
-        .feature3,
-      ])
-    })
+    let feature123Button = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.path.append(contentsOf: [
+          .feature1,
+          .feature2,
+          .feature3,
+        ])
+      })
     feature123Button.setTitle("Push feature 1 → 2 → 3", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [
@@ -114,24 +122,32 @@ private class FeatureViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
 
-    let feature1Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature1)
-    })
+    let feature1Button = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature1)
+      })
     feature1Button.setTitle("Push feature 1", for: .normal)
 
-    let feature2Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature2)
-    })
+    let feature2Button = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature2)
+      })
     feature2Button.setTitle("Push feature 2", for: .normal)
 
-    let feature3Button = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature3)
-    })
+    let feature3Button = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: StaticNavigationStackController.Model.Path.feature3)
+      })
     feature3Button.setTitle("Push feature 3", for: .normal)
 
-    let dismissButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.dismiss()
-    })
+    let dismissButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.dismiss()
+      })
     dismissButton.setTitle("Dismiss", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [

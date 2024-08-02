@@ -43,16 +43,20 @@ private class RootViewController: UIViewController {
       NumberFeatureViewController(number: number)
     }
 
-    let numberButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: Int.random(in: 1...1_000))
-    })
+    let numberButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: Int.random(in: 1...1_000))
+      })
     numberButton.setTitle("Push number feature", for: .normal)
 
-    let deepLinkButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: Int.random(in: 1...1_000))
-      self?.traitCollection.push(value: "Hello!")
-      self?.traitCollection.push(value: Bool.random())
-    })
+    let deepLinkButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: Int.random(in: 1...1_000))
+        self?.traitCollection.push(value: "Hello!")
+        self?.traitCollection.push(value: Bool.random())
+      })
     deepLinkButton.setTitle("Push features: number → string → bool", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [
@@ -89,19 +93,25 @@ private class NumberFeatureViewController: UIViewController {
       StringFeatureViewController(string: string)
     }
 
-    let numberButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: Int.random(in: 1...1_000))
-    })
+    let numberButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: Int.random(in: 1...1_000))
+      })
     numberButton.setTitle("Push number feature", for: .normal)
 
-    let stringButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: "Hello!")
-    })
+    let stringButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: "Hello!")
+      })
     stringButton.setTitle("Push string feature", for: .normal)
 
-    let dismissButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.dismiss()
-    })
+    let dismissButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.dismiss()
+      })
     dismissButton.setTitle("Dismiss", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [
@@ -123,7 +133,7 @@ private class NumberFeatureViewController: UIViewController {
 
 private class StringFeatureViewController: UIViewController {
   let string: String
-  init(string: String ) {
+  init(string: String) {
     self.string = string
     super.init(nibName: nil, bundle: nil)
     title = "Feature '\(string)'"
@@ -139,24 +149,32 @@ private class StringFeatureViewController: UIViewController {
       BoolFeatureViewController(bool: bool)
     }
 
-    let numberButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: Int.random(in: 1...1_000))
-    })
+    let numberButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: Int.random(in: 1...1_000))
+      })
     numberButton.setTitle("Push number feature", for: .normal)
 
-    let stringButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: "Hello!")
-    })
+    let stringButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: "Hello!")
+      })
     stringButton.setTitle("Push string feature", for: .normal)
 
-    let boolButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: "\(Bool.random())")
-    })
+    let boolButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: "\(Bool.random())")
+      })
     boolButton.setTitle("Push boolean feature", for: .normal)
 
-    let dismissButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.dismiss()
-    })
+    let dismissButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.dismiss()
+      })
     dismissButton.setTitle("Dismiss", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [
@@ -191,24 +209,32 @@ private class BoolFeatureViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
 
-    let numberButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: Int.random(in: 1...1_000))
-    })
+    let numberButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: Int.random(in: 1...1_000))
+      })
     numberButton.setTitle("Push number feature", for: .normal)
 
-    let stringButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: "Hello!")
-    })
+    let stringButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: "Hello!")
+      })
     stringButton.setTitle("Push string feature", for: .normal)
 
-    let boolButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.push(value: "\(Bool.random())")
-    })
+    let boolButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.push(value: "\(Bool.random())")
+      })
     boolButton.setTitle("Push boolean feature", for: .normal)
 
-    let dismissButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.traitCollection.dismiss()
-    })
+    let dismissButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.traitCollection.dismiss()
+      })
     dismissButton.setTitle("Dismiss", for: .normal)
 
     let stack = UIStackView(arrangedSubviews: [

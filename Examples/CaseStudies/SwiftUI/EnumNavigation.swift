@@ -25,7 +25,7 @@ struct EnumNavigation: SwiftUICaseStudy {
     """
 
   @State var destination: Destination?
-  
+
   var body: some View {
     Section {
       Button("Alert is presented: \(destination.is(\.alert) ? "✅" : "❌")") {

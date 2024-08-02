@@ -20,7 +20,7 @@ struct UIKitCaseStudiesView: View {
       }
       CaseStudyGroupView("Stack navigation") {
         StaticNavigationStackController()
-        ErasedNavigationStackController() 
+        ErasedNavigationStackController()
         // TODO: state restoration
       }
       CaseStudyGroupView("Advanced") {

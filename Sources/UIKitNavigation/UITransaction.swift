@@ -40,7 +40,6 @@
     }
   }
 
-
   private enum AnimationCompletionsKey: UITransactionKey {
     static let defaultValue: [@Sendable (Bool?) -> Void] = []
   }

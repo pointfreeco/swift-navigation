@@ -32,15 +32,17 @@ class EnumControlsViewController: UIViewController, UIKitCaseStudy {
     quantityStepper.maximumValue = .infinity
     let quantityStack = UIStackView(arrangedSubviews: [
       quantityLabel,
-      quantityStepper
+      quantityStepper,
     ])
-    let outOfStockButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.status = .outOfStock(isOnBackOrder: false)
-    })
+    let outOfStockButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.status = .outOfStock(isOnBackOrder: false)
+      })
     outOfStockButton.setTitle("Out of stock", for: .normal)
     let inStockStack = UIStackView(arrangedSubviews: [
       quantityStack,
-      outOfStockButton
+      outOfStockButton,
     ])
     inStockStack.axis = .vertical
 
@@ -49,15 +51,17 @@ class EnumControlsViewController: UIViewController, UIKitCaseStudy {
     let isOnBackOrderSwitch = UISwitch()
     let isOnBackOrderStack = UIStackView(arrangedSubviews: [
       isOnBackOrderLabel,
-      isOnBackOrderSwitch
+      isOnBackOrderSwitch,
     ])
-    let backInStockButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.status = .inStock(quantity: 100)
-    })
+    let backInStockButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.status = .inStock(quantity: 100)
+      })
     backInStockButton.setTitle("Back in stock!", for: .normal)
     let outOfStockStack = UIStackView(arrangedSubviews: [
       isOnBackOrderStack,
-      backInStockButton
+      backInStockButton,
     ])
     outOfStockStack.axis = .vertical
 

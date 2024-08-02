@@ -176,7 +176,7 @@ public struct UIBinding<Value>: Sendable {
   ///   // ...
   /// }
   /// ```
-  /// 
+  ///
   /// > Note: SwiftUI's `Binding` type has no such initializer because a view is reinitialized many,
   /// > many times in an application as its parent's body is recomputed, and so Swift has a separate
   /// > `@State` property wrapper that is used to create local, mutable state for a view, and you
@@ -712,7 +712,7 @@ private final class _UIBindingOptionalToBool<
           """
           Boolean presentation binding attempted to write 'true' to a generic 'UIBinding<Item?>' \
           (i.e., 'UIBinding<\(Wrapped.self)?>').
-          
+
           This is not a valid thing to do, as there is no way to convert 'true' to a new instance \
           of '\(Wrapped.self)'.
           """,

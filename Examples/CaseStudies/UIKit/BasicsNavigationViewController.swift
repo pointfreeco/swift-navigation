@@ -14,20 +14,26 @@ class BasicsNavigationViewController: UIViewController, UIKitCaseStudy {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
 
-    let showAlertButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.alert = "Hello!"
-    })
-    let showSheetButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.sheet = .random(in: 1...1_000)
-    })
+    let showAlertButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.alert = "Hello!"
+      })
+    let showSheetButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.sheet = .random(in: 1...1_000)
+      })
     let showSheetFromBooleanButton = UIButton(
       type: .system,
       primaryAction: UIAction { [weak self] _ in
         self?.model.isSheetPresented = true
-    })
-    let drillDownButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.drillDown = .random(in: 1...1_000)
-    })
+      })
+    let drillDownButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.drillDown = .random(in: 1...1_000)
+      })
 
     let stack = UIStackView(arrangedSubviews: [
       showAlertButton,

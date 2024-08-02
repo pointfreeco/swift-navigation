@@ -24,20 +24,26 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
 
-    let showAlertButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.destination = .alert("Hello!")
-    })
-    let showSheetButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.destination = .sheet(.random(in: 1...1_000))
-    })
+    let showAlertButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.destination = .alert("Hello!")
+      })
+    let showSheetButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.destination = .sheet(.random(in: 1...1_000))
+      })
     let showSheetFromBooleanButton = UIButton(
       type: .system,
       primaryAction: UIAction { [weak self] _ in
         self?.model.destination = .sheetWithoutPayload
       })
-    let drillDownButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      self?.model.destination = .drillDown(.random(in: 1...1_000))
-    })
+    let drillDownButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        self?.model.destination = .drillDown(.random(in: 1...1_000))
+      })
 
     let stack = UIStackView(arrangedSubviews: [
       showAlertButton,
@@ -128,4 +134,3 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
     rootViewController: BasicsNavigationViewController()
   )
 }
-

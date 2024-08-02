@@ -76,7 +76,7 @@ class WiFiSettingsViewController: UICollectionViewController, UIKitCaseStudy {
     There are multiple features that communicate with each other, there are multiple navigation \
     patterns, and the root feature has a complex collection view that updates dynamically.
     """
-  let isPresentedInSheet = true  
+  let isPresentedInSheet = true
 
   @UIBindable var model: WiFiSettingsModel
   var dataSource: UICollectionViewDiffableDataSource<Section, Item>!

@@ -14,13 +14,11 @@ public enum ButtonStateBuilder<Action> {
     component
   }
 
-  public static func buildEither(first component: [ButtonState<Action>]) -> [ButtonState<Action>]
-  {
+  public static func buildEither(first component: [ButtonState<Action>]) -> [ButtonState<Action>] {
     component
   }
 
-  public static func buildEither(second component: [ButtonState<Action>]) -> [ButtonState<Action>]
-  {
+  public static func buildEither(second component: [ButtonState<Action>]) -> [ButtonState<Action>] {
     component
   }
 
@@ -32,4 +30,3 @@ public enum ButtonStateBuilder<Action> {
     component ?? []
   }
 }
-

@@ -123,7 +123,8 @@
           var invalidIndices = IndexSet()
           var didPushNewViewController = false
           for (index, navigationID) in newPath.enumerated() {
-            if let viewController = viewControllers
+            if let viewController =
+              viewControllers
               .first(where: { $0.navigationID == navigationID })
             {
               newViewControllers.append(viewController)
@@ -167,7 +168,7 @@
             popFromViewController(viewController, animated: !transaction.uiKit.disablesAnimations)
           }
       }
-      
+
       return viewController
     }
 

@@ -270,7 +270,7 @@ final class NavigationStackTests: XCTestCase {
       ChildViewController(number: number)
     }
     try await setUp(controller: nav)
-    
+
     try await Task.sleep(for: .seconds(0.3))
     nav.traitCollection.push(value: 1)
     await assertEventuallyEqual(nav.viewControllers.count, 2)

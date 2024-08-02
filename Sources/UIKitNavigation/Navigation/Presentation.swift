@@ -350,8 +350,7 @@
           }
           let childController = content(unwrappedItem)
           let onDismiss = { [presentationID = id(unwrappedItem.wrappedValue)] in
-            if 
-              let wrappedValue = item.wrappedValue,
+            if let wrappedValue = item.wrappedValue,
               presentationID == id(wrappedValue)
             {
               item.wrappedValue = nil
@@ -401,7 +400,8 @@
 
   extension UINavigationController {
     @available(
-      *, deprecated, message: """
+      *, deprecated,
+      message: """
         Use 'self.navigationDestination(isPresented:)' instead of 'self.navigationController?.pushViewController(isPresented:)'.
         """
     )
@@ -414,7 +414,8 @@
     }
 
     @available(
-      *, deprecated, message: """
+      *, deprecated,
+      message: """
         Use 'self.navigationDestination(item:)' instead of 'self.navigationController?.pushViewController(item:)'.
         """
     )
@@ -427,7 +428,8 @@
     }
 
     @available(
-      *, deprecated, message: """
+      *, deprecated,
+      message: """
         Use 'self.navigationDestination(item:)' instead of 'self.navigationController?.pushViewController(item:)'.
         """
     )

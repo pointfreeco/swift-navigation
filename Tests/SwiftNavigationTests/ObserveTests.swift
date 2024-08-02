@@ -9,6 +9,6 @@ class ObserveTests: XCTestCase {
       count = 1
     }
     XCTAssertEqual(count, 1)
-    _ = token 
+    _ = token
   }
 }

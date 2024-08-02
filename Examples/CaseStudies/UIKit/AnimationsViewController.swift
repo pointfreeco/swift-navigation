@@ -28,10 +28,12 @@ class AnimationsViewController: UIViewController, UIKitCaseStudy {
     let scaleStack = UIStackView(arrangedSubviews: [scaleLabel, isScaledSwitch])
     scaleStack.spacing = 12
     scaleStack.axis = .horizontal
-    let colorsButton = UIButton(type: .system, primaryAction: UIAction { [weak self] _ in
-      guard let self else { return }
-      Task { await self.model.cycleColors() }
-    })
+    let colorsButton = UIButton(
+      type: .system,
+      primaryAction: UIAction { [weak self] _ in
+        guard let self else { return }
+        Task { await self.model.cycleColors() }
+      })
     colorsButton.setTitle("Cycle colors", for: .normal)
     let stack = UIStackView(arrangedSubviews: [
       scaleStack,

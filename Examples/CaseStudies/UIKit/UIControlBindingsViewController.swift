@@ -115,11 +115,10 @@ class UIControlBindingsViewController: UIViewController, UIKitCaseStudy {
   }
 }
 
-private extension String {
-  func range(for range: Range<String.Index>) -> Range<Int> {
-    distance(from: startIndex, to: range.lowerBound)
-    ..<
-    distance(from: startIndex, to: range.upperBound)
+extension String {
+  fileprivate func range(for range: Range<String.Index>) -> Range<Int> {
+    distance(
+      from: startIndex, to: range.lowerBound)..<distance(from: startIndex, to: range.upperBound)
   }
 }
 

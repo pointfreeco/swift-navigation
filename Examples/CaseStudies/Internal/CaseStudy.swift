@@ -80,11 +80,9 @@ struct UIKitCaseStudyButton<C: UIKitCaseStudy>: View {
       }
       .sheet(isPresented: $isPresented) {
         UIViewControllerRepresenting {
-          (
-            (caseStudy as? UINavigationController)
-              ?? UINavigationController(rootViewController: caseStudy)
-          )
-          .setUp(caseStudy: caseStudy)
+          ((caseStudy as? UINavigationController)
+            ?? UINavigationController(rootViewController: caseStudy))
+            .setUp(caseStudy: caseStudy)
         }
         .modifier(CaseStudyModifier(caseStudy: caseStudy))
       }
@@ -110,7 +108,7 @@ extension UINavigationController {
             rootView: Form {
               Text(template: caseStudy.readMe)
             }
-              .presentationDetents([.medium])
+            .presentationDetents([.medium])
           ),
           animated: true
         )

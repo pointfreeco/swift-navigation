@@ -37,16 +37,14 @@ public struct UINavigationPath: Equatable {
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
       switch (lhs, rhs) {
-      case 
-        let (.eager(lhs), .eager(rhs)),
+      case let (.eager(lhs), .eager(rhs)),
         let (.lazy(.element(lhs)), .eager(rhs)),
         let (.lazy(.element(lhs)), .lazy(.element(rhs))),
         let (.eager(lhs), .lazy(.element(rhs))):
         return lhs == rhs
       case let (.lazy(.codable(lhs)), .lazy(.codable(rhs))):
         return lhs == rhs
-      case 
-        let (.eager(eager), .lazy(.codable(lazy))),
+      case let (.eager(eager), .lazy(.codable(lazy))),
         let (.lazy(.codable(lazy)), .eager(eager)),
         let (.lazy(.element(eager)), .lazy(.codable(lazy))),
         let (.lazy(.codable(lazy)), .lazy(.element(eager))):
@@ -167,8 +165,7 @@ public struct UINavigationPath: Equatable {
       elements.reserveCapacity(path.elements.count)
       for element in path.elements {
         switch element {
-        case
-          let .eager(value),
+        case let .eager(value),
           let .lazy(.element(value)):
           guard let element = Element(value) else { return nil }
           elements.append(element)

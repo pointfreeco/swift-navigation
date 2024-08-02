@@ -22,8 +22,8 @@ final class RuntimeWarningTests: XCTestCase {
   func testNavigationDestination_WithoutNavigationController() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-      failed - Can't present navigation item: "navigationController" is "nil".
-      """
+        failed - Can't present navigation item: "navigationController" is "nil".
+        """
     }
     class VC: UIViewController {
       override func viewDidLoad() {
@@ -110,8 +110,8 @@ final class RuntimeWarningTests: XCTestCase {
   func testNavigationDestinationFor_WithoutNavigationController() async throws {
     XCTExpectFailure {
       $0.compactDescription == """
-      failed - Can't register navigation destination: "navigationController" is "nil".
-      """
+        failed - Can't register navigation destination: "navigationController" is "nil".
+        """
     }
     class VC: UIViewController {
       override func viewDidLoad() {
