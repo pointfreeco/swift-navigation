@@ -5,3 +5,4 @@ builder:
     - SwiftNavigation
     - SwiftUINavigation
     - UIKitNavigation
+    swift_version: 6.0
