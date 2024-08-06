@@ -7,19 +7,24 @@ TEST_RUNNER_CI = $(CI)
 
 default: test
 
-test:
+test: test-ios test-macos test-tvos test-watchos test-examples
+
+test-ios:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_IOS)"
+test-macos:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_MACOS)"
+test-tvos:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_TVOS)"
+test-watchos:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
