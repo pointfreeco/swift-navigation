@@ -405,6 +405,7 @@ final class PresentationTests: XCTestCase {
     nav.pushViewController(child!, animated: false)
     await assertEventuallyEqual(nav.viewControllers.count, 2)
 
+    try await Task.sleep(for: .seconds(0.5))
     withUITransaction(\.uiKit.disablesAnimations, true) {
       child!.model.isPresented = true
     }
@@ -415,9 +416,6 @@ final class PresentationTests: XCTestCase {
     nav.popToRootViewController(animated: false)
     try await Task.sleep(for: .seconds(0.5))
 
-    XCTExpectFailure {
-      $0.compactDescription.hasPrefix("failed - Binding failed to write")
-    }
     child = nil
     try await Task.sleep(for: .seconds(0.5))
 
