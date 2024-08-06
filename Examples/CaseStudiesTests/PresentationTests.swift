@@ -301,7 +301,7 @@ final class PresentationTests: XCTestCase {
 
   @MainActor
   func testPushFireAndForget_PushStateDriven() async throws {
-    let nav = UINavigationController(rootViewController: UIViewController())
+    let nav = UINavigationController(rootViewController: ViewController())
     try await setUp(controller: nav)
     await assertEventuallyEqual(nav.viewControllers.count, 1)
 
@@ -321,7 +321,7 @@ final class PresentationTests: XCTestCase {
 
   @MainActor
   func testDismissMultiplePresentations() async throws {
-    class VC: UIViewController {
+    class VC: ViewController {
       @UIBinding var isPresented = false
       override func viewDidLoad() {
         super.viewDidLoad()
@@ -344,17 +344,8 @@ final class PresentationTests: XCTestCase {
 
   @MainActor
   func testDismissLeafPresentationDirectly() async throws {
-    class VC: UIViewController {
+    class VC: ViewController {
       @UIBinding var isPresented = false
-      override func loadView() {
-        super.loadView()
-        view.backgroundColor = .init(
-          red: .random(in: 0...1),
-          green: .random(in: 0...1),
-          blue: .random(in: 0...1),
-          alpha: 1
-        )
-      }
       override func viewDidLoad() {
         super.viewDidLoad()
         present(isPresented: $isPresented) { VC() }
@@ -376,17 +367,8 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor func testDismissMiddlePresentation() async throws {
-    class VC: UIViewController {
+    class VC: ViewController {
       @UIBinding var isPresented = false
-      override func loadView() {
-        super.loadView()
-        view.backgroundColor = .init(
-          red: .random(in: 0...1),
-          green: .random(in: 0...1),
-          blue: .random(in: 0...1),
-          alpha: 1
-        )
-      }
       override func viewDidLoad() {
         super.viewDidLoad()
         present(isPresented: $isPresented) { VC() }
@@ -414,8 +396,33 @@ final class PresentationTests: XCTestCase {
     await assertEventuallyNil(vc.presentedViewController?.presentedViewController, timeout: 2)
   }
 
-  @MainActor func testDoublePresentation_ChangeRootBinding() async throws {
+  @MainActor func testNestedPresentationParentDismissalDismissesChild() async throws {
+    let nav = UINavigationController(rootViewController: ViewController())
+    try await setUp(controller: nav)
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
 
+    var child: BasicViewController? = BasicViewController(model: Model())
+    nav.pushViewController(child!, animated: false)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      child!.model.isPresented = true
+    }
+    try await Task.sleep(for: .seconds(0.5))
+
+    await assertEventuallyNotNil(child!.presentedViewController)
+    XCTAssertEqual(child!.presentedViewController, nav.presentedViewController)
+    nav.popToRootViewController(animated: false)
+    try await Task.sleep(for: .seconds(0.5))
+
+    XCTExpectFailure {
+      $0.compactDescription.hasPrefix("failed - Binding failed to write")
+    }
+    child = nil
+    try await Task.sleep(for: .seconds(0.5))
+
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyNil(nav.presentedViewController)
   }
 }
 
@@ -441,6 +448,18 @@ private final class Model: Identifiable {
   }
 }
 
+private class ViewController: UIViewController {
+  override func viewDidLoad() {
+    view.backgroundColor = .init(
+      red: .random(in: 0...1),
+      green: .random(in: 0...1),
+      blue: .random(in: 0...1),
+      alpha: 1
+    )
+    super.viewDidLoad()
+  }
+}
+
 private class BasicViewController: UIViewController {
   @UIBindable var model: Model
   var isPresenting = false
@@ -463,7 +482,7 @@ private class BasicViewController: UIViewController {
       self?.isPresenting = false
     } content: { [weak self] in
       self?.isPresenting = true
-      return UIViewController()
+      return ViewController()
     }
     present(item: $model.presentedChild) { [weak self] in
       self?.isPresenting = false
@@ -472,7 +491,7 @@ private class BasicViewController: UIViewController {
       return BasicViewController(model: model)
     }
     navigationDestination(isPresented: $model.isPushed) {
-      UIViewController()
+      ViewController()
     }
     navigationDestination(item: $model.pushedChild) { model in
       BasicViewController(model: model)
