@@ -221,4 +221,43 @@
       }
     }
   }
+
+  @available(
+    iOS,
+    introduced: 13,
+    deprecated: 100000,
+    message:
+      "use 'View.confirmationDialog(title:isPresented:titleVisibility:presenting::actions:)' instead."
+  )
+  @available(
+    macOS,
+    introduced: 12,
+    unavailable
+  )
+  @available(
+    tvOS,
+    introduced: 13,
+    deprecated: 100000,
+    message:
+      "use 'View.confirmationDialog(title:isPresented:titleVisibility:presenting::actions:)' instead."
+  )
+  @available(
+    watchOS,
+    introduced: 6,
+    deprecated: 100000,
+    message:
+      "use 'View.confirmationDialog(title:isPresented:titleVisibility:presenting::actions:)' instead."
+  )
+  extension ActionSheet {
+    public init<Action>(
+      _ state: ConfirmationDialogState<Action>,
+      action: @escaping (Action?) -> Void
+    ) {
+      self.init(
+        title: Text(state.title),
+        message: state.message.map { Text($0) },
+        buttons: state.buttons.map { .init($0, action: action) }
+      )
+    }
+  }
 #endif  // canImport(SwiftUI)

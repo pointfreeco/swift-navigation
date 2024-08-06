@@ -256,5 +256,4 @@
       }
     }
   }
-
 #endif  // canImport(SwiftUI)

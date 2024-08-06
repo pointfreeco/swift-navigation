@@ -443,9 +443,18 @@
     }
   }
 
+  @MainActor
   private class Presented {
     weak var controller: UIViewController?
     let presentationID: AnyHashable?
+    deinit {
+      // NB: This can only be assumed because it is held in a UIViewController and is guaranteed to
+      //     deinit alongside it on the main thread. If we use this other places we should force it
+      //     to be a UIViewController as well, to ensure this functionality.
+      MainActor.assumeIsolated {
+        self.controller?.dismiss(animated: false)
+      }
+    }
     init(_ controller: UIViewController, id presentationID: AnyHashable? = nil) {
       self.controller = controller
       self.presentationID = presentationID
