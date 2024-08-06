@@ -443,9 +443,15 @@
     }
   }
 
+  @MainActor
   private class Presented {
     weak var controller: UIViewController?
     let presentationID: AnyHashable?
+    deinit {
+      MainActor.assumeIsolated {
+        self.controller?.dismiss(animated: false)
+      }
+    }
     init(_ controller: UIViewController, id presentationID: AnyHashable? = nil) {
       self.controller = controller
       self.presentationID = presentationID
