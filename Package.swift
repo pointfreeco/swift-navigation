@@ -51,7 +51,7 @@ let package = Package(
     .target(
       name: "SwiftUINavigation",
       dependencies: [
-        "UIKitNavigation",
+        "SwiftNavigation",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
