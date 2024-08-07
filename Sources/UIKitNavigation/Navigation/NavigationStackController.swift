@@ -191,7 +191,8 @@
 
       override func responds(to aSelector: Selector!) -> Bool {
         aSelector == #selector(navigationController(_:didShow:animated:))
-          || base?.responds(to: aSelector) ?? false
+          || MainActor.assumeIsolated { base?.responds(to: aSelector) }
+          ?? false
       }
 
       func navigationController(
