@@ -1,8 +1,8 @@
-import SwiftNavigation
-import XCTest
+#if swift(>=6)
+  import SwiftNavigation
+  import XCTest
 
-class ObserveTests: XCTestCase {
-  #if swift(>=6)
+  class ObserveTests: XCTestCase {
     @MainActor
     func testCompiles() {
       var count = 0
@@ -12,5 +12,5 @@ class ObserveTests: XCTestCase {
       XCTAssertEqual(count, 1)
       _ = token
     }
-  #endif
-}
+  }
+#endif
