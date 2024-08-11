@@ -1,6 +1,6 @@
 import Foundation
 
-package extension MainActor {
+extension MainActor {
   // NB: This functionality was not back-deployed in Swift 5.9
   static func _assumeIsolated<T : Sendable>(
     _ operation: @MainActor () throws -> T,
