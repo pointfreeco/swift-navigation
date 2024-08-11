@@ -24,7 +24,7 @@ package extension MainActor {
         return try rawFn()
       }
     #else
-      return assumeIsolated(operation, file: file, line: line)
+      return try assumeIsolated(operation, file: file, line: line)
     #endif
   }
 }
