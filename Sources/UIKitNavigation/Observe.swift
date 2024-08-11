@@ -123,7 +123,7 @@
       _ apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
     ) -> ObservationToken {
       let token = SwiftNavigation.observe { transaction in
-        MainActor.assumeIsolated {
+        MainActor._assumeIsolated {
           withUITransaction(transaction) {
             #if os(watchOS)
               apply(transaction)
@@ -172,5 +172,9 @@
     }
   }
 
-  private nonisolated(unsafe) let tokensKey = malloc(1)!
+  #if swift(>=5.10)
+    private nonisolated(unsafe) let tokensKey = malloc(1)!
+  #else
+    private let tokensKey = malloc(1)!
+  #endif
 #endif

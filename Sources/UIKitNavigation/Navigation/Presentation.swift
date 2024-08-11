@@ -451,7 +451,7 @@
       // NB: This can only be assumed because it is held in a UIViewController and is guaranteed to
       //     deinit alongside it on the main thread. If we use this other places we should force it
       //     to be a UIViewController as well, to ensure this functionality.
-      MainActor.assumeIsolated {
+      MainActor._assumeIsolated {
         self.controller?.dismiss(animated: false)
       }
     }

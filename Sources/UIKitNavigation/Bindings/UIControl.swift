@@ -69,12 +69,12 @@
       @UncheckedSendable var uncheckedKeyPath = keyPath
       let observation = observe(keyPath) { [$uncheckedKeyPath] control, _ in
         guard isSetting.withValue({ !$0 }) else { return }
-        MainActor.assumeIsolated {
+        MainActor._assumeIsolated {
           binding.wrappedValue = control[keyPath: $uncheckedKeyPath.wrappedValue]
         }
       }
       let observationToken = ObservationToken { [weak self] in
-        MainActor.assumeIsolated {
+        MainActor._assumeIsolated {
           self?.removeAction(action, for: .allEvents)
         }
         token.cancel()
