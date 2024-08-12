@@ -1,4 +1,5 @@
 #if canImport(SwiftUI)
+  import IssueReporting
   import SwiftUI
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
@@ -214,18 +215,25 @@
     ///   - action: An action handler, called when a button with an action is tapped, by passing the
     ///     action to the closure.
     public init<Action>(_ state: AlertState<Action>, action: @escaping (Action?) -> Void) {
-      if state.buttons.count == 2 {
+      if state.buttons.count <= 1 {
+        self.init(
+          title: Text(state.title),
+          message: state.message.map { Text($0) },
+          dismissButton: state.buttons.first.map { .init($0, action: action) }
+        )
+      } else {
+        if state.buttons.count > 2 {
+          reportIssue(
+            """
+            'Alert' handed 'AlertState' with too many buttons. Will only display the first two.
+            """
+          )
+        }
         self.init(
           title: Text(state.title),
           message: state.message.map { Text($0) },
           primaryButton: .init(state.buttons[0], action: action),
           secondaryButton: .init(state.buttons[1], action: action)
-        )
-      } else {
-        self.init(
-          title: Text(state.title),
-          message: state.message.map { Text($0) },
-          dismissButton: state.buttons.first.map { .init($0, action: action) }
         )
       }
     }
@@ -240,18 +248,25 @@
       _ state: AlertState<Action>,
       action: @escaping @Sendable (Action?) async -> Void
     ) {
-      if state.buttons.count == 2 {
+      if state.buttons.count <= 1 {
+        self.init(
+          title: Text(state.title),
+          message: state.message.map { Text($0) },
+          dismissButton: state.buttons.first.map { .init($0, action: action) }
+        )
+      } else {
+        if state.buttons.count > 2 {
+          reportIssue(
+            """
+            'Alert' handed 'AlertState' with too many buttons. Will only display the first two.
+            """
+          )
+        }
         self.init(
           title: Text(state.title),
           message: state.message.map { Text($0) },
           primaryButton: .init(state.buttons[0], action: action),
           secondaryButton: .init(state.buttons[1], action: action)
-        )
-      } else {
-        self.init(
-          title: Text(state.title),
-          message: state.message.map { Text($0) },
-          dismissButton: state.buttons.first.map { .init($0, action: action) }
         )
       }
     }

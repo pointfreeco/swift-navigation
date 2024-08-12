@@ -155,7 +155,6 @@ public struct AlertState<Action>: Identifiable {
   ///   - title: The title of the alert.
   ///   - actions: A ``ButtonStateBuilder`` returning the alert's actions.
   ///   - message: The message for the alert.
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public init(
     title: () -> TextState,
     @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] },
