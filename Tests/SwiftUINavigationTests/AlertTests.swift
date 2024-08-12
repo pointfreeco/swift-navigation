@@ -110,6 +110,7 @@
   // NB: This is a compile time test to make sure that async action closures can be used in
   //     Swift <5.7.
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+  @MainActor
   private struct TestView: View {
     @State var alert: AlertState<AlertAction>?
     enum AlertAction {

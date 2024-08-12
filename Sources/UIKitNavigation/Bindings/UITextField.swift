@@ -66,12 +66,12 @@
         textSelection = selection.wrappedValue
       }
       let observation = observe(\.selectedTextRange) { control, _ in
-        MainActor.assumeIsolated {
+        MainActor._assumeIsolated {
           selection.wrappedValue = control.textSelection
         }
       }
       let observationToken = ObservationToken { [weak self] in
-        MainActor.assumeIsolated {
+        MainActor._assumeIsolated {
           self?.removeAction(editingChangedAction, for: [.editingChanged, .editingDidBegin])
           self?.removeAction(editingDidEndAction, for: .editingDidEnd)
         }
@@ -215,7 +215,7 @@
         }
       }
       let outerToken = ObservationToken { [weak self] in
-        MainActor.assumeIsolated {
+        MainActor._assumeIsolated {
           self?.removeAction(editingDidBeginAction, for: .editingDidBegin)
           self?.removeAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
         }

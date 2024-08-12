@@ -12,8 +12,8 @@ final class ErasedNavigationStackController: NavigationStackController, UIKitCas
   let isPresentedInSheet = true
   private var model: Model!
 
-  convenience init() {
-    @UIBindable var model = Model()
+  convenience init(model: Model) {
+    @UIBindable var model = model
     self.init(path: $model.path) {
       RootViewController(model: model)
     }
@@ -256,5 +256,5 @@ private class BoolFeatureViewController: UIViewController {
 }
 
 #Preview {
-  ErasedNavigationStackController()
+  ErasedNavigationStackController(model: ErasedNavigationStackController.Model())
 }
