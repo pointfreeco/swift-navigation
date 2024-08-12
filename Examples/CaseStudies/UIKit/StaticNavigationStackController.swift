@@ -15,6 +15,7 @@ final class StaticNavigationStackController: NavigationStackController, UIKitCas
   let isPresentedInSheet = true
   private var model: Model!
 
+  @MainActor
   convenience init() {
     @UIBindable var model = Model()
     self.init(path: $model.path) {

@@ -2,6 +2,7 @@
   @_spi(Internals) import SwiftNavigation
   import UIKit
 
+  @MainActor
   extension NSObject {
     /// Observe access to properties of an observable (or perceptible) object.
     ///
@@ -105,7 +106,6 @@
     ///   of a property changes.
     /// - Returns: A cancellation token.
     @discardableResult
-    @MainActor
     public func observe(_ apply: @escaping @MainActor @Sendable () -> Void) -> ObservationToken {
       observe { _ in apply() }
     }
@@ -118,12 +118,11 @@
     ///   of a property changes.
     /// - Returns: A cancellation token.
     @discardableResult
-    @MainActor
     public func observe(
       _ apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
     ) -> ObservationToken {
       let token = SwiftNavigation.observe { transaction in
-        MainActor.assumeIsolated {
+        MainActor._assumeIsolated {
           withUITransaction(transaction) {
             #if os(watchOS)
               apply(transaction)
@@ -164,13 +163,13 @@
 
     fileprivate var tokens: [Any] {
       get {
-        objc_getAssociatedObject(self, tokensKey) as? [Any] ?? []
+        objc_getAssociatedObject(self, Self.tokensKey) as? [Any] ?? []
       }
       set {
-        objc_setAssociatedObject(self, tokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(self, Self.tokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
       }
     }
-  }
 
-  private nonisolated(unsafe) let tokensKey = malloc(1)!
+    private static let tokensKey = malloc(1)!
+  }
 #endif
