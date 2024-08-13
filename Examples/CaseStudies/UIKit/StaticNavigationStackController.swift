@@ -15,9 +15,8 @@ final class StaticNavigationStackController: NavigationStackController, UIKitCas
   let isPresentedInSheet = true
   private var model: Model!
 
-  @MainActor
-  convenience init() {
-    @UIBindable var model = Model()
+  convenience init(model: Model) {
+    @UIBindable var model = model
     self.init(path: $model.path) {
       RootViewController(model: model)
     }
@@ -170,5 +169,5 @@ private class FeatureViewController: UIViewController {
 }
 
 #Preview {
-  StaticNavigationStackController()
+  StaticNavigationStackController(model: StaticNavigationStackController.Model())
 }

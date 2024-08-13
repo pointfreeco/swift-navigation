@@ -27,32 +27,36 @@
       set { pathDelegate.base = newValue }
     }
 
-    public convenience init<Data: RandomAccessCollection & RangeReplaceableCollection>(
+    public required init<Data: RandomAccessCollection & RangeReplaceableCollection>(
       navigationBarClass: AnyClass? = nil,
       toolbarClass: AnyClass? = nil,
       path: UIBinding<Data>,
       root: () -> UIViewController
     ) where Data.Element: Hashable {
-      self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
+      super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
       self._path = path.path
       let root = root()
       self.root = root
       self.viewControllers = [root]
     }
 
-    public convenience init(
+    public required init(
       navigationBarClass: AnyClass? = nil,
       toolbarClass: AnyClass? = nil,
       path: UIBinding<UINavigationPath>,
       root: () -> UIViewController
     ) {
-      self.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
+      super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
       self._path = path.elements
       let root = root()
       self.root = root
       self.viewControllers = [root]
     }
-
+    
+    public required init?(coder aDecoder: NSCoder) {
+      fatalError("init(coder:) has not been implemented")
+    }
+    
     open override func viewDidLoad() {
       super.viewDidLoad()
 
