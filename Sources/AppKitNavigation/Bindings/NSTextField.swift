@@ -1,8 +1,8 @@
-#if canImport(UIKit) && !os(watchOS)
-  import UIKit
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+import AppKit
+import SwiftNavigation
 
-  @available(iOS 14, tvOS 14, *)
-  extension UITextField {
+extension NSTextField: NSTextViewDelegate {
     /// Creates a new text field with the specified frame and registers the binding against its
     /// text.
     ///
@@ -11,8 +11,8 @@
     ///   - text: The binding to read from for the current text, and write to when the text
     ///     changes.
     public convenience init(frame: CGRect = .zero, text: UIBinding<String>) {
-      self.init(frame: frame)
-      bind(text: text)
+        self.init(frame: frame)
+        bind(text: text)
     }
 
     /// Creates a new text field with the specified frame and registers the binding against its
@@ -23,8 +23,8 @@
     ///   - attributedText: The binding to read from for the current text, and write to when the
     ///     attributed text changes.
     public convenience init(frame: CGRect = .zero, attributedText: UIBinding<NSAttributedString>) {
-      self.init(frame: frame)
-      bind(attributedText: attributedText)
+        self.init(frame: frame)
+        bind(attributedText: attributedText)
     }
 
     /// Establishes a two-way connection between a binding and the text field's current text.
@@ -34,7 +34,7 @@
     /// - Returns: A cancel token.
     @discardableResult
     public func bind(text: UIBinding<String>) -> ObservationToken {
-      bind(UIBinding(text), to: \.text, for: .editingChanged)
+        bind(text, to: \.stringValue)
     }
 
     /// Establishes a two-way connection between a binding and the text field's current text.
@@ -44,7 +44,7 @@
     /// - Returns: A cancel token.
     @discardableResult
     public func bind(attributedText: UIBinding<NSAttributedString>) -> ObservationToken {
-      bind(UIBinding(attributedText), to: \.attributedText, for: .editingChanged)
+        bind(attributedText, to: \.attributedStringValue)
     }
 
     /// Establishes a two-way connection between a binding and the text field's current selection.
@@ -53,79 +53,101 @@
     ///   the selected text range changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(selection: UIBinding<UITextSelection?>) -> ObservationToken {
-      let editingChangedAction = UIAction { [weak self] _ in
-        guard let self else { return }
-        selection.wrappedValue = self.textSelection
-      }
-      addAction(editingChangedAction, for: [.editingChanged, .editingDidBegin])
-      let editingDidEndAction = UIAction { _ in selection.wrappedValue = nil }
-      addAction(editingDidEndAction, for: .editingDidEnd)
-      let token = observe { [weak self] in
-        guard let self else { return }
-        textSelection = selection.wrappedValue
-      }
-      let observation = observe(\.selectedTextRange) { control, _ in
-        MainActor._assumeIsolated {
-          selection.wrappedValue = control.textSelection
+    public func bind(selection: UIBinding<AppKitTextSelection?>) -> ObservationToken {
+        let editingChangedAction = NotificationCenter.default.publisher(for: NSTextField.textDidChangeNotification, object: self)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                selection.wrappedValue = self.textSelection
+            }
+        let editingDidEndAction = NotificationCenter.default.publisher(for: NSTextField.textDidEndEditingNotification, object: self).sink { _ in selection.wrappedValue = nil }
+        let token = observe { [weak self] in
+            guard let self else { return }
+            textSelection = selection.wrappedValue
         }
-      }
-      let observationToken = ObservationToken { [weak self] in
-        MainActor._assumeIsolated {
-          self?.removeAction(editingChangedAction, for: [.editingChanged, .editingDidBegin])
-          self?.removeAction(editingDidEndAction, for: .editingDidEnd)
+        textSelectionObserver = TextSelectionObserver { control in
+            MainActor._assumeIsolated {
+                selection.wrappedValue = control.textSelection
+            }
         }
-        token.cancel()
-        observation.invalidate()
-      }
-      observationTokens[\UITextField.selectedTextRange] = observationToken
-      return observationToken
+        let observationToken = ObservationToken { [weak self] in
+            MainActor._assumeIsolated {
+                editingChangedAction.cancel()
+                editingDidEndAction.cancel()
+            }
+            token.cancel()
+            self?.textSelectionObserver = nil
+        }
+        observationTokens[\NSTextField.selectedRange] = observationToken
+        return observationToken
     }
 
-    fileprivate var textSelection: UITextSelection? {
-      get {
-        guard
-          let textRange = selectedTextRange,
-          let text
-        else {
-          return nil
+    fileprivate var selectedRange: NSRange? {
+        set {
+            currentEditor()?.selectedRange = newValue ?? .init(location: 0, length: 0)
         }
-        let lowerBound =
-          text.index(
-            text.startIndex,
-            offsetBy: offset(from: beginningOfDocument, to: textRange.start),
-            limitedBy: text.endIndex
-          ) ?? text.endIndex
-        let upperBound =
-          text.index(
-            text.startIndex,
-            offsetBy: offset(from: beginningOfDocument, to: textRange.end),
-            limitedBy: text.endIndex
-          ) ?? text.endIndex
-        return UITextSelection(range: lowerBound..<upperBound)
-      }
-      set {
-        guard let text else { return }
-        guard let selection = newValue?.range else {
-          selectedTextRange = nil
-          return
+
+        get {
+            currentEditor()?.selectedRange
         }
-        guard
-          let from = position(
-            from: beginningOfDocument,
-            offset: text.distance(
-              from: text.startIndex, to: min(selection.lowerBound, text.endIndex)
+    }
+
+    fileprivate class TextSelectionObserver: NSObject {
+        let observer: (NSTextField) -> Void
+
+        init(observer: @escaping (NSTextField) -> Void) {
+            self.observer = observer
+        }
+    }
+
+    fileprivate var textSelectionObserver: TextSelectionObserver? {
+        set {
+            objc_setAssociatedObject(self, #function, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            objc_getAssociatedObject(self, #function) as? TextSelectionObserver
+        }
+    }
+
+    public func textViewDidChangeSelection(_ notification: Notification) {
+        textSelectionObserver?.observer(self)
+    }
+
+    fileprivate var textSelection: AppKitTextSelection? {
+        get {
+            guard
+                let textRange = selectedRange
+            else {
+                return nil
+            }
+            let text = stringValue
+            let lowerBound =
+                text.index(
+                    text.startIndex,
+                    offsetBy: textRange.location,
+                    limitedBy: text.endIndex
+                ) ?? text.endIndex
+            let upperBound =
+                text.index(
+                    text.startIndex,
+                    offsetBy: NSMaxRange(textRange),
+                    limitedBy: text.endIndex
+                ) ?? text.endIndex
+            return AppKitTextSelection(range: lowerBound ..< upperBound)
+        }
+        set {
+            guard let selection = newValue?.range else {
+                selectedRange = nil
+                return
+            }
+            let text = stringValue
+            let from = text.distance(
+                from: text.startIndex, to: min(selection.lowerBound, text.endIndex)
             )
-          ),
-          let to = position(
-            from: beginningOfDocument,
-            offset: text.distance(
-              from: text.startIndex, to: min(selection.upperBound, text.endIndex)
+            let to = text.distance(
+                from: text.startIndex, to: min(selection.upperBound, text.endIndex)
             )
-          )
-        else { return }
-        selectedTextRange = textRange(from: from, to: to)
-      }
+            selectedRange = .init(location: from, length: to - from)
+        }
     }
 
     /// Modifies this text field by binding its focus state to the given state value.
@@ -193,36 +215,36 @@
     /// - Returns: A cancel token.
     @discardableResult
     public func bind<Value: Hashable>(
-      focus: UIBinding<Value?>, equals value: Value
+        focus: UIBinding<Value?>, equals value: Value
     ) -> ObservationToken {
-      self.focusToken?.cancel()
-      let editingDidBeginAction = UIAction { _ in focus.wrappedValue = value }
-      let editingDidEndAction = UIAction { _ in
-        guard focus.wrappedValue == value else { return }
-        focus.wrappedValue = nil
-      }
-      addAction(editingDidBeginAction, for: .editingDidBegin)
-      addAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
-      let innerToken = observe { [weak self] in
-        guard let self else { return }
-        switch (focus.wrappedValue, isFirstResponder) {
-        case (value, false):
-          becomeFirstResponder()
-        case (nil, true):
-          resignFirstResponder()
-        default:
-          break
+        focusToken?.cancel()
+        let editingDidBeginAction = NotificationCenter.default.publisher(for: NSTextField.textDidBeginEditingNotification, object: self).sink { _ in
+            focus.wrappedValue = value
         }
-      }
-      let outerToken = ObservationToken { [weak self] in
-        MainActor._assumeIsolated {
-          self?.removeAction(editingDidBeginAction, for: .editingDidBegin)
-          self?.removeAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
+
+        let editingDidEndAction = NotificationCenter.default.publisher(for: NSTextField.textDidEndEditingNotification, object: self).sink { _ in
+            guard focus.wrappedValue == value else { return }
+            focus.wrappedValue = nil
         }
-        innerToken.cancel()
-      }
-      self.focusToken = outerToken
-      return outerToken
+
+        let innerToken = observe { [weak self] in
+            guard let self else { return }
+            switch (focus.wrappedValue, currentEditor() != nil) {
+            case (value, false):
+                becomeFirstResponder()
+            case (nil, true):
+                window?.makeFirstResponder(nil)
+            default:
+                break
+            }
+        }
+        let outerToken = ObservationToken {
+            editingDidBeginAction.cancel()
+            editingDidEndAction.cancel()
+            innerToken.cancel()
+        }
+        focusToken = outerToken
+        return outerToken
     }
 
     /// Binds this text field's focus state to the given Boolean state value.
@@ -277,35 +299,37 @@
     /// - Returns: A cancel token.
     @discardableResult
     public func bind(focus condition: UIBinding<Bool>) -> ObservationToken {
-      bind(focus: condition.toOptionalUnit, equals: Bool.Unit())
+        bind(focus: condition.toOptionalUnit, equals: Bool.Unit())
     }
 
     private var focusToken: ObservationToken? {
-      get { objc_getAssociatedObject(self, Self.focusTokenKey) as? ObservationToken }
-      set {
-        objc_setAssociatedObject(
-          self, Self.focusTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-        )
-      }
+        get { objc_getAssociatedObject(self, Self.focusTokenKey) as? ObservationToken }
+        set {
+            objc_setAssociatedObject(
+                self, Self.focusTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
     }
 
     private static let focusTokenKey = malloc(1)!
-  }
+}
 
-  /// Represents a selection of text.
-  ///
-  /// Like SwiftUI's `TextSelection`, but for UIKit.
-  public struct UITextSelection: Hashable, Sendable {
+/// Represents a selection of text.
+///
+/// Like SwiftUI's `TextSelection`, but for UIKit.
+public struct AppKitTextSelection: Hashable, Sendable {
     public var range: Range<String.Index>
 
     public init(range: Range<String.Index>) {
-      self.range = range
+        self.range = range
     }
+
     public init(insertionPoint: String.Index) {
-      self.range = insertionPoint..<insertionPoint
+        self.range = insertionPoint ..< insertionPoint
     }
+
     public var isInsertion: Bool {
-      self.range.isEmpty
+        range.isEmpty
     }
-  }
+}
 #endif

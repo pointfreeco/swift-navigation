@@ -67,17 +67,9 @@ let package = Package(
       ]
     ),
     .target(
-      name: "CocoaNavigation",
-      dependencies: [
-        "SwiftNavigation",
-        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
-      ]
-    ),
-    .target(
       name: "UIKitNavigation",
       dependencies: [
         "SwiftNavigation",
-        "CocoaNavigation",
         "UIKitNavigationShim",
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
       ]
@@ -89,7 +81,6 @@ let package = Package(
       name: "AppKitNavigation",
       dependencies: [
         "SwiftNavigation",
-        "CocoaNavigation",
         "AppKitNavigationShim",
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
       ]
