@@ -52,11 +52,11 @@
       self.root = root
       self.viewControllers = [root]
     }
-    
+
     public required init?(coder aDecoder: NSCoder) {
       fatalError("init(coder:) has not been implemented")
     }
-    
+
     open override func viewDidLoad() {
       super.viewDidLoad()
 
