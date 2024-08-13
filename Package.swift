@@ -23,6 +23,10 @@ let package = Package(
       name: "UIKitNavigation",
       targets: ["UIKitNavigation"]
     ),
+    .library(
+      name: "AppKitNavigation",
+      targets: ["AppKitNavigation"]
+    ),
   ],
   dependencies: [
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
@@ -63,15 +67,35 @@ let package = Package(
       ]
     ),
     .target(
+      name: "CocoaNavigation",
+      dependencies: [
+        "SwiftNavigation",
+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
+      ]
+    ),
+    .target(
       name: "UIKitNavigation",
       dependencies: [
         "SwiftNavigation",
+        "CocoaNavigation",
         "UIKitNavigationShim",
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
       ]
     ),
     .target(
       name: "UIKitNavigationShim"
+    ),
+    .target(
+      name: "AppKitNavigation",
+      dependencies: [
+        "SwiftNavigation",
+        "CocoaNavigation",
+        "AppKitNavigationShim",
+        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
+      ]
+    ),
+    .target(
+      name: "AppKitNavigationShim"
     ),
     .testTarget(
       name: "UIKitNavigationTests",
