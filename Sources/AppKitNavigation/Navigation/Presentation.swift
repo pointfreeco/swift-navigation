@@ -128,9 +128,8 @@ extension NSViewController {
             guard let self else { return }
             if presentedViewControllers != nil {
                 self.dismiss(nil)
-                    onDismiss?()
-                    self.present(child, for: style)
-                
+                onDismiss?()
+                self.present(child, for: style)
             } else {
                 self.present(child, for: style)
             }
@@ -140,7 +139,6 @@ extension NSViewController {
         }
     }
 
-    
     public enum TransitionStyle {
         case sheet
         case modalWindow
@@ -154,9 +152,9 @@ extension NSViewController {
             presentAsSheet(viewControllerToPresent)
         case .modalWindow:
             presentAsModalWindow(viewControllerToPresent)
-        case .popover(let rect, let view, let preferredEdge, let behavior):
+        case let .popover(rect, view, preferredEdge, behavior):
             present(viewControllerToPresent, asPopoverRelativeTo: rect, of: view, preferredEdge: preferredEdge, behavior: behavior)
-        case .custom(let animator):
+        case let .custom(animator):
             present(viewControllerToPresent, animator: animator)
         }
     }
@@ -292,7 +290,7 @@ extension NSViewController {
                     }
                 }
                 childController.onDismiss = onDismiss
-                
+
                 self.presentedByID[key] = Presented(childController, id: id(unwrappedItem.wrappedValue))
                 let work = {
                     withUITransaction(transaction) {

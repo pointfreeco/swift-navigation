@@ -12,25 +12,24 @@ public protocol NSTargetActionProtocol: NSObject, Sendable {
 
 @MainActor
 internal class NSTargetActionHandler: NSObject {
-    let action: (NSControl) -> Void
+    typealias Action = (Any?) -> Void
+    var actions: [Action] = []
 
     var originTarget: AnyObject?
-    
-    var originAction: Selector?
-    
-    init(action: @escaping (NSControl) -> Void) {
-        self.action = action
-    }
 
-    @objc func invokeAction(_ sender: NSControl) {
+    var originAction: Selector?
+
+    @objc func invokeAction(_ sender: Any?) {
         if let originTarget, let originAction {
             NSApplication.shared.sendAction(originAction, to: originTarget, from: sender)
         }
-        action(sender)
-        
+        actions.forEach { $0(sender) }
+    }
+
+    func addAction(_ action: @escaping Action) {
+        actions.append(action)
     }
 }
-
 
 extension NSTargetActionProtocol {
     /// Establishes a two-way connection between a source of truth and a property of this control.
@@ -50,11 +49,27 @@ extension NSTargetActionProtocol {
         }
     }
 
-    
-    
     internal var actionHandler: NSTargetActionHandler? {
-        set { objc_setAssociatedObject(self, actionHandlerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-        get { objc_getAssociatedObject(self, actionHandlerKey) as? NSTargetActionHandler }
+        set {
+            objc_setAssociatedObject(self, actionHandlerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            objc_getAssociatedObject(self, actionHandlerKey) as? NSTargetActionHandler
+        }
+    }
+
+    internal func createActionHandlerIfNeeded() -> NSTargetActionHandler {
+        if let actionHandler {
+            return actionHandler
+        } else {
+            let actionHandler = NSTargetActionHandler()
+            actionHandler.originTarget = appkitNavigationTarget
+            actionHandler.originAction = appkitNavigationAction
+            self.actionHandler = actionHandler
+            appkitNavigationTarget = actionHandler
+            appkitNavigationAction = #selector(NSTargetActionHandler.invokeAction(_:))
+            return actionHandler
+        }
     }
 
     /// Establishes a two-way connection between a source of truth and a property of this control.
@@ -74,13 +89,11 @@ extension NSTargetActionProtocol {
         set: @escaping (_ control: Self, _ newValue: Value, _ transaction: UITransaction) -> Void
     ) -> ObservationToken {
         unbind(keyPath)
-        let actionHandler = NSTargetActionHandler { [weak self] _ in
+        let actionHandler = createActionHandlerIfNeeded()
+        actionHandler.addAction { [weak self] _ in
             guard let self else { return }
             binding.wrappedValue = self[keyPath: keyPath]
         }
-        self.actionHandler = actionHandler
-        appkitNavigationTarget = actionHandler
-        appkitNavigationAction = #selector(NSTargetActionHandler.invokeAction(_:))
 
         let isSetting = LockIsolated(false)
         let token = observe { [weak self] transaction in
@@ -133,6 +146,8 @@ extension NSTargetActionProtocol {
         }
     }
 }
+
+
 
 @MainActor
 private let observationTokensKey = malloc(1)!

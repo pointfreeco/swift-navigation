@@ -3,7 +3,7 @@ import AppKit
 import AppKitNavigation
 import ConcurrencyExtras
 
-class MinimalObservationViewController: NSViewController, AppKitCaseStudy {
+class MinimalObservationViewController: XiblessViewController<NSView>, AppKitCaseStudy {
     let caseStudyTitle = "Minimal observation"
     let readMe = """
     This case study demonstrates how to use the 'observe' tool from the library in order to \
@@ -15,10 +15,6 @@ class MinimalObservationViewController: NSViewController, AppKitCaseStudy {
     closure of 'observe' causes re-renders.
     """
     @UIBindable var model = Model()
-    
-    override func loadView() {
-        view = NSView()
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

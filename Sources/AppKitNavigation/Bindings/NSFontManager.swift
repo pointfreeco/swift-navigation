@@ -67,7 +67,7 @@ extension NSFontManager {
         bind(font, to: \._selectedFont)
     }
     
-    private var _selectedFont: NSFont {
+    @objc private var _selectedFont: NSFont {
         set { setSelectedFont(newValue, isMultiple: false) }
         get { convert(.systemFont(ofSize: 0)) }
     }

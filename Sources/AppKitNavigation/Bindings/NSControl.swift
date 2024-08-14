@@ -14,4 +14,14 @@ extension NSControl: NSTargetActionProtocol {
     }
 }
 
+extension NSControl {
+    public convenience init(action: @escaping (Self) -> Void) {
+        self.init(frame: .zero)
+        createActionHandlerIfNeeded().addAction { [weak self] _ in
+            guard let self else { return }
+            action(self)
+        }
+    }
+}
+
 #endif

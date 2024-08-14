@@ -1,9 +1,9 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-  @_spi(Internals) import SwiftNavigation
-  import AppKit
+@_spi(Internals) import SwiftNavigation
+import AppKit
 
-  @MainActor
-  extension NSObject {
+@MainActor
+extension NSObject {
     /// Observe access to properties of an observable (or perceptible) object.
     ///
     /// This tool allows you to set up an observation loop so that you can access fields from an
@@ -107,7 +107,7 @@
     /// - Returns: A cancellation token.
     @discardableResult
     public func observe(_ apply: @escaping @MainActor @Sendable () -> Void) -> ObservationToken {
-      observe { _ in apply() }
+        observe { _ in apply() }
     }
 
     /// Observe access to properties of an observable (or perceptible) object.
@@ -119,59 +119,59 @@
     /// - Returns: A cancellation token.
     @discardableResult
     public func observe(
-      _ apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
+        _ apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
     ) -> ObservationToken {
-      let token = SwiftNavigation.observe { transaction in
-        MainActor._assumeIsolated {
-          withUITransaction(transaction) {
-            #if os(watchOS)
-              apply(transaction)
-            #else
-              if transaction.appKit.disablesAnimations {
-                NSView.performWithoutAnimation { apply(transaction) }
-                for completion in transaction.appKit.animationCompletions {
-                  completion(true)
-                }
-              } else if let animation = transaction.appKit.animation {
-                return animation.perform(
-                  { apply(transaction) },
-                  completion: transaction.appKit.animationCompletions.isEmpty
-                    ? nil
-                    : {
-                      for completion in transaction.appKit.animationCompletions {
-                        completion($0)
-                      }
+        let token = SwiftNavigation.observe { transaction in
+            MainActor._assumeIsolated {
+                withUITransaction(transaction) {
+                    #if os(watchOS)
+                    apply(transaction)
+                    #else
+                    if transaction.appKit.disablesAnimations {
+                        NSView.performWithoutAnimation { apply(transaction) }
+                        for completion in transaction.appKit.animationCompletions {
+                            completion(true)
+                        }
+                    } else if let animation = transaction.appKit.animation {
+                        return animation.perform(
+                            { apply(transaction) },
+                            completion: transaction.appKit.animationCompletions.isEmpty
+                                ? nil
+                                : {
+                                    for completion in transaction.appKit.animationCompletions {
+                                        completion($0)
+                                    }
+                                }
+                        )
+                    } else {
+                        apply(transaction)
+                        for completion in transaction.appKit.animationCompletions {
+                            completion(true)
+                        }
                     }
-                )
-              } else {
-                apply(transaction)
-                for completion in transaction.appKit.animationCompletions {
-                  completion(true)
+                    #endif
                 }
-              }
-            #endif
-          }
+            }
+        } task: { transaction, work in
+            DispatchQueue.main.async {
+                withUITransaction(transaction, work)
+            }
         }
-      } task: { transaction, work in
-        DispatchQueue.main.async {
-          withUITransaction(transaction, work)
-        }
-      }
-      tokens.append(token)
-      return token
+        tokens.append(token)
+        return token
     }
 
     fileprivate var tokens: [Any] {
-      get {
-        objc_getAssociatedObject(self, Self.tokensKey) as? [Any] ?? []
-      }
-      set {
-        objc_setAssociatedObject(self, Self.tokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-      }
+        get {
+            objc_getAssociatedObject(self, Self.tokensKey) as? [Any] ?? []
+        }
+        set {
+            objc_setAssociatedObject(self, Self.tokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
 
     private static let tokensKey = malloc(1)!
-  }
+}
 
 extension NSView {
     static func performWithoutAnimation(_ block: () -> Void) {

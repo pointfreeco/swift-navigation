@@ -54,7 +54,12 @@
 		DC86E8712C208D8D003C0EC9 /* Text+Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC86E8702C208D8A003C0EC9 /* Text+Template.swift */; };
 		E9836D922C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */; };
 		E9836D942C6CA07300FC6EFD /* AppKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = E9836D932C6CA07300FC6EFD /* AppKitNavigation */; };
-		E9836D962C6CADBB00FC6EFD /* NSControlBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9836D952C6CADBB00FC6EFD /* NSControlBindingsViewController.swift */; };
+		E9836D962C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9836D952C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift */; };
+		E9CD5B762C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B752C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift */; };
+		E9CD5B782C6CDEA500CE7947 /* AppKit+FocusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B772C6CDEA500CE7947 /* AppKit+FocusViewController.swift */; };
+		E9CD5B7B2C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */; };
+		E9CD5B7C2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */; };
+		E9CD5B7E2C6D14DC00CE7947 /* AppKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B7D2C6D14DC00CE7947 /* AppKitCaseStudies.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,7 +119,12 @@
 		DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedBindings.swift; sourceTree = "<group>"; };
 		DC86E8702C208D8A003C0EC9 /* Text+Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text+Template.swift"; sourceTree = "<group>"; };
 		E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+MinimalObservationViewController.swift"; sourceTree = "<group>"; };
-		E9836D952C6CADBB00FC6EFD /* NSControlBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSControlBindingsViewController.swift; sourceTree = "<group>"; };
+		E9836D952C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+NSControlBindingsViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B752C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+EnumControlsViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B772C6CDEA500CE7947 /* AppKit+FocusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+FocusViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppKit+BasicsNavigationViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppKit+ConciseEnumNavigationViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B7D2C6D14DC00CE7947 /* AppKitCaseStudies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKitCaseStudies.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -284,8 +294,13 @@
 		E9836D902C6C9E3000FC6EFD /* AppKit */ = {
 			isa = PBXGroup;
 			children = (
+				E9CD5B7D2C6D14DC00CE7947 /* AppKitCaseStudies.swift */,
 				E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */,
-				E9836D952C6CADBB00FC6EFD /* NSControlBindingsViewController.swift */,
+				E9836D952C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift */,
+				E9CD5B752C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift */,
+				E9CD5B772C6CDEA500CE7947 /* AppKit+FocusViewController.swift */,
+				E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */,
+				E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */,
 			);
 			path = AppKit;
 			sourceTree = "<group>";
@@ -449,17 +464,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				CABE9FC1272F2C0000AFC150 /* EnumNavigation.swift in Sources */,
+				E9CD5B782C6CDEA500CE7947 /* AppKit+FocusViewController.swift in Sources */,
 				E9836D922C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift in Sources */,
+				E9CD5B7B2C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift in Sources */,
 				DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */,
 				CA9D70502C1FB431003B672A /* StaticNavigationStackController.swift in Sources */,
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
+				E9CD5B7C2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift in Sources */,
 				CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */,
 				CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */,
 				CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */,
 				CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
 				CA3D0E322C20B27B00CCF7CD /* ConnectToNetworkFeature.swift in Sources */,
-				E9836D962C6CADBB00FC6EFD /* NSControlBindingsViewController.swift in Sources */,
+				E9836D962C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift in Sources */,
 				CA3D0E332C20B27B00CCF7CD /* NetworkDetailFeature.swift in Sources */,
 				CA3D0E342C20B27B00CCF7CD /* Network.swift in Sources */,
 				CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */,
@@ -473,8 +491,10 @@
 				CA601BAE2C234613006B0C5F /* AnimationsViewController.swift in Sources */,
 				CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */,
 				CA49D9542C20D4DF00E6C5BB /* ErasedNavigationStackController.swift in Sources */,
+				E9CD5B762C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift in Sources */,
 				CA9D70542C1FB4FA003B672A /* BasicsNavigationViewController.swift in Sources */,
 				DC86E8712C208D8D003C0EC9 /* Text+Template.swift in Sources */,
+				E9CD5B7E2C6D14DC00CE7947 /* AppKitCaseStudies.swift in Sources */,
 				CA473838272F0D860012CAC3 /* OptionalNavigation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -28,14 +28,10 @@ extension NSAlert {
     ) {
         let button = addButton(withTitle: String(state: buttonState.label))
 
-        let actionHandler = NSTargetActionHandler { _ in
+        button.createActionHandlerIfNeeded().addAction { _ in
             buttonState.withAction(handler)
         }
-        actionHandler.originTarget = button.target
-        actionHandler.originAction = button.action
-        button.target = actionHandler
-        button.action = #selector(NSTargetActionHandler.invokeAction(_:))
-        button.actionHandler = actionHandler
+        
         if buttonState.role == .destructive, #available(macOS 11.0, *) {
             button.hasDestructiveAction = true
         }
