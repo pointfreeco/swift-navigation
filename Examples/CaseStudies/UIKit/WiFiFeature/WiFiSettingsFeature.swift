@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import UIKitNavigation
 
@@ -309,3 +310,4 @@ extension NSDiffableDataSourceSnapshot<
     }
   }
 }
+#endif

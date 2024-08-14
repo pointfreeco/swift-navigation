@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import UIKit
 import UIKitNavigation
@@ -172,3 +173,4 @@ private class FeatureViewController: UIViewController {
 #Preview {
   StaticNavigationStackController()
 }
+#endif

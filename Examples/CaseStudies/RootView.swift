@@ -8,9 +8,11 @@ struct RootView: View {
         NavigationLink("SwiftUI") {
           SwiftUICaseStudiesView()
         }
+#if canImport(UIKit) && !os(watchOS)
         NavigationLink("UIKit") {
           UIKitCaseStudiesView()
         }
+#endif
       }
       .navigationTitle("Case studies")
     }

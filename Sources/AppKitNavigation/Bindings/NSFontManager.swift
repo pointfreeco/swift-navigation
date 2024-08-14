@@ -13,12 +13,14 @@ extension NSFontManager: NSTargetActionProtocol, @unchecked Sendable {
         get { appkitNavigationDelegate.action }
     }
 
+    private static let appkitNavigationDelegateKey = malloc(1)!
+    
     private var appkitNavigationDelegate: Delegate {
         set {
-            objc_setAssociatedObject(self, #function, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, Self.appkitNavigationDelegateKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            if let delegate = objc_getAssociatedObject(self, #function) as? Delegate {
+            if let delegate = objc_getAssociatedObject(self, Self.appkitNavigationDelegateKey) as? Delegate {
                 return delegate
             } else {
                 let delegate = Delegate()

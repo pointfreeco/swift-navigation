@@ -9,7 +9,18 @@ protocol CaseStudy {
   var isPresentedInSheet: Bool { get }
 }
 protocol SwiftUICaseStudy: CaseStudy, View {}
+#if canImport(UIKit) && !os(watchOS)
 protocol UIKitCaseStudy: CaseStudy, UIViewController {}
+extension UIKitCaseStudy {
+  var usesOwnLayout: Bool { true }
+}
+#endif
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+protocol AppKitCaseStudy: CaseStudy, NSViewController {}
+extension AppKitCaseStudy {
+    var usesOwnLayout: Bool { true }
+}
+#endif
 
 extension CaseStudy {
   var caseStudyNavigationTitle: String { caseStudyTitle }
@@ -18,9 +29,7 @@ extension CaseStudy {
 extension SwiftUICaseStudy {
   var usesOwnLayout: Bool { false }
 }
-extension UIKitCaseStudy {
-  var usesOwnLayout: Bool { true }
-}
+
 
 @resultBuilder
 @MainActor
@@ -31,10 +40,12 @@ enum CaseStudyViewBuilder {
   static func buildExpression(_ caseStudy: some SwiftUICaseStudy) -> some View {
     SwiftUICaseStudyButton(caseStudy: caseStudy)
   }
+#if canImport(UIKit) && !os(watchOS)
   @ViewBuilder
   static func buildExpression(_ caseStudy: some UIKitCaseStudy) -> some View {
     UIKitCaseStudyButton(caseStudy: caseStudy)
   }
+    #endif
   static func buildPartialBlock(first: some View) -> some View {
     first
   }
@@ -69,7 +80,7 @@ struct SwiftUICaseStudyButton<C: SwiftUICaseStudy>: View {
     }
   }
 }
-
+#if canImport(UIKit) && !os(watchOS)
 struct UIKitCaseStudyButton<C: UIKitCaseStudy>: View {
   let caseStudy: C
   @State var isPresented = false
@@ -116,7 +127,7 @@ extension UINavigationController {
     return self
   }
 }
-
+#endif
 struct CaseStudyModifier<C: CaseStudy>: ViewModifier {
   let caseStudy: C
   @State var isAboutPresented = false
@@ -209,7 +220,7 @@ private struct DemoCaseStudy: SwiftUICaseStudy {
     Text("Hello!")
   }
 }
-
+#if canImport(UIKit) && !os(watchOS)
 private class DemoCaseStudyController: UIViewController, UIKitCaseStudy {
   let caseStudyTitle = "Demo Case Study"
   let readMe = """
@@ -218,3 +229,4 @@ private class DemoCaseStudyController: UIViewController, UIKitCaseStudy {
     Enjoy!
     """
 }
+#endif

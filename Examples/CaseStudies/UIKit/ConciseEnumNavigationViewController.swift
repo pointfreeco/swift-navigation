@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import UIKit
 import UIKitNavigation
@@ -134,3 +135,4 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
     rootViewController: BasicsNavigationViewController()
   )
 }
+#endif

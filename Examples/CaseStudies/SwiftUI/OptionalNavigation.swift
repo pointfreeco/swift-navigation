@@ -57,7 +57,7 @@ struct OptionalNavigation: SwiftUICaseStudy {
         .navigationTitle("Sheet")
         .presentationDetents([.medium])
       }
-
+#if canImport(UIKit) && !os(watchOS)
       Button("Cover is presented: \(fullScreenCover != nil ? "✅" : "❌")") {
         fullScreenCover = .random(in: 1...1_000)
       }
@@ -79,7 +79,7 @@ struct OptionalNavigation: SwiftUICaseStudy {
           }
         }
       }
-
+        #endif
       Button("Popover is presented: \(popover != nil ? "✅" : "❌")") {
         popover = .random(in: 1...1_000)
       }

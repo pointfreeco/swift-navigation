@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import UIKitNavigation
 import XCTest
 
@@ -496,3 +497,4 @@ private class BasicViewController: UIViewController {
     }
   }
 }
+#endif

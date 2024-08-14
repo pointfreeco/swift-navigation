@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import UIKitNavigation
 import XCTestDynamicOverlay
@@ -109,3 +110,4 @@ final class ConnectToNetworkViewController: UIViewController {
     )
   }
 }
+#endif

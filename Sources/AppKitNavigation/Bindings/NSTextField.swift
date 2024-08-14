@@ -69,11 +69,12 @@ extension NSTextField: NSTextViewDelegate {
                 selection.wrappedValue = control.textSelection
             }
         }
+        
         let observationToken = ObservationToken { [weak self] in
-            MainActor._assumeIsolated {
-                editingChangedAction.cancel()
-                editingDidEndAction.cancel()
-            }
+//            MainActor._assumeIsolated {
+            editingChangedAction.cancel()
+            editingDidEndAction.cancel()
+//            }
             token.cancel()
             self?.textSelectionObserver = nil
         }
@@ -99,12 +100,13 @@ extension NSTextField: NSTextViewDelegate {
         }
     }
 
-    fileprivate var textSelectionObserver: TextSelectionObserver? {
+    private static let textSelectionObserverKey = malloc(1)!
+    private var textSelectionObserver: TextSelectionObserver? {
         set {
-            objc_setAssociatedObject(self, #function, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, Self.textSelectionObserverKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            objc_getAssociatedObject(self, #function) as? TextSelectionObserver
+            objc_getAssociatedObject(self, Self.textSelectionObserverKey) as? TextSelectionObserver
         }
     }
 

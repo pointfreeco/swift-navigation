@@ -52,6 +52,9 @@
 		CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */; };
 		DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */; };
 		DC86E8712C208D8D003C0EC9 /* Text+Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC86E8702C208D8A003C0EC9 /* Text+Template.swift */; };
+		E9836D922C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */; };
+		E9836D942C6CA07300FC6EFD /* AppKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = E9836D932C6CA07300FC6EFD /* AppKitNavigation */; };
+		E9836D962C6CADBB00FC6EFD /* NSControlBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9836D952C6CADBB00FC6EFD /* NSControlBindingsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +113,8 @@
 		DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
 		DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedBindings.swift; sourceTree = "<group>"; };
 		DC86E8702C208D8A003C0EC9 /* Text+Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text+Template.swift"; sourceTree = "<group>"; };
+		E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+MinimalObservationViewController.swift"; sourceTree = "<group>"; };
+		E9836D952C6CADBB00FC6EFD /* NSControlBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSControlBindingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +135,7 @@
 				CA48F2FA2C49645100BE2C3C /* SwiftUINavigation in Frameworks */,
 				CA48F3052C49650F00BE2C3C /* Tagged in Frameworks */,
 				CA48F2FC2C49645100BE2C3C /* UIKitNavigation in Frameworks */,
+				E9836D942C6CA07300FC6EFD /* AppKitNavigation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +200,7 @@
 				CA9D70492C1F642A003B672A /* Internal */,
 				CADCA3642C1CE80B00DE645F /* SwiftUI */,
 				CA9D704A2C1F6431003B672A /* UIKit */,
+				E9836D902C6C9E3000FC6EFD /* AppKit */,
 			);
 			path = CaseStudies;
 			sourceTree = "<group>";
@@ -274,6 +281,15 @@
 			path = Internal;
 			sourceTree = "<group>";
 		};
+		E9836D902C6C9E3000FC6EFD /* AppKit */ = {
+			isa = PBXGroup;
+			children = (
+				E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */,
+				E9836D952C6CADBB00FC6EFD /* NSControlBindingsViewController.swift */,
+			);
+			path = AppKit;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -316,6 +332,7 @@
 				CA48F3012C49650100BE2C3C /* IdentifiedCollections */,
 				CA48F3042C49650F00BE2C3C /* Tagged */,
 				CA48F3072C49651700BE2C3C /* ConcurrencyExtras */,
+				E9836D932C6CA07300FC6EFD /* AppKitNavigation */,
 			);
 			productName = CaseStudies;
 			productReference = CA473804272F0D330012CAC3 /* CaseStudies.app */;
@@ -432,6 +449,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CABE9FC1272F2C0000AFC150 /* EnumNavigation.swift in Sources */,
+				E9836D922C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift in Sources */,
 				DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */,
 				CA9D70502C1FB431003B672A /* StaticNavigationStackController.swift in Sources */,
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
@@ -441,6 +459,7 @@
 				CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
 				CA3D0E322C20B27B00CCF7CD /* ConnectToNetworkFeature.swift in Sources */,
+				E9836D962C6CADBB00FC6EFD /* NSControlBindingsViewController.swift in Sources */,
 				CA3D0E332C20B27B00CCF7CD /* NetworkDetailFeature.swift in Sources */,
 				CA3D0E342C20B27B00CCF7CD /* Network.swift in Sources */,
 				CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */,
@@ -683,6 +702,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.CaseStudies;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -713,6 +734,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.CaseStudies;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -725,6 +748,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -734,6 +758,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.CaseStudiesTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -748,6 +774,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -757,6 +784,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.CaseStudiesTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -867,6 +896,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA48F3062C49651700BE2C3C /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
 			productName = ConcurrencyExtras;
+		};
+		E9836D932C6CA07300FC6EFD /* AppKitNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppKitNavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -175,11 +175,8 @@
 
 extension NSView {
     static func performWithoutAnimation(_ block: () -> Void) {
-        if NSAnimationContext.current.allowsImplicitAnimation {
-            NSAnimationContext.current.allowsImplicitAnimation = false
-            block()
-            NSAnimationContext.current.allowsImplicitAnimation = true
-        } else {
+        NSAnimationContext.runAnimationGroup { context in
+            context.allowsImplicitAnimation = false
             block()
         }
     }

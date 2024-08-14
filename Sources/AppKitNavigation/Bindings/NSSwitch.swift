@@ -26,7 +26,7 @@ extension NSSwitch {
         }
     }
 
-    var boolValue: Bool {
+    @objc var boolValue: Bool {
         set { state = newValue ? .on : .off }
         get { state == .on }
     }
