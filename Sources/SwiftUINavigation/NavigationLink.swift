@@ -54,7 +54,7 @@
     @available(macOS, introduced: 10.15, deprecated: 13)
     @available(tvOS, introduced: 13, deprecated: 16)
     @available(watchOS, introduced: 6, deprecated: 9)
-    public init<Item, WrappedDestination>(
+    public init<Item: Sendable, WrappedDestination>(
       item: Binding<Item?>,
       onNavigate: @escaping @Sendable (_ isActive: Bool) -> Void,
       @ViewBuilder destination: @escaping (Binding<Item>) -> WrappedDestination,
