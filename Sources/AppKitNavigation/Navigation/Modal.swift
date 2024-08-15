@@ -4,42 +4,6 @@ import AppKit
 import Combine
 
 @MainActor
-@objc
-public protocol ModalRepresentable where Self: NSObject {
-    @objc @discardableResult func runModal() -> NSApplication.ModalResponse
-    @objc var window: NSWindow { get }
-}
-
-extension NSWindow: ModalRepresentable {
-    
-    public var window: NSWindow { self }
-    
-    public func runModal() -> NSApplication.ModalResponse {
-        NSApplication.shared.runModal(for: self)
-    }
-}
-
-extension NSAlert: ModalRepresentable {}
-
-@MainActor
-class WindowsObserver: NSObject {
-    static let shared = WindowsObserver()
-    
-    var windowsCancellable: [NSWindow: AnyCancellable] = [:]
-    
-    func observeWindow(_ window: NSWindow) {
-        windowsCancellable[window] = NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: window)
-            .sink { [weak self] _ in
-                guard let self else { return }
-                if NSApplication.shared.modalWindow === window {
-                    NSApplication.shared.stopModal()
-                }
-                windowsCancellable.removeValue(forKey: window)
-            }
-    }
-}
-
-@MainActor
 extension NSObject {
     @discardableResult
     public func modal<Item, ID: Hashable>(
@@ -50,12 +14,12 @@ extension NSObject {
     ) -> ObservationToken {
         modal(item: item, id: id) { $item in
             content($item)
-        } beginSheet: { modalRepresentable, _ in
+        } beginModal: { modalRepresentable, _ in
             if NSApplication.shared.modalWindow != nil {
                 NSApplication.shared.stopModal()
                 onDismiss?()
                 DispatchQueue.main.async {
-                    WindowsObserver.shared.observeWindow(modalRepresentable.window)
+                    ModalWindowsObserver.shared.observeWindow(modalRepresentable.window)
                     modalRepresentable.runModal()
                     modalRepresentable.onEndModal?.invoke()
                     modalRepresentable.onEndModal = nil
@@ -63,13 +27,13 @@ extension NSObject {
 
             } else {
                 DispatchQueue.main.async {
-                    WindowsObserver.shared.observeWindow(modalRepresentable.window)
+                    ModalWindowsObserver.shared.observeWindow(modalRepresentable.window)
                     modalRepresentable.runModal()
                     modalRepresentable.onEndModal?.invoke()
                     modalRepresentable.onEndModal = nil
                 }
             }
-        } endSheet: { provider, _ in
+        } endModal: { provider, _ in
             NSApplication.shared.stopModal()
             onDismiss?()
         }
@@ -79,11 +43,11 @@ extension NSObject {
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         content: @escaping (UIBinding<Item>) -> ModalRepresentable,
-        beginSheet: @escaping (
+        beginModal: @escaping (
             _ child: ModalRepresentable,
             _ transaction: UITransaction
         ) -> Void,
-        endSheet: @escaping (
+        endModal: @escaping (
             _ child: ModalRepresentable,
             _ transaction: UITransaction
         ) -> Void
@@ -92,8 +56,8 @@ extension NSObject {
             item: item,
             id: { $0[keyPath: id] },
             content: content,
-            beginModal: beginSheet,
-            endModal: endSheet
+            beginModal: beginModal,
+            endModal: endModal
         )
     }
 

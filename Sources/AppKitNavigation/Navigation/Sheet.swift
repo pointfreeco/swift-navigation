@@ -2,53 +2,95 @@
 
 import AppKit
 
-@MainActor
-public protocol SheetRepresentable: NSObject {
-    var currentWindow: NSWindow? { get }
-    func beginSheet(for provider: SheetRepresentable) async
-    func endSheet(for provider: SheetRepresentable)
-}
-
 extension SheetRepresentable {
-    public func beginSheet(for provider: any SheetRepresentable) async {
-        if let sheetedWindow = provider.currentWindow {
-            await currentWindow?.beginSheet(sheetedWindow)
+    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
+    ///
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
+    ///
+    /// - Parameters:
+    ///   - isSheeted: A binding to a Boolean value that determines whether to sheet the representable
+    ///   - onDismiss: The closure to execute when dismissing the representable.
+    ///   - content: A closure that returns the representable to display over the current window content.
+    @discardableResult
+    public func sheet(
+        isSheeted: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> SheetRepresentable
+    ) -> ObservationToken {
+        sheet(item: isSheeted.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+    }
+
+    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
+    ///
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user. If `item`'s
+    ///     identity changes, the view controller is dismissed and replaced with a new one using the
+    ///     same process.
+    ///   - onDismiss: The closure to execute when dismissing the view controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> SheetRepresentable
+    ) -> ObservationToken {
+        sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    }
+
+    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
+    ///
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user. If `item`'s
+    ///     identity changes, the view controller is dismissed and replaced with a new one using the
+    ///     same process.
+    ///   - onDismiss: The closure to execute when dismissing the view controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
+    @_disfavoredOverload
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> SheetRepresentable
+    ) -> ObservationToken {
+        sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    }
+
+    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
+    ///
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
+    ///
+    /// - Parameters:
+    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
+    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
+    ///     content in a view controller that you create that is displayed to the user. If `item`'s
+    ///     identity changes, the view controller is dismissed and replaced with a new one using the
+    ///     same process.
+    ///   - id: The key path to the provided item's identifier.
+    ///   - onDismiss: The closure to execute when dismissing the view controller.
+    ///   - content: A closure that returns the view controller to display over the current view
+    ///     controller's content.
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> SheetRepresentable
+    ) -> ObservationToken {
+        sheet(item: item, id: id, onDismiss: onDismiss) {
+            content($0.wrappedValue)
         }
     }
 
-    public func endSheet(for provider: any SheetRepresentable) {
-        if let sheetedWindow = provider.currentWindow {
-            currentWindow?.endSheet(sheetedWindow)
-        }
-    }
-}
-
-extension NSWindow: SheetRepresentable {
-    public var currentWindow: NSWindow? { self }
-}
-
-extension NSWindowController: SheetRepresentable {
-    public var currentWindow: NSWindow? { window }
-}
-
-extension NSViewController: SheetRepresentable {
-    public var currentWindow: NSWindow? { view.window }
-}
-
-extension NSAlert: SheetRepresentable {
-    public var currentWindow: NSWindow? { window }
-
-    public func beginSheet(for provider: any SheetRepresentable) async {
-        guard let parentWindow = provider.currentWindow else { return }
-        await beginSheetModal(for: parentWindow)
-    }
-
-    public func endSheet(for provider: any SheetRepresentable) {
-        provider.currentWindow?.endSheet(window)
-    }
-}
-
-extension SheetRepresentable {
     @discardableResult
     public func sheet<Item, ID: Hashable>(
         item: UIBinding<Item?>,
@@ -142,11 +184,7 @@ extension SheetRepresentable {
                         beginSheet(childController, transaction)
                     }
                 }
-//                if hasViewAppeared {
                 work()
-//                } else {
-//                    onViewAppear.append(work)
-//                }
             } else if let presented = sheetedByID[key] {
                 if let controller = presented.provider {
                     endSheet(controller, transaction)
@@ -181,18 +219,6 @@ extension SheetRepresentable {
     }
 }
 
-internal class ClosureHolder: NSObject {
-    let closure: () -> Void
-    
-    init(closure: @escaping () -> Void) {
-        self.closure = closure
-    }
-    
-    func invoke() {
-        closure()
-    }
-}
-
 private let onEndSheetKey = malloc(1)!
 private let sheetedKey = malloc(1)!
 
@@ -223,6 +249,5 @@ extension NSWindow {
         sheetParent?.endSheet(self)
     }
 }
-
 
 #endif

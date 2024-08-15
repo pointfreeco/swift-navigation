@@ -7,7 +7,7 @@ import AppKitNavigationShim
 extension NSViewController {
     /// Presents a view controller modally when a binding to a Boolean value you provide is true.
     ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
     ///
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the view
@@ -27,7 +27,7 @@ extension NSViewController {
 
     /// Presents a view controller modally using the given item as a data source for its content.
     ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
@@ -50,7 +50,7 @@ extension NSViewController {
 
     /// Presents a view controller modally using the given item as a data source for its content.
     ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
@@ -74,7 +74,7 @@ extension NSViewController {
 
     /// Presents a view controller modally using the given item as a data source for its content.
     ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
@@ -101,7 +101,7 @@ extension NSViewController {
 
     /// Presents a view controller modally using the given item as a data source for its content.
     ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for UIKit.
+    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
     ///
     /// - Parameters:
     ///   - item: A binding to an optional source of truth for the view controller. When `item` is
@@ -332,9 +332,9 @@ private class Presented {
     weak var controller: NSViewController?
     let presentationID: AnyHashable?
     deinit {
-        // NB: This can only be assumed because it is held in a UIViewController and is guaranteed to
+        // NB: This can only be assumed because it is held in a NSViewController and is guaranteed to
         //     deinit alongside it on the main thread. If we use this other places we should force it
-        //     to be a UIViewController as well, to ensure this functionality.
+        //     to be a NSViewController as well, to ensure this functionality.
         MainActor._assumeIsolated {
             self.controller?.dismiss(nil)
         }

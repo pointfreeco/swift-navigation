@@ -80,21 +80,6 @@ extension AppKitAnimation {
     /// - Parameters:
     ///   - duration: The total duration of the animations, measured in seconds. If you specify a
     ///     negative value or `0`, the changes are made without animating them.
-    ///   - delay: The amount of time (measured in seconds) to wait before beginning the animations.
-    ///     Specify a value of `0` to begin the animations immediately.
-    ///   - dampingRatio: The damping ratio for the spring animation as it approaches its quiescent
-    ///     state.
-    ///
-    ///     To smoothly decelerate the animation without oscillation, use a value of `1`. Employ a
-    ///     damping ratio closer to zero to increase oscillation.
-    ///   - velocity: The initial spring velocity. For smooth start to the animation, match this
-    ///     value to the view's velocity as it was prior to attachment.
-    ///
-    ///     A value of `1` corresponds to the total animation distance traversed in one second. For
-    ///     example, if the total animation distance is 200 points and you want the start of the
-    ///     animation to match a view velocity of 100 pt/s, use a value of `0.5`.
-    ///   - options: A mask of options indicating how you want to perform the animations. For a list
-    ///     of valid constants, see `UIView.AnimationOptions`.
     /// - Returns: An animation using a timing curve corresponding to the motion of a physical
     ///   spring.
     public static func animate(
@@ -111,11 +96,7 @@ extension AppKitAnimation {
 
     /// A default animation instance.
     public static var `default`: Self {
-        if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
-            return .animate()
-        } else {
-            return .animate(withDuration: 0.35)
-        }
+        return .animate()
     }
 }
 #endif

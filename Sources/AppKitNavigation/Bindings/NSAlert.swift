@@ -2,7 +2,7 @@
 import AppKit
 
 extension NSAlert {
-    /// Creates and returns a view controller for displaying an alert using a data description.
+    /// Creates and returns a alert for displaying an alert using a data description.
     ///
     /// - Parameters:
     ///   - state: A data description of the alert.
@@ -38,7 +38,10 @@ extension NSAlert {
         if buttonState.role == .cancel {
             button.keyEquivalent = "\u{1b}"
         }
-//        self.accessibilityLabel = button.label.accessibilityLabel.map { String(state: $0) }
+        
+        if #available(macOS 12, *) {
+            button.setAccessibilityLabel(buttonState.label.accessibilityLabel.map { String(state: $0) })
+        }
     }
 }
 #endif

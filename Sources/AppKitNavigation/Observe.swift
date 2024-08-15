@@ -10,7 +10,7 @@ extension NSObject {
     /// observable model in order to populate your view, and also automatically track changes to
     /// any accessed fields so that the view is always up-to-date.
     ///
-    /// It is most useful when dealing with non-SwiftUI views, such as UIKit views and controller.
+    /// It is most useful when dealing with non-SwiftUI views, such as AppKit views and controller.
     /// You can invoke the ``observe(_:)`` method a single time in the `viewDidLoad` and update all
     /// the view elements:
     ///
@@ -18,16 +18,16 @@ extension NSObject {
     /// override func viewDidLoad() {
     ///   super.viewDidLoad()
     ///
-    ///   let countLabel = UILabel()
-    ///   let incrementButton = UIButton(primaryAction: UIAction { [weak self] _ in
+    ///   let countLabel = NSTextField(labelWithString: "")
+    ///   let incrementButton = NSButton { [weak self] _ in
     ///     self?.model.incrementButtonTapped()
-    ///   })
+    ///   }
     ///
     ///   observe { [weak self] in
     ///     guard let self
     ///     else { return }
     ///
-    ///     countLabel.text = "\(model.count)"
+    ///     countLabel.stringValue = "\(model.count)"
     ///   }
     /// }
     /// ```
@@ -38,7 +38,7 @@ extension NSObject {
     /// again.
     ///
     /// Generally speaking you can usually have a single ``observe(_:)`` in the entry point of your
-    /// view, such as `viewDidLoad` for `UIViewController`. This works even if you have many UI
+    /// view, such as `viewDidLoad` for `NSViewController`. This works even if you have many UI
     /// components to update:
     ///
     /// ```swift
@@ -51,9 +51,9 @@ extension NSObject {
     ///
     ///     countLabel.isHidden = model.isObservingCount
     ///     if !countLabel.isHidden {
-    ///       countLabel.text = "\(model.count)"
+    ///       countLabel.stringValue = "\(model.count)"
     ///     }
-    ///     factLabel.text = model.fact
+    ///     factLabel.stringValue = model.fact
     ///   }
     /// }
     /// ```
@@ -124,9 +124,6 @@ extension NSObject {
         let token = SwiftNavigation.observe { transaction in
             MainActor._assumeIsolated {
                 withUITransaction(transaction) {
-                    #if os(watchOS)
-                    apply(transaction)
-                    #else
                     if transaction.appKit.disablesAnimations {
                         NSView.performWithoutAnimation { apply(transaction) }
                         for completion in transaction.appKit.animationCompletions {
@@ -149,7 +146,6 @@ extension NSObject {
                             completion(true)
                         }
                     }
-                    #endif
                 }
             }
         } task: { transaction, work in
@@ -174,7 +170,7 @@ extension NSObject {
 }
 
 extension NSView {
-    static func performWithoutAnimation(_ block: () -> Void) {
+    fileprivate static func performWithoutAnimation(_ block: () -> Void) {
         NSAnimationContext.runAnimationGroup { context in
             context.allowsImplicitAnimation = false
             block()
