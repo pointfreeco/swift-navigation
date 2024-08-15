@@ -51,8 +51,15 @@
       [self UIKitNavigation_viewDidDisappear:animated];
 
       if ((self.isBeingDismissed || self.isMovingFromParentViewController) && self.onDismiss != NULL) {
-        self.onDismiss();
-        self.onDismiss = nil;
+        if ([self isKindOfClass:UIAlertController.class]) {
+          dispatch_async(dispatch_get_main_queue(), ^{
+            self.onDismiss();
+            self.onDismiss = nil;
+          });
+        } else {
+          self.onDismiss();
+          self.onDismiss = nil;
+        }
       }
     }
 
