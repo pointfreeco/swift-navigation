@@ -3,58 +3,58 @@
 import AppKit
 
 @MainActor
-public protocol WindowProviderAdapter: NSObject {
+public protocol SheetRepresentable: NSObject {
     var currentWindow: NSWindow? { get }
-    func beginSheet(for provider: WindowProviderAdapter) async
-    func endSheet(for provider: WindowProviderAdapter)
+    func beginSheet(for provider: SheetRepresentable) async
+    func endSheet(for provider: SheetRepresentable)
 }
 
-extension WindowProviderAdapter {
-    public func beginSheet(for provider: any WindowProviderAdapter) async {
+extension SheetRepresentable {
+    public func beginSheet(for provider: any SheetRepresentable) async {
         if let sheetedWindow = provider.currentWindow {
             await currentWindow?.beginSheet(sheetedWindow)
         }
     }
 
-    public func endSheet(for provider: any WindowProviderAdapter) {
+    public func endSheet(for provider: any SheetRepresentable) {
         if let sheetedWindow = provider.currentWindow {
             currentWindow?.endSheet(sheetedWindow)
         }
     }
 }
 
-extension NSWindow: WindowProviderAdapter {
+extension NSWindow: SheetRepresentable {
     public var currentWindow: NSWindow? { self }
 }
 
-extension NSWindowController: WindowProviderAdapter {
+extension NSWindowController: SheetRepresentable {
     public var currentWindow: NSWindow? { window }
 }
 
-extension NSViewController: WindowProviderAdapter {
+extension NSViewController: SheetRepresentable {
     public var currentWindow: NSWindow? { view.window }
 }
 
-extension NSAlert: WindowProviderAdapter {
+extension NSAlert: SheetRepresentable {
     public var currentWindow: NSWindow? { window }
 
-    public func beginSheet(for provider: any WindowProviderAdapter) async {
+    public func beginSheet(for provider: any SheetRepresentable) async {
         guard let parentWindow = provider.currentWindow else { return }
         await beginSheetModal(for: parentWindow)
     }
 
-    public func endSheet(for provider: any WindowProviderAdapter) {
+    public func endSheet(for provider: any SheetRepresentable) {
         provider.currentWindow?.endSheet(window)
     }
 }
 
-extension WindowProviderAdapter {
+extension SheetRepresentable {
     @discardableResult
     public func sheet<Item, ID: Hashable>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> WindowProviderAdapter
+        content: @escaping (UIBinding<Item>) -> SheetRepresentable
     ) -> ObservationToken {
         sheet(item: item, id: id) { $item in
             content($item)
@@ -84,13 +84,13 @@ extension WindowProviderAdapter {
     private func sheet<Item, ID: Hashable>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
-        content: @escaping (UIBinding<Item>) -> WindowProviderAdapter,
+        content: @escaping (UIBinding<Item>) -> SheetRepresentable,
         beginSheet: @escaping (
-            _ child: WindowProviderAdapter,
+            _ child: SheetRepresentable,
             _ transaction: UITransaction
         ) -> Void,
         endSheet: @escaping (
-            _ child: WindowProviderAdapter,
+            _ child: SheetRepresentable,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
@@ -106,13 +106,13 @@ extension WindowProviderAdapter {
     private func sheet<Item>(
         item: UIBinding<Item?>,
         id: @escaping (Item) -> AnyHashable?,
-        content: @escaping (UIBinding<Item>) -> WindowProviderAdapter,
+        content: @escaping (UIBinding<Item>) -> SheetRepresentable,
         beginSheet: @escaping (
-            _ child: WindowProviderAdapter,
+            _ child: SheetRepresentable,
             _ transaction: UITransaction
         ) -> Void,
         endSheet: @escaping (
-            _ child: WindowProviderAdapter,
+            _ child: SheetRepresentable,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
@@ -179,15 +179,15 @@ extension WindowProviderAdapter {
             objc_getAssociatedObject(self, onEndSheetKey) as? ClosureHolder
         }
     }
-
-//    func modal() {}
 }
 
-private class ClosureHolder: NSObject {
+internal class ClosureHolder: NSObject {
     let closure: () -> Void
+    
     init(closure: @escaping () -> Void) {
         self.closure = closure
     }
+    
     func invoke() {
         closure()
     }
@@ -198,7 +198,7 @@ private let sheetedKey = malloc(1)!
 
 @MainActor
 private class Sheeted {
-    weak var provider: WindowProviderAdapter?
+    weak var provider: SheetRepresentable?
     let sheetID: AnyHashable?
     deinit {
         // NB: This can only be assumed because it is held in a UIViewController and is guaranteed to
@@ -209,7 +209,7 @@ private class Sheeted {
         }
     }
 
-    init(_ provider: WindowProviderAdapter? = nil, id: AnyHashable?) {
+    init(_ provider: SheetRepresentable? = nil, id: AnyHashable?) {
         self.provider = provider
         self.sheetID = id
     }

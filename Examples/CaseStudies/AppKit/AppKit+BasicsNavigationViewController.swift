@@ -20,6 +20,9 @@ class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseS
         
         let showSheetButton = NSButton { [weak self] _ in
             self?.model.sheet = .random(in: 1 ... 1_000)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self?.model.sheet = nil
+            }
         }
 
         let showSheetFromBooleanButton = NSButton { [weak self] _ in
@@ -60,8 +63,8 @@ class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseS
 //            alert.addAction(UIAlertAction(title: "OK", style: .default))
 //            return alert
 //        }
-        sheet(item: $model.sheet, id: \.self) { count in
-            NSAlert(error: CocoaError.error(.coderInvalidValue))
+        modal(item: $model.sheet, id: \.self) { count in
+            NSWindow(contentViewController: XiblessViewController<NSBox>())
         }
 //        present(item: $model.sheet, id: \.self, style: .sheet) { count in
 ////            let vc = NSHostingController(
