@@ -63,19 +63,19 @@ extension NSObject {
     }
 
     private func modalObserver<Content: ModalContent>() -> ModalObserver<Content> {
-        if let observer = objc_getAssociatedObject(self, modalObserverKey) as? ModalObserver<Content> {
+        if let observer = objc_getAssociatedObject(self, modalObserverKeys.key(of: Content.self)) as? ModalObserver<Content> {
             return observer
         } else {
-            let modalObserver = ModalObserver<Content>(owner: self)
-            objc_setAssociatedObject(self, modalObserverKey, modalObserver, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            return modalObserver
+            let observer = ModalObserver<Content>(owner: self)
+            objc_setAssociatedObject(self, modalObserverKeys.key(of: Content.self), observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return observer
         }
     }
 }
 
 private let modalObserverKey = malloc(1)!
 @MainActor
-private var modalObserverKeys: [AnyHashableMetatype: UnsafeMutableRawPointer] = [:]
+private var modalObserverKeys = AssociatedKeys()
 private typealias ModalObserver<Content: ModalContent> = NavigationObserver<NSObject, Content>
 
 extension Navigated where Content: ModalContent {

@@ -14,28 +14,8 @@ extension NSWindow: ModalContent {
     public func runModal() -> NSApplication.ModalResponse {
         NSApplication.shared.runModal(for: self)
     }
-    
-    public var onBeginNavigation: (() -> Void)? {
-        set { _onBeginNavigation = newValue }
-        get { _onBeginNavigation }
-    }
-    
-    public var onEndNavigation: (() -> Void)? {
-        set { _onEndNavigation = newValue }
-        get { _onEndNavigation }
-    }
 }
 
-extension NSAlert: ModalContent {
-    public var onBeginNavigation: (() -> Void)? {
-        set { _onBeginNavigation = newValue }
-        get { _onBeginNavigation }
-    }
-    
-    public var onEndNavigation: (() -> Void)? {
-        set { _onEndNavigation = newValue }
-        get { _onEndNavigation }
-    }
-}
+extension NSAlert: ModalContent {}
 
 #endif

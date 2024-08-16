@@ -16,11 +16,11 @@ extension NSViewController {
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
     @discardableResult
-    public func present(
+    public func present<Content: PresentationContent>(
         isPresented: UIBinding<Bool>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping () -> PresentationContent
+        content: @escaping () -> Content
     ) -> ObservationToken {
         present(item: isPresented.toOptionalUnit, style: style, onDismiss: onDismiss) { _ in content() }
     }
@@ -39,11 +39,11 @@ extension NSViewController {
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
     @discardableResult
-    public func present<Item: Identifiable>(
+    public func present<Item: Identifiable, Content: PresentationContent>(
         item: UIBinding<Item?>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> PresentationContent
+        content: @escaping (Item) -> Content
     ) -> ObservationToken {
         present(item: item, id: \.id, style: style, onDismiss: onDismiss, content: content)
     }
@@ -63,11 +63,11 @@ extension NSViewController {
     ///     controller's content.
     @_disfavoredOverload
     @discardableResult
-    public func present<Item: Identifiable>(
+    public func present<Item: Identifiable, Content: PresentationContent>(
         item: UIBinding<Item?>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> PresentationContent
+        content: @escaping (UIBinding<Item>) -> Content
     ) -> ObservationToken {
         present(item: item, id: \.id, style: style, onDismiss: onDismiss, content: content)
     }
@@ -87,12 +87,12 @@ extension NSViewController {
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
     @discardableResult
-    public func present<Item, ID: Hashable>(
+    public func present<Item, ID: Hashable, Content: PresentationContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> PresentationContent
+        content: @escaping (Item) -> Content
     ) -> ObservationToken {
         present(item: item, id: id, style: style, onDismiss: onDismiss) {
             content($0.wrappedValue)
@@ -115,26 +115,27 @@ extension NSViewController {
     ///     controller's content.
     @_disfavoredOverload
     @discardableResult
-    public func present<Item, ID: Hashable>(
+    public func present<Item, ID: Hashable, Content: PresentationContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> PresentationContent
+        content: @escaping (UIBinding<Item>) -> Content
     ) -> ObservationToken {
         destination(item: item, id: id) { $item in
             content($item)
         } present: { [weak self] child, transaction in
             guard let self else { return }
-            if presentedViewControllers != nil {
-                self.dismiss(nil)
+            if let presentedViewController = presentedViewControllers?.first {
+                self.dismiss(presentedViewController)
                 onDismiss?()
-                self.present(child, for: style)
+                child.presented(from: self, style: style)
             } else {
-                self.present(child, for: style)
+                child.presented(from: self, style: style)
             }
-        } dismiss: { [weak self] _, transaction in
-            self?.dismiss(nil)
+        } dismiss: { [weak self] child, transaction in
+            guard let self else { return }
+            child.dismiss(from: self)
             onDismiss?()
         }
     }
@@ -172,12 +173,12 @@ extension NSViewController {
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
     @discardableResult
-    public func destination(
+    public func destination<Content: PresentationContent>(
         isPresented: UIBinding<Bool>,
-        content: @escaping () -> PresentationContent,
-        present: @escaping (PresentationContent, UITransaction) -> Void,
+        content: @escaping () -> Content,
+        present: @escaping (Content, UITransaction) -> Void,
         dismiss: @escaping (
-            _ child: PresentationContent,
+            _ child: Content,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
@@ -202,21 +203,22 @@ extension NSViewController {
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
     @discardableResult
-    public func destination<Item>(
+    public func destination<Item, Content: PresentationContent>(
         item: UIBinding<Item?>,
-        content: @escaping (UIBinding<Item>) -> PresentationContent,
-        present: @escaping (PresentationContent, UITransaction) -> Void,
+        content: @escaping (UIBinding<Item>) -> Content,
+        present: @escaping (Content, UITransaction) -> Void,
         dismiss: @escaping (
-            _ child: PresentationContent,
+            _ child: Content,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
-        destination(
+        let presentationObserver: PresentationObserver<Content> = presentationObserver()
+        return presentationObserver.observe(
             item: item,
             id: { _ in nil },
             content: content,
-            present: present,
-            dismiss: dismiss
+            begin: present,
+            end: dismiss
         )
     }
 
@@ -236,16 +238,16 @@ extension NSViewController {
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
     @discardableResult
-    public func destination<Item, ID: Hashable>(
+    public func destination<Item, ID: Hashable, Content: PresentationContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
-        content: @escaping (UIBinding<Item>) -> PresentationContent,
+        content: @escaping (UIBinding<Item>) -> Content,
         present: @escaping (
-            _ child: PresentationContent,
+            _ child: Content,
             _ transaction: UITransaction
         ) -> Void,
         dismiss: @escaping (
-            _ child: PresentationContent,
+            _ child: Content,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
@@ -256,100 +258,45 @@ extension NSViewController {
 //            present: present,
 //            dismiss: dismiss
 //        )
-        presentationObserver.observe(item: item, id: { $0[keyPath: id] }, content: content, begin: present, end: dismiss)
+        let presentationObserver: PresentationObserver<Content> = presentationObserver()
+        return presentationObserver.observe(item: item, id: { $0[keyPath: id] }, content: content, begin: present, end: dismiss)
         
     }
 
-    private func destination<Item>(
-        item: UIBinding<Item?>,
-        id: @escaping (Item) -> AnyHashable?,
-        content: @escaping (UIBinding<Item>) -> NSViewController,
-        present: @escaping (
-            _ child: NSViewController,
-            _ transaction: UITransaction
-        ) -> Void,
-        dismiss: @escaping (
-            _ child: NSViewController,
-            _ transaction: UITransaction
-        ) -> Void
-    ) -> ObservationToken {
-        let key = UIBindingIdentifier(item)
-        return observe { [weak self] transaction in
-            guard let self else { return }
-            if let unwrappedItem = UIBinding(item) {
-                if let presented = presentedByID[key] {
-                    guard let presentationID = presented.presentationID,
-                          presentationID != id(unwrappedItem.wrappedValue)
-                    else {
-                        return
-                    }
-                }
-                let childController = content(unwrappedItem)
-                let onDismiss = { [presentationID = id(unwrappedItem.wrappedValue)] in
-                    if let wrappedValue = item.wrappedValue,
-                       presentationID == id(wrappedValue) {
-                        item.wrappedValue = nil
-                    }
-                }
-                childController.onDismiss = onDismiss
-
-                self.presentedByID[key] = Presented(childController, id: id(unwrappedItem.wrappedValue))
-                let work = {
-                    withUITransaction(transaction) {
-                        present(childController, transaction)
-                    }
-                }
-                if hasViewAppeared {
-                    work()
-                } else {
-                    onViewAppear.append(work)
-                }
-            } else if let presented = presentedByID[key] {
-                if let controller = presented.controller {
-                    dismiss(controller, transaction)
-                }
-                self.presentedByID[key] = nil
-            }
-        }
-    }
-
-    fileprivate var presentedByID: [UIBindingIdentifier: Presented] {
-        get {
-            (objc_getAssociatedObject(self, Self.presentedKey)
-                as? [UIBindingIdentifier: Presented])
-                ?? [:]
-        }
-        set {
-            objc_setAssociatedObject(
-                self, Self.presentedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-            )
-        }
-    }
-
-    private static let presentedKey = malloc(1)!
     
-    private var presentationObserver: PresentationObserver {
-        set {
-            objc_setAssociatedObject(self, presentationObserverKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-        get {
-            if let observer = objc_getAssociatedObject(self, presentationObserverKey) as? PresentationObserver {
-                return observer
-            } else {
-                let observer = PresentationObserver(owner: self)
-                self.presentationObserver = observer
-                return observer
-            }
+    private func presentationObserver<Content: PresentationContent>() -> PresentationObserver<Content> {
+        if let observer = objc_getAssociatedObject(self, presentationObserverKeys.key(of: Content.self)) as? PresentationObserver<Content> {
+            return observer
+        } else {
+            let observer = PresentationObserver<Content>(owner: self)
+            objc_setAssociatedObject(self, presentationObserverKeys.key(of: Content.self), observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return observer
         }
     }
     
 }
 private let presentationObserverKey = malloc(1)!
 
+@MainActor
+private var presentationObserverKeys = AssociatedKeys()
+
+@MainActor
 public protocol PresentationContent: NavigationContent {
     func presented(from presentingViewController: NSViewController, style: NSViewController.TransitionStyle)
+    func dismiss(from presentingViewController: NSViewController)
 }
-extension NSViewController: PresentationContent {}
+
+
+extension NSViewController: PresentationContent {
+    public func presented(from presentingViewController: NSViewController, style: TransitionStyle) {
+        presentingViewController.present(self, for: style)
+    }
+    
+    public func dismiss(from presentingViewController: NSViewController) {
+        presentingViewController.dismiss(self)
+    }
+}
+
 extension NavigationContent where Self: NSViewController {
     var _onEndNavigation: (() -> Void)? {
         set {
@@ -361,7 +308,7 @@ extension NavigationContent where Self: NSViewController {
     }
 }
 
-class PresentationObserver: NavigationObserver<NSViewController, PresentationContent> {
+class PresentationObserver<Content: PresentationContent>: NavigationObserver<NSViewController, Content> {
     override func commitWork(_ work: @escaping () -> Void) {
         if owner.hasViewAppeared {
             work()
@@ -377,22 +324,4 @@ extension Navigated where Content: NSViewController {
     }
 }
 
-@MainActor
-private class Presented {
-    weak var controller: NSViewController?
-    let presentationID: AnyHashable?
-    deinit {
-        // NB: This can only be assumed because it is held in a NSViewController and is guaranteed to
-        //     deinit alongside it on the main thread. If we use this other places we should force it
-        //     to be a NSViewController as well, to ensure this functionality.
-        MainActor._assumeIsolated {
-            self.controller?.dismiss(nil)
-        }
-    }
-
-    required init(_ controller: NSViewController, id presentationID: AnyHashable? = nil) {
-        self.controller = controller
-        self.presentationID = presentationID
-    }
-}
 #endif
