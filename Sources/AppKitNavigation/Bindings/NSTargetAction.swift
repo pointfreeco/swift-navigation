@@ -134,6 +134,21 @@ extension NSTargetActionProtocol {
         observationTokens[keyPath] = nil
     }
 
+//    var observationTokens: [AnyKeyPath: ObservationToken] {
+//        get {
+//            objc_getAssociatedObject(self, observationTokensKey) as? [AnyKeyPath: ObservationToken]
+//                ?? [:]
+//        }
+//        set {
+//            objc_setAssociatedObject(
+//                self, observationTokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+//            )
+//        }
+//    }
+}
+
+@MainActor
+extension NSObject {
     var observationTokens: [AnyKeyPath: ObservationToken] {
         get {
             objc_getAssociatedObject(self, observationTokensKey) as? [AnyKeyPath: ObservationToken]
@@ -146,7 +161,6 @@ extension NSTargetActionProtocol {
         }
     }
 }
-
 
 
 @MainActor

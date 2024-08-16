@@ -1,3 +1,5 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+
 import Foundation
 
 extension MainActor {
@@ -28,3 +30,6 @@ extension MainActor {
         #endif
     }
 }
+
+
+#endif

@@ -48,17 +48,24 @@ class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseS
         observe { [weak self] in
             guard let self else { return }
 
-            showAlertButton.title = "Alert is presented: \(model.alert != nil ? "✅" : "❌")"
+            if let url = model.url {
+                showAlertButton.title = "URL is: \(url)"
+            } else {
+                showAlertButton.title = "Alert is presented: \(model.alert != nil ? "✅" : "❌")"
+            }
             showSheetButton.title = "Sheet is presented: \(model.sheet != nil ? "✅" : "❌")"
             showSheetFromBooleanButton.title = "Sheet is presented from boolean: \(model.isSheetPresented ? "✅" : "❌")"
         }
 
-        modal(item: $model.alert, id: \.self) { message in
-            let alert = NSAlert()
-            alert.messageText = "This is an alert"
-            alert.informativeText = message
-            alert.addButton(withTitle: "OK")
-            return alert
+        modal(item: $model.alert, id: \.self) { [unowned self] message in
+//            let alert = NSAlert()
+//            alert.messageText = "This is an alert"
+//            alert.informativeText = message
+//            alert.addButton(withTitle: "OK")
+//            return alert
+            let openPanel = NSOpenPanel(url: $model.url)
+            openPanel.message = message
+            return openPanel
         }
 
         present(item: $model.sheet, id: \.self, style: .sheet) { count in
@@ -79,6 +86,7 @@ class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseS
         var alert: String?
         var isSheetPresented = false
         var sheet: Int?
+        var url: URL?
     }
 }
 

@@ -1,3 +1,5 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+
 import Foundation
 
 @MainActor
@@ -31,3 +33,6 @@ extension NavigationContent {
         }
     }
 }
+
+
+#endif

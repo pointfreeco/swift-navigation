@@ -1,7 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
 import AppKit
-import Combine
 
 @MainActor
 private var modalObserverKeys = AssociatedKeys()
@@ -113,7 +112,7 @@ extension NSObject {
                 onDismiss?()
                 DispatchQueue.main.async {
                     ModalWindowsObserver.shared.observeWindow(modalContent.window)
-                    modalContent.runModal()
+                    modalContent.appKitNavigationRunModal()
                     modalContent.onEndNavigation?()
                     modalContent.onEndNavigation = nil
                 }
@@ -121,7 +120,7 @@ extension NSObject {
             } else {
                 DispatchQueue.main.async {
                     ModalWindowsObserver.shared.observeWindow(modalContent.window)
-                    modalContent.runModal()
+                    modalContent.appKitNavigationRunModal()
                     modalContent.onEndNavigation?()
                     modalContent.onEndNavigation = nil
                 }

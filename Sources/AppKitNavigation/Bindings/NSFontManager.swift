@@ -1,6 +1,7 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
 import AppKit
+import SwiftNavigation
 
 extension NSFontManager: NSTargetActionProtocol, @unchecked Sendable {
     public var appkitNavigationTarget: AnyObject? {

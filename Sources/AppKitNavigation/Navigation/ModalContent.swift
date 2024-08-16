@@ -4,18 +4,32 @@ import AppKit
 
 @MainActor
 public protocol ModalContent: NavigationContent {
-    @discardableResult func runModal() -> NSApplication.ModalResponse
+    @discardableResult func appKitNavigationRunModal() -> NSApplication.ModalResponse
     var window: NSWindow { get }
 }
 
 extension NSWindow: ModalContent {
     public var window: NSWindow { self }
 
-    public func runModal() -> NSApplication.ModalResponse {
+    public func appKitNavigationRunModal() -> NSApplication.ModalResponse {
+        __appKitNavigationRunModal()
+    }
+    
+    @objc func __appKitNavigationRunModal() -> NSApplication.ModalResponse {
         NSApplication.shared.runModal(for: self)
     }
 }
 
-extension NSAlert: ModalContent {}
+extension NSSavePanel {
+    override func __appKitNavigationRunModal() -> NSApplication.ModalResponse {
+        runModal()
+    }
+}
+
+extension NSAlert: ModalContent {
+    public func appKitNavigationRunModal() -> NSApplication.ModalResponse {
+        runModal()
+    }
+}
 
 #endif

@@ -2,6 +2,11 @@
 
 import AppKit
 
+private typealias SheetObserver<FromContent: SheetContent, ToContent: SheetContent> = NavigationObserver<FromContent, ToContent>
+
+@MainActor
+private var sheetObserverKeys = AssociatedKeys()
+
 extension SheetContent {
     /// Sheet a representable modally when a binding to a Boolean value you provide is true.
     ///
@@ -146,7 +151,6 @@ extension SheetContent {
         )
     }
 
-
     private func sheetObserver<Content: SheetContent>() -> SheetObserver<Self, Content> {
         if let observer = objc_getAssociatedObject(self, sheetObserverKeys.key(of: Content.self)) as? SheetObserver<Self, Content> {
             return observer
@@ -157,15 +161,6 @@ extension SheetContent {
         }
     }
 }
-
-private typealias SheetObserver<FromContent: SheetContent, ToContent: SheetContent> = NavigationObserver<FromContent, ToContent>
-private let sheetObserverKey = malloc(1)!
-
-@MainActor
-private var sheetObserverKeys = AssociatedKeys()
-
-private let onEndSheetKey = malloc(1)!
-private let sheetedKey = malloc(1)!
 
 extension NSWindow {
     func endSheeted() {
@@ -178,7 +173,7 @@ extension NSWindow {
 
 extension Navigated where Content: SheetContent {
     func clearup() {
-        self.content?.currentWindow?.endSheeted()
+        content?.currentWindow?.endSheeted()
     }
 }
 

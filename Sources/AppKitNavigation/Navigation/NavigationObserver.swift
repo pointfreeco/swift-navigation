@@ -1,3 +1,5 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+
 import Foundation
 import SwiftNavigation
 
@@ -29,17 +31,17 @@ class NavigationObserver<Owner: AnyObject, Content: NavigationContent>: NSObject
         return observe { [weak self] transaction in
             guard let self else { return }
             if let unwrappedItem = UIBinding(item) {
-                if let presented = navigatedByID[key] {
-                    guard let presentationID = presented.id,
-                          presentationID != id(unwrappedItem.wrappedValue)
+                if let navigated = navigatedByID[key] {
+                    guard let navigationID = navigated.id,
+                          navigationID != id(unwrappedItem.wrappedValue)
                     else {
                         return
                     }
                 }
                 let content = content(unwrappedItem)
-                let onEndNavigation = { [presentationID = id(unwrappedItem.wrappedValue)] in
+                let onEndNavigation = { [navigationID = id(unwrappedItem.wrappedValue)] in
                     if let wrappedValue = item.wrappedValue,
-                       presentationID == id(wrappedValue) {
+                       navigationID == id(wrappedValue) {
                         item.wrappedValue = nil
                     }
                 }
@@ -82,3 +84,6 @@ class Navigated<Content: NavigationContent> {
         self.id = id
     }
 }
+
+
+#endif
