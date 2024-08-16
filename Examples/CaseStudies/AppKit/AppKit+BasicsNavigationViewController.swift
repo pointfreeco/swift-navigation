@@ -64,7 +64,9 @@ class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseS
 //            return alert
 //        }
         modal(item: $model.sheet, id: \.self) { count in
-            NSWindow(contentViewController: XiblessViewController<NSBox>())
+            let vc = XiblessViewController<NSBox>()
+            vc.view.frame = .init(x: 0, y: 0, width: 500, height: 500)
+            return NSWindow(contentViewController: vc)
         }
 //        present(item: $model.sheet, id: \.self, style: .sheet) { count in
 ////            let vc = NSHostingController(

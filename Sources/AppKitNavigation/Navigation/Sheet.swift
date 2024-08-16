@@ -2,7 +2,7 @@
 
 import AppKit
 
-extension SheetRepresentable {
+extension SheetContent {
     /// Sheet a representable modally when a binding to a Boolean value you provide is true.
     ///
     /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
@@ -15,7 +15,7 @@ extension SheetRepresentable {
     public func sheet(
         isSheeted: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping () -> SheetRepresentable
+        content: @escaping () -> SheetContent
     ) -> ObservationToken {
         sheet(item: isSheeted.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
     }
@@ -37,7 +37,7 @@ extension SheetRepresentable {
     public func sheet<Item: Identifiable>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> SheetRepresentable
+        content: @escaping (Item) -> SheetContent
     ) -> ObservationToken {
         sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
@@ -60,7 +60,7 @@ extension SheetRepresentable {
     public func sheet<Item: Identifiable>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> SheetRepresentable
+        content: @escaping (UIBinding<Item>) -> SheetContent
     ) -> ObservationToken {
         sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
@@ -84,7 +84,7 @@ extension SheetRepresentable {
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> SheetRepresentable
+        content: @escaping (Item) -> SheetContent
     ) -> ObservationToken {
         sheet(item: item, id: id, onDismiss: onDismiss) {
             content($0.wrappedValue)
@@ -96,29 +96,29 @@ extension SheetRepresentable {
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> SheetRepresentable
+        content: @escaping (UIBinding<Item>) -> SheetContent
     ) -> ObservationToken {
         sheet(item: item, id: id) { $item in
             content($item)
-        } beginSheet: { [weak self] child, transaction in
+        } beginSheet: { [weak self] child, _ in
             guard let self else { return }
             if let attachedSheetWindow = currentWindow?.attachedSheet {
                 self.endSheet(for: attachedSheetWindow)
                 onDismiss?()
                 Task { @MainActor in
                     await self.beginSheet(for: child)
-                    child.onEndSheet?.invoke()
-                    child.onEndSheet = nil
+                    child.onEndNavigation?()
+                    child.onEndNavigation = nil
                 }
             } else {
                 Task { @MainActor in
                     await self.beginSheet(for: child)
-                    child.onEndSheet?.invoke()
-                    child.onEndSheet = nil
+                    child.onEndNavigation?()
+                    child.onEndNavigation = nil
                 }
             }
-        } endSheet: { [weak self] provider, transaction in
-            self?.endSheet(for: provider)
+        } endSheet: { [weak self] content, _ in
+            self?.endSheet(for: content)
             onDismiss?()
         }
     }
@@ -126,35 +126,35 @@ extension SheetRepresentable {
     private func sheet<Item, ID: Hashable>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
-        content: @escaping (UIBinding<Item>) -> SheetRepresentable,
+        content: @escaping (UIBinding<Item>) -> SheetContent,
         beginSheet: @escaping (
-            _ child: SheetRepresentable,
+            _ child: SheetContent,
             _ transaction: UITransaction
         ) -> Void,
         endSheet: @escaping (
-            _ child: SheetRepresentable,
+            _ child: SheetContent,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
-        sheet(
+        sheetObserver.observe(
             item: item,
             id: { $0[keyPath: id] },
             content: content,
-            beginSheet: beginSheet,
-            endSheet: endSheet
+            begin: beginSheet,
+            end: endSheet
         )
     }
 
     private func sheet<Item>(
         item: UIBinding<Item?>,
         id: @escaping (Item) -> AnyHashable?,
-        content: @escaping (UIBinding<Item>) -> SheetRepresentable,
+        content: @escaping (UIBinding<Item>) -> SheetContent,
         beginSheet: @escaping (
-            _ child: SheetRepresentable,
+            _ child: SheetContent,
             _ transaction: UITransaction
         ) -> Void,
         endSheet: @escaping (
-            _ child: SheetRepresentable,
+            _ child: SheetContent,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
@@ -163,7 +163,7 @@ extension SheetRepresentable {
             guard let self else { return }
             if let unwrappedItem = UIBinding(item) {
                 if let presented = sheetedByID[key] {
-                    guard let presentationID = presented.sheetID,
+                    guard let presentationID = presented.id,
                           presentationID != id(unwrappedItem.wrappedValue)
                     else {
                         return
@@ -186,7 +186,7 @@ extension SheetRepresentable {
                 }
                 work()
             } else if let presented = sheetedByID[key] {
-                if let controller = presented.provider {
+                if let controller = presented.content {
                     endSheet(controller, transaction)
                 }
                 self.sheetedByID[key] = nil
@@ -217,27 +217,44 @@ extension SheetRepresentable {
             objc_getAssociatedObject(self, onEndSheetKey) as? ClosureHolder
         }
     }
+
+    private var sheetObserver: SheetObserver {
+        set {
+            objc_setAssociatedObject(self, sheetObserverKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            if let observer = objc_getAssociatedObject(self, sheetObserverKey) as? SheetObserver {
+                return observer
+            } else {
+                let observer = SheetObserver(owner: self)
+                self.sheetObserver = observer
+                return observer
+            }
+        }
+    }
 }
 
+private typealias SheetObserver = NavigationObserver<SheetContent, SheetContent>
+private let sheetObserverKey = malloc(1)!
 private let onEndSheetKey = malloc(1)!
 private let sheetedKey = malloc(1)!
 
 @MainActor
-private class Sheeted {
-    weak var provider: SheetRepresentable?
-    let sheetID: AnyHashable?
+private class Sheeted: NavigatedProtocol {
+    weak var content: (any SheetContent)?
+    let id: AnyHashable?
     deinit {
         // NB: This can only be assumed because it is held in a UIViewController and is guaranteed to
         //     deinit alongside it on the main thread. If we use this other places we should force it
         //     to be a UIViewController as well, to ensure this functionality.
         MainActor._assumeIsolated {
-            self.provider?.currentWindow?.endSheeted()
+            self.content?.currentWindow?.endSheeted()
         }
     }
 
-    init(_ provider: SheetRepresentable? = nil, id: AnyHashable?) {
-        self.provider = provider
-        self.sheetID = id
+    required init(_ content: any SheetContent, id: AnyHashable?) {
+        self.content = content
+        self.id = id
     }
 }
 
@@ -247,6 +264,12 @@ extension NSWindow {
             return
         }
         sheetParent?.endSheet(self)
+    }
+}
+
+extension Navigated where Content: SheetContent {
+    func clearup() {
+        self.content?.currentWindow?.endSheeted()
     }
 }
 

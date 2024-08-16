@@ -20,7 +20,7 @@ extension NSViewController {
         isPresented: UIBinding<Bool>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping () -> NSViewController
+        content: @escaping () -> PresentationContent
     ) -> ObservationToken {
         present(item: isPresented.toOptionalUnit, style: style, onDismiss: onDismiss) { _ in content() }
     }
@@ -43,7 +43,7 @@ extension NSViewController {
         item: UIBinding<Item?>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> NSViewController
+        content: @escaping (Item) -> PresentationContent
     ) -> ObservationToken {
         present(item: item, id: \.id, style: style, onDismiss: onDismiss, content: content)
     }
@@ -67,7 +67,7 @@ extension NSViewController {
         item: UIBinding<Item?>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> NSViewController
+        content: @escaping (UIBinding<Item>) -> PresentationContent
     ) -> ObservationToken {
         present(item: item, id: \.id, style: style, onDismiss: onDismiss, content: content)
     }
@@ -92,7 +92,7 @@ extension NSViewController {
         id: KeyPath<Item, ID>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> NSViewController
+        content: @escaping (Item) -> PresentationContent
     ) -> ObservationToken {
         present(item: item, id: id, style: style, onDismiss: onDismiss) {
             content($0.wrappedValue)
@@ -120,7 +120,7 @@ extension NSViewController {
         id: KeyPath<Item, ID>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> NSViewController
+        content: @escaping (UIBinding<Item>) -> PresentationContent
     ) -> ObservationToken {
         destination(item: item, id: id) { $item in
             content($item)
@@ -174,10 +174,10 @@ extension NSViewController {
     @discardableResult
     public func destination(
         isPresented: UIBinding<Bool>,
-        content: @escaping () -> NSViewController,
-        present: @escaping (NSViewController, UITransaction) -> Void,
+        content: @escaping () -> PresentationContent,
+        present: @escaping (PresentationContent, UITransaction) -> Void,
         dismiss: @escaping (
-            _ child: NSViewController,
+            _ child: PresentationContent,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
@@ -204,10 +204,10 @@ extension NSViewController {
     @discardableResult
     public func destination<Item>(
         item: UIBinding<Item?>,
-        content: @escaping (UIBinding<Item>) -> NSViewController,
-        present: @escaping (NSViewController, UITransaction) -> Void,
+        content: @escaping (UIBinding<Item>) -> PresentationContent,
+        present: @escaping (PresentationContent, UITransaction) -> Void,
         dismiss: @escaping (
-            _ child: NSViewController,
+            _ child: PresentationContent,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
@@ -239,23 +239,25 @@ extension NSViewController {
     public func destination<Item, ID: Hashable>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
-        content: @escaping (UIBinding<Item>) -> NSViewController,
+        content: @escaping (UIBinding<Item>) -> PresentationContent,
         present: @escaping (
-            _ child: NSViewController,
+            _ child: PresentationContent,
             _ transaction: UITransaction
         ) -> Void,
         dismiss: @escaping (
-            _ child: NSViewController,
+            _ child: PresentationContent,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObservationToken {
-        destination(
-            item: item,
-            id: { $0[keyPath: id] },
-            content: content,
-            present: present,
-            dismiss: dismiss
-        )
+//        destination(
+//            item: item,
+//            id: { $0[keyPath: id] },
+//            content: content,
+//            present: present,
+//            dismiss: dismiss
+//        )
+        presentationObserver.observe(item: item, id: { $0[keyPath: id] }, content: content, begin: present, end: dismiss)
+        
     }
 
     private func destination<Item>(
@@ -325,6 +327,54 @@ extension NSViewController {
     }
 
     private static let presentedKey = malloc(1)!
+    
+    private var presentationObserver: PresentationObserver {
+        set {
+            objc_setAssociatedObject(self, presentationObserverKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            if let observer = objc_getAssociatedObject(self, presentationObserverKey) as? PresentationObserver {
+                return observer
+            } else {
+                let observer = PresentationObserver(owner: self)
+                self.presentationObserver = observer
+                return observer
+            }
+        }
+    }
+    
+}
+private let presentationObserverKey = malloc(1)!
+
+public protocol PresentationContent: NavigationContent {
+    func presented(from presentingViewController: NSViewController, style: NSViewController.TransitionStyle)
+}
+extension NSViewController: PresentationContent {}
+extension NavigationContent where Self: NSViewController {
+    var _onEndNavigation: (() -> Void)? {
+        set {
+            onDismiss = newValue
+        }
+        get {
+            onDismiss
+        }
+    }
+}
+
+class PresentationObserver: NavigationObserver<NSViewController, PresentationContent> {
+    override func commitWork(_ work: @escaping () -> Void) {
+        if owner.hasViewAppeared {
+            work()
+        } else {
+            owner.onViewAppear.append(work)
+        }
+    }
+}
+
+extension Navigated where Content: NSViewController {
+    func clearup() {
+        self.content?.dismiss(nil)
+    }
 }
 
 @MainActor
@@ -340,7 +390,7 @@ private class Presented {
         }
     }
 
-    init(_ controller: NSViewController, id presentationID: AnyHashable? = nil) {
+    required init(_ controller: NSViewController, id presentationID: AnyHashable? = nil) {
         self.controller = controller
         self.presentationID = presentationID
     }
