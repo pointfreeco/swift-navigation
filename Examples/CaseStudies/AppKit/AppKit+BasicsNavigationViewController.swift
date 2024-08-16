@@ -17,7 +17,7 @@ class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseS
         let showAlertButton = NSButton { [weak self] _ in
             self?.model.alert = "Hello!"
         }
-        
+
         let showSheetButton = NSButton { [weak self] _ in
             self?.model.sheet = .random(in: 1 ... 1_000)
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -51,45 +51,26 @@ class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseS
             showAlertButton.title = "Alert is presented: \(model.alert != nil ? "✅" : "❌")"
             showSheetButton.title = "Sheet is presented: \(model.sheet != nil ? "✅" : "❌")"
             showSheetFromBooleanButton.title = "Sheet is presented from boolean: \(model.isSheetPresented ? "✅" : "❌")"
-            
         }
 
-//        present(item: $model.alert, id: \.self) { message in
-//            let alert = UIAlertController(
-//                title: "This is an alert",
-//                message: message,
-//                preferredStyle: .alert
-//            )
-//            alert.addAction(UIAlertAction(title: "OK", style: .default))
-//            return alert
-//        }
-        
-        
-        
-//        modal(item: $model.sheet, id: \.self) { count in
-//            let vc = XiblessViewController<NSBox>()
-//            vc.view.frame = .init(x: 0, y: 0, width: 500, height: 500)
-//            return NSWindow(contentViewController: vc)
-//        }
-        
-//        sheet(item: $model.sheet, id: \.self) { count in
-//            let vc = XiblessViewController<NSBox>()
-//            vc.view.frame = .init(x: 0, y: 0, width: 500, height: 500)
-//            return NSWindow(contentViewController: vc)
-//        }
-        present(item: $model.sheet, id: \.self, style: .sheet) { count in
-//            let vc = NSHostingController(
-//                rootView: Form { Text(count.description) }
-//            )
-            let vc = XiblessViewController<NSBox>()
-            vc.preferredContentSize = .init(width: 300, height: 200)
-            return vc
+        modal(item: $model.alert, id: \.self) { message in
+            let alert = NSAlert()
+            alert.messageText = "This is an alert"
+            alert.informativeText = message
+            alert.addButton(withTitle: "OK")
+            return alert
         }
-        present(isPresented: $model.isSheetPresented, style: .sheet) {
-            let vc = NSHostingController(
-                rootView: Form { Text("Hello!") }
+
+        present(item: $model.sheet, id: \.self, style: .sheet) { count in
+            NSHostingController(
+                rootView: Form { Text(count.description) }.frame(width: 100, height: 100, alignment: .center)
             )
-            return vc
+        }
+        
+        present(isPresented: $model.isSheetPresented, style: .sheet) {
+            NSHostingController(
+                rootView: Form { Text("Hello!") }.frame(width: 100, height: 100, alignment: .center)
+            )
         }
     }
 

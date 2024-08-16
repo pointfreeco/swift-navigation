@@ -17,7 +17,7 @@ struct AppKitCaseStudiesView: View {
             CaseStudyGroupView("Optional navigation") {
                 BasicsNavigationViewController()
                 // TODO: Alert/dialog state
-//        ConciseEnumNavigationViewController()
+                ConciseEnumNavigationViewController()
             }
 //      CaseStudyGroupView("Stack navigation") {
 //        StaticNavigationStackController()

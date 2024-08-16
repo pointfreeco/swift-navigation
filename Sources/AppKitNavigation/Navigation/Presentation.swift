@@ -4,6 +4,19 @@ import IssueReporting
 import AppKit
 import AppKitNavigationShim
 
+@MainActor
+private var presentationObserverKeys = AssociatedKeys()
+
+class PresentationObserver<Content: PresentationContent>: NavigationObserver<NSViewController, Content> {
+    override func commitWork(_ work: @escaping () -> Void) {
+        if owner.hasViewAppeared {
+            work()
+        } else {
+            owner.onViewAppear.append(work)
+        }
+    }
+}
+
 extension NSViewController {
     /// Presents a view controller modally when a binding to a Boolean value you provide is true.
     ///
@@ -140,26 +153,6 @@ extension NSViewController {
         }
     }
 
-    public enum TransitionStyle {
-        case sheet
-        case modalWindow
-        case popover(rect: NSRect, view: NSView, preferredEdge: NSRectEdge, behavior: NSPopover.Behavior)
-        case custom(NSViewControllerPresentationAnimator)
-    }
-
-    fileprivate func present(_ viewControllerToPresent: NSViewController, for style: TransitionStyle) {
-        switch style {
-        case .sheet:
-            presentAsSheet(viewControllerToPresent)
-        case .modalWindow:
-            presentAsModalWindow(viewControllerToPresent)
-        case let .popover(rect, view, preferredEdge, behavior):
-            present(viewControllerToPresent, asPopoverRelativeTo: rect, of: view, preferredEdge: preferredEdge, behavior: behavior)
-        case let .custom(animator):
-            present(viewControllerToPresent, animator: animator)
-        }
-    }
-
     /// Presents a view controller when a binding to a Boolean value you provide is true.
     ///
     /// This helper powers ``present(isPresented:onDismiss:content:)`` and
@@ -260,10 +253,8 @@ extension NSViewController {
 //        )
         let presentationObserver: PresentationObserver<Content> = presentationObserver()
         return presentationObserver.observe(item: item, id: { $0[keyPath: id] }, content: content, begin: present, end: dismiss)
-        
     }
 
-    
     private func presentationObserver<Content: PresentationContent>() -> PresentationObserver<Content> {
         if let observer = objc_getAssociatedObject(self, presentationObserverKeys.key(of: Content.self)) as? PresentationObserver<Content> {
             return observer
@@ -272,28 +263,6 @@ extension NSViewController {
             objc_setAssociatedObject(self, presentationObserverKeys.key(of: Content.self), observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return observer
         }
-    }
-    
-}
-private let presentationObserverKey = malloc(1)!
-
-@MainActor
-private var presentationObserverKeys = AssociatedKeys()
-
-@MainActor
-public protocol PresentationContent: NavigationContent {
-    func presented(from presentingViewController: NSViewController, style: NSViewController.TransitionStyle)
-    func dismiss(from presentingViewController: NSViewController)
-}
-
-
-extension NSViewController: PresentationContent {
-    public func presented(from presentingViewController: NSViewController, style: TransitionStyle) {
-        presentingViewController.present(self, for: style)
-    }
-    
-    public func dismiss(from presentingViewController: NSViewController) {
-        presentingViewController.dismiss(self)
     }
 }
 
@@ -308,19 +277,9 @@ extension NavigationContent where Self: NSViewController {
     }
 }
 
-class PresentationObserver<Content: PresentationContent>: NavigationObserver<NSViewController, Content> {
-    override func commitWork(_ work: @escaping () -> Void) {
-        if owner.hasViewAppeared {
-            work()
-        } else {
-            owner.onViewAppear.append(work)
-        }
-    }
-}
-
 extension Navigated where Content: NSViewController {
     func clearup() {
-        self.content?.dismiss(nil)
+        content?.dismiss(nil)
     }
 }
 

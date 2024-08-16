@@ -3,8 +3,6 @@ import SwiftNavigation
 
 @MainActor
 class NavigationObserver<Owner: AnyObject, Content: NavigationContent>: NSObject {
-    
-    
     private var navigatedByID: [UIBindingIdentifier: Navigated<Content>] = [:]
 
     unowned let owner: Owner
