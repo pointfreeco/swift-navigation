@@ -10,62 +10,6 @@ public protocol NSTargetActionProtocol: NSObject, Sendable {
     var appkitNavigationAction: Selector? { set get }
 }
 
-@MainActor
-class NSTargetActionProxy: NSObject {
-    typealias Action = (Any?) -> Void
-
-    internal private(set) var bindingActions: [Action] = []
-
-    internal private(set) var actions: [Action] = []
-
-    var originTarget: AnyObject?
-
-    var originAction: Selector?
-
-    weak var owner: NSTargetActionProtocol?
-
-    required init(owner: NSTargetActionProtocol) {
-        self.owner = owner
-        super.init()
-        self.originTarget = owner.appkitNavigationTarget
-        self.originAction = owner.appkitNavigationAction
-        owner.appkitNavigationTarget = self
-        owner.appkitNavigationAction = #selector(invokeAction(_:))
-        if let textField = owner as? NSTextField {
-            NotificationCenter.default.addObserver(self, selector: #selector(controlTextDidChange(_:)), name: NSControl.textDidChangeNotification, object: textField)
-        }
-    }
-
-    @objc func controlTextDidChange(_ obj: Notification) {
-        bindingActions.forEach { $0(obj.object) }
-        actions.forEach { $0(obj.object) }
-    }
-
-    @objc func invokeAction(_ sender: Any?) {
-        if let originTarget, let originAction {
-            NSApplication.shared.sendAction(originAction, to: originTarget, from: sender)
-        }
-        bindingActions.forEach { $0(sender) }
-        actions.forEach { $0(sender) }
-    }
-
-    func addAction(_ action: @escaping Action) {
-        actions.append(action)
-    }
-
-    func removeAllActions() {
-        actions.removeAll()
-    }
-
-    func addBindingAction(_ bindingAction: @escaping Action) {
-        bindingActions.append(bindingAction)
-    }
-
-    func removeAllBindingActions() {
-        bindingActions.removeAll()
-    }
-}
-
 extension NSTargetActionProtocol {
     /// Establishes a two-way connection between a source of truth and a property of this control.
     ///
@@ -121,7 +65,7 @@ extension NSTargetActionProtocol {
     ) -> ObservationToken {
         unbind(keyPath)
         let actionProxy = createActionProxyIfNeeded()
-        actionProxy.addBindingAction { [weak self] _ in
+        let actionID = actionProxy.addBindingAction { [weak self] _ in
             guard let self else { return }
             binding.wrappedValue = self[keyPath: keyPath]
         }
@@ -149,9 +93,7 @@ extension NSTargetActionProtocol {
         }
         let observationToken = ObservationToken { [weak self] in
             MainActor._assumeIsolated {
-                self?.appkitNavigationTarget = nil
-                self?.appkitNavigationAction = nil
-                self?.actionProxy = nil
+                self?.actionProxy?.removeAction(for: actionID)
             }
             token.cancel()
             observation.invalidate()

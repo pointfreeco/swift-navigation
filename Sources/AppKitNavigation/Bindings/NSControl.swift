@@ -23,13 +23,18 @@ extension NSControl {
         }
     }
 
-    public func addAction(_ action: @escaping (NSControl) -> Void) {
+    @discardableResult
+    public func addAction(_ action: @escaping (NSControl) -> Void) -> UUID {
         createActionProxyIfNeeded().addAction { [weak self] _ in
             guard let self else { return }
             action(self)
         }
     }
 
+    public func removeAction(for id: UUID) {
+        createActionProxyIfNeeded().removeAction(for: id)
+    }
+    
     public func removeAllActions() {
         createActionProxyIfNeeded().removeAllActions()
     }
