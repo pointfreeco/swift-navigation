@@ -24,11 +24,11 @@ struct AppKitCaseStudiesView: View {
 //        ErasedNavigationStackController(model: ErasedNavigationStackController.Model())
 //        // TODO: state restoration
 //      }
-//      CaseStudyGroupView("Advanced") {
-//        // TODO: Deep link
-//        // TODO: Dismissal (show off from VCs and views)
-//        WiFiSettingsViewController(model: WiFiSettingsModel(foundNetworks: .mocks))
-//      }
+            CaseStudyGroupView("Advanced") {
+                // TODO: Deep link
+                // TODO: Dismissal (show off from VCs and views)
+                WiFiSettingsViewController(model: WiFiSettingsModel(foundNetworks: .mocks))
+            }
         }
         .navigationTitle("AppKit")
     }

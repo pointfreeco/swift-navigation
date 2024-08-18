@@ -15,7 +15,7 @@ extension NSFontManager: NSTargetActionProtocol, @unchecked Sendable {
     }
 
     private static let appkitNavigationDelegateKey = malloc(1)!
-    
+
     private var appkitNavigationDelegate: Delegate {
         set {
             objc_setAssociatedObject(self, Self.appkitNavigationDelegateKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -25,17 +25,17 @@ extension NSFontManager: NSTargetActionProtocol, @unchecked Sendable {
                 return delegate
             } else {
                 let delegate = Delegate()
-                self.target = delegate
+                target = delegate
                 self.appkitNavigationDelegate = delegate
                 return delegate
             }
         }
     }
-    
+
     private class Delegate: NSObject, NSFontChanging {
         var target: AnyObject?
         var action: Selector?
-        
+
         func changeFont(_ sender: NSFontManager?) {
             if let action {
                 NSApplication.shared.sendAction(action, to: target, from: sender)
@@ -67,7 +67,7 @@ extension NSFontManager {
     public func bind(font: UIBinding<NSFont>) -> ObservationToken {
         bind(font, to: \._selectedFont)
     }
-    
+
     @objc private var _selectedFont: NSFont {
         set { setSelectedFont(newValue, isMultiple: false) }
         get { convert(.systemFont(ofSize: 0)) }

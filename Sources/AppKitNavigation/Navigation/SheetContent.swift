@@ -11,15 +11,13 @@ public protocol SheetContent: NavigationContent {
 
 extension SheetContent {
     public func beginSheet(for content: any SheetContent) async {
-        if let sheetedWindow = content.currentWindow {
-            await currentWindow?.beginSheet(sheetedWindow)
-        }
+        guard let sheetedWindow = content.currentWindow else { return }
+        await currentWindow?.beginSheet(sheetedWindow)
     }
 
     public func endSheet(for content: any SheetContent) {
-        if let sheetedWindow = content.currentWindow {
-            currentWindow?.endSheet(sheetedWindow)
-        }
+        guard let sheetedWindow = content.currentWindow else { return }
+        currentWindow?.endSheet(sheetedWindow)
     }
 }
 
@@ -38,6 +36,17 @@ extension NSViewController: SheetContent {
 extension NSAlert: SheetContent {
     public var currentWindow: NSWindow? { window }
 
+    public func beginSheet(for content: any SheetContent) async {
+        guard let parentWindow = content.currentWindow else { return }
+        await beginSheetModal(for: parentWindow)
+    }
+
+    public func endSheet(for content: any SheetContent) {
+        content.currentWindow?.endSheet(window)
+    }
+}
+
+extension NSSavePanel {
     public func beginSheet(for content: any SheetContent) async {
         guard let parentWindow = content.currentWindow else { return }
         await beginSheetModal(for: parentWindow)

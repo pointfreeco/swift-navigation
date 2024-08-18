@@ -1,6 +1,4 @@
 import SwiftUI
-import AppKitNavigation
-import UIKitNavigation
 
 protocol CaseStudy {
     var readMe: String { get }
@@ -12,12 +10,16 @@ protocol CaseStudy {
 
 protocol SwiftUICaseStudy: CaseStudy, View {}
 #if canImport(UIKit) && !os(watchOS)
+import UIKitNavigation
+
 protocol UIKitCaseStudy: CaseStudy, UIViewController {}
 extension UIKitCaseStudy {
     var usesOwnLayout: Bool { true }
 }
 #endif
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
+import AppKitNavigation
+
 protocol AppKitCaseStudy: CaseStudy, NSViewController {}
 extension AppKitCaseStudy {
     var usesOwnLayout: Bool { true }

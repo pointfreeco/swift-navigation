@@ -25,6 +25,15 @@ extension NSObject {
     ) -> ObservationToken {
         modal(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
     }
+    
+    @discardableResult
+    public func modalSession<Content: ModalSessionContent>(
+        isModaled: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> Content
+    ) -> ObservationToken {
+        modalSession(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+    }
 
     /// Sheet a representable modally when a binding to a Boolean value you provide is true.
     ///
@@ -46,6 +55,15 @@ extension NSObject {
         content: @escaping (Item) -> Content
     ) -> ObservationToken {
         modal(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    }
+    
+    @discardableResult
+    public func modalSession<Item: Identifiable, Content: ModalSessionContent>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> Content
+    ) -> ObservationToken {
+        modalSession(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
     /// Sheet a representable modally when a binding to a Boolean value you provide is true.
@@ -70,6 +88,16 @@ extension NSObject {
     ) -> ObservationToken {
         modal(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
+    
+    @_disfavoredOverload
+    @discardableResult
+    public func modalSession<Item: Identifiable, Content: ModalSessionContent>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> Content
+    ) -> ObservationToken {
+        modalSession(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    }
 
     /// Sheet a representable modally when a binding to a Boolean value you provide is true.
     ///
@@ -93,6 +121,18 @@ extension NSObject {
         content: @escaping (Item) -> Content
     ) -> ObservationToken {
         modal(item: item, id: id, onDismiss: onDismiss) {
+            content($0.wrappedValue)
+        }
+    }
+    
+    @discardableResult
+    public func modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> Content
+    ) -> ObservationToken {
+        modalSession(item: item, id: id, onDismiss: onDismiss) {
             content($0.wrappedValue)
         }
     }
@@ -131,6 +171,40 @@ extension NSObject {
         }
     }
 
+    @discardableResult
+    public func modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> Content
+    ) -> ObservationToken {
+        modal(item: item, id: id) { $item in
+            content($item)
+        } beginModal: { modalContent, _ in
+            if let modaledWindow = NSApplication.shared.modalWindow, let modalSession = ModalWindowsObserver.shared.modalSessionByWindow[modaledWindow] {
+                NSApplication.shared.endModalSession(modalSession)
+                modaledWindow.window.close()
+                onDismiss?()
+                DispatchQueue.main.async {
+                    let modalSession = modalContent.appKitNavigationBeginModalSession()
+                    ModalWindowsObserver.shared.observeWindow(modalContent.window, modalSession: modalSession)
+                }
+
+            } else {
+                DispatchQueue.main.async {
+                    let modalSession = modalContent.appKitNavigationBeginModalSession()
+                    ModalWindowsObserver.shared.observeWindow(modalContent.window, modalSession: modalSession)
+                }
+            }
+        } endModal: { modalContent, _ in
+            if let modalSession = ModalWindowsObserver.shared.modalSessionByWindow[modalContent.window] {
+                NSApplication.shared.endModalSession(modalSession)
+                modalContent.window.close()
+                onDismiss?()
+            }
+        }
+    }
+    
     private func modal<Item, ID: Hashable, Content: ModalContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,

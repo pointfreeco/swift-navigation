@@ -11,23 +11,58 @@ public protocol NSTargetActionProtocol: NSObject, Sendable {
 }
 
 @MainActor
-internal class NSTargetActionHandler: NSObject {
+class NSTargetActionProxy: NSObject {
     typealias Action = (Any?) -> Void
-    var actions: [Action] = []
+
+    internal private(set) var bindingActions: [Action] = []
+
+    internal private(set) var actions: [Action] = []
 
     var originTarget: AnyObject?
 
     var originAction: Selector?
 
+    weak var owner: NSTargetActionProtocol?
+
+    required init(owner: NSTargetActionProtocol) {
+        self.owner = owner
+        super.init()
+        self.originTarget = owner.appkitNavigationTarget
+        self.originAction = owner.appkitNavigationAction
+        owner.appkitNavigationTarget = self
+        owner.appkitNavigationAction = #selector(invokeAction(_:))
+        if let textField = owner as? NSTextField {
+            NotificationCenter.default.addObserver(self, selector: #selector(controlTextDidChange(_:)), name: NSControl.textDidChangeNotification, object: textField)
+        }
+    }
+
+    @objc func controlTextDidChange(_ obj: Notification) {
+        bindingActions.forEach { $0(obj.object) }
+        actions.forEach { $0(obj.object) }
+    }
+
     @objc func invokeAction(_ sender: Any?) {
         if let originTarget, let originAction {
             NSApplication.shared.sendAction(originAction, to: originTarget, from: sender)
         }
+        bindingActions.forEach { $0(sender) }
         actions.forEach { $0(sender) }
     }
 
     func addAction(_ action: @escaping Action) {
         actions.append(action)
+    }
+
+    func removeAllActions() {
+        actions.removeAll()
+    }
+
+    func addBindingAction(_ bindingAction: @escaping Action) {
+        bindingActions.append(bindingAction)
+    }
+
+    func removeAllBindingActions() {
+        bindingActions.removeAll()
     }
 }
 
@@ -49,26 +84,22 @@ extension NSTargetActionProtocol {
         }
     }
 
-    internal var actionHandler: NSTargetActionHandler? {
+    var actionProxy: NSTargetActionProxy? {
         set {
-            objc_setAssociatedObject(self, actionHandlerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, actionProxyKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            objc_getAssociatedObject(self, actionHandlerKey) as? NSTargetActionHandler
+            objc_getAssociatedObject(self, actionProxyKey) as? NSTargetActionProxy
         }
     }
 
-    internal func createActionHandlerIfNeeded() -> NSTargetActionHandler {
-        if let actionHandler {
-            return actionHandler
+    func createActionProxyIfNeeded() -> NSTargetActionProxy {
+        if let actionProxy {
+            return actionProxy
         } else {
-            let actionHandler = NSTargetActionHandler()
-            actionHandler.originTarget = appkitNavigationTarget
-            actionHandler.originAction = appkitNavigationAction
-            self.actionHandler = actionHandler
-            appkitNavigationTarget = actionHandler
-            appkitNavigationAction = #selector(NSTargetActionHandler.invokeAction(_:))
-            return actionHandler
+            let actionProxy = NSTargetActionProxy(owner: self)
+            self.actionProxy = actionProxy
+            return actionProxy
         }
     }
 
@@ -89,8 +120,8 @@ extension NSTargetActionProtocol {
         set: @escaping (_ control: Self, _ newValue: Value, _ transaction: UITransaction) -> Void
     ) -> ObservationToken {
         unbind(keyPath)
-        let actionHandler = createActionHandlerIfNeeded()
-        actionHandler.addAction { [weak self] _ in
+        let actionProxy = createActionProxyIfNeeded()
+        actionProxy.addBindingAction { [weak self] _ in
             guard let self else { return }
             binding.wrappedValue = self[keyPath: keyPath]
         }
@@ -120,7 +151,7 @@ extension NSTargetActionProtocol {
             MainActor._assumeIsolated {
                 self?.appkitNavigationTarget = nil
                 self?.appkitNavigationAction = nil
-                self?.actionHandler = nil
+                self?.actionProxy = nil
             }
             token.cancel()
             observation.invalidate()
@@ -162,10 +193,9 @@ extension NSObject {
     }
 }
 
-
 @MainActor
 private let observationTokensKey = malloc(1)!
 @MainActor
-private let actionHandlerKey = malloc(1)!
+private let actionProxyKey = malloc(1)!
 
 #endif

@@ -9,13 +9,22 @@ class ModalWindowsObserver: NSObject {
     
     var windowsCancellable: [NSWindow: AnyCancellable] = [:]
     
-    func observeWindow(_ window: NSWindow) {
+    var modalSessionByWindow: [NSWindow: NSApplication.ModalSession] = [:]
+    
+    func observeWindow(_ window: NSWindow, modalSession: NSApplication.ModalSession? = nil) {
+        if let modalSession {
+            modalSessionByWindow[window] = modalSession
+        }
         windowsCancellable[window] = NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: window)
             .sink { [weak self] _ in
                 guard let self else { return }
-                if NSApplication.shared.modalWindow === window {
+                if let modalSession = modalSessionByWindow[window] {
+                    NSApplication.shared.endModalSession(modalSession)
+                } else if NSApplication.shared.modalWindow === window {
                     NSApplication.shared.stopModal()
                 }
+                modalSessionByWindow.removeValue(forKey: window)
+                windowsCancellable[window]?.cancel()
                 windowsCancellable.removeValue(forKey: window)
             }
     }

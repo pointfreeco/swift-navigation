@@ -28,7 +28,7 @@ extension NSAlert {
     ) {
         let button = addButton(withTitle: String(state: buttonState.label))
 
-        button.createActionHandlerIfNeeded().addAction { _ in
+        button.createActionProxyIfNeeded().addBindingAction { _ in
             buttonState.withAction(handler)
         }
         

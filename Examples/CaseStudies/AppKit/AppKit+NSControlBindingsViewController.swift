@@ -8,6 +8,15 @@ class XiblessViewController<View: NSView>: NSViewController {
     override func loadView() {
         view = contentView
     }
+
+    override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("")
+    }
 }
 
 class NSControlBindingsViewController: XiblessViewController<NSBox>, AppKitCaseStudy {
@@ -117,10 +126,8 @@ extension String {
     }
 }
 
-
 #Preview(traits: .fixedLayout(width: 500, height: 800)) {
     NSControlBindingsViewController()
 }
-
 
 #endif

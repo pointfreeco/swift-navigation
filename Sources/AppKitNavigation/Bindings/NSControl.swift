@@ -17,10 +17,21 @@ extension NSControl: NSTargetActionProtocol {
 extension NSControl {
     public convenience init(action: @escaping (Self) -> Void) {
         self.init(frame: .zero)
-        createActionHandlerIfNeeded().addAction { [weak self] _ in
+        createActionProxyIfNeeded().addAction { [weak self] _ in
             guard let self else { return }
             action(self)
         }
+    }
+
+    public func addAction(_ action: @escaping (NSControl) -> Void) {
+        createActionProxyIfNeeded().addAction { [weak self] _ in
+            guard let self else { return }
+            action(self)
+        }
+    }
+
+    public func removeAllActions() {
+        createActionProxyIfNeeded().removeAllActions()
     }
 }
 

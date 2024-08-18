@@ -1,7 +1,9 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
+import Combine
 import SwiftNavigation
 
+@MainActor
 extension NSTextField: NSTextViewDelegate {
     /// Creates a new text field with the specified frame and registers the binding against its
     /// text.
@@ -69,14 +71,14 @@ extension NSTextField: NSTextViewDelegate {
                 selection.wrappedValue = control.textSelection
             }
         }
-        
+
         let observationToken = ObservationToken { [weak self] in
-//            MainActor._assumeIsolated {
-            editingChangedAction.cancel()
-            editingDidEndAction.cancel()
-//            }
-            token.cancel()
-            self?.textSelectionObserver = nil
+            MainActor._assumeIsolated {
+                editingChangedAction.cancel()
+                editingDidEndAction.cancel()
+                token.cancel()
+                self?.textSelectionObserver = nil
+            }
         }
         observationTokens[\NSTextField.selectedRange] = observationToken
         return observationToken
@@ -334,4 +336,7 @@ public struct AppKitTextSelection: Hashable, Sendable {
         range.isEmpty
     }
 }
+
+extension AnyCancellable: @unchecked Sendable {}
+
 #endif

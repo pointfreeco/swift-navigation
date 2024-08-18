@@ -26,7 +26,7 @@ extension NSColorPanel {
         self.init()
         bind(color: color)
     }
-    
+
     /// Establishes a two-way connection between a binding and the color panel's selected color.
     ///
     /// - Parameter color: The binding to read from for the selected color, and write to
