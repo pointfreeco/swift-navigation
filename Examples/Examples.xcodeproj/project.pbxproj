@@ -221,11 +221,11 @@
 				CA473830272F0D860012CAC3 /* CaseStudiesApp.swift */,
 				CA47382E272F0D860012CAC3 /* RootView.swift */,
 				CA47380A272F0D340012CAC3 /* Assets.xcassets */,
-				DC5EB9BC2C0525980034B757 /* WiFiFeature */,
 				CA9D70492C1F642A003B672A /* Internal */,
 				CADCA3642C1CE80B00DE645F /* SwiftUI */,
 				CA9D704A2C1F6431003B672A /* UIKit */,
 				E9836D902C6C9E3000FC6EFD /* AppKit */,
+				DC5EB9BC2C0525980034B757 /* WiFiFeature */,
 			);
 			path = CaseStudies;
 			sourceTree = "<group>";

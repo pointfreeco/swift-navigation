@@ -9,6 +9,7 @@ protocol CaseStudy {
 }
 
 protocol SwiftUICaseStudy: CaseStudy, View {}
+
 #if canImport(UIKit) && !os(watchOS)
 import UIKitNavigation
 
@@ -17,6 +18,7 @@ extension UIKitCaseStudy {
     var usesOwnLayout: Bool { true }
 }
 #endif
+
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKitNavigation
 
@@ -187,6 +189,11 @@ struct CaseStudyModifier<C: CaseStudy>: ViewModifier {
             .sheet(isPresented: $isAboutPresented) {
                 Form {
                     Text(template: caseStudy.readMe)
+                    #if os(macOS)
+                    Button("Close") {
+                        isAboutPresented = false
+                    }
+                    #endif
                 }
                 .presentationDetents([.medium])
             }

@@ -24,7 +24,7 @@ extension NSAlert {
 extension NSAlert {
     public func addButton<Action>(
         _ buttonState: ButtonState<Action>,
-        action handler: @escaping (_ action: Action?) -> Void
+        action handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
     ) {
         let button = addButton(withTitle: String(state: buttonState.label))
 
@@ -35,6 +35,7 @@ extension NSAlert {
         if buttonState.role == .destructive, #available(macOS 11.0, *) {
             button.hasDestructiveAction = true
         }
+        
         if buttonState.role == .cancel {
             button.keyEquivalent = "\u{1b}"
         }

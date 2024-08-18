@@ -56,8 +56,8 @@ class WiFiSettingsViewController: XiblessViewController<NSScrollView>, AppKitCas
 
         dataSource = NSCollectionViewDiffableDataSource<Section, Item>(
             collectionView: collectionView
-        ) { [unowned self] collectionView, indexPath, item in
-
+        ) { [weak self] collectionView, indexPath, item in
+            guard let self else { return nil }
             switch item {
             case .isOn:
                 let switchViewItem = collectionView.makeItem(withIdentifier: .init(WiFiSettingsSwitchViewItem.self), for: indexPath) as! WiFiSettingsSwitchViewItem
@@ -70,7 +70,8 @@ class WiFiSettingsViewController: XiblessViewController<NSScrollView>, AppKitCas
                 connectedViewItem.nameLabel.stringValue = network.name
                 connectedViewItem.securedIconImageView.isHidden = !network.isSecured
                 connectedViewItem.wifiIconImageView.image = NSImage(systemSymbolName: "wifi", variableValue: network.connectivity, accessibilityDescription: nil)
-                connectedViewItem.detailButton.addAction { _ in
+                connectedViewItem.detailButton.addAction { [weak self] _ in
+                    guard let self else { return }
                     self.model.infoButtonTapped(network: network)
                 }
                 return connectedViewItem
@@ -79,7 +80,8 @@ class WiFiSettingsViewController: XiblessViewController<NSScrollView>, AppKitCas
                 foundedViewItem.titleLabel.stringValue = network.name
                 foundedViewItem.securedIconImageView.isHidden = !network.isSecured
                 foundedViewItem.wifiIconImageView.image = NSImage(systemSymbolName: "wifi", variableValue: network.connectivity, accessibilityDescription: nil)
-                foundedViewItem.connectButton.addAction { _ in
+                foundedViewItem.connectButton.addAction { [weak self] _ in
+                    guard let self else { return }
                     self.model.networkTapped(network)
                 }
                 return foundedViewItem
@@ -97,10 +99,11 @@ class WiFiSettingsViewController: XiblessViewController<NSScrollView>, AppKitCas
         modalSession(item: $model.destination.connect) { model in
             let panel = NSPanel(contentViewController: ConnectToNetworkViewController(model: model))
             panel.styleMask = [.titled]
+            panel.title = ""
             panel.animationBehavior = .none
             return panel
         }
-        
+
         present(item: $model.destination.detail, style: .sheet) { model in
             let vc = NetworkDetailViewController(model: model)
             vc.preferredContentSize = .init(width: 300, height: 200)
