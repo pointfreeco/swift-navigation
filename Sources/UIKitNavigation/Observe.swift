@@ -83,12 +83,12 @@
     ///
     /// ## Cancellation
     ///
-    /// The method returns an ``ObservationToken`` that can be used to cancel observation. For
+    /// The method returns an ``ObserveToken`` that can be used to cancel observation. For
     /// example, if you only want to observe while a view controller is visible, you can start
     /// observation in the `viewWillAppear` and then cancel observation in the `viewWillDisappear`:
     ///
     /// ```swift
-    /// var observation: ObservationToken?
+    /// var observation: ObserveToken?
     ///
     /// func viewWillAppear() {
     ///   super.viewWillAppear()
@@ -106,7 +106,7 @@
     ///   of a property changes.
     /// - Returns: A cancellation token.
     @discardableResult
-    public func observe(_ apply: @escaping @MainActor @Sendable () -> Void) -> ObservationToken {
+    public func observe(_ apply: @escaping @MainActor @Sendable () -> Void) -> ObserveToken {
       observe { _ in apply() }
     }
 
@@ -120,7 +120,7 @@
     @discardableResult
     public func observe(
       _ apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
-    ) -> ObservationToken {
+    ) -> ObserveToken {
       let token = SwiftNavigation.observe { transaction in
         MainActor._assumeIsolated {
           withUITransaction(transaction) {

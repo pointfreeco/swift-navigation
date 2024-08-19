@@ -1,3 +1,10 @@
+// MARK: - Deprecated after 2.1.0
+
+@available(*, unavailable, renamed: "ObserveToken")
+public typealias ObservationToken = ObserveToken
+
+// MARK: - Deprecated after 2.0.0
+
 extension AlertState {
   @available(*, deprecated, message: "Use 'init(title:actions:message:)' instead.")
   public init(

@@ -37,7 +37,7 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms.
 ### Observing changes to state
 
 - ``observe(isolation:_:)-93yzu``
-- ``ObservationToken``
+- ``ObserveToken``
 
 ### Creating and sharing state
 
