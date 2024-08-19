@@ -1,6 +1,6 @@
 // MARK: - Deprecated after 2.1.0
 
-@available(*, unavailable, renamed: "ObserveToken")
+@available(*, deprecated, renamed: "ObserveToken")
 public typealias ObservationToken = ObserveToken
 
 // MARK: - Deprecated after 2.0.0
