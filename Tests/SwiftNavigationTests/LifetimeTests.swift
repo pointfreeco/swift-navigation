@@ -4,10 +4,10 @@
 
   final class LifetimeTests: XCTestCase {
     @MainActor
-    func testObservationToken() async {
+    func testObserveToken() async {
       let model = Model()
       var counts = [Int]()
-      var token: ObservationToken?
+      var token: ObserveToken?
       do {
         token = SwiftNavigation.observe {
           counts.append(model.count)

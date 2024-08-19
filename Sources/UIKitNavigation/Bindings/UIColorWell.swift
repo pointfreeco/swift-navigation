@@ -23,7 +23,7 @@
     ///   when the selected color changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(selectedColor: UIBinding<UIColor?>) -> ObservationToken {
+    public func bind(selectedColor: UIBinding<UIColor?>) -> ObserveToken {
       bind(selectedColor, to: \.selectedColor, for: .valueChanged)
     }
   }

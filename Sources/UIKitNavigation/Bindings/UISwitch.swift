@@ -23,7 +23,7 @@
     ///   state changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(isOn: UIBinding<Bool>) -> ObservationToken {
+    public func bind(isOn: UIBinding<Bool>) -> ObserveToken {
       bind(isOn, to: \.isOn, for: .valueChanged) { control, isOn, transaction in
         control.setOn(isOn, animated: !transaction.uiKit.disablesAnimations)
       }

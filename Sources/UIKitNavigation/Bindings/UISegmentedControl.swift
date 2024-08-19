@@ -40,7 +40,7 @@
       filePath: StaticString = #filePath,
       line: UInt = #line,
       column: UInt = #column
-    ) -> ObservationToken {
+    ) -> ObserveToken {
       let fileID = HashableStaticString(rawValue: fileID)
       let filePath = HashableStaticString(rawValue: filePath)
       return bind(

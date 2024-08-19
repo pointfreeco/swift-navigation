@@ -23,7 +23,7 @@
       _ binding: UIBinding<Value>,
       to keyPath: ReferenceWritableKeyPath<Self, Value>,
       for event: UIControl.Event
-    ) -> ObservationToken {
+    ) -> ObserveToken {
       bind(binding, to: keyPath, for: event) { control, newValue, _ in
         control[keyPath: keyPath] = newValue
       }
@@ -45,7 +45,7 @@
       to keyPath: KeyPath<Self, Value>,
       for event: UIControl.Event,
       set: @escaping (_ control: Self, _ newValue: Value, _ transaction: UITransaction) -> Void
-    ) -> ObservationToken {
+    ) -> ObserveToken {
       unbind(keyPath)
       let action = UIAction { [weak self] _ in
         guard let self else { return }
@@ -73,35 +73,35 @@
           binding.wrappedValue = control[keyPath: $uncheckedKeyPath.wrappedValue]
         }
       }
-      let observationToken = ObservationToken { [weak self] in
+      let observeToken = ObserveToken { [weak self] in
         MainActor._assumeIsolated {
           self?.removeAction(action, for: .allEvents)
         }
         token.cancel()
         observation.invalidate()
       }
-      observationTokens[keyPath] = observationToken
-      return observationToken
+      observeTokens[keyPath] = observeToken
+      return observeToken
     }
 
     public func unbind<Value>(_ keyPath: KeyPath<Self, Value>) {
-      observationTokens[keyPath]?.cancel()
-      observationTokens[keyPath] = nil
+      observeTokens[keyPath]?.cancel()
+      observeTokens[keyPath] = nil
     }
 
-    var observationTokens: [AnyKeyPath: ObservationToken] {
+    var observeTokens: [AnyKeyPath: ObserveToken] {
       get {
-        objc_getAssociatedObject(self, observationTokensKey) as? [AnyKeyPath: ObservationToken]
+        objc_getAssociatedObject(self, observeTokensKey) as? [AnyKeyPath: ObserveToken]
           ?? [:]
       }
       set {
         objc_setAssociatedObject(
-          self, observationTokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self, observeTokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }
   }
 
   @MainActor
-  private let observationTokensKey = malloc(1)!
+  private let observeTokensKey = malloc(1)!
 #endif
