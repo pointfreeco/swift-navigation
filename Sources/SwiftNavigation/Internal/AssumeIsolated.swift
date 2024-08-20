@@ -1,10 +1,8 @@
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
-
 import Foundation
 
 extension MainActor {
     // NB: This functionality was not back-deployed in Swift 5.9
-    static func _assumeIsolated<T: Sendable>(
+    package static func _assumeIsolated<T: Sendable>(
         _ operation: @MainActor () throws -> T,
         file: StaticString = #fileID,
         line: UInt = #line
@@ -30,6 +28,3 @@ extension MainActor {
         #endif
     }
 }
-
-
-#endif
