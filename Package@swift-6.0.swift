@@ -79,6 +79,18 @@ let package = Package(
         "UIKitNavigation"
       ]
     ),
-  ],
-  swiftLanguageVersions: [.v6]
+  ]
+  //, swiftLanguageModes: [.v6]
 )
+
+for target in package.targets {
+  target.swiftSettings = target.swiftSettings ?? []
+  target.swiftSettings!.append(contentsOf: [
+    .enableExperimentalFeature("StrictConcurrency")
+  ])
+  // target.swiftSettings?.append(
+  //   .unsafeFlags([
+  //     "-enable-library-evolution",
+  //   ])
+  // )
+}
