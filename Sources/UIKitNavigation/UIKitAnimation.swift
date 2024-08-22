@@ -51,7 +51,7 @@
           }
         #endif
         _ = animation
-        fatalError() // TODO: todo
+        fatalError()
 
       case let .uiKit(animation):
         func animations() throws -> Result {
