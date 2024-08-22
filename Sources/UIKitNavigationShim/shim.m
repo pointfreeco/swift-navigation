@@ -77,7 +77,7 @@
       return objc_getAssociatedObject(self, onDismissKey);
     }
 
-    - (void)set_UIKitNavigation_OnDismiss:(void (^)())onDismiss {
+    - (void)set_UIKitNavigation_onDismiss:(void (^)())onDismiss {
       objc_setAssociatedObject(self, onDismissKey, [onDismiss copy], OBJC_ASSOCIATION_COPY_NONATOMIC);
     }
 
@@ -86,7 +86,7 @@
       return onViewAppear == nil ? @[] : onViewAppear;
     }
 
-    - (void)set_UIKitNavigation_OnViewAppear:(NSMutableArray<void (^)()> *)onViewAppear {
+    - (void)set_UIKitNavigation_onViewAppear:(NSMutableArray<void (^)()> *)onViewAppear {
       objc_setAssociatedObject(self, onViewAppearKey, onViewAppear, OBJC_ASSOCIATION_COPY_NONATOMIC);
     }
 
