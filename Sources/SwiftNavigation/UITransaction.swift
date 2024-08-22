@@ -1,3 +1,5 @@
+import OrderedCollections
+
 /// Executes a closure with the specified transaction and returns the result.
 ///
 /// - Parameters:
@@ -36,8 +38,7 @@ public func withUITransaction<R, V>(
 public struct UITransaction: Sendable {
   @TaskLocal package static var current = Self()
 
-  // todo: make ordered dictionary
-  var storage: [Key: any Sendable] = [:]
+  var storage: OrderedDictionary<Key, any Sendable> = [:]
 
   /// Creates a transaction.
   public init() {}
