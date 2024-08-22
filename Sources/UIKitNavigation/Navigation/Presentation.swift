@@ -356,7 +356,7 @@
               item.wrappedValue = nil
             }
           }
-          childController.onDismiss = onDismiss
+          childController._UIKitNavigation_onDismiss = onDismiss
           if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
             childController.traitOverrides.dismiss = UIDismissAction { _ in
               onDismiss()
@@ -368,10 +368,10 @@
               present(childController, transaction)
             }
           }
-          if hasViewAppeared {
+          if _UIKitNavigation_hasViewAppeared {
             work()
           } else {
-            onViewAppear.append(work)
+              _UIKitNavigation_onViewAppear.append(work)
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
