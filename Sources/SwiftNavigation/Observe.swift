@@ -102,8 +102,7 @@ private actor ActorProxy {
   }
 }
 
-@_spi(Internals)
-public func observe(
+func observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
@@ -118,7 +117,21 @@ public func observe(
         let token,
         !token.isCancelled
       else { return }
-      apply(transaction)
+
+      var perform: @Sendable () -> Void = { apply(transaction) }
+      for key in transaction.storage.keys {
+        guard let keyType = key.keyType as? any _UICustomTransactionKey.Type
+        else { continue }
+        func open<K: _UICustomTransactionKey>(_: K.Type) {
+          perform = { [perform] in
+            K.perform(value: transaction[K.self]) {
+              perform()
+            }
+          }
+        }
+        open(keyType)
+      }
+      perform()
     },
     task: task
   )

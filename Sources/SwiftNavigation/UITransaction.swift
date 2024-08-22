@@ -1,3 +1,5 @@
+import OrderedCollections
+
 /// Executes a closure with the specified transaction and returns the result.
 ///
 /// - Parameters:
@@ -8,7 +10,10 @@ public func withUITransaction<Result>(
   _ transaction: UITransaction,
   _ body: () throws -> Result
 ) rethrows -> Result {
-  try UITransaction.$current.withValue(transaction, operation: body)
+  try UITransaction.$current.withValue(
+    UITransaction.current.merging(transaction),
+    operation: body
+  )
 }
 
 /// Executes a closure with the specified transaction key path and value and returns the result.
@@ -24,7 +29,7 @@ public func withUITransaction<R, V>(
   _ value: V,
   _ body: () throws -> R
 ) rethrows -> R {
-  var transaction = UITransaction.current
+  var transaction = UITransaction()
   transaction[keyPath: keyPath] = value
   return try withUITransaction(transaction, body)
 }
@@ -36,7 +41,7 @@ public func withUITransaction<R, V>(
 public struct UITransaction: Sendable {
   @TaskLocal package static var current = Self()
 
-  private var storage: [Key: any Sendable] = [:]
+  var storage: OrderedDictionary<Key, any Sendable> = [:]
 
   /// Creates a transaction.
   public init() {}
@@ -68,7 +73,15 @@ public struct UITransaction: Sendable {
     storage.isEmpty
   }
 
-  private struct Key: Hashable {
+  fileprivate func merging(_ other: Self) -> Self {
+    Self(storage: storage.merging(other.storage, uniquingKeysWith: { $1 }))
+  }
+
+  private init(storage: OrderedDictionary<Key, any Sendable>) {
+    self.storage = storage
+  }
+
+  struct Key: Hashable {
     let keyType: Any.Type
     init<K: UITransactionKey>(_ keyType: K.Type) {
       self.keyType = keyType
@@ -91,4 +104,11 @@ public protocol UITransactionKey {
 
   /// The default value for the transaction key.
   static var defaultValue: Value { get }
+}
+
+public protocol _UICustomTransactionKey: UITransactionKey, Sendable {
+  static func perform(
+    value: Value,
+    operation: @Sendable () -> Void
+  )
 }

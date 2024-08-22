@@ -1,6 +1,6 @@
-#if canImport(UIKit)
-  @_spi(Internals) import SwiftNavigation
-  import UIKit
+#if canImport(ObjectiveC)
+  import Dispatch
+  import ObjectiveC
 
   @MainActor
   extension NSObject {
@@ -123,34 +123,7 @@
     ) -> ObserveToken {
       let token = SwiftNavigation.observe { transaction in
         MainActor._assumeIsolated {
-          withUITransaction(transaction) {
-            #if os(watchOS)
-              apply(transaction)
-            #else
-              if transaction.uiKit.disablesAnimations {
-                UIView.performWithoutAnimation { apply(transaction) }
-                for completion in transaction.uiKit.animationCompletions {
-                  completion(true)
-                }
-              } else if let animation = transaction.uiKit.animation {
-                return animation.perform(
-                  { apply(transaction) },
-                  completion: transaction.uiKit.animationCompletions.isEmpty
-                    ? nil
-                    : {
-                      for completion in transaction.uiKit.animationCompletions {
-                        completion($0)
-                      }
-                    }
-                )
-              } else {
-                apply(transaction)
-                for completion in transaction.uiKit.animationCompletions {
-                  completion(true)
-                }
-              }
-            #endif
-          }
+          apply(transaction)
         }
       } task: { transaction, work in
         DispatchQueue.main.async {
