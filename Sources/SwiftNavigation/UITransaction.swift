@@ -95,7 +95,7 @@ public protocol UITransactionKey {
 
 public protocol PerformKey: UITransactionKey, Sendable {
   static func perform(
-    transaction: UITransaction,
+    value: Value,
     operation: @escaping @Sendable () -> Void
   )
 }

@@ -27,32 +27,32 @@ import SwiftNavigation
       static let defaultValue = UIKit()
 
       public static func perform(
-        transaction: UITransaction,
+        value: UIKit,
         operation: @escaping @Sendable () -> Void
       ) {
         MainActor._assumeIsolated {
 #if os(watchOS)
           //apply(transaction)
 #else
-          if transaction.uiKit.disablesAnimations {
+          if value.disablesAnimations {
             UIView.performWithoutAnimation { operation() }
-            for completion in transaction.uiKit.animationCompletions {
+            for completion in value.animationCompletions {
               completion(true)
             }
-          } else if let animation = transaction.uiKit.animation {
+          } else if let animation = value.animation {
             return animation.perform(
               { operation() },
-              completion: transaction.uiKit.animationCompletions.isEmpty
+              completion: value.animationCompletions.isEmpty
               ? nil
               : {
-                for completion in transaction.uiKit.animationCompletions {
+                for completion in value.animationCompletions {
                   completion($0)
                 }
               }
             )
           } else {
             operation()
-            for completion in transaction.uiKit.animationCompletions {
+            for completion in value.animationCompletions {
               completion(true)
             }
           }

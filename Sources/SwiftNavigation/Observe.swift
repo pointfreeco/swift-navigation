@@ -136,22 +136,36 @@ private func onChange(
   } onChange: {
     task(.current) {
       onChange(apply) { transaction, operation in
-        var perform: @Sendable () -> Void = {
-          task(transaction, operation)
-        }
-        for value in transaction.storage.keys {
-          @Sendable func open<K: PerformKey>(_: K.Type, operation: @escaping @Sendable () -> Void) {
-            K.perform(transaction: transaction) {
+
+        for key in transaction.storage.keys {
+          guard let key = key.keyType as? any PerformKey.Type
+          else { continue }
+
+          func open<K: PerformKey>(_: K.Type) {
+            K.perform(value: transaction[K.self]) {
               operation()
             }
           }
-          if let type = value.keyType as? any PerformKey.Type {
-            perform = { [perform] in
-              open(type, operation: perform)
-            }
-          }
+          open(key)
         }
-        perform()
+
+
+//        var perform: @Sendable () -> Void = {
+//          task(transaction, operation)
+//        }
+//        for value in transaction.storage.keys {
+//          @Sendable func open<K: PerformKey>(_: K.Type, operation: @escaping @Sendable () -> Void) {
+//            K.perform(value: transaction[K.self]) {
+//              operation()
+//            }
+//          }
+//          if let type = value.keyType as? any PerformKey.Type {
+//            perform = { [perform] in
+//              open(type, operation: perform)
+//            }
+//          }
+//        }
+//        perform()
       }
     }
   }
