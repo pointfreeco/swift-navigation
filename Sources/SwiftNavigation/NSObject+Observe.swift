@@ -1,6 +1,6 @@
 #if canImport(ObjectiveC)
-import ObjectiveC
-import Dispatch
+  import Dispatch
+  import ObjectiveC
 
   @MainActor
   extension NSObject {

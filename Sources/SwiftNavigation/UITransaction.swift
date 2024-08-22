@@ -10,7 +10,7 @@ public func withUITransaction<Result>(
   _ transaction: UITransaction,
   _ body: () throws -> Result
 ) rethrows -> Result {
-  try UITransaction.$current.withValue(transaction, operation: body)
+  try UITransaction.$current.withValue(UITransaction.current.merging(transaction), operation: body)
 }
 
 /// Executes a closure with the specified transaction key path and value and returns the result.
@@ -68,6 +68,14 @@ public struct UITransaction: Sendable {
 
   var isEmpty: Bool {
     storage.isEmpty
+  }
+
+  fileprivate func merging(_ other: Self) -> Self {
+    Self(storage: storage.merging(other.storage, uniquingKeysWith: { $1 }))
+  }
+
+  private init(storage: OrderedDictionary<Key, any Sendable>) {
+    self.storage = storage
   }
 
   struct Key: Hashable {
