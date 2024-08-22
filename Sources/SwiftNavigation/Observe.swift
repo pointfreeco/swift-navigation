@@ -132,12 +132,11 @@ private func onChange(
   ) -> Void
 ) {
   withPerceptionTracking {
-    print("apply(.current)")
     apply(.current)
   } onChange: {
     task(.current) {
       onChange(apply) { transaction, operation in
-        var count = 0
+
         for key in transaction.storage.keys {
           guard let key = key.keyType as? any PerformKey.Type
           else { continue }
@@ -148,10 +147,8 @@ private func onChange(
             }
           }
           open(key)
-          count += 1
         }
-        print("!!!!", count)
-        print("---------")
+
 
 //        var perform: @Sendable () -> Void = {
 //          task(transaction, operation)

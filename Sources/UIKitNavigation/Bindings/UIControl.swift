@@ -49,7 +49,6 @@
       unbind(keyPath)
       let action = UIAction { [weak self] _ in
         guard let self else { return }
-        print("UIAction")
         binding.wrappedValue = self[keyPath: keyPath]
       }
       addAction(action, for: event)

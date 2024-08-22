@@ -53,12 +53,12 @@ class AnimationsViewController: UIViewController, UIKitCaseStudy {
     observe { [weak self] in
       guard let self else { return }
 
-//      var transform = CGAffineTransform(translationX: model.position.x, y: model.position.y)
-//      if model.isScaled {
-//        transform = transform.scaledBy(x: 2, y: 2)
-//      }
-//      circleView.transform = transform
-//      circleView.backgroundColor = model.color
+      var transform = CGAffineTransform(translationX: model.position.x, y: model.position.y)
+      if model.isScaled {
+        transform = transform.scaledBy(x: 2, y: 2)
+      }
+      circleView.transform = transform
+      circleView.backgroundColor = model.color
     }
   }
 
