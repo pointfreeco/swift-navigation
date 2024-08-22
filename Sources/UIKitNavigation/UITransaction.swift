@@ -1,6 +1,7 @@
 #if canImport(UIKit) && !os(watchOS)
 
 import UIKit
+import SwiftNavigation
 
   extension UITransaction {
     /// Creates a transaction and assigns its animation property.
@@ -16,41 +17,48 @@ import UIKit
       get { self[UIKitKey.self] }
       set {
         self[UIKitKey.self] = newValue
-        self.perform = { transaction, work in
-          MainActor._assumeIsolated {
-#if os(watchOS)
-            //apply(transaction)
-#else
-            if transaction.uiKit.disablesAnimations {
-              UIView.performWithoutAnimation { work() }
-              for completion in transaction.uiKit.animationCompletions {
-                completion(true)
-              }
-            } else if let animation = transaction.uiKit.animation {
-              return animation.perform(
-                { work() },
-                completion: transaction.uiKit.animationCompletions.isEmpty
-                ? nil
-                : {
-                  for completion in transaction.uiKit.animationCompletions {
-                    completion($0)
-                  }
-                }
-              )
-            } else {
-              work()
-              for completion in transaction.uiKit.animationCompletions {
-                completion(true)
-              }
-            }
-#endif
-          }
-        }
+//        self.perform = { transaction, work in
+//
+//        }
       }
     }
 
-    private enum UIKitKey: UITransactionKey {
+    private enum UIKitKey: UITransactionKey, PerformKey {
       static let defaultValue = UIKit()
+
+      public static func perform(
+        transaction: UITransaction,
+        operation: @escaping @Sendable () -> Void
+      ) {
+        MainActor._assumeIsolated {
+#if os(watchOS)
+          //apply(transaction)
+#else
+          if transaction.uiKit.disablesAnimations {
+            UIView.performWithoutAnimation { operation() }
+            for completion in transaction.uiKit.animationCompletions {
+              completion(true)
+            }
+          } else if let animation = transaction.uiKit.animation {
+            return animation.perform(
+              { operation() },
+              completion: transaction.uiKit.animationCompletions.isEmpty
+              ? nil
+              : {
+                for completion in transaction.uiKit.animationCompletions {
+                  completion($0)
+                }
+              }
+            )
+          } else {
+            operation()
+            for completion in transaction.uiKit.animationCompletions {
+              completion(true)
+            }
+          }
+#endif
+        }
+      }
     }
 
     /// UIKit-specific data associated with a ``UITransaction``.

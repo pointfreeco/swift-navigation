@@ -36,7 +36,7 @@ public func withUITransaction<R, V>(
 public struct UITransaction: Sendable {
   @TaskLocal package static var current = Self()
 
-  private var storage: [Key: any Sendable] = [:]
+  var storage: [Key: any Sendable] = [:]
 
   /// Creates a transaction.
   public init() {}
@@ -68,7 +68,7 @@ public struct UITransaction: Sendable {
     storage.isEmpty
   }
 
-  private struct Key: Hashable {
+  struct Key: Hashable {
     let keyType: Any.Type
     init<K: UITransactionKey>(_ keyType: K.Type) {
       self.keyType = keyType
@@ -93,18 +93,9 @@ public protocol UITransactionKey {
   static var defaultValue: Value { get }
 }
 
-
-extension UITransaction {
-  public var perform: @Sendable (UITransaction, @Sendable () -> Void) -> Void {
-    get {
-      self[PerformTransactionKey.self]
-    }
-    set {
-      self[PerformTransactionKey.self] = newValue
-    }
-  }
-}
-
-private enum PerformTransactionKey: UITransactionKey {
-  static let defaultValue: @Sendable (UITransaction, @Sendable () -> Void) -> Void = { $1() }
+public protocol PerformKey: UITransactionKey, Sendable {
+  static func perform(
+    transaction: UITransaction,
+    operation: @escaping @Sendable () -> Void
+  )
 }

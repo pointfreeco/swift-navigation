@@ -127,36 +127,7 @@
         }
       } task: { transaction, work in
         DispatchQueue.main.async {
-          withUITransaction(transaction) {
-            MainActor._assumeIsolated {
-              #if os(watchOS)
-                apply(transaction)
-              #else
-                if transaction.uiKit.disablesAnimations {
-                  UIView.performWithoutAnimation { work() }
-                  for completion in transaction.uiKit.animationCompletions {
-                    completion(true)
-                  }
-                } else if let animation = transaction.uiKit.animation {
-                  return animation.perform(
-                    { work() },
-                    completion: transaction.uiKit.animationCompletions.isEmpty
-                      ? nil
-                      : {
-                        for completion in transaction.uiKit.animationCompletions {
-                          completion($0)
-                        }
-                      }
-                  )
-                } else {
-                  work()
-                  for completion in transaction.uiKit.animationCompletions {
-                    completion(true)
-                  }
-                }
-              #endif
-            }
-          }
+          withUITransaction(transaction, work)
         }
       }
       tokens.append(token)
