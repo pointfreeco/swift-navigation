@@ -21,7 +21,7 @@
     ///   the current page changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(currentPage: UIBinding<Int>) -> ObservationToken {
+    public func bind(currentPage: UIBinding<Int>) -> ObserveToken {
       bind(currentPage, to: \.currentPage, for: .valueChanged)
     }
   }

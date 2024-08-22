@@ -22,7 +22,7 @@
     ///   value changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(value: UIBinding<Float>) -> ObservationToken {
+    public func bind(value: UIBinding<Float>) -> ObserveToken {
       bind(value, to: \.value, for: .valueChanged)
     }
   }

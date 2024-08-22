@@ -8,9 +8,9 @@
 
     @interface UIViewController (UIKitNavigation)
 
-    @property BOOL hasViewAppeared;
-    @property (nullable) void (^onDismiss)();
-    @property NSArray<void(^)()> *onViewAppear;
+    @property BOOL _UIKitNavigation_hasViewAppeared;
+    @property (nullable) void (^_UIKitNavigation_onDismiss)();
+    @property NSArray<void(^)()> *_UIKitNavigation_onViewAppear;
 
     @end
 

@@ -14,7 +14,7 @@
     ///   - handler: A closure that is invoked with an action held in `state`.
     public convenience init<Action>(
       state: AlertState<Action>,
-      handler: @escaping (_ action: Action?) -> Void
+      handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
     ) {
       self.init(
         title: String(state: state.title),
@@ -34,7 +34,7 @@
     ///   - handler: A closure that is invoked with an action held in `state`.
     public convenience init<Action>(
       state: ConfirmationDialogState<Action>,
-      handler: @escaping (_ action: Action?) -> Void
+      handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
     ) {
       self.init(
         title: state.titleVisibility == .visible ? String(state: state.title) : nil,
@@ -71,7 +71,7 @@
   extension UIAlertAction {
     public convenience init<Action>(
       _ button: ButtonState<Action>,
-      action handler: @escaping (_ action: Action?) -> Void
+      action handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
     ) {
       self.init(
         title: String(state: button.label),
