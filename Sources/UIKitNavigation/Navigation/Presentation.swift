@@ -371,7 +371,7 @@
           if _UIKitNavigation_hasViewAppeared {
             work()
           } else {
-              _UIKitNavigation_onViewAppear.append(work)
+            _UIKitNavigation_onViewAppear.append(work)
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
