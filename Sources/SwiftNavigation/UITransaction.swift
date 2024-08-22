@@ -10,7 +10,10 @@ public func withUITransaction<Result>(
   _ transaction: UITransaction,
   _ body: () throws -> Result
 ) rethrows -> Result {
-  try UITransaction.$current.withValue(UITransaction.current.merging(transaction), operation: body)
+  try UITransaction.$current.withValue(
+    UITransaction.current.merging(transaction),
+    operation: body
+  )
 }
 
 /// Executes a closure with the specified transaction key path and value and returns the result.
@@ -26,7 +29,7 @@ public func withUITransaction<R, V>(
   _ value: V,
   _ body: () throws -> R
 ) rethrows -> R {
-  var transaction = UITransaction.current
+  var transaction = UITransaction()
   transaction[keyPath: keyPath] = value
   return try withUITransaction(transaction, body)
 }

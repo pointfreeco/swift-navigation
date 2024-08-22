@@ -68,7 +68,33 @@
       XCTAssertEqual(UITransaction.current.isSet, false)
     }
 
-    // TODO: write test for a transaction helper and make sure merging is happening under the hood
+    @MainActor
+    func testTransactionMerging() async {
+      observe { transaction in
+        XCTAssertFalse(transaction.isSet)
+        XCTAssertFalse(transaction.isAlsoSet)
+      }
+      withUITransaction(\.isSet, true) {
+        observe { transaction in
+          XCTAssertTrue(transaction.isSet)
+          XCTAssertFalse(transaction.isAlsoSet)
+        }
+        _ = withUITransaction(\.isAlsoSet, true) {
+          observe { transaction in
+            XCTAssertTrue(transaction.isSet)
+            XCTAssertTrue(transaction.isAlsoSet)
+          }
+        }
+        observe { transaction in
+          XCTAssertTrue(transaction.isSet)
+          XCTAssertFalse(transaction.isAlsoSet)
+        }
+      }
+      observe { transaction in
+        XCTAssertFalse(transaction.isSet)
+        XCTAssertFalse(transaction.isAlsoSet)
+      }
+    }
 
     @MainActor
     func testSynchronousTransactionKey() async {
@@ -127,19 +153,25 @@
     }
   }
 
-@Perceptible
-private class Model {
-  var count = 0
-}
-
-private enum IsSetKey: UITransactionKey {
-  static let defaultValue = false
-}
-extension UITransaction {
-  var isSet: Bool {
-    get { self[IsSetKey.self] }
-    set { self[IsSetKey.self] = newValue }
+  @Perceptible
+  private class Model {
+    var count = 0
   }
-}
 
+  extension UITransaction {
+    var isSet: Bool {
+      get { self[IsSetKey.self] }
+      set { self[IsSetKey.self] = newValue }
+    }
+    var isAlsoSet: Bool {
+      get { self[IsAlsoSetKey.self] }
+      set { self[IsAlsoSetKey.self] = newValue }
+    }
+  }
+  private enum IsSetKey: UITransactionKey {
+    static let defaultValue = false
+  }
+  private enum IsAlsoSetKey: UITransactionKey {
+    static let defaultValue = false
+  }
 #endif
