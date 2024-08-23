@@ -83,7 +83,6 @@ let package = Package(
       name: "AppKitNavigation",
       dependencies: [
         "SwiftNavigation",
-        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
       ]
     ),
     .testTarget(
