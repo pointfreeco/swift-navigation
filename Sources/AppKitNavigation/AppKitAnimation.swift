@@ -43,8 +43,8 @@
         return try result!._rethrowGet()
 
       case let .swiftUI(animation):
-        var result: Swift.Result<Result, Error>?
         #if swift(>=6)
+          var result: Swift.Result<Result, Error>?
           if #available(macOS 15, *) {
             NSAnimationContext.animate(animation) {
               result = Swift.Result(catching: body)
