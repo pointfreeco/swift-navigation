@@ -1,7 +1,7 @@
 #if canImport(SwiftUI)
   import Foundation
   import SwiftUI
-  
+
   @available(iOS 17, macOS 14, *)
   @available(tvOS, unavailable)
   @available(watchOS, unavailable)
@@ -51,7 +51,7 @@
         }
       }
     }
-  
+
     /// Presents a sheet using a binding as a data source for the sheet's content.
     ///
     /// A version of ``SwiftUI/View/inspector(item:content:)`` that is passed an item
