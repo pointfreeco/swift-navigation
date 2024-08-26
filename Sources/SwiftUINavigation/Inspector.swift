@@ -13,7 +13,6 @@ extension View {
   /// This overload differs in that it passes a _binding_ to the unwrapped value, instead. This
   /// gives the inspector the ability to write changes back to its source of truth.
   ///
-  ///
   /// ```swift
   /// struct TimelineView: View {
   ///   @State var draft: Post?
