@@ -8,7 +8,7 @@ import SwiftUI
 extension View {
   /// Shows an inspector using a binding as a data source for the inspector's content.
   ///
-  /// SwiftUI comes with a `inspector(isPresented:)` view modifier that is powered by a binding to a b boolean state.
+  /// SwiftUI comes with a `inspector(isPresented:)` view modifier that is powered by a binding to a Boolean.
   ///
   /// This overload differs in that it passes a _binding_ to the unwrapped value, instead. This
   /// gives the inspector the ability to write changes back to its source of truth.
