@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import Foundation
 import SwiftUI
 
@@ -70,3 +71,4 @@ extension View {
     }
   }
 }
+#endif
