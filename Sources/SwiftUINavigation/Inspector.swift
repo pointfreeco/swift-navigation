@@ -52,7 +52,7 @@ extension View {
 
   /// Presents a sheet using a binding as a data source for the sheet's content.
   ///
-  /// A version of  ``SwiftUI/View/inspector(item:content:)``that is passed an item
+  /// A version of ``SwiftUI/View/inspector(item:content:) ``that is passed an item
   /// and not a binding to an item.
   ///
   /// - Parameters:
