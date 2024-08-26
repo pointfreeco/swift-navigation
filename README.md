@@ -238,7 +238,7 @@ The tools provided by this library can also form the foundation of building navi
 non-Apple platforms, such as Windows, Linux, Wasm and more. We do not currently provide any such
 tools at this moment, but it is possible for them to be built externally.
 
-For example, in Wasm it is possible to use the ``observe(isolation:_:)-93yzu`` function to observe changes
+For example, in Wasm it is possible to use the `observe(isolation:_:)` function to observe changes
 to a model and update the DOM:
 
 ```swift
@@ -305,7 +305,7 @@ You can add Swift Navigation to an Xcode project by adding it as a package depen
 If you want to use Swift Navigation in a [SwiftPM](https://swift.org/package-manager/) project, 
 it's as simple as adding it to a `dependencies` clause in your `Package.swift`:
 
-``` swift
+```swift
 dependencies: [
   .package(url: "https://github.com/pointfreeco/swift-navigation", from: "2.0.0")
 ]

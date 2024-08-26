@@ -5,13 +5,13 @@
 ### Tree-based navigation
 
 - ``UIKit/UIViewController/present(isPresented:onDismiss:content:)``
-- ``UIKit/UIViewController/present(item:onDismiss:content:)-34iup``
-- ``UIKit/UIViewController/present(item:onDismiss:content:)-86u3v``
-- ``UIKit/UIViewController/present(item:id:onDismiss:content:)-8grlt``
-- ``UIKit/UIViewController/present(item:id:onDismiss:content:)-2fmzj``
+- ``UIKit/UIViewController/present(item:onDismiss:content:)-4m7m3``
+- ``UIKit/UIViewController/present(item:onDismiss:content:)-4x5io``
+- ``UIKit/UIViewController/present(item:id:onDismiss:content:)-4xafn``
+- ``UIKit/UIViewController/present(item:id:onDismiss:content:)-9fu88``
 - ``UIKit/UIViewController/navigationDestination(isPresented:content:)``
-- ``UIKit/UIViewController/navigationDestination(item:content:)-367r6``
-- ``UIKit/UIViewController/navigationDestination(item:content:)-4pmzx``
+- ``UIKit/UIViewController/navigationDestination(item:content:)-1gks3``
+- ``UIKit/UIViewController/navigationDestination(item:content:)-5auro``
 
 ### Custom tree-based navigation
 

@@ -257,7 +257,7 @@
 
     /// Presents a view controller using the given item as a data source for its content.
     ///
-    /// This helper powers ``navigationDestination(item:content:)-367r6`` and can be used to define
+    /// This helper powers ``navigationDestination(item:content:)-1gks3`` and can be used to define
     /// custom transitions.
     ///
     /// - Parameters:
@@ -288,7 +288,7 @@
 
     /// Presents a view controller using the given item as a data source for its content.
     ///
-    /// This helper powers ``present(item:onDismiss:content:)-34iup`` and can be used to define
+    /// This helper powers ``present(item:onDismiss:content:)-4m7m3`` and can be used to define
     /// custom transitions.
     ///
     /// - Parameters:

@@ -157,7 +157,7 @@ private func onChange(
 ///
 /// When this token is deallocated it cancels the observation it was associated with. Store this
 /// token in another object to keep the observation alive. You can do with this with a set of
-/// ``ObserveToken``s and the ``store(in:)-1hsqo`` method:
+/// ``ObserveToken``s and the ``store(in:)-4bp5r`` method:
 ///
 /// ```swift
 /// class Coordinator {
@@ -188,7 +188,7 @@ public final class ObserveToken: @unchecked Sendable, HashableObject {
     cancel()
   }
 
-  /// Cancels observation that was created with ``observe(isolation:_:)-93yzu``.
+  /// Cancels observation that was created with ``observe(isolation:_:)-9xf99``.
   ///
   /// > Note: This cancellation is lazy and cooperative. It does not cancel the observation
   /// > immediately, but rather next time a change is detected by `observe` it will cease any future
