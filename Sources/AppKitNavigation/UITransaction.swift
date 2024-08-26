@@ -33,12 +33,12 @@
             return animation.perform(
               { operation() },
               completion: value.animationCompletions.isEmpty
-              ? nil
-              : {
-                for completion in value.animationCompletions {
-                  completion($0)
+                ? nil
+                : {
+                  for completion in value.animationCompletions {
+                    completion($0)
+                  }
                 }
-              }
             )
           } else {
             operation()

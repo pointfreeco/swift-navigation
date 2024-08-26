@@ -82,7 +82,7 @@ let package = Package(
     .target(
       name: "AppKitNavigation",
       dependencies: [
-        "SwiftNavigation",
+        "SwiftNavigation"
       ]
     ),
     .testTarget(
