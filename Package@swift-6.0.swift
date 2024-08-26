@@ -23,6 +23,10 @@ let package = Package(
       name: "UIKitNavigation",
       targets: ["UIKitNavigation"]
     ),
+    .library(
+      name: "AppKitNavigation",
+      targets: ["AppKitNavigation"]
+    ),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
@@ -74,6 +78,12 @@ let package = Package(
     ),
     .target(
       name: "UIKitNavigationShim"
+    ),
+    .target(
+      name: "AppKitNavigation",
+      dependencies: [
+        "SwiftNavigation",
+      ]
     ),
     .testTarget(
       name: "UIKitNavigationTests",

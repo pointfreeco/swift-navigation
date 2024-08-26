@@ -29,7 +29,7 @@
 
   @Perceptible
   @MainActor
-  class Model {
+  private class Model {
     var count = 0
   }
 #endif
