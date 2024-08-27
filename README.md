@@ -202,7 +202,7 @@ with the view. When the state becomes non-`nil` the corresponding form of naviga
 triggered, and when the presented view is dismissed, the state will be `nil`'d out.
 
 Another powerful aspect of SwiftUI is its ability to update its UI whenever state in an observable
-model changes. And thanks to Swift's observation tools this can be done done implicitly and 
+model changes. And thanks to Swift's observation tools this can be done implicitly and 
 minimally: whichever fields are accessed in the `body` of the view are automatically tracked 
 so that when they change the view updates.
 
