@@ -437,21 +437,21 @@ final class PresentationTests: XCTestCase {
     let vc = VC()
     try await setUp(controller: vc)
 
-    withUITransaction(\.uiKit.disablesAnimations, true) {
-      vc.presentedChild = Model()
-    }
-    try await Task.sleep(for: .seconds(0.5))
+    vc.presentedChild = Model()
+    await assertEventuallyNotNil(vc.presentedViewController)
 
-    withUITransaction(\.uiKit.disablesAnimations, true) {
-      vc.presentedChild?.isPushed = true
-    }
-    try await Task.sleep(for: .seconds(0.5))
+    vc.presentedChild?.isPushed = true
+    await assertEventuallyEqual(
+      (vc.presentedViewController as? UINavigationController)?.viewControllers.count,
+      2
+    )
 
-    withUITransaction(\.uiKit.disablesAnimations, false) {
-      vc.presentedChild?.isPushed = false
-    }
-    try await Task.sleep(for: .seconds(1))
-
+    try await Task.sleep(for: .seconds(0.3))
+    vc.presentedChild?.isPushed = false
+    await assertEventuallyEqual(
+      (vc.presentedViewController as? UINavigationController)?.viewControllers.count,
+      1
+    )
     await assertEventuallyNotNil(vc.presentedChild)
   }
 }
