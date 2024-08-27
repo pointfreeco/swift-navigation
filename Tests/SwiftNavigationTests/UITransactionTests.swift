@@ -7,7 +7,7 @@ class UITransactionTests: XCTestCase {
     let model = Model()
     XCTAssertEqual(UITransaction.current.isSet, false)
 
-    var didObserve = true
+    var didObserve = false
     observe {
       if model.count == 0 {
         XCTAssertEqual(UITransaction.current.isSet, false)
@@ -57,21 +57,21 @@ class UITransactionTests: XCTestCase {
   }
 
   @MainActor
-  func testSynchronousTransactionKey() async {
-    let expectation = expectation(description: "onChange")
-
+  func testSynchronousTransactionKey() async throws {
     let model = Model()
     XCTAssertEqual(UITransaction.current.isSet, false)
 
+    var didObserve = false
     _ = withUITransaction(\.isSet, true) {
       observe {
         XCTAssertEqual(model.count, 0)
         XCTAssertEqual(UITransaction.current.isSet, true)
-        expectation.fulfill()
+        didObserve = true
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 1)
+    try await Task.sleep(for: .seconds(0.3))
+    XCTAssertEqual(didObserve, true)
     XCTAssertEqual(UITransaction.current.isSet, false)
   }
 

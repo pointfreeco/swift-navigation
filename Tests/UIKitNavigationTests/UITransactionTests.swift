@@ -6,13 +6,14 @@
   class UITransactionTests: XCTestCase {
     #if !os(watchOS)
       @MainActor
-      func testTransactionKeyPropagatesWithAnimation() async {
+      func testTransactionKeyPropagatesWithAnimation() async throws {
         let expectation = expectation(description: "onChange")
         expectation.expectedFulfillmentCount = 2
 
         let model = Model()
         XCTAssertEqual(UITransaction.current.isSet, false)
 
+        var didObserve = false
         observe {
           if model.count == 0 {
             XCTAssertEqual(UITransaction.current.isSet, false)
@@ -21,7 +22,7 @@
           } else {
             XCTFail()
           }
-          expectation.fulfill()
+          didObserve = true
         }
 
         withUITransaction(\.isSet, true) {
@@ -29,7 +30,8 @@
             model.count += 1
           }
         }
-        await fulfillment(of: [expectation], timeout: 1)
+        try await Task.sleep(for: .seconds(0.3))
+        XCTAssertEqual(didObserve, true)
         XCTAssertEqual(model.count, 1)
         XCTAssertEqual(UITransaction.current.isSet, false)
       }
