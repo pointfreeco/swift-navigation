@@ -10,12 +10,7 @@ public protocol ModalSessionContent: ModalContent {
 extension NSWindow: ModalSessionContent {
 
     public func appKitNavigationBeginModalSession() -> NSApplication.ModalSession {
-        __appKitNavigationBeginModalSession()
-    }
-    
-    @objc func __appKitNavigationBeginModalSession() -> NSApplication.ModalSession {
-        let modalSession = NSApplication.shared.beginModalSession(for: self)
-        return modalSession
+        NSApplication.shared.beginModalSession(for: self)
     }
 }
 
