@@ -114,18 +114,10 @@ extension SheetContent {
     }
 }
 
-extension NSWindow {
-    func endSheeted() {
-        guard sheetParent != nil else {
-            return
-        }
-        sheetParent?.endSheet(self)
-    }
-}
-
 extension Navigated where Content: SheetContent {
     func clearup() {
-        content?.currentWindow?.endSheeted()
+        guard let window = content?.currentWindow else { return }
+        window.sheetParent?.endSheet(window)
     }
 }
 
