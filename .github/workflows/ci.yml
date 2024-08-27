@@ -36,6 +36,30 @@ jobs:
       - name: Run tests
         run: make test-${{ matrix.variation }}
 
+  wasm:
+    name: SwiftWasm
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain:
+          - wasm-5.9.2-RELEASE
+          - wasm-5.10.0-RELEASE 
+    steps:
+      - name: Cache toolchains
+        uses: actions/cache@v3
+        with:
+          path: ~/Library/Developer/Toolchains
+          key: ${{ matrix.toolchain }}
+      - uses: actions/checkout@v4
+      - uses: bytecodealliance/actions/wasmtime/setup@v1
+      - uses: swiftwasm/setup-swiftwasm@v1
+        with:
+          swift-version: ${{ matrix.toolchain }}
+      - name: Build tests
+        run: swift build --triple wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
+      - name: Run tests
+        run: wasmtime .build/debug/swift-navigationPackageTests.wasm
+
   windows:
     name: Windows
     strategy:
