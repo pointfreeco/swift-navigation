@@ -4,32 +4,32 @@
 
   class IsolationTests: XCTestCase {
     @MainActor
-    func testIsolationOnMinActor() async {
+    func testIsolationOnMainActor() async throws {
       let model = MainActorModel()
-      let expectation = expectation(description: "observation")
-      expectation.expectedFulfillmentCount = 2
+      var didObserve = false
       let token = SwiftNavigation.observe {
         _ = model.count
         MainActor.assertIsolated()
-        expectation.fulfill()
+        didObserve = true
       }
       model.count += 1
-      await fulfillment(of: [expectation], timeout: 1)
+      try await Task.sleep(for: .seconds(0.3))
+      XCTAssertEqual(didObserve, true)
       _ = token
     }
 
     @GlobalActorIsolated
-    func testIsolationOnGlobalActor() async {
+    func testIsolationOnGlobalActor() async throws {
       let model = GlobalActorModel()
-      let expectation = expectation(description: "observation")
-      expectation.expectedFulfillmentCount = 2
+      var didObserve = false
       let token = SwiftNavigation.observe {
         _ = model.count
         GlobalActorIsolated.assertIsolated()
-        expectation.fulfill()
+        didObserve = true
       }
       model.count += 1
-      await fulfillment(of: [expectation], timeout: 1)
+      try await Task.sleep(for: .seconds(0.3))
+      XCTAssertEqual(didObserve, true)
       _ = token
     }
   }

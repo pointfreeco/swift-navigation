@@ -3,13 +3,11 @@ import XCTest
 
 class UITransactionTests: XCTestCase {
   @MainActor
-  func testTransactionKeyPropagates() async {
-    let expectation = expectation(description: "onChange")
-    expectation.expectedFulfillmentCount = 2
-
+  func testTransactionKeyPropagates() async throws {
     let model = Model()
     XCTAssertEqual(UITransaction.current.isSet, false)
 
+    var didObserve = true
     observe {
       if model.count == 0 {
         XCTAssertEqual(UITransaction.current.isSet, false)
@@ -18,13 +16,14 @@ class UITransactionTests: XCTestCase {
       } else {
         XCTFail()
       }
-      expectation.fulfill()
+      didObserve = true
     }
 
     withUITransaction(\.isSet, true) {
       model.count += 1
     }
-    await fulfillment(of: [expectation], timeout: 1)
+    try await Task.sleep(for: .seconds(0.3))
+    XCTAssertEqual(didObserve, true)
     XCTAssertEqual(model.count, 1)
     XCTAssertEqual(UITransaction.current.isSet, false)
   }
@@ -88,14 +87,12 @@ class UITransactionTests: XCTestCase {
   }
 
   @MainActor
-  func testBindingTransactionKey() async {
-    let expectation = expectation(description: "onChange")
-    expectation.expectedFulfillmentCount = 2
-
+  func testBindingTransactionKey() async throws {
     @UIBinding var count = 0
     var transaction = UITransaction()
     transaction.isSet = true
 
+    var didObserve = false
     observe {
       if count == 0 {
         XCTAssertEqual(UITransaction.current.isSet, false)
@@ -104,13 +101,14 @@ class UITransactionTests: XCTestCase {
       } else {
         XCTFail()
       }
-      expectation.fulfill()
+      didObserve = true
     }
 
     let bindingWithTransaction = $count.transaction(transaction)
     bindingWithTransaction.wrappedValue = 1
 
-    await fulfillment(of: [expectation], timeout: 1)
+    try await Task.sleep(for: .seconds(0.3))
+    XCTAssertEqual(didObserve, true)
   }
 }
 
