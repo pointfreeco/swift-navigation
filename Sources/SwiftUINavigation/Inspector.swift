@@ -45,11 +45,7 @@
       item: Binding<Item?>,
       @ViewBuilder content: @escaping (Binding<Item>) -> Content
     ) -> some View {
-      inspector(isPresented: Binding(item)) {
-        if let defaultValue = item.wrappedValue {
-          content(Binding(unwrapping: item, default: defaultValue))
-        }
-      }
+      InspectorModifier(item: $item, destination: content)
     }
 
     /// Presents a sheet using a binding as a data source for the sheet's content.
@@ -69,6 +65,27 @@
     ) -> some View {
       inspector(item: item) {
         content($0.wrappedValue)
+      }
+    }
+  }
+
+  @available(iOS 17, macOS 14, *)
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
+  @available(visionOS, unavailable)
+  private struct InspectorModifier<Item, Destination: View>: ViewModifier {
+    @Binding var item: Item?
+    let destination: (Binding<Item>) -> Destination
+    @State var cachedItem: Item?
+
+    func body(content: Content) -> some View {
+      content.inspector(isPresented: Binding($item)) {
+        if let defaultValue = item ?? cachedItem {
+          destination(Binding(unwrapping: $item, default: defaultValue))
+            .onAppear {
+              cachedItem = defaultValue
+            }
+        }
       }
     }
   }
