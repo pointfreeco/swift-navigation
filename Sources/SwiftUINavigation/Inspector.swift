@@ -45,7 +45,7 @@
       item: Binding<Item?>,
       @ViewBuilder content: @escaping (Binding<Item>) -> Content
     ) -> some View {
-      InspectorModifier(item: $item, destination: content)
+      modifier(InspectorModifier(item: item, destination: content))
     }
 
     /// Presents a sheet using a binding as a data source for the sheet's content.
