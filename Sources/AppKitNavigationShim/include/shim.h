@@ -8,9 +8,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSViewController (AppKitNavigation)
 
-@property BOOL hasViewAppeared;
-@property (nullable) void (^ onDismiss)();
-@property NSArray<void (^)()> *onViewAppear;
+@property BOOL _AppKitNavigation_hasViewAppeared;
+@property (nullable) void (^ _AppKitNavigation_onDismiss)();
+@property NSArray<void (^)()> *_AppKitNavigation_onViewAppear;
 
 @end
 
