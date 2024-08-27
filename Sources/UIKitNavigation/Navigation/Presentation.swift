@@ -452,7 +452,8 @@
       //     deinit alongside it on the main thread. If we use this other places we should force it
       //     to be a UIViewController as well, to ensure this functionality.
       MainActor._assumeIsolated {
-        self.controller?.dismiss(animated: false)
+        guard let controller, controller.parent == nil else { return }
+        controller.dismiss(animated: false)
       }
     }
     init(_ controller: UIViewController, id presentationID: AnyHashable? = nil) {
