@@ -116,7 +116,7 @@ import IssueReporting
 /// ```
 ///
 /// And you can also build your own navigation tools by utilizing ``UIBinding`` and
-/// ``observe(isolation:_:)-93yzu``. You can even build navigation tools for non-Apple platforms,
+/// ``observe(isolation:_:)-9xf99``. You can even build navigation tools for non-Apple platforms,
 /// such as Windows, Linux, Wasm and more.
 ///
 /// For example, it is possible to build a tool that drives alerts in HTML from a binding of a
@@ -243,7 +243,12 @@ public struct UIBinding<Value>: Sendable {
 
   /// Creates a binding by projecting the base optional value to a Boolean value.
   ///
-  /// - Parameter base: A value to project to a Boolean value.
+  /// - Parameters:
+  ///   - base: A value to project to a Boolean value.
+  ///   - fileID: The source `#fileID` associated with the binding.
+  ///   - filePath: The source `#filePath` associated with the binding.
+  ///   - line: The source `#line` associated with the binding.
+  ///   - column: The source `#column` associated with the binding.
   public init<V>(
     _ base: UIBinding<V?>,
     fileID: StaticString = #fileID,

@@ -109,7 +109,7 @@ minimally: whichever fields are accessed in the `body` of the view are automatic
 so that when they change the view updates.
 
 Our UIKitNavigation library comes with a tool that brings this power to UIKit, and it's called
-``observe(isolation:_:)-93yzu``:
+``observe(isolation:_:)-9xf99``:
 
 ```swift
 observe { [weak self] in
@@ -137,10 +137,6 @@ right away, going all the way back to the iOS 13 era of platforms.
 
 ## Topics
 
-### Observing changes to state
-
-- ``ObjectiveC/NSObject/observe(_:)-1trvu``
-
 ### Animations
 
 - ``withUIKitAnimation(_:_:completion:)``
@@ -163,3 +159,8 @@ right away, going all the way back to the iOS 13 era of platforms.
 - ``UIKit/UIViewController``
 - ``UIKit/UIAlertController``
 - ``UIKit/UITraitCollection``
+
+### Xcode previews
+
+- ``UIViewRepresenting``
+- ``UIViewControllerRepresenting``
