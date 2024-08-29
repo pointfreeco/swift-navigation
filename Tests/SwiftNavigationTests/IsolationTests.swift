@@ -3,34 +3,38 @@
   import XCTest
 
   class IsolationTests: XCTestCase {
-    @MainActor
     func testIsolationOnMainActor() async throws {
-      let model = MainActorModel()
-      var didObserve = false
-      let token = SwiftNavigation.observe {
-        _ = model.count
-        MainActor.assertIsolated()
-        didObserve = true
+      try await Task { @MainActor in
+        let model = MainActorModel()
+        var didObserve = false
+        let token = SwiftNavigation.observe {
+          _ = model.count
+          MainActor.assertIsolated()
+          didObserve = true
+        }
+        model.count += 1
+        try await Task.sleep(for: .seconds(0.3))
+        XCTAssertEqual(didObserve, true)
+        _ = token
       }
-      model.count += 1
-      try await Task.sleep(for: .seconds(0.3))
-      XCTAssertEqual(didObserve, true)
-      _ = token
+      .value
     }
 
-    @GlobalActorIsolated
     func testIsolationOnGlobalActor() async throws {
-      let model = GlobalActorModel()
-      var didObserve = false
-      let token = SwiftNavigation.observe {
-        _ = model.count
-        GlobalActorIsolated.assertIsolated()
-        didObserve = true
+      try await Task { @GlobalActorIsolated in
+        let model = GlobalActorModel()
+        var didObserve = false
+        let token = SwiftNavigation.observe {
+          _ = model.count
+          GlobalActorIsolated.assertIsolated()
+          didObserve = true
+        }
+        model.count += 1
+        try await Task.sleep(for: .seconds(0.3))
+        XCTAssertEqual(didObserve, true)
+        _ = token
       }
-      model.count += 1
-      try await Task.sleep(for: .seconds(0.3))
-      XCTAssertEqual(didObserve, true)
-      _ = token
+      .value
     }
   }
 
