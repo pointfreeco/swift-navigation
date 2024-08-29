@@ -1,4 +1,4 @@
-#if canImport(SwiftUI) && canImport(Testing)
+#if canImport(Testing)
   import CustomDump
   import SwiftUI
   import SwiftUINavigation
@@ -31,4 +31,4 @@
       }
     }
   }
-#endif  // canImport(SwiftUI)
+#endif
