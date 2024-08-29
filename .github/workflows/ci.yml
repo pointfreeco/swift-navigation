@@ -39,25 +39,30 @@ jobs:
   wasm:
     name: SwiftWasm
     runs-on: ubuntu-latest
+    env:
+      OMIT_MACRO_TESTS: 1
     strategy:
       matrix:
-        toolchain:
-          - wasm-DEVELOPMENT-SNAPSHOT-2024-08-26-a
+        include:
+          - toolchain: swift-DEVELOPMENT-SNAPSHOT-2024-07-08-a
+            swift-sdk: swift-wasm-DEVELOPMENT-SNAPSHOT-2024-07-09-a
     steps:
-      - name: Cache toolchains
-        uses: actions/cache@v3
-        with:
-          path: ~/Library/Developer/Toolchains
-          key: ${{ matrix.toolchain }}
       - uses: actions/checkout@v4
       - uses: bytecodealliance/actions/wasmtime/setup@v1
-      - uses: swiftwasm/setup-swiftwasm@v1
-        with:
-          swift-version: ${{ matrix.toolchain }}
+      - name: Install Swift and Swift SDK for WebAssembly
+        run: |
+          PREFIX=/opt/swift
+          SWIFT_TOOLCHAIN_TAG="${{ matrix.toolchain }}"
+          SWIFT_SDK_TAG="${{ matrix.swift-sdk }}"
+          set -ex
+          curl -f -o /tmp/swift.tar.gz "https://download.swift.org/development/ubuntu2204/$SWIFT_TOOLCHAIN_TAG/$SWIFT_TOOLCHAIN_TAG-ubuntu22.04.tar.gz"
+          sudo mkdir -p $PREFIX; sudo tar -xzf /tmp/swift.tar.gz -C $PREFIX --strip-component 1
+          $PREFIX/usr/bin/swift experimental-sdk install "https://github.com/swiftwasm/swift/releases/download/$SWIFT_SDK_TAG/$SWIFT_SDK_TAG-wasm32-unknown-wasi.artifactbundle.zip"
+          echo "$PREFIX/usr/bin" >> $GITHUB_PATH
       - name: Build tests
-        run: swift build --static-swift-stdlib --triple wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
+        run: swift build --swift-sdk wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
       - name: Run tests
-        run: wasmtime .build/debug/swift-navigationPackageTests.wasm
+        run: wasmtime --dir . .build/debug/swift-navigationPackageTests.wasm
 
   windows:
     name: Windows
