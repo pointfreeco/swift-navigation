@@ -3,7 +3,6 @@ import XCTest
 
 class ObserveTests: XCTestCase {
   #if swift(>=6)
-//    @MainActor
     func testIsolation() async {
       await MainActor.run {
         var count = 0
@@ -16,7 +15,6 @@ class ObserveTests: XCTestCase {
     }
   #endif
 
-//  @MainActor
   func testTokenStorage() async {
     await MainActor.run {
       var count = 0
