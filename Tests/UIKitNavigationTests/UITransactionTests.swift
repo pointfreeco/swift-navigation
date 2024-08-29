@@ -6,7 +6,7 @@
   class UITransactionTests: XCTestCase {
     #if !os(watchOS)
       @MainActor
-      func testTransactionKeyPropagatesWithAnimation() async throws {
+      func testTransactionKeyPropagatesWithAnimation() async {
         let expectation = expectation(description: "onChange")
         expectation.expectedFulfillmentCount = 2
 
