@@ -13,7 +13,7 @@
           didObserve = true
         }
         model.count += 1
-        try await Task.sleep(for: .seconds(0.3))
+        try await Task.sleep(nanoseconds: 300_000_000)
         XCTAssertEqual(didObserve, true)
         _ = token
       }
@@ -30,7 +30,7 @@
           didObserve = true
         }
         model.count += 1
-        try await Task.sleep(for: .seconds(0.3))
+        try await Task.sleep(nanoseconds: 300_000_000)
         XCTAssertEqual(didObserve, true)
         _ = token
       }

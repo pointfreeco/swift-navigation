@@ -13,7 +13,6 @@
         let model = Model()
         XCTAssertEqual(UITransaction.current.isSet, false)
 
-        var didObserve = false
         observe {
           if model.count == 0 {
             XCTAssertEqual(UITransaction.current.isSet, false)
@@ -22,7 +21,7 @@
           } else {
             XCTFail()
           }
-          didObserve = true
+          expectation.fulfill()
         }
 
         withUITransaction(\.isSet, true) {
@@ -30,8 +29,7 @@
             model.count += 1
           }
         }
-        try await Task.sleep(nanoseconds: 100_000_000)
-        XCTAssertEqual(didObserve, true)
+        await fulfillment(of: [expectation], timeout: 1)
         XCTAssertEqual(model.count, 1)
         XCTAssertEqual(UITransaction.current.isSet, false)
       }

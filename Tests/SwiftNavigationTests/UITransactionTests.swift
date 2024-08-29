@@ -25,7 +25,7 @@ class UITransactionTests: XCTestCase {
       withUITransaction(\.isSet, true) {
         model.count += 1
       }
-      try await Task.sleep(for: .seconds(0.3))
+      try await Task.sleep(nanoseconds: 300_000_000)
       XCTAssertEqual(didObserve, true)
       XCTAssertEqual(model.count, 1)
       XCTAssertEqual(UITransaction.current.isSet, false)
@@ -84,7 +84,7 @@ class UITransactionTests: XCTestCase {
         .store(in: &tokens)
       }
 
-      try await Task.sleep(for: .seconds(0.3))
+      try await Task.sleep(nanoseconds: 300_000_000)
       XCTAssertEqual(didObserve, true)
       XCTAssertEqual(UITransaction.current.isSet, false)
     }
@@ -124,7 +124,7 @@ class UITransactionTests: XCTestCase {
       let bindingWithTransaction = $count.transaction(transaction)
       bindingWithTransaction.wrappedValue = 1
 
-      try await Task.sleep(for: .seconds(0.3))
+      try await Task.sleep(nanoseconds: 300_000_000)
       XCTAssertEqual(didObserve, true)
     }
     .value
