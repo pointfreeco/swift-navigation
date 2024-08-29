@@ -33,39 +33,37 @@ class UITransactionTests: XCTestCase {
     .value
   }
 
-  func testTransactionMerging() async {
-    await MainActor.run {
-      var tokens: Set<ObserveToken> = []
+  func testTransactionMerging() {
+    var tokens: Set<ObserveToken> = []
+    SwiftNavigation.observe { transaction in
+      XCTAssertFalse(transaction.isSet)
+      XCTAssertFalse(transaction.isAlsoSet)
+    }
+    .store(in: &tokens)
+    withUITransaction(\.isSet, true) {
       SwiftNavigation.observe { transaction in
-        XCTAssertFalse(transaction.isSet)
+        XCTAssertTrue(transaction.isSet)
         XCTAssertFalse(transaction.isAlsoSet)
       }
       .store(in: &tokens)
-      withUITransaction(\.isSet, true) {
+      withUITransaction(\.isAlsoSet, true) {
         SwiftNavigation.observe { transaction in
           XCTAssertTrue(transaction.isSet)
-          XCTAssertFalse(transaction.isAlsoSet)
-        }
-        .store(in: &tokens)
-        withUITransaction(\.isAlsoSet, true) {
-          SwiftNavigation.observe { transaction in
-            XCTAssertTrue(transaction.isSet)
-            XCTAssertTrue(transaction.isAlsoSet)
-          }
-          .store(in: &tokens)
-        }
-        SwiftNavigation.observe { transaction in
-          XCTAssertTrue(transaction.isSet)
-          XCTAssertFalse(transaction.isAlsoSet)
+          XCTAssertTrue(transaction.isAlsoSet)
         }
         .store(in: &tokens)
       }
       SwiftNavigation.observe { transaction in
-        XCTAssertFalse(transaction.isSet)
+        XCTAssertTrue(transaction.isSet)
         XCTAssertFalse(transaction.isAlsoSet)
       }
       .store(in: &tokens)
     }
+    SwiftNavigation.observe { transaction in
+      XCTAssertFalse(transaction.isSet)
+      XCTAssertFalse(transaction.isAlsoSet)
+    }
+    .store(in: &tokens)
   }
 
   func testSynchronousTransactionKey() async throws {
