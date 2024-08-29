@@ -23,6 +23,7 @@ class ObserveTests: XCTestCase {
       observe {
         count += 1
       }
+      .store(in: &tokens)
       observe {
         count += 1
       }
