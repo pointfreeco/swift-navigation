@@ -39,8 +39,6 @@ jobs:
   wasm:
     name: SwiftWasm
     runs-on: ubuntu-latest
-    env:
-      OMIT_MACRO_TESTS: 1
     strategy:
       matrix:
         include:
