@@ -2,6 +2,7 @@ import SwiftNavigation
 import XCTest
 
 class UITransactionTests: XCTestCase {
+  #if compiler(>=6)
   func testTransactionKeyPropagates() async throws {
     try await Task { @MainActor in
       var tokens: Set<ObserveToken> = []
@@ -128,6 +129,7 @@ class UITransactionTests: XCTestCase {
     }
     .value
   }
+  #endif
 }
 
 @Perceptible

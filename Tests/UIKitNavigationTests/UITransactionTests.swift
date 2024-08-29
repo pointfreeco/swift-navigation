@@ -30,7 +30,7 @@
             model.count += 1
           }
         }
-        try await Task.sleep(for: .seconds(0.3))
+        try await Task.sleep(nanoseconds: 100_000_000)
         XCTAssertEqual(didObserve, true)
         XCTAssertEqual(model.count, 1)
         XCTAssertEqual(UITransaction.current.isSet, false)

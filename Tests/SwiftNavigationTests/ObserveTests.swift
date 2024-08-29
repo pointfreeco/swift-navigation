@@ -15,19 +15,19 @@ class ObserveTests: XCTestCase {
     }
   #endif
 
-  func testTokenStorage() async {
-    await MainActor.run {
+  #if !os(WASI)
+    @MainActor
+    func testTokenStorage() async {
       var count = 0
       var tokens: Set<ObserveToken> = []
-      SwiftNavigation.observe {
+      observe {
         count += 1
       }
-      .store(in: &tokens)
-      SwiftNavigation.observe {
+      observe {
         count += 1
       }
       .store(in: &tokens)
       XCTAssertEqual(count, 2)
     }
-  }
+  #endif
 }
