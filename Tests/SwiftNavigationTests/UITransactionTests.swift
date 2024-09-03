@@ -2,81 +2,93 @@ import SwiftNavigation
 import XCTest
 
 class UITransactionTests: XCTestCase {
-  @MainActor
-  func testTransactionKeyPropagates() async {
-    let expectation = expectation(description: "onChange")
-    expectation.expectedFulfillmentCount = 2
+  #if compiler(>=6)
+  func testTransactionKeyPropagates() async throws {
+    try await Task { @MainActor in
+      var tokens: Set<ObserveToken> = []
+      let model = Model()
+      XCTAssertEqual(UITransaction.current.isSet, false)
 
-    let model = Model()
-    XCTAssertEqual(UITransaction.current.isSet, false)
-
-    observe {
-      if model.count == 0 {
-        XCTAssertEqual(UITransaction.current.isSet, false)
-      } else if model.count == 1 {
-        XCTAssertEqual(UITransaction.current.isSet, true)
-      } else {
-        XCTFail()
+      var didObserve = false
+      SwiftNavigation.observe {
+        if model.count == 0 {
+          XCTAssertEqual(UITransaction.current.isSet, false)
+        } else if model.count == 1 {
+          XCTAssertEqual(UITransaction.current.isSet, true)
+        } else {
+          XCTFail()
+        }
+        didObserve = true
       }
-      expectation.fulfill()
-    }
+      .store(in: &tokens)
 
-    withUITransaction(\.isSet, true) {
-      model.count += 1
+      withUITransaction(\.isSet, true) {
+        model.count += 1
+      }
+      try await Task.sleep(nanoseconds: 300_000_000)
+      XCTAssertEqual(didObserve, true)
+      XCTAssertEqual(model.count, 1)
+      XCTAssertEqual(UITransaction.current.isSet, false)
     }
-    await fulfillment(of: [expectation], timeout: 1)
-    XCTAssertEqual(model.count, 1)
-    XCTAssertEqual(UITransaction.current.isSet, false)
+    .value
   }
 
-  @MainActor
-  func testTransactionMerging() async {
-    observe { transaction in
+  func testTransactionMerging() {
+    var tokens: Set<ObserveToken> = []
+    SwiftNavigation.observe { transaction in
       XCTAssertFalse(transaction.isSet)
       XCTAssertFalse(transaction.isAlsoSet)
     }
+    .store(in: &tokens)
     withUITransaction(\.isSet, true) {
-      observe { transaction in
+      SwiftNavigation.observe { transaction in
         XCTAssertTrue(transaction.isSet)
         XCTAssertFalse(transaction.isAlsoSet)
       }
-      _ = withUITransaction(\.isAlsoSet, true) {
-        observe { transaction in
+      .store(in: &tokens)
+      withUITransaction(\.isAlsoSet, true) {
+        SwiftNavigation.observe { transaction in
           XCTAssertTrue(transaction.isSet)
           XCTAssertTrue(transaction.isAlsoSet)
         }
+        .store(in: &tokens)
       }
-      observe { transaction in
+      SwiftNavigation.observe { transaction in
         XCTAssertTrue(transaction.isSet)
         XCTAssertFalse(transaction.isAlsoSet)
       }
+      .store(in: &tokens)
     }
-    observe { transaction in
+    SwiftNavigation.observe { transaction in
       XCTAssertFalse(transaction.isSet)
       XCTAssertFalse(transaction.isAlsoSet)
     }
+    .store(in: &tokens)
   }
 
-  @MainActor
-  func testSynchronousTransactionKey() async {
-    let expectation = expectation(description: "onChange")
+  func testSynchronousTransactionKey() async throws {
+    try await Task { @MainActor in
+      var tokens: Set<ObserveToken> = []
+      let model = Model()
+      XCTAssertEqual(UITransaction.current.isSet, false)
 
-    let model = Model()
-    XCTAssertEqual(UITransaction.current.isSet, false)
-
-    _ = withUITransaction(\.isSet, true) {
-      observe {
-        XCTAssertEqual(model.count, 0)
-        XCTAssertEqual(UITransaction.current.isSet, true)
-        expectation.fulfill()
+      var didObserve = false
+      withUITransaction(\.isSet, true) {
+        SwiftNavigation.observe {
+          XCTAssertEqual(model.count, 0)
+          XCTAssertEqual(UITransaction.current.isSet, true)
+          didObserve = true
+        }
+        .store(in: &tokens)
       }
-    }
 
-    await fulfillment(of: [expectation], timeout: 1)
-    XCTAssertEqual(UITransaction.current.isSet, false)
+      try await Task.sleep(nanoseconds: 300_000_000)
+      XCTAssertEqual(didObserve, true)
+      XCTAssertEqual(UITransaction.current.isSet, false)
+    }
+    .value
   }
 
-  @MainActor
   func testOverrideTransactionKey() async {
     XCTAssertEqual(UITransaction.current.isSet, false)
     withUITransaction(\.isSet, true) {
@@ -87,31 +99,35 @@ class UITransactionTests: XCTestCase {
     }
   }
 
-  @MainActor
-  func testBindingTransactionKey() async {
-    let expectation = expectation(description: "onChange")
-    expectation.expectedFulfillmentCount = 2
+  func testBindingTransactionKey() async throws {
+    try await Task { @MainActor in
+      var tokens: Set<ObserveToken> = []
+      @UIBinding var count = 0
+      var transaction = UITransaction()
+      transaction.isSet = true
 
-    @UIBinding var count = 0
-    var transaction = UITransaction()
-    transaction.isSet = true
-
-    observe {
-      if count == 0 {
-        XCTAssertEqual(UITransaction.current.isSet, false)
-      } else if count == 1 {
-        XCTAssertEqual(UITransaction.current.isSet, true)
-      } else {
-        XCTFail()
+      var didObserve = false
+      SwiftNavigation.observe {
+        if count == 0 {
+          XCTAssertEqual(UITransaction.current.isSet, false)
+        } else if count == 1 {
+          XCTAssertEqual(UITransaction.current.isSet, true)
+        } else {
+          XCTFail()
+        }
+        didObserve = true
       }
-      expectation.fulfill()
+      .store(in: &tokens)
+
+      let bindingWithTransaction = $count.transaction(transaction)
+      bindingWithTransaction.wrappedValue = 1
+
+      try await Task.sleep(nanoseconds: 300_000_000)
+      XCTAssertEqual(didObserve, true)
     }
-
-    let bindingWithTransaction = $count.transaction(transaction)
-    bindingWithTransaction.wrappedValue = 1
-
-    await fulfillment(of: [expectation], timeout: 1)
+    .value
   }
+  #endif
 }
 
 @Perceptible
