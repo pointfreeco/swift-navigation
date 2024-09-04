@@ -90,9 +90,9 @@
         } else if difference.count == 1,
           case .remove(newPath.count, _, nil) = difference.first
         {
-          popViewController(animated: transaction.uiKit.disablesAnimations)
+          popViewController(animated: !transaction.uiKit.disablesAnimations)
         } else if difference.insertions.isEmpty, newPath.isEmpty {
-          popToRootViewController(animated: transaction.uiKit.disablesAnimations)
+          popToRootViewController(animated: !transaction.uiKit.disablesAnimations)
         } else if difference.insertions.isEmpty,
           case let offsets = difference.removals.map(\.offset),
           let first = offsets.first,
