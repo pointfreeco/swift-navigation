@@ -3,7 +3,7 @@
   import SwiftUI
   import XCTest
 
-  @available(iOS 16.0, *)
+@available(iOS 16, tvOS 16, *)
   class ViewControllerRepresentingTests: XCTestCase {
     @MainActor
     func testPerceptionCheckingInNavigationStackController() async throws {
