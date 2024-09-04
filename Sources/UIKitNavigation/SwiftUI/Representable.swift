@@ -14,7 +14,9 @@
   >: UIViewControllerRepresentable {
     private let base: UIViewControllerType
     public init(_ base: () -> UIViewControllerType) {
-      self.base = base()
+      self.base = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+        base()
+      }
     }
     public func makeUIViewController(context _: Context) -> UIViewControllerType { base }
     public func updateUIViewController(_: UIViewControllerType, context _: Context) {}
@@ -27,7 +29,9 @@
   public struct UIViewRepresenting<UIViewType: UIView>: UIViewRepresentable {
     private let base: UIViewType
     public init(_ base: () -> UIViewType) {
-      self.base = base()
+      self.base = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+        base()
+      }
     }
     public func makeUIView(context _: Context) -> UIViewType { base }
     public func updateUIView(_: UIViewType, context _: Context) {}
