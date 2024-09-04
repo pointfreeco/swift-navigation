@@ -1,9 +1,9 @@
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
   import UIKitNavigation
   import SwiftUI
   import XCTest
 
-@available(iOS 16, tvOS 16, watchOS 9, *)
+  @available(iOS 16, tvOS 16, *)
   class ViewControllerRepresentingTests: XCTestCase {
     @MainActor
     func testPerceptionCheckingInNavigationStackController() async throws {
