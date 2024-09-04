@@ -1,6 +1,5 @@
 #if canImport(UIKit)
   import UIKitNavigation
-  import SwiftUI
   import XCTest
 
   class ObserveTests: XCTestCase {
