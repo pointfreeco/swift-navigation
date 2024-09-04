@@ -16,6 +16,22 @@ public func withUITransaction<Result>(
   )
 }
 
+/// Executes a closure with the specified transaction and returns the result.
+///
+/// - Parameters:
+///   - transaction: An instance of a transaction, set as the thread's current transaction.
+///   - body: A closure to execute.
+/// - Returns: The result of executing the closure with the specified transaction.
+public func withUITransaction<Result>(
+  _ transaction: UITransaction,
+  _ body: () async throws -> Result
+) async rethrows -> Result {
+  try await UITransaction.$current.withValue(
+    UITransaction.current.merging(transaction),
+    operation: body
+  )
+}
+
 /// Executes a closure with the specified transaction key path and value and returns the result.
 ///
 /// - Parameters:
@@ -32,6 +48,24 @@ public func withUITransaction<R, V>(
   var transaction = UITransaction()
   transaction[keyPath: keyPath] = value
   return try withUITransaction(transaction, body)
+}
+
+/// Executes a closure with the specified transaction key path and value and returns the result.
+///
+/// - Parameters:
+///   - keyPath: A key path that indicates the property of the ``UITransaction`` structure to
+///     update.
+///   - value: The new value to set for the item specified by `keyPath`.
+///   - body: A closure to execute.
+/// - Returns: The result of executing the closure with the specified transaction value.
+public func withUITransaction<R, V>(
+  _ keyPath: WritableKeyPath<UITransaction, V>,
+  _ value: V,
+  _ body: () async throws -> R
+) async rethrows -> R {
+  var transaction = UITransaction()
+  transaction[keyPath: keyPath] = value
+  return try await withUITransaction(transaction, body)
 }
 
 /// Use a transaction to pass an animation between views in a view hierarchy.
