@@ -11,7 +11,9 @@
   >: NSViewControllerRepresentable {
     private let base: NSViewControllerType
     public init(_ base: () -> NSViewControllerType) {
-      self.base = base()
+      self.base = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+        base()
+      }
     }
     public func makeNSViewController(context _: Context) -> NSViewControllerType { base }
     public func updateNSViewController(_: NSViewControllerType, context _: Context) {}
@@ -24,7 +26,9 @@
   public struct NSViewRepresenting<NSViewType: NSView>: NSViewRepresentable {
     private let base: NSViewType
     public init(_ base: () -> NSViewType) {
-      self.base = base()
+      self.base = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+        base()
+      }
     }
     public func makeNSView(context _: Context) -> NSViewType { base }
     public func updateNSView(_: NSViewType, context _: Context) {}
