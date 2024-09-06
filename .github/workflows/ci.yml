@@ -26,6 +26,7 @@ jobs:
           - tvos
           - watchos
           - examples
+          - dynamic-framework
 
     steps:
       - uses: actions/checkout@v4

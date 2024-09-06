@@ -36,6 +36,12 @@ test-examples:
 		-scheme CaseStudies \
 		-destination platform="$(PLATFORM_IOS)"
 
+test-dynamic-framework:
+	xcodebuild build \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme DynamicFramework \
+		-destination platform="$(PLATFORM_MACOS)"
+
 DOC_WARNINGS := $(shell xcodebuild clean docbuild \
 	-scheme SwiftUINavigation \
 	-destination platform="$(PLATFORM_MACOS)" \
