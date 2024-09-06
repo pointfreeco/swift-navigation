@@ -47,9 +47,11 @@
 		CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */; };
 		CA9D705A2C208977003B672A /* UIControlBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */; };
 		CA9D705E2C2089DD003B672A /* EnumControlsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */; };
-		CAAFA9CE2C8B422100BB2BA1 /* DynamicFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = CAAFA9CD2C8B422100BB2BA1 /* DynamicFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAAFA9D32C8B422800BB2BA1 /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAFA9D22C8B422800BB2BA1 /* UIKitNavigation */; };
-		CAAFA9D52C8B42F900BB2BA1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAFA9D42C8B42F900BB2BA1 /* File.swift */; };
+		CAAFA9D52C8B42F900BB2BA1 /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAFA9D42C8B42F900BB2BA1 /* Import.swift */; };
+		CAAFA9D72C8B468000BB2BA1 /* AppKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAFA9D62C8B468000BB2BA1 /* AppKitNavigation */; };
+		CAAFA9D92C8B468000BB2BA1 /* SwiftNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAFA9D82C8B468000BB2BA1 /* SwiftNavigation */; };
+		CAAFA9DB2C8B468000BB2BA1 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAFA9DA2C8B468000BB2BA1 /* SwiftUINavigation */; };
 		CABE9FC1272F2C0000AFC150 /* EnumNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */; };
 		CADCA3632C1CE75500DE645F /* SwiftUICaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */; };
 		CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */; };
@@ -100,8 +102,7 @@
 		CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIControlBindingsViewController.swift; sourceTree = "<group>"; };
 		CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumControlsViewController.swift; sourceTree = "<group>"; };
 		CAAFA9CB2C8B422100BB2BA1 /* DynamicFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DynamicFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAAFA9CD2C8B422100BB2BA1 /* DynamicFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamicFramework.h; sourceTree = "<group>"; };
-		CAAFA9D42C8B42F900BB2BA1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		CAAFA9D42C8B42F900BB2BA1 /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumNavigation.swift; sourceTree = "<group>"; };
 		CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICaseStudies.swift; sourceTree = "<group>"; };
 		CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudy.swift; sourceTree = "<group>"; };
@@ -150,7 +151,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAAFA9DB2C8B468000BB2BA1 /* SwiftUINavigation in Frameworks */,
+				CAAFA9D92C8B468000BB2BA1 /* SwiftNavigation in Frameworks */,
 				CAAFA9D32C8B422800BB2BA1 /* UIKitNavigation in Frameworks */,
+				CAAFA9D72C8B468000BB2BA1 /* AppKitNavigation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,8 +263,7 @@
 		CAAFA9CC2C8B422100BB2BA1 /* DynamicFramework */ = {
 			isa = PBXGroup;
 			children = (
-				CAAFA9CD2C8B422100BB2BA1 /* DynamicFramework.h */,
-				CAAFA9D42C8B42F900BB2BA1 /* File.swift */,
+				CAAFA9D42C8B42F900BB2BA1 /* Import.swift */,
 			);
 			path = DynamicFramework;
 			sourceTree = "<group>";
@@ -306,7 +309,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAAFA9CE2C8B422100BB2BA1 /* DynamicFramework.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +393,9 @@
 			name = DynamicFramework;
 			packageProductDependencies = (
 				CAAFA9D22C8B422800BB2BA1 /* UIKitNavigation */,
+				CAAFA9D62C8B468000BB2BA1 /* AppKitNavigation */,
+				CAAFA9D82C8B468000BB2BA1 /* SwiftNavigation */,
+				CAAFA9DA2C8B468000BB2BA1 /* SwiftUINavigation */,
 			);
 			productName = DynamicFramework;
 			productReference = CAAFA9CB2C8B422100BB2BA1 /* DynamicFramework.framework */;
@@ -547,7 +552,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAAFA9D52C8B42F900BB2BA1 /* File.swift in Sources */,
+				CAAFA9D52C8B42F900BB2BA1 /* Import.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1041,6 +1046,18 @@
 		CAAFA9D22C8B422800BB2BA1 /* UIKitNavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = UIKitNavigation;
+		};
+		CAAFA9D62C8B468000BB2BA1 /* AppKitNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppKitNavigation;
+		};
+		CAAFA9D82C8B468000BB2BA1 /* SwiftNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftNavigation;
+		};
+		CAAFA9DA2C8B468000BB2BA1 /* SwiftUINavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftUINavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
