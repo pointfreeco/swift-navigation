@@ -103,6 +103,7 @@
 		CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumControlsViewController.swift; sourceTree = "<group>"; };
 		CAAFA9CB2C8B422100BB2BA1 /* DynamicFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DynamicFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAAFA9D42C8B42F900BB2BA1 /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
+		CAAFA9DC2C8B4CA900BB2BA1 /* DynamicFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamicFramework.h; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumNavigation.swift; sourceTree = "<group>"; };
 		CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICaseStudies.swift; sourceTree = "<group>"; };
 		CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudy.swift; sourceTree = "<group>"; };
@@ -264,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				CAAFA9D42C8B42F900BB2BA1 /* Import.swift */,
+				CAAFA9DC2C8B4CA900BB2BA1 /* DynamicFramework.h */,
 			);
 			path = DynamicFramework;
 			sourceTree = "<group>";
