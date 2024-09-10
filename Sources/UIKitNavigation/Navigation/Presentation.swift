@@ -2,7 +2,11 @@
   import IssueReporting
   @_spi(Internals) import SwiftNavigation
   import UIKit
-  @_implementationOnly import UIKitNavigationShim
+  #if compiler(>=5.10)
+    private import UIKitNavigationShim
+  #else
+    @_implementationOnly import UIKitNavigationShim
+  #endif
 
   extension UIViewController {
     /// Presents a view controller modally when a binding to a Boolean value you provide is true.
