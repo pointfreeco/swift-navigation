@@ -97,7 +97,8 @@ let package = Package(
 for target in package.targets {
   target.swiftSettings = target.swiftSettings ?? []
   target.swiftSettings!.append(contentsOf: [
-    .enableExperimentalFeature("StrictConcurrency")
+    .enableExperimentalFeature("AccessLevelOnImport"),
+    .enableExperimentalFeature("StrictConcurrency"),
   ])
   // target.swiftSettings?.append(
   //   .unsafeFlags([
