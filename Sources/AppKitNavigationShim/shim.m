@@ -41,17 +41,17 @@ static void *onViewAppearKey = &onViewAppearKey;
 - (void)AppKitNavigation_viewDidAppear {
     [self AppKitNavigation_viewDidAppear];
 
-    if (self.hasViewAppeared) {
+    if (self._AppKitNavigation_hasViewAppeared) {
         return;
     }
 
-    self.hasViewAppeared = YES;
+    self._AppKitNavigation_hasViewAppeared = YES;
 
-    for (void (^work)() in self.onViewAppear) {
+    for (void (^work)() in self._AppKitNavigation_onViewAppear) {
         work();
     }
 
-    self.onViewAppear = @[];
+    self._AppKitNavigation_onViewAppear = @[];
 }
 
 - (void)setBeingDismissed:(BOOL)beingDismissed {
@@ -65,9 +65,9 @@ static void *onViewAppearKey = &onViewAppearKey;
 - (void)AppKitNavigation_viewDidDisappear {
     [self AppKitNavigation_viewDidDisappear];
 
-    if ((self.isBeingDismissed) && self.onDismiss != NULL) {
-        self.onDismiss();
-        self.onDismiss = nil;
+    if ((self.isBeingDismissed) && self._AppKitNavigation_onDismiss != NULL) {
+        self._AppKitNavigation_onDismiss();
+        self._AppKitNavigation_onDismiss = nil;
         [self setBeingDismissed:NO];
     }
 }
@@ -77,31 +77,31 @@ static void *onViewAppearKey = &onViewAppearKey;
     [self setBeingDismissed:YES];
 }
 
-- (BOOL)hasViewAppeared {
+- (BOOL)_AppKitNavigation_hasViewAppeared {
     return [objc_getAssociatedObject(self, hasViewAppearedKey) boolValue];
 }
 
-- (void)setHasViewAppeared:(BOOL)hasViewAppeared {
+- (void)set_AppKitNavigation_hasViewAppeared:(BOOL)_AppKitNavigation_hasViewAppeared {
     objc_setAssociatedObject(
-        self, hasViewAppearedKey, @(hasViewAppeared), OBJC_ASSOCIATION_COPY_NONATOMIC
+        self, hasViewAppearedKey, @(_AppKitNavigation_hasViewAppeared), OBJC_ASSOCIATION_COPY_NONATOMIC
         );
 }
 
-- (void (^)())onDismiss {
+- (void (^)())_AppKitNavigation_onDismiss {
     return objc_getAssociatedObject(self, onDismissKey);
 }
 
-- (void)setOnDismiss:(void (^)())onDismiss {
-    objc_setAssociatedObject(self, onDismissKey, [onDismiss copy], OBJC_ASSOCIATION_COPY_NONATOMIC);
+- (void)set_AppKitNavigation_onDismiss:(void (^)())_AppKitNavigation_onDismiss {
+    objc_setAssociatedObject(self, onDismissKey, [_AppKitNavigation_onDismiss copy], OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-- (NSMutableArray<void (^)()> *)onViewAppear {
+- (NSMutableArray<void (^)()> *)_AppKitNavigation_onViewAppear {
     id onViewAppear = objc_getAssociatedObject(self, onViewAppearKey);
 
     return onViewAppear == nil ? @[] : onViewAppear;
 }
 
-- (void)setOnViewAppear:(NSMutableArray<void (^)()> *)onViewAppear {
+- (void)set_AppKitNavigation_onViewAppear:(NSMutableArray<void (^)()> *)onViewAppear {
     objc_setAssociatedObject(self, onViewAppearKey, onViewAppear, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 

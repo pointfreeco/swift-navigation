@@ -8,10 +8,10 @@ private var presentationObserverKeys = AssociatedKeys()
 
 class PresentationObserver<Content: PresentationContent>: NavigationObserver<NSViewController, Content> {
     override func commitWork(_ work: @escaping () -> Void) {
-        if owner.hasViewAppeared {
+        if owner._AppKitNavigation_hasViewAppeared {
             work()
         } else {
-            owner.onViewAppear.append(work)
+            owner._AppKitNavigation_onViewAppear.append(work)
         }
     }
 }
@@ -158,10 +158,10 @@ extension NSViewController {
 extension NavigationContent where Self: NSViewController {
     var _onEndNavigation: (() -> Void)? {
         set {
-            onDismiss = newValue
+            _AppKitNavigation_onDismiss = newValue
         }
         get {
-            onDismiss
+            _AppKitNavigation_onDismiss
         }
     }
 }
