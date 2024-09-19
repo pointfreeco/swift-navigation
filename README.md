@@ -113,7 +113,7 @@ the `destination` property:
 
 ```swift
 import SwiftUINavigation 
-
+// ...
 .sheet(item: $model.destination.addItem) { addItemModel in
   AddItemView(model: addItemModel)
 }
