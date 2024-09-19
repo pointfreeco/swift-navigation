@@ -100,7 +100,7 @@ We start by annotating the `Destination` enum with the `@CasePathable` macro, wh
 refer to the cases of an enum with dot-syntax just like one does with structs and properties:
 
 ```diff
-+import SwiftUINavigation 
++import SwiftNavigation 
 
 +@CasePathable
  enum Destination {
