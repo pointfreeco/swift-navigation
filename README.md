@@ -29,10 +29,6 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms.
 
 #### SwiftUI
 
-> [!IMPORTANT]
-> To get access to the tools described below you must depend on the SwiftNavigation package and
-> import the SwiftUINavigation library.
-
 SwiftUI already comes with incredibly powerful navigation APIs, but there are a few areas lacking
 that can be filled. In particular, driving navigation from enum state so that you can have
 compile-time guarantees that only one destination can be active at a time.
@@ -96,10 +92,16 @@ This is more concise, and we get compile-time verification that at most one dest
 active at a time. However, SwiftUI does not come with the tools to drive navigation from this 
 model. This is where the SwiftUINavigation tools becomes useful.
 
+> [!IMPORTANT]
+> To get access to the tools described below you must depend on the [SwiftNavigation package](https://github.com/pointfreeco/swift-navigation#installation) and
+> import the **SwiftUINavigation** library.
+
 We start by annotating the `Destination` enum with the `@CasePathable` macro, which allows one to
 refer to the cases of an enum with dot-syntax just like one does with structs and properties:
 
 ```diff
++import SwiftUINavigation 
+
 +@CasePathable
  enum Destination {
    // ...
@@ -110,6 +112,8 @@ And now one can use simple dot-chaining syntax to derive a binding from a partic
 the `destination` property:
 
 ```swift
+import SwiftUINavigation 
+
 .sheet(item: $model.destination.addItem) { addItemModel in
   AddItemView(model: addItemModel)
 }
@@ -133,7 +137,7 @@ we can still use SwiftUI's navigation APIs.
 
 > [!IMPORTANT]
 > To get access to the tools described below you must depend on the SwiftNavigation package and
-> import the UIKitNavigation library.
+> import the **UIKitNavigation** library.
 
 Unlike SwiftUI, UIKit does not come with state-driven navigation tools. Its navigation tools are
 "fire-and-forget", meaning you simply invoke a method to trigger a navigation, but there is 
@@ -158,6 +162,8 @@ inspired by SwiftUI. For example, if you have a feature model like the one discu
 the [SwiftUI](#swiftui) section:
 
 ```swift
+import SwiftUINavigation 
+
 @Observable
 class FeatureModel {
   var destination: Destination?
@@ -173,6 +179,8 @@ class FeatureModel {
 …then one can drive navigation in a _view controller_ using tools in the library: 
 
 ```swift
+import UIKitNavigation 
+
 class FeatureViewController: UIViewController {
   @UIBindable var model: FeatureModel
 
