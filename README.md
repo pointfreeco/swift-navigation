@@ -168,7 +168,7 @@ import SwiftNavigation
 class FeatureModel {
   var destination: Destination?
 
-+@CasePathable
+  @CasePathable
   enum Destination {
     case addItem(AddItemModel)
     case deleteItemAlert
