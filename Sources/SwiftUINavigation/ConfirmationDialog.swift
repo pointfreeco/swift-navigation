@@ -11,6 +11,8 @@
         self = .hidden
       case .visible:
         self = .visible
+      @unknown default:
+        self = .hidden
       }
     }
   }
