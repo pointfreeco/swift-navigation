@@ -14,27 +14,94 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  library:
+  tests:
     runs-on: macos-14
     strategy:
       matrix:
-        xcode:
-          - '15.4'
-        variation:
-          - ios
-          - macos
-          - tvos
-          - watchos
-          - examples
+        combination:
+          - xcode: '15.4'
+            variation: ios
+            os_version: 17.5
+          - xcode: '16.1'
+            variation: ios
+            os_version: 18.1
+
+          - xcode: '15.4'
+            variation: tvos
+            os_version: 17.5
+          - xcode: '16.1'
+            variation: tvos
+            os_version: 18.1
+
+          - xcode: '15.4'
+            variation: watchos
+            os_version: 10.5
+          - xcode: '16.1'
+            variation: watchos
+            os_version: 11.1
+
+          - xcode: '15.4'
+            variation: macos
+          - xcode: '16.1'
+            variation: macos
+
+          - xcode: '15.4'
+            variation: examples
+            os_version: 17.5
+          - xcode: '16.1'
+            variation: examples
+            os_version: 18.1
 
     steps:
       - uses: actions/checkout@v4
-      - name: Select Xcode ${{ matrix.xcode }}
-        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+      - name: Select Xcode ${{ matrix.combination.xcode }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.combination.xcode }}.app
       - name: Skip macro validation
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+      - name: Set OS version
+        run: |
+          if [[ "${{ matrix.combination.variation }}" == "ios" ]]; then
+            echo "IOS_VERSION=${{ matrix.combination.os_version }}" >> $GITHUB_ENV
+          elif [[ "${{ matrix.combination.variation }}" == "tvos" ]]; then
+            echo "TVOS_VERSION=${{ matrix.combination.os_version }}" >> $GITHUB_ENV
+          elif [[ "${{ matrix.combination.variation }}" == "watchos" ]]; then
+            echo "WATCHOS_VERSION=${{ matrix.combination.os_version }}" >> $GITHUB_ENV
+          elif [[ "${{ matrix.combination.variation }}" == "examples" ]]; then
+            echo "IOS_VERSION=${{ matrix.combination.os_version }}" >> $GITHUB_ENV
+          fi
       - name: Run tests
-        run: make test-${{ matrix.variation }}
+        run: make test-${{ matrix.combination.variation }}
+
+  library-evolution:
+    runs-on: macos-14
+    strategy:
+      matrix:
+        combination:
+          - xcode: '15.4'
+            variation: ios
+            os_version: 17.5
+          - xcode: '16.1'
+            variation: ios
+            os_version: 18.1
+
+          - xcode: '15.4'
+            variation: macos
+          - xcode: '16.1'
+            variation: macos
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode ${{ matrix.combination.xcode }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.combination.xcode }}.app
+      - name: Skip macro validation
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+      - name: Set OS version
+        run: |
+          if [[ "${{ matrix.combination.variation }}" == "ios" ]]; then
+            echo "IOS_VERSION=${{ matrix.combination.os_version }}" >> $GITHUB_ENV
+          fi
+      - name: Run Library Evolution builds
+        run: make library-evolution-${{ matrix.combination.variation }}
 
   wasm:
     name: Wasm

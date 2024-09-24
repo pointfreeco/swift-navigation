@@ -1,8 +1,4 @@
-PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iOS 17.5,iPhone \d\+ Pro [^M])
-PLATFORM_MACOS = macOS
-PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,tvOS 17.5,TV)
-PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,watchOS 10.5,Watch)
-
+OTHER_SWIFT_FLAGS="-DRESILIENT_LIBRARIES"
 TEST_RUNNER_CI = $(CI)
 
 default: test
@@ -11,50 +7,61 @@ test: test-ios test-macos test-tvos test-watchos test-examples
 
 test-ios:
 	xcodebuild test \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
-		-destination platform="$(PLATFORM_IOS)"
+		-destination $(call destination_ios)
 	xcodebuild build \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme DynamicFramework \
-		-destination platform="$(PLATFORM_IOS)"
+		-destination $(call destination_ios)
 test-macos:
 	xcodebuild test \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
-		-destination platform="$(PLATFORM_MACOS)"
+		-destination $(call destination_macos)
 	xcodebuild build \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme DynamicFramework \
-		-destination platform="$(PLATFORM_MACOS)"
+		-destination $(call destination_macos)
 test-tvos:
 	xcodebuild test \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
-		-destination platform="$(PLATFORM_TVOS)"
+		-destination $(call destination_tvos) \
+		-destination-timeout 120
 	xcodebuild build \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme DynamicFramework \
-		-destination platform="$(PLATFORM_TVOS)"
+		-destination $(call destination_tvos) \
+		-destination-timeout 120
 test-watchos:
 	xcodebuild test \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
-		-destination platform="$(PLATFORM_WATCHOS)"
+		-destination $(call destination_watchos)
 	xcodebuild build \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme DynamicFramework \
-		-destination platform="$(PLATFORM_WATCHOS)"
+		-destination $(call destination_watchos)
 
 test-examples:
 	xcodebuild test \
+		-skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme CaseStudies \
-		-destination platform="$(PLATFORM_IOS)"
+		-destination $(call destination_ios)
 
 DOC_WARNINGS := $(shell xcodebuild clean docbuild \
 	-scheme SwiftUINavigation \
-	-destination platform="$(PLATFORM_MACOS)" \
+		-destination $(call destination_macos) \
 	-quiet \
 	2>&1 \
 	| grep "couldn't be resolved to known documentation" \
@@ -64,6 +71,40 @@ test-docs:
 	@test "$(DOC_WARNINGS)" = "" \
 		|| (echo "xcodebuild docbuild failed:\n\n$(DOC_WARNINGS)" | tr '\1' '\n' \
 		&& exit 1)
+
+library-evolution: build-for-library-evolution-ios build-for-library-evolution-macos
+
+library-evolution-macos:
+	swift build \
+		-c release \
+		--target SwiftUINavigation \
+		-Xswiftc -emit-module-interface \
+		-Xswiftc -enable-library-evolution \
+		-Xswiftc $(OTHER_SWIFT_FLAGS)
+
+	swift build \
+		-c release \
+		--target AppKitNavigation \
+		-Xswiftc -emit-module-interface \
+		-Xswiftc -enable-library-evolution \
+		-Xswiftc $(OTHER_SWIFT_FLAGS)
+
+library-evolution-ios:
+	xcodebuild build \
+	  -skipMacroValidation \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme SwiftUINavigation \
+		-destination $(call destination_ios) \
+		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
+
+	xcodebuild build \
+	  -skipMacroValidation \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme UIKitNavigation \
+		-destination $(call destination_ios) \
+		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
 
 format:
 	swift format \
@@ -75,6 +116,18 @@ format:
 
 .PHONY: format test-all test-docs
 
-define udid_for
-$(shell xcrun simctl list devices available '$(1)' | grep '$(2)' | sort -r | head -1 | awk -F '[()]' '{ print $$(NF-3) }')
+define destination_ios
+"platform=iOS Simulator,name=iPhone 15 Pro Max,OS=$(IOS_VERSION)"
+endef
+
+define destination_watchos
+"platform=watchOS Simulator,name=Apple Watch Series 6 (44mm),OS=$(WATCHOS_VERSION)"
+endef
+
+define destination_tvos
+"platform=tvOS Simulator,name=Apple TV 4K (3rd Generation),OS=$(TVOS_VERSION)"
+endef
+
+define destination_macos
+"platform=macOS"
 endef
