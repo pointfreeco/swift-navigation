@@ -1,13 +1,13 @@
 {
-  "originHash" : "21426c7e67e0003e5a1e08c0f4323d81f8190a1dc8c3b2f9dc9f8fed20da343d",
+  "originHash" : "d9f3020bf077488150ea2f67e939c77cd308906abc0d7613c03ac1764d236fd8",
   "pins" : [
     {
       "identity" : "swift-case-paths",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-case-paths",
+      "location" : "git@github.com:gemmakbarlow/swift-case-paths.git",
       "state" : {
-        "revision" : "642e6aab8e03e5f992d9c83e38c5be98cfad5078",
-        "version" : "1.5.5"
+        "branch" : "gemmakbarlow/xcode-16-library-evolution-issues",
+        "revision" : "eb42355dc4c7b10be0c32b079d9bdb7cf5b7258a"
       }
     },
     {

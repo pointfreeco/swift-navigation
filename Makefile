@@ -65,6 +65,21 @@ test-docs:
 		|| (echo "xcodebuild docbuild failed:\n\n$(DOC_WARNINGS)" | tr '\1' '\n' \
 		&& exit 1)
 
+build-for-library-evolution:
+	swift build \
+		-c release \
+		--target SwiftNavigation \
+		-Xswiftc -emit-module-interface \
+		-Xswiftc -enable-library-evolution \
+		-Xswiftc -DRESILIENT_LIBRARIES # Required to build swift-syntax; see https://github.com/swiftlang/swift-syntax/pull/2540
+
+	swift build \
+		-c release \
+		--target SwiftUINavigation \
+		-Xswiftc -emit-module-interface \
+		-Xswiftc -enable-library-evolution \
+		-Xswiftc -DRESILIENT_LIBRARIES # Required to build swift-syntax; see https://github.com/swiftlang/swift-syntax/pull/2540
+
 format:
 	swift format \
 		--ignore-unparsable-files \
