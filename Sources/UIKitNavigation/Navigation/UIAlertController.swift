@@ -58,6 +58,8 @@
       case .cancel:
         self = .cancel
       case .destructive:
+        fallthrough
+      @unknown default:
         self = .destructive
       }
     }
