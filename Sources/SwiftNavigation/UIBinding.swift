@@ -681,7 +681,9 @@ where Base.Value: CasePathable {
   let base: Base
   let keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
   let casePath: AnyCasePath<Base.Value, Case>
-  init(base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>) {
+  init(
+    base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
+  ) {
     self.base = base
     self.keyPath = keyPath
     self.casePath = Base.Value.allCasePaths[keyPath: keyPath]
