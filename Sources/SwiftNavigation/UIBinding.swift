@@ -587,8 +587,8 @@ private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
 
 private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding, Sendable {
   let base: Base
-  let keyPath: _WritableKeyPath<Base.Value, Value>
-  init(base: Base, keyPath: _WritableKeyPath<Base.Value, Value>) {
+  let keyPath: _SendableWritableKeyPath<Base.Value, Value>
+  init(base: Base, keyPath: _SendableWritableKeyPath<Base.Value, Value>) {
     self.base = base
     self.keyPath = keyPath
   }
@@ -679,9 +679,9 @@ where Base.Value: Hashable {
 private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding
 where Base.Value: CasePathable {
   let base: Base
-  let keyPath: _KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
+  let keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
   let casePath: AnyCasePath<Base.Value, Case>
-  init(base: Base, keyPath: _KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>) {
+  init(base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>) {
     self.base = base
     self.keyPath = keyPath
     self.casePath = Base.Value.allCasePaths[keyPath: keyPath]
@@ -760,8 +760,8 @@ private final class _UIBindingOptionalToMember<
   Base: _UIBinding<Wrapped?>, Wrapped, Value
 >: _UIBinding {
   let base: Base
-  let keyPath: _WritableKeyPath<Wrapped, Value>
-  init(base: Base, keyPath: _WritableKeyPath<Wrapped, Value>) {
+  let keyPath: _SendableWritableKeyPath<Wrapped, Value>
+  init(base: Base, keyPath: _SendableWritableKeyPath<Wrapped, Value>) {
     self.base = base
     self.keyPath = keyPath
   }
@@ -790,9 +790,9 @@ private final class _UIBindingOptionalEnumToCase<
   Base: _UIBinding<Enum?>, Enum: CasePathable, Case
 >: _UIBinding {
   let base: Base
-  let keyPath: _KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
+  let keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
   let casePath: AnyCasePath<Enum, Case>
-  init(base: Base, keyPath: _KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
+  init(base: Base, keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
     self.base = base
     self.keyPath = keyPath
     self.casePath = Enum.allCasePaths[keyPath: keyPath]
