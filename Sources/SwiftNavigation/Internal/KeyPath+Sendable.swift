@@ -7,13 +7,13 @@
 #endif
 
 func sendableKeyPath<Root, Value>(
-  _ keyPath: WritableKeyPath<Root, Value>
-) -> _SendableWritableKeyPath<Root, Value> {
-  unsafeBitCast(keyPath, to: _SendableWritableKeyPath<Root, Value>.self)
-}
-
-func sendableKeyPath<Root, Value>(
   _ keyPath: KeyPath<Root, Value>
 ) -> _SendableKeyPath<Root, Value> {
   unsafeBitCast(keyPath, to: _SendableKeyPath<Root, Value>.self)
+}
+
+func sendableKeyPath<Root, Value>(
+  _ keyPath: WritableKeyPath<Root, Value>
+) -> _SendableWritableKeyPath<Root, Value> {
+  unsafeBitCast(keyPath, to: _SendableWritableKeyPath<Root, Value>.self)
 }
