@@ -14,20 +14,36 @@ test-ios:
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_IOS)"
+	xcodebuild build \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme DynamicFramework \
+		-destination platform="$(PLATFORM_IOS)"
 test-macos:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
+		-destination platform="$(PLATFORM_MACOS)"
+	xcodebuild build \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme DynamicFramework \
 		-destination platform="$(PLATFORM_MACOS)"
 test-tvos:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_TVOS)"
+	xcodebuild build \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme DynamicFramework \
+		-destination platform="$(PLATFORM_TVOS)"
 test-watchos:
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
+		-destination platform="$(PLATFORM_WATCHOS)"
+	xcodebuild build \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme DynamicFramework \
 		-destination platform="$(PLATFORM_WATCHOS)"
 
 test-examples:

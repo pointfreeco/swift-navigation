@@ -1,9 +1,9 @@
-#if canImport(SwiftUI)
-  import CustomDump
-  import SwiftUINavigation
-  import XCTest
+import CustomDump
+import SwiftNavigation
+import XCTest
 
-  final class TextStateTests: XCTestCase {
+final class TextStateTests: XCTestCase {
+  #if !os(WASI)
     func testTextState() {
       var dump = ""
       customDump(TextState("Hello, world!"), to: &dump)
@@ -72,5 +72,5 @@
         """#
       )
     }
-  }
-#endif  // canImport(SwiftUI)
+  #endif
+}

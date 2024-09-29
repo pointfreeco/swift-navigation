@@ -1,4 +1,5 @@
 import UIKitNavigation
+import UIKitNavigationShim
 import XCTest
 
 final class NavigationStackTests: XCTestCase {

@@ -422,6 +422,38 @@ final class PresentationTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 1)
     await assertEventuallyNil(nav.presentedViewController)
   }
+
+  @MainActor func testAnimatedPopFromModallyNavigationController() async throws {
+    class VC: ViewController {
+      @UIBinding var presentedChild: Model?
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        present(item: $presentedChild) { model in
+          let root = BasicViewController(model: model)
+          return UINavigationController(rootViewController: root)
+        }
+      }
+    }
+    let vc = VC()
+    try await setUp(controller: vc)
+
+    vc.presentedChild = Model()
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    vc.presentedChild?.isPushed = true
+    await assertEventuallyEqual(
+      (vc.presentedViewController as? UINavigationController)?.viewControllers.count,
+      2
+    )
+
+    try await Task.sleep(for: .seconds(0.3))
+    vc.presentedChild?.isPushed = false
+    await assertEventuallyEqual(
+      (vc.presentedViewController as? UINavigationController)?.viewControllers.count,
+      1
+    )
+    await assertEventuallyNotNil(vc.presentedChild)
+  }
 }
 
 @Observable

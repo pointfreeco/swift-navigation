@@ -2,7 +2,7 @@
   import IssueReporting
   @_spi(Internals) import SwiftNavigation
   import UIKit
-  import UIKitNavigationShim
+  @_implementationOnly import UIKitNavigationShim
 
   extension UIViewController {
     /// Presents a view controller modally when a binding to a Boolean value you provide is true.
@@ -257,7 +257,7 @@
 
     /// Presents a view controller using the given item as a data source for its content.
     ///
-    /// This helper powers ``navigationDestination(item:content:)-367r6`` and can be used to define
+    /// This helper powers ``navigationDestination(item:content:)-1gks3`` and can be used to define
     /// custom transitions.
     ///
     /// - Parameters:
@@ -288,7 +288,7 @@
 
     /// Presents a view controller using the given item as a data source for its content.
     ///
-    /// This helper powers ``present(item:onDismiss:content:)-34iup`` and can be used to define
+    /// This helper powers ``present(item:onDismiss:content:)-4m7m3`` and can be used to define
     /// custom transitions.
     ///
     /// - Parameters:
@@ -452,7 +452,8 @@
       //     deinit alongside it on the main thread. If we use this other places we should force it
       //     to be a UIViewController as well, to ensure this functionality.
       MainActor._assumeIsolated {
-        self.controller?.dismiss(animated: false)
+        guard let controller, controller.parent == nil else { return }
+        controller.dismiss(animated: false)
       }
     }
     init(_ controller: UIViewController, id presentationID: AnyHashable? = nil) {

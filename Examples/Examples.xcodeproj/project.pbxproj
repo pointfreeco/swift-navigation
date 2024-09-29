@@ -47,6 +47,11 @@
 		CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */; };
 		CA9D705A2C208977003B672A /* UIControlBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */; };
 		CA9D705E2C2089DD003B672A /* EnumControlsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */; };
+		CAAFA9D32C8B422800BB2BA1 /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAFA9D22C8B422800BB2BA1 /* UIKitNavigation */; };
+		CAAFA9D52C8B42F900BB2BA1 /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAFA9D42C8B42F900BB2BA1 /* Import.swift */; };
+		CAAFA9D72C8B468000BB2BA1 /* AppKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAFA9D62C8B468000BB2BA1 /* AppKitNavigation */; };
+		CAAFA9D92C8B468000BB2BA1 /* SwiftNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAFA9D82C8B468000BB2BA1 /* SwiftNavigation */; };
+		CAAFA9DB2C8B468000BB2BA1 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAFA9DA2C8B468000BB2BA1 /* SwiftUINavigation */; };
 		CABE9FC1272F2C0000AFC150 /* EnumNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */; };
 		CADCA3632C1CE75500DE645F /* SwiftUICaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */; };
 		CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */; };
@@ -96,6 +101,9 @@
 		CA9D70572C2088B7003B672A /* MinimalObservationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinimalObservationViewController.swift; sourceTree = "<group>"; };
 		CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIControlBindingsViewController.swift; sourceTree = "<group>"; };
 		CA9D705D2C2089DD003B672A /* EnumControlsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumControlsViewController.swift; sourceTree = "<group>"; };
+		CAAFA9CB2C8B422100BB2BA1 /* DynamicFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DynamicFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAAFA9D42C8B42F900BB2BA1 /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
+		CAAFA9DC2C8B4CA900BB2BA1 /* DynamicFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamicFramework.h; sourceTree = "<group>"; };
 		CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumNavigation.swift; sourceTree = "<group>"; };
 		CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICaseStudies.swift; sourceTree = "<group>"; };
 		CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudy.swift; sourceTree = "<group>"; };
@@ -140,6 +148,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CAAFA9C82C8B422100BB2BA1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAAFA9DB2C8B468000BB2BA1 /* SwiftUINavigation in Frameworks */,
+				CAAFA9D92C8B468000BB2BA1 /* SwiftNavigation in Frameworks */,
+				CAAFA9D32C8B422800BB2BA1 /* UIKitNavigation in Frameworks */,
+				CAAFA9D72C8B468000BB2BA1 /* AppKitNavigation in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -149,6 +168,7 @@
 				CA48F2F82C49644000BE2C3C /* swiftui-navigation */,
 				CA473805272F0D330012CAC3 /* CaseStudies */,
 				CA49D95A2C20EAA400E6C5BB /* CaseStudiesTests */,
+				CAAFA9CC2C8B422100BB2BA1 /* DynamicFramework */,
 				CA4737F2272F09780012CAC3 /* Frameworks */,
 				CA4737C9272F095F0012CAC3 /* Inventory */,
 				CA473795272F08EF0012CAC3 /* Products */,
@@ -161,6 +181,7 @@
 				CA4737C8272F095F0012CAC3 /* Inventory.app */,
 				CA473804272F0D330012CAC3 /* CaseStudies.app */,
 				CA49D9592C20EAA400E6C5BB /* CaseStudiesTests.xctest */,
+				CAAFA9CB2C8B422100BB2BA1 /* DynamicFramework.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,6 +261,15 @@
 			path = UIKit;
 			sourceTree = "<group>";
 		};
+		CAAFA9CC2C8B422100BB2BA1 /* DynamicFramework */ = {
+			isa = PBXGroup;
+			children = (
+				CAAFA9D42C8B42F900BB2BA1 /* Import.swift */,
+				CAAFA9DC2C8B4CA900BB2BA1 /* DynamicFramework.h */,
+			);
+			path = DynamicFramework;
+			sourceTree = "<group>";
+		};
 		CADCA3642C1CE80B00DE645F /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -275,6 +305,16 @@
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CAAFA9C62C8B422100BB2BA1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		CA4737C7272F095F0012CAC3 /* Inventory */ = {
@@ -339,6 +379,30 @@
 			productReference = CA49D9592C20EAA400E6C5BB /* CaseStudiesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		CAAFA9CA2C8B422100BB2BA1 /* DynamicFramework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CAAFA9D12C8B422100BB2BA1 /* Build configuration list for PBXNativeTarget "DynamicFramework" */;
+			buildPhases = (
+				CAAFA9C62C8B422100BB2BA1 /* Headers */,
+				CAAFA9C72C8B422100BB2BA1 /* Sources */,
+				CAAFA9C82C8B422100BB2BA1 /* Frameworks */,
+				CAAFA9C92C8B422100BB2BA1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DynamicFramework;
+			packageProductDependencies = (
+				CAAFA9D22C8B422800BB2BA1 /* UIKitNavigation */,
+				CAAFA9D62C8B468000BB2BA1 /* AppKitNavigation */,
+				CAAFA9D82C8B468000BB2BA1 /* SwiftNavigation */,
+				CAAFA9DA2C8B468000BB2BA1 /* SwiftUINavigation */,
+			);
+			productName = DynamicFramework;
+			productReference = CAAFA9CB2C8B422100BB2BA1 /* DynamicFramework.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -360,6 +424,10 @@
 					CA49D9582C20EAA400E6C5BB = {
 						CreatedOnToolsVersion = 15.4;
 						TestTargetID = CA473803272F0D330012CAC3;
+					};
+					CAAFA9CA2C8B422100BB2BA1 = {
+						CreatedOnToolsVersion = 15.4;
+						LastSwiftMigration = 1540;
 					};
 				};
 			};
@@ -385,6 +453,7 @@
 				CA473803272F0D330012CAC3 /* CaseStudies */,
 				CA49D9582C20EAA400E6C5BB /* CaseStudiesTests */,
 				CA4737C7272F095F0012CAC3 /* Inventory */,
+				CAAFA9CA2C8B422100BB2BA1 /* DynamicFramework */,
 			);
 		};
 /* End PBXProject section */
@@ -407,6 +476,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CA49D9572C20EAA400E6C5BB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CAAFA9C92C8B422100BB2BA1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -471,6 +547,14 @@
 				CA49D9632C20EAB000E6C5BB /* NavigationStackTests.swift in Sources */,
 				CA49D9622C20EAB000E6C5BB /* PresentationTests.swift in Sources */,
 				CA601BAC2C21ED95006B0C5F /* RuntimeWarningTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CAAFA9C72C8B422100BB2BA1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAAFA9D52C8B42F900BB2BA1 /* Import.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -764,6 +848,96 @@
 			};
 			name = Release;
 		};
+		CAAFA9CF2C8B422100BB2BA1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.DynamicFramework;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CAAFA9D02C8B422100BB2BA1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.DynamicFramework;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -799,6 +973,15 @@
 			buildConfigurations = (
 				CA49D9602C20EAA400E6C5BB /* Debug */,
 				CA49D9612C20EAA400E6C5BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CAAFA9D12C8B422100BB2BA1 /* Build configuration list for PBXNativeTarget "DynamicFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAAFA9CF2C8B422100BB2BA1 /* Debug */,
+				CAAFA9D02C8B422100BB2BA1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -867,6 +1050,22 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA48F3062C49651700BE2C3C /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
 			productName = ConcurrencyExtras;
+		};
+		CAAFA9D22C8B422800BB2BA1 /* UIKitNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UIKitNavigation;
+		};
+		CAAFA9D62C8B468000BB2BA1 /* AppKitNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppKitNavigation;
+		};
+		CAAFA9D82C8B468000BB2BA1 /* SwiftNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftNavigation;
+		};
+		CAAFA9DA2C8B468000BB2BA1 /* SwiftUINavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftUINavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

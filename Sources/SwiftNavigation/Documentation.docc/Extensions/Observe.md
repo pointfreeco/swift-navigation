@@ -1,7 +1,7 @@
-# ``SwiftNavigation/observe(isolation:_:)-93yzu``
+# ``SwiftNavigation/observe(isolation:_:)-9xf99``
 
 ## Topics
 
 ### Attaching data to observation
 
-- ``observe(isolation:_:)-5rirm``
+- ``observe(isolation:_:)-34d7t``

@@ -2,8 +2,7 @@ import SwiftNavigation
 import XCTest
 
 final class UIBindingTests: XCTestCase {
-  @MainActor
-  func testInitProjectedValue() throws {
+  func testInitProjectedValue() {
     @UIBinding var text = ""
     let textBinding = UIBinding(projectedValue: $text)
 
@@ -16,7 +15,6 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(textBinding.wrappedValue, "Blob, Jr.")
   }
 
-  @MainActor
   func testOperationFromOptional() throws {
     @UIBinding var count: Int? = nil
 
@@ -48,7 +46,6 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(unwrappedCountBinding.wrappedValue, 1729)
   }
 
-  @MainActor
   func testOperationToOptional() {
     @UIBinding var count = 0
 
@@ -67,7 +64,6 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(optionalCountBinding.wrappedValue, 2)
   }
 
-  // @MainActor
   // func testOperationToAnyHashable() {
   //   @UIBinding var count = 0
   //
@@ -84,7 +80,6 @@ final class UIBindingTests: XCTestCase {
   //   XCTAssertEqual(optionalCountBinding.wrappedValue, 2)
   // }
 
-  @MainActor
   func testOperationConstant() {
     @UIBinding var count: Int
     _count = .constant(0)
@@ -93,7 +88,6 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(count, 0)
   }
 
-  @MainActor
   func testDynamicMemberLookupProperty() {
     struct User {
       var name = ""
@@ -111,7 +105,6 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(nameBinding.wrappedValue, "Blob, Jr.")
   }
 
-  @MainActor
   func testDynamicMemberLookupCase() throws {
     struct Failure: Error, Equatable {}
 
@@ -144,7 +137,6 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(countBinding.wrappedValue, 1729)
   }
 
-  @MainActor
   func testDynamicMemberLookupOptionalEnumCase() throws {
     struct Failure: Error, Equatable {}
 

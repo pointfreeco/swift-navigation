@@ -11,8 +11,13 @@
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - selectedSegment: The binding to read from for the selected color, and write to when the
     ///     selected color is changes.
+    ///   - fileID: The source `#fileID` associated with the control.
+    ///   - filePath: The source `#filePath` associated with the control.
+    ///   - line: The source `#line` associated with the control.
+    ///   - column: The source `#column` associated with the control.
     public convenience init(
-      frame: CGRect = .zero, selectedSegment: UIBinding<some RawRepresentable<Int>>,
+      frame: CGRect = .zero,
+      selectedSegment: UIBinding<some RawRepresentable<Int>>,
       fileID: StaticString = #fileID,
       filePath: StaticString = #filePath,
       line: UInt = #line,
@@ -30,8 +35,13 @@
 
     /// Establishes a two-way connection between a binding and the color well's selected color.
     ///
-    /// - Parameter selectedSegment: The binding to read from for the selected color, and write to
-    ///   when the selected color changes.
+    /// - Parameters:
+    ///   - selectedSegment: The binding to read from for the selected color, and write to when the
+    ///     selected color changes.
+    ///   - fileID: The source `#fileID` associated with the binding.
+    ///   - filePath: The source `#filePath` associated with the binding.
+    ///   - line: The source `#line` associated with the binding.
+    ///   - column: The source `#column` associated with the binding.
     /// - Returns: A cancel token.
     @discardableResult
     public func bind(

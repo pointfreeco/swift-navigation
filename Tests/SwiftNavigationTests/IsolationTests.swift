@@ -3,34 +3,38 @@
   import XCTest
 
   class IsolationTests: XCTestCase {
-    @MainActor
-    func testIsolationOnMinActor() async {
-      let model = MainActorModel()
-      let expectation = expectation(description: "observation")
-      expectation.expectedFulfillmentCount = 2
-      let token = SwiftNavigation.observe {
-        _ = model.count
-        MainActor.assertIsolated()
-        expectation.fulfill()
+    func testIsolationOnMainActor() async throws {
+      try await Task { @MainActor in
+        let model = MainActorModel()
+        var didObserve = false
+        let token = SwiftNavigation.observe {
+          _ = model.count
+          MainActor.assertIsolated()
+          didObserve = true
+        }
+        model.count += 1
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertEqual(didObserve, true)
+        _ = token
       }
-      model.count += 1
-      await fulfillment(of: [expectation], timeout: 1)
-      _ = token
+      .value
     }
 
-    @GlobalActorIsolated
-    func testIsolationOnGlobalActor() async {
-      let model = GlobalActorModel()
-      let expectation = expectation(description: "observation")
-      expectation.expectedFulfillmentCount = 2
-      let token = SwiftNavigation.observe {
-        _ = model.count
-        GlobalActorIsolated.assertIsolated()
-        expectation.fulfill()
+    func testIsolationOnGlobalActor() async throws {
+      try await Task { @GlobalActorIsolated in
+        let model = GlobalActorModel()
+        var didObserve = false
+        let token = SwiftNavigation.observe {
+          _ = model.count
+          GlobalActorIsolated.assertIsolated()
+          didObserve = true
+        }
+        model.count += 1
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertEqual(didObserve, true)
+        _ = token
       }
-      model.count += 1
-      await fulfillment(of: [expectation], timeout: 1)
-      _ = token
+      .value
     }
   }
 
