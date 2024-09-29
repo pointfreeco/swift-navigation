@@ -100,6 +100,7 @@ build-for-library-evolution-macos:
 
 build-for-library-evolution-ios:
 	xcodebuild build \
+	  -skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
 		-destination platform="$(PLATFORM_IOS)" \
@@ -107,6 +108,7 @@ build-for-library-evolution-ios:
 		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
 
 	xcodebuild build \
+	  -skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_IOS)" \
@@ -114,6 +116,7 @@ build-for-library-evolution-ios:
 		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
 
 	xcodebuild build \
+	  -skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme UIKitNavigation \
 		-destination platform="$(PLATFORM_IOS)" \
