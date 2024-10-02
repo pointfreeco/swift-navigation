@@ -88,14 +88,6 @@ build-for-library-evolution-ios:
 	xcodebuild build \
 	  -skipMacroValidation \
 		-workspace SwiftNavigation.xcworkspace \
-		-scheme SwiftNavigation \
-		-destination platform="$(PLATFORM_IOS)" \
-		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
-		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
-
-	xcodebuild build \
-	  -skipMacroValidation \
-		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftUINavigation \
 		-destination platform="$(PLATFORM_IOS)" \
 		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
