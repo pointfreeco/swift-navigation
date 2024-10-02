@@ -12,7 +12,7 @@
       case .visible:
         self = .visible
       @unknown default:
-        self = .hidden
+        self = .automatic
       }
     }
   }
