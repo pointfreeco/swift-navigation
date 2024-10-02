@@ -75,14 +75,14 @@ build-for-library-evolution-macos:
 		--target SwiftUINavigation \
 		-Xswiftc -emit-module-interface \
 		-Xswiftc -enable-library-evolution \
-		-Xswiftc -DRESILIENT_LIBRARIES # Required to build swift-syntax; see https://github.com/swiftlang/swift-syntax/pull/2540
+		-Xswiftc $(OTHER_SWIFT_FLAGS)
 
 	swift build \
 		-c release \
 		--target AppKitNavigation \
 		-Xswiftc -emit-module-interface \
 		-Xswiftc -enable-library-evolution \
-		-Xswiftc -DRESILIENT_LIBRARIES # Required to build swift-syntax; see https://github.com/swiftlang/swift-syntax/pull/2540
+		-Xswiftc $(OTHER_SWIFT_FLAGS)
 
 build-for-library-evolution-ios:
 	xcodebuild build \
