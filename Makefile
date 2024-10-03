@@ -1,12 +1,7 @@
-# Default versions
-IOS_VERSION ?= 17.5
-TVOS_VERSION ?= 17.5
-WATCHOS_VERSION ?= 10.5
-
-PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iOS $(IOS_VERSION),iPhone \d\+ Pro [^M])
+PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iOS,iPhone \d\+ Pro [^M])
 PLATFORM_MACOS = macOS
-PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,tvOS $(TVOS_VERSION),TV)
-PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,watchOS $(WATCHOS_VERSION),Watch)
+PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,tvOS,TV)
+PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,watchOS,Watch)
 TEST_RUNNER_CI = $(CI)
 
 OTHER_SWIFT_FLAGS="-DRESILIENT_LIBRARIES"
