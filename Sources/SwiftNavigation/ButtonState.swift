@@ -321,6 +321,9 @@ extension ButtonState: Sendable where Action: Sendable {}
     ///   - button: Button state.
     ///   - action: An action closure that is invoked when the button is tapped.
     @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    #if compiler(>=6)
+      @MainActor
+    #endif
     public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action?) -> Void) {
       self.init(
         role: button.role.map(ButtonRole.init),
