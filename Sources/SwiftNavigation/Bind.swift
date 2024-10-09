@@ -21,15 +21,21 @@
       _ modelValue: ModelValue, to viewValue: ViewValue
     ) -> some View
     where ModelValue.Value == ViewValue.Value, ModelValue.Value: Equatable {
-      self.modifier(_Bind(modelValue: modelValue, viewValue: viewValue))
+      self.modifier(_Bind(
+        modelValue: modelValue.wrappedValue,
+        setModelValue: { modelValue.wrappedValue = $0 },
+        viewValue: viewValue.wrappedValue,
+        setViewValue: { viewValue.wrappedValue = $0 }
+      ))
     }
   }
 
   @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
-  private struct _Bind<ModelValue: _Bindable, ViewValue: _Bindable>: ViewModifier
-  where ModelValue.Value == ViewValue.Value, ModelValue.Value: Equatable {
-    let modelValue: ModelValue
-    let viewValue: ViewValue
+  private struct _Bind<Value: Equatable>: ViewModifier {
+    let modelValue: Value
+    let setModelValue: (Value) -> Void
+    let viewValue: Value
+    let setViewValue: (Value) -> Void
 
     @State var hasAppeared = false
 
@@ -38,18 +44,16 @@
         .onAppear {
           guard !self.hasAppeared else { return }
           self.hasAppeared = true
-          guard self.viewValue.wrappedValue != self.modelValue.wrappedValue else { return }
-          self.viewValue.wrappedValue = self.modelValue.wrappedValue
+          guard self.viewValue != self.modelValue else { return }
+          self.setViewValue(self.modelValue)
         }
-        .onChange(of: self.modelValue.wrappedValue) {
-          guard self.viewValue.wrappedValue != $0
-          else { return }
-          self.viewValue.wrappedValue = $0
+        .onChange(of: self.modelValue) {
+          guard self.viewValue != $0 else { return }
+          self.setViewValue($0)
         }
-        .onChange(of: self.viewValue.wrappedValue) {
-          guard self.modelValue.wrappedValue != $0
-          else { return }
-          self.modelValue.wrappedValue = $0
+        .onChange(of: self.viewValue) {
+          guard self.modelValue != $0 else { return }
+          self.setModelValue($0)
         }
     }
   }
