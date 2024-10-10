@@ -123,7 +123,6 @@
         guard let self else { return }
         if presentedViewController != nil {
           self.dismiss(animated: !transaction.uiKit.disablesAnimations) {
-            onDismiss?()
             self.present(child, animated: !transaction.uiKit.disablesAnimations)
           }
         } else {
