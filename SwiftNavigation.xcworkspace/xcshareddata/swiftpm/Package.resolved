@@ -1,4 +1,5 @@
 {
+  "originHash" : "75dae436fdc9b1a44a669fa8368ae31049099c9154e577dc38707ff965cdebf8",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -14,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "71344dd930fde41e8f3adafe260adcbb2fc2a3dc",
-        "version" : "1.5.4"
+        "branch" : "1.5.6",
+        "revision" : "bc92c4b27f9a84bfb498cdbfdf35d5a357e9161f"
       }
     },
     {
@@ -122,10 +123,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "357ca1e5dd31f613a1d43320870ebc219386a495",
-        "version" : "1.2.2"
+        "revision" : "27d767d643fa2cf083d0a73d74fa84cacb53e85c",
+        "version" : "1.4.1"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

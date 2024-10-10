@@ -1,9 +1,10 @@
-PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iOS 17.5,iPhone \d\+ Pro [^M])
+PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iOS,iPhone \d\+ Pro [^M])
 PLATFORM_MACOS = macOS
-PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,tvOS 17.5,TV)
-PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,watchOS 10.5,Watch)
-
+PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,tvOS,TV)
+PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,watchOS,Watch)
 TEST_RUNNER_CI = $(CI)
+
+OTHER_SWIFT_FLAGS="-DRESILIENT_LIBRARIES"
 
 default: test
 
@@ -64,6 +65,40 @@ test-docs:
 	@test "$(DOC_WARNINGS)" = "" \
 		|| (echo "xcodebuild docbuild failed:\n\n$(DOC_WARNINGS)" | tr '\1' '\n' \
 		&& exit 1)
+
+build-for-library-evolution: build-for-library-evolution-ios build-for-library-evolution-macos
+
+build-for-library-evolution-macos:
+	swift build \
+		-c release \
+		--target SwiftUINavigation \
+		-Xswiftc -emit-module-interface \
+		-Xswiftc -enable-library-evolution \
+		-Xswiftc $(OTHER_SWIFT_FLAGS)
+
+	swift build \
+		-c release \
+		--target AppKitNavigation \
+		-Xswiftc -emit-module-interface \
+		-Xswiftc -enable-library-evolution \
+		-Xswiftc $(OTHER_SWIFT_FLAGS)
+
+build-for-library-evolution-ios:
+	xcodebuild build \
+	  -skipMacroValidation \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme SwiftUINavigation \
+		-destination platform="$(PLATFORM_IOS)" \
+		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
+
+	xcodebuild build \
+	  -skipMacroValidation \
+		-workspace SwiftNavigation.xcworkspace \
+		-scheme UIKitNavigation \
+		-destination platform="$(PLATFORM_IOS)" \
+		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
 
 format:
 	swift format \
