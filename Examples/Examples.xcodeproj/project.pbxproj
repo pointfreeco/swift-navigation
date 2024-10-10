@@ -12,6 +12,7 @@
 		CA3D0E332C20B27B00CCF7CD /* NetworkDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BA2C0525980034B757 /* NetworkDetailFeature.swift */; };
 		CA3D0E342C20B27B00CCF7CD /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9B92C0525980034B757 /* Network.swift */; };
 		CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BB2C0525980034B757 /* WiFiSettingsFeature.swift */; };
+		CA456DA82CB810BA00F04E02 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CA456DA72CB810BA00F04E02 /* IdentifiedCollections */; };
 		CA4737CF272F09600012CAC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA4737CE272F09600012CAC3 /* Assets.xcassets */; };
 		CA4737F4272F09780012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA4737F3272F09780012CAC3 /* SwiftUINavigation */; };
 		CA4737F9272F09D00012CAC3 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4737F5272F09D00012CAC3 /* ItemRow.swift */; };
@@ -126,6 +127,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA4737F4272F09780012CAC3 /* SwiftUINavigation in Frameworks */,
+				CA456DA82CB810BA00F04E02 /* IdentifiedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +334,7 @@
 			name = Inventory;
 			packageProductDependencies = (
 				CA4737F3272F09780012CAC3 /* SwiftUINavigation */,
+				CA456DA72CB810BA00F04E02 /* IdentifiedCollections */,
 			);
 			productName = Inventory;
 			productReference = CA4737C8272F095F0012CAC3 /* Inventory.app */;
@@ -1024,6 +1027,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CA456DA72CB810BA00F04E02 /* IdentifiedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA48F3002C49650100BE2C3C /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
+			productName = IdentifiedCollections;
+		};
 		CA4737F3272F09780012CAC3 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftUINavigation;
