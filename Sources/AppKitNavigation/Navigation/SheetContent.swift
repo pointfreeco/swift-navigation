@@ -25,14 +25,6 @@ extension NSWindow: SheetContent {
     var currentWindow: NSWindow? { self }
 }
 
-extension NSWindowController: SheetContent {
-    var currentWindow: NSWindow? { window }
-}
-
-extension NSViewController: SheetContent {
-    var currentWindow: NSWindow? { view.window }
-}
-
 extension NSAlert: SheetContent {
     var currentWindow: NSWindow? { window }
 

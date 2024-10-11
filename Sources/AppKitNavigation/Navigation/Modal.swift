@@ -7,25 +7,79 @@ private var modalObserverKeys = AssociatedKeys()
 
 private typealias ModalObserver<Content: ModalContent> = NavigationObserver<NSObject, Content>
 
+// MARK: - Modal Session - NSWindow
 @MainActor
 extension NSObject {
-    // MARK: - Modal - NSWindow
 
+    @discardableResult
+    public func modalSession(
+        isModaled: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(isModaled: isModaled, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modalSession<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func modalSession<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modalSession<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modalSession<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+// MARK: - Modal - NSWindow
+
+@MainActor
+extension NSObject {
     @discardableResult
     public func modal(
         isModaled: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping () -> NSWindow
     ) -> ObserveToken {
-        modal(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+        _modal(isModaled: isModaled, onDismiss: onDismiss, content: content)
     }
+
     @discardableResult
     public func modal<Item: Identifiable>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> NSWindow
     ) -> ObserveToken {
-        modal(item: item, id: \.id, onDismiss: onDismiss, content: content)
+        _modal(item: item, onDismiss: onDismiss, content: content)
     }
 
     @_disfavoredOverload
@@ -35,7 +89,7 @@ extension NSObject {
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> NSWindow
     ) -> ObserveToken {
-        modal(item: item, id: \.id, onDismiss: onDismiss, content: content)
+        _modal(item: item, onDismiss: onDismiss, content: content)
     }
 
     @discardableResult
@@ -45,9 +99,7 @@ extension NSObject {
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> NSWindow
     ) -> ObserveToken {
-        modal(item: item, id: id, onDismiss: onDismiss) {
-            content($0.wrappedValue)
-        }
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
     }
 
     @discardableResult
@@ -59,43 +111,120 @@ extension NSObject {
     ) -> ObserveToken {
         _modal(item: item, id: id, onDismiss: onDismiss, content: content)
     }
-    // MARK: - Modal - NSSavePanel
+}
 
-    @discardableResult
-    public func modal(
-        isModaled: UIBinding<Bool>,
-        onDismiss: (() -> Void)? = nil,
-        content: @escaping () -> NSSavePanel
-    ) -> ObserveToken {
-        _modal(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
-    }
+// MARK: - Modal - NSAlert
 
-    // MARK: - Modal - NSAlert
-
+@MainActor
+extension NSObject {
     @discardableResult
     public func modal(
         isModaled: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping () -> NSAlert
     ) -> ObserveToken {
-        _modal(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+        _modal(isModaled: isModaled, onDismiss: onDismiss, content: content)
     }
 
-    // MARK: - Modal Session - NSWindow
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSAlert
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSAlert
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
 
     @discardableResult
-    public func modalSession(
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSAlert
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSAlert
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+// MARK: - Modal - NSSavePanel
+
+@MainActor
+extension NSObject {
+    @discardableResult
+    public func modal(
         isModaled: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping () -> NSWindow
+        content: @escaping () -> NSSavePanel
     ) -> ObserveToken {
-        _modalSession(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+        _modal(isModaled: isModaled, onDismiss: onDismiss, content: content)
     }
 
-    // MARK: - Private Modal
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
 
     @discardableResult
-    private func _modal<Content: ModalContent>(
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+// MARK: - Private Modal
+@MainActor
+extension NSObject {
+
+    @discardableResult
+    fileprivate func _modal<Content: ModalContent>(
         isModaled: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping () -> Content
@@ -104,7 +233,7 @@ extension NSObject {
     }
 
     @discardableResult
-    private func _modal<Item: Identifiable, Content: ModalContent>(
+    fileprivate func _modal<Item: Identifiable, Content: ModalContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
@@ -114,7 +243,7 @@ extension NSObject {
 
     @_disfavoredOverload
     @discardableResult
-    private func _modal<Item: Identifiable, Content: ModalContent>(
+    fileprivate func _modal<Item: Identifiable, Content: ModalContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
@@ -123,7 +252,7 @@ extension NSObject {
     }
 
     @discardableResult
-    private func _modal<Item, ID: Hashable, Content: ModalContent>(
+    fileprivate func _modal<Item, ID: Hashable, Content: ModalContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
@@ -135,7 +264,7 @@ extension NSObject {
     }
 
     @discardableResult
-    private func _modal<Item, ID: Hashable, Content: ModalContent>(
+    fileprivate func _modal<Item, ID: Hashable, Content: ModalContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
@@ -167,9 +296,11 @@ extension NSObject {
             onDismiss?()
         }
     }
+
     // MARK: - Modal Session
+
     @discardableResult
-    private func _modalSession<Content: ModalSessionContent>(
+    fileprivate func _modalSession<Content: ModalSessionContent>(
         isModaled: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping () -> Content
@@ -178,7 +309,7 @@ extension NSObject {
     }
 
     @discardableResult
-    private func _modalSession<Item: Identifiable, Content: ModalSessionContent>(
+    fileprivate func _modalSession<Item: Identifiable, Content: ModalSessionContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
@@ -188,7 +319,7 @@ extension NSObject {
 
     @_disfavoredOverload
     @discardableResult
-    private func _modalSession<Item: Identifiable, Content: ModalSessionContent>(
+    fileprivate func _modalSession<Item: Identifiable, Content: ModalSessionContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
@@ -197,7 +328,7 @@ extension NSObject {
     }
 
     @discardableResult
-    private func _modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
+    fileprivate func _modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
@@ -209,7 +340,7 @@ extension NSObject {
     }
 
     @discardableResult
-    private func _modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
+    fileprivate func _modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,

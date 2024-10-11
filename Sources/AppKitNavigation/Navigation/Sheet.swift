@@ -7,9 +7,160 @@ private typealias SheetObserver<FromContent: SheetContent, ToContent: SheetConte
 @MainActor
 private var sheetObserverKeys = AssociatedKeys()
 
+extension NSWindow {
+    @discardableResult
+    public func sheet(
+        isSheeted: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSWindow
+    ) -> ObserveToken {
+        _sheet(isSheeted: isSheeted, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+extension NSWindow {
+    @discardableResult
+    public func sheet(
+        isSheeted: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSAlert
+    ) -> ObserveToken {
+        _sheet(isSheeted: isSheeted, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSAlert
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSAlert
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSAlert
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSAlert
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+extension NSWindow {
+    @discardableResult
+    public func sheet(
+        isSheeted: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(isSheeted: isSheeted, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+
 extension SheetContent {
     @discardableResult
-    private func _sheet<Content: SheetContent>(
+    fileprivate func _sheet<Content: SheetContent>(
         isSheeted: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping () -> Content
@@ -18,7 +169,7 @@ extension SheetContent {
     }
 
     @discardableResult
-    private func _sheet<Item: Identifiable, Content: SheetContent>(
+    fileprivate func _sheet<Item: Identifiable, Content: SheetContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
@@ -28,7 +179,7 @@ extension SheetContent {
 
     @_disfavoredOverload
     @discardableResult
-    private func _sheet<Item: Identifiable, Content: SheetContent>(
+    fileprivate func _sheet<Item: Identifiable, Content: SheetContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
@@ -37,7 +188,7 @@ extension SheetContent {
     }
 
     @discardableResult
-    private func _sheet<Item, ID: Hashable, Content: SheetContent>(
+    fileprivate func _sheet<Item, ID: Hashable, Content: SheetContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
@@ -49,7 +200,7 @@ extension SheetContent {
     }
 
     @discardableResult
-    private func _sheet<Item, ID: Hashable, Content: SheetContent>(
+    fileprivate func _sheet<Item, ID: Hashable, Content: SheetContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,

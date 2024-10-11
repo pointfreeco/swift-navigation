@@ -74,13 +74,13 @@ extension NSViewController {
             if let presentedViewController = presentedViewControllers?.first {
                 self.dismiss(presentedViewController)
                 onDismiss?()
-                child.presented(from: self, style: style)
+                self.present(child, for: style)
             } else {
-                child.presented(from: self, style: style)
+                self.present(child, for: style)
             }
         } dismiss: { [weak self] child, transaction in
             guard let self else { return }
-            child.dismiss(from: self)
+            self.dismiss(child)
             onDismiss?()
         }
     }
@@ -150,6 +150,26 @@ extension NSViewController {
             let observer = PresentationObserver(owner: self)
             objc_setAssociatedObject(self, Self.presentationObserverKey, observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return observer
+        }
+    }
+    
+    public enum TransitionStyle {
+        case sheet
+        case modalWindow
+        case popover(rect: NSRect, view: NSView, preferredEdge: NSRectEdge, behavior: NSPopover.Behavior)
+        case custom(NSViewControllerPresentationAnimator)
+    }
+
+    private func present(_ viewControllerToPresent: NSViewController, for style: TransitionStyle) {
+        switch style {
+        case .sheet:
+            presentAsSheet(viewControllerToPresent)
+        case .modalWindow:
+            presentAsModalWindow(viewControllerToPresent)
+        case let .popover(rect, view, preferredEdge, behavior):
+            present(viewControllerToPresent, asPopoverRelativeTo: rect, of: view, preferredEdge: preferredEdge, behavior: behavior)
+        case let .custom(animator):
+            present(viewControllerToPresent, animator: animator)
         }
     }
 }
