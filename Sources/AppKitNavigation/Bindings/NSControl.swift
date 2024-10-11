@@ -2,17 +2,7 @@
 
 import AppKit
 
-extension NSControl: NSTargetActionProtocol {
-    public var appkitNavigationTarget: AnyObject? {
-        set { target = newValue }
-        get { target }
-    }
-
-    public var appkitNavigationAction: Selector? {
-        set { action = newValue }
-        get { action }
-    }
-}
+extension NSControl: TargetActionProtocol {}
 
 extension NSControl {
     public convenience init(action: @escaping (Self) -> Void) {

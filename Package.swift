@@ -85,7 +85,7 @@ let package = Package(
       dependencies: [
         "SwiftNavigation",
         "AppKitNavigationShim",
-        .product(name: "IdentifiedCollections", package: "swift-identified-collections")
+        .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
       ]
     ),
     .target(

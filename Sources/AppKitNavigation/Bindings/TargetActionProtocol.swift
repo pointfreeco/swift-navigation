@@ -5,12 +5,12 @@ import AppKit
 
 /// A protocol used to extend `NSControl, NSMenuItem...`.
 @MainActor
-public protocol NSTargetActionProtocol: NSObject, Sendable {
-    var appkitNavigationTarget: AnyObject? { set get }
-    var appkitNavigationAction: Selector? { set get }
+public protocol TargetActionProtocol: NSObject, Sendable {
+    var target: AnyObject? { set get }
+    var action: Selector? { set get }
 }
 
-extension NSTargetActionProtocol {
+extension TargetActionProtocol {
     /// Establishes a two-way connection between a source of truth and a property of this control.
     ///
     /// - Parameters:
@@ -28,20 +28,20 @@ extension NSTargetActionProtocol {
         }
     }
 
-    var actionProxy: NSTargetActionProxy? {
+    var actionProxy: TargetActionProxy? {
         set {
             objc_setAssociatedObject(self, actionProxyKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            objc_getAssociatedObject(self, actionProxyKey) as? NSTargetActionProxy
+            objc_getAssociatedObject(self, actionProxyKey) as? TargetActionProxy
         }
     }
 
-    func createActionProxyIfNeeded() -> NSTargetActionProxy {
+    func createActionProxyIfNeeded() -> TargetActionProxy {
         if let actionProxy {
             return actionProxy
         } else {
-            let actionProxy = NSTargetActionProxy(owner: self)
+            let actionProxy = TargetActionProxy(owner: self)
             self.actionProxy = actionProxy
             return actionProxy
         }
@@ -62,7 +62,7 @@ extension NSTargetActionProtocol {
         _ binding: UIBinding<Value>,
         to keyPath: KeyPath<Self, Value>,
         set: @escaping (_ control: Self, _ newValue: Value, _ transaction: UITransaction) -> Void
-    ) -> ObservationToken {
+    ) -> ObserveToken {
         unbind(keyPath)
         let actionProxy = createActionProxyIfNeeded()
         let actionID = actionProxy.addBindingAction { [weak self] _ in
@@ -91,7 +91,7 @@ extension NSTargetActionProtocol {
                 binding.wrappedValue = control[keyPath: $uncheckedKeyPath.wrappedValue]
             }
         }
-        let observationToken = ObservationToken { [weak self] in
+        let observationToken = ObserveToken { [weak self] in
             MainActor._assumeIsolated {
                 self?.actionProxy?.removeAction(for: actionID)
             }
@@ -107,24 +107,13 @@ extension NSTargetActionProtocol {
         observationTokens[keyPath] = nil
     }
 
-//    var observationTokens: [AnyKeyPath: ObservationToken] {
-//        get {
-//            objc_getAssociatedObject(self, observationTokensKey) as? [AnyKeyPath: ObservationToken]
-//                ?? [:]
-//        }
-//        set {
-//            objc_setAssociatedObject(
-//                self, observationTokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-//            )
-//        }
-//    }
 }
 
 @MainActor
 extension NSObject {
-    var observationTokens: [AnyKeyPath: ObservationToken] {
+    var observationTokens: [AnyKeyPath: ObserveToken] {
         get {
-            objc_getAssociatedObject(self, observationTokensKey) as? [AnyKeyPath: ObservationToken]
+            objc_getAssociatedObject(self, observationTokensKey) as? [AnyKeyPath: ObserveToken]
                 ?? [:]
         }
         set {

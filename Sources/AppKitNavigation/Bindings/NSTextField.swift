@@ -72,7 +72,7 @@ extension NSTextField: NSTextViewDelegate {
             }
         }
 
-        let observationToken = ObservationToken { [weak self] in
+        let observationToken = ObserveToken { [weak self] in
             MainActor._assumeIsolated {
                 editingChangedAction.cancel()
                 editingDidEndAction.cancel()
@@ -242,7 +242,7 @@ extension NSTextField: NSTextViewDelegate {
                 break
             }
         }
-        let outerToken = ObservationToken {
+        let outerToken = ObserveToken {
             editingDidBeginAction.cancel()
             editingDidEndAction.cancel()
             innerToken.cancel()

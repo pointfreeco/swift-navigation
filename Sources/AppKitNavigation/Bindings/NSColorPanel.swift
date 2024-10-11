@@ -2,13 +2,13 @@
 
 import AppKit
 
-extension NSColorPanel: NSTargetActionProtocol {
-    public var appkitNavigationTarget: AnyObject? {
+extension NSColorPanel: TargetActionProtocol {
+    public var target: AnyObject? {
         set { setTarget(newValue) }
         get { value(forKeyPath: "target") as? AnyObject }
     }
 
-    public var appkitNavigationAction: Selector? {
+    public var action: Selector? {
         set { setAction(newValue) }
         get { value(forKeyPath: "action") as? Selector }
     }

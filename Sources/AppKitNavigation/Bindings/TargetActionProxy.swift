@@ -4,7 +4,7 @@ import AppKit
 import IdentifiedCollections
 
 @MainActor
-class NSTargetActionProxy: NSObject {
+class TargetActionProxy: NSObject {
     typealias ActionClosure = (Any?) -> Void
 
     typealias ActionIdentifier = UUID
@@ -27,15 +27,15 @@ class NSTargetActionProxy: NSObject {
 
     private var originAction: Selector?
 
-    weak var owner: NSTargetActionProtocol?
+    weak var owner: TargetActionProtocol?
 
-    required init(owner: NSTargetActionProtocol) {
+    required init(owner: TargetActionProtocol) {
         self.owner = owner
         super.init()
-        self.originTarget = owner.appkitNavigationTarget
-        self.originAction = owner.appkitNavigationAction
-        owner.appkitNavigationTarget = self
-        owner.appkitNavigationAction = #selector(invokeAction(_:))
+        self.originTarget = owner.target
+        self.originAction = owner.action
+        owner.target = self
+        owner.action = #selector(invokeAction(_:))
         if let textField = owner as? NSTextField {
             NotificationCenter.default.addObserver(self, selector: #selector(controlTextDidChange(_:)), name: NSControl.textDidChangeNotification, object: textField)
         }
