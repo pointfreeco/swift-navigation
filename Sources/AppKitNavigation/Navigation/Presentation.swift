@@ -3,10 +3,7 @@ import SwiftNavigation
 import AppKit
 import AppKitNavigationShim
 
-@MainActor
-private var presentationObserverKeys = AssociatedKeys()
-
-class PresentationObserver<Content: PresentationContent>: NavigationObserver<NSViewController, Content> {
+class PresentationObserver: NavigationObserver<NSViewController, NSViewController> {
     override func commitWork(_ work: @escaping () -> Void) {
         if owner._AppKitNavigation_hasViewAppeared {
             work()
@@ -18,43 +15,43 @@ class PresentationObserver<Content: PresentationContent>: NavigationObserver<NSV
 
 extension NSViewController {
     @discardableResult
-    public func present<Content: PresentationContent>(
+    public func present(
         isPresented: UIBinding<Bool>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping () -> Content
+        content: @escaping () -> NSViewController
     ) -> ObserveToken {
         present(item: isPresented.toOptionalUnit, style: style, onDismiss: onDismiss) { _ in content() }
     }
 
     @discardableResult
-    public func present<Item: Identifiable, Content: PresentationContent>(
+    public func present<Item: Identifiable>(
         item: UIBinding<Item?>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> Content
+        content: @escaping (Item) -> NSViewController
     ) -> ObserveToken {
         present(item: item, id: \.id, style: style, onDismiss: onDismiss, content: content)
     }
 
     @_disfavoredOverload
     @discardableResult
-    public func present<Item: Identifiable, Content: PresentationContent>(
+    public func present<Item: Identifiable>(
         item: UIBinding<Item?>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> Content
+        content: @escaping (UIBinding<Item>) -> NSViewController
     ) -> ObserveToken {
         present(item: item, id: \.id, style: style, onDismiss: onDismiss, content: content)
     }
 
     @discardableResult
-    public func present<Item, ID: Hashable, Content: PresentationContent>(
+    public func present<Item, ID: Hashable>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> Content
+        content: @escaping (Item) -> NSViewController
     ) -> ObserveToken {
         present(item: item, id: id, style: style, onDismiss: onDismiss) {
             content($0.wrappedValue)
@@ -63,12 +60,12 @@ extension NSViewController {
 
     @_disfavoredOverload
     @discardableResult
-    public func present<Item, ID: Hashable, Content: PresentationContent>(
+    public func present<Item, ID: Hashable>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         style: TransitionStyle,
         onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> Content
+        content: @escaping (UIBinding<Item>) -> NSViewController
     ) -> ObserveToken {
         destination(item: item, id: id) { $item in
             content($item)
@@ -89,12 +86,12 @@ extension NSViewController {
     }
 
     @discardableResult
-    public func destination<Content: PresentationContent>(
+    public func destination(
         isPresented: UIBinding<Bool>,
-        content: @escaping () -> Content,
-        present: @escaping (Content, UITransaction) -> Void,
+        content: @escaping () -> NSViewController,
+        present: @escaping (NSViewController, UITransaction) -> Void,
         dismiss: @escaping (
-            _ child: Content,
+            _ child: NSViewController,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObserveToken {
@@ -107,16 +104,16 @@ extension NSViewController {
     }
 
     @discardableResult
-    public func destination<Item, Content: PresentationContent>(
+    public func destination<Item>(
         item: UIBinding<Item?>,
-        content: @escaping (UIBinding<Item>) -> Content,
-        present: @escaping (Content, UITransaction) -> Void,
+        content: @escaping (UIBinding<Item>) -> NSViewController,
+        present: @escaping (NSViewController, UITransaction) -> Void,
         dismiss: @escaping (
-            _ child: Content,
+            _ child: NSViewController,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObserveToken {
-        let presentationObserver: PresentationObserver<Content> = presentationObserver()
+        let presentationObserver: PresentationObserver = presentationObserver()
         return presentationObserver.observe(
             item: item,
             id: { _ in nil },
@@ -127,29 +124,31 @@ extension NSViewController {
     }
 
     @discardableResult
-    public func destination<Item, ID: Hashable, Content: PresentationContent>(
+    public func destination<Item, ID: Hashable>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
-        content: @escaping (UIBinding<Item>) -> Content,
+        content: @escaping (UIBinding<Item>) -> NSViewController,
         present: @escaping (
-            _ child: Content,
+            _ child: NSViewController,
             _ transaction: UITransaction
         ) -> Void,
         dismiss: @escaping (
-            _ child: Content,
+            _ child: NSViewController,
             _ transaction: UITransaction
         ) -> Void
     ) -> ObserveToken {
-        let presentationObserver: PresentationObserver<Content> = presentationObserver()
+        let presentationObserver: PresentationObserver = presentationObserver()
         return presentationObserver.observe(item: item, id: { $0[keyPath: id] }, content: content, begin: present, end: dismiss)
     }
 
-    private func presentationObserver<Content: PresentationContent>() -> PresentationObserver<Content> {
-        if let observer = objc_getAssociatedObject(self, presentationObserverKeys.key(of: Content.self)) as? PresentationObserver<Content> {
+    private static var presentationObserverKey = malloc(1)!
+    
+    private func presentationObserver() -> PresentationObserver {
+        if let observer = objc_getAssociatedObject(self, Self.presentationObserverKey) as? PresentationObserver {
             return observer
         } else {
-            let observer = PresentationObserver<Content>(owner: self)
-            objc_setAssociatedObject(self, presentationObserverKeys.key(of: Content.self), observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            let observer = PresentationObserver(owner: self)
+            objc_setAssociatedObject(self, Self.presentationObserverKey, observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return observer
         }
     }

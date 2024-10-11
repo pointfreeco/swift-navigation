@@ -3,13 +3,12 @@
 import AppKit
 
 @MainActor
-public protocol ModalSessionContent: ModalContent {
+protocol ModalSessionContent: ModalContent {
     func appKitNavigationBeginModalSession() -> NSApplication.ModalSession
 }
 
 extension NSWindow: ModalSessionContent {
-
-    public func appKitNavigationBeginModalSession() -> NSApplication.ModalSession {
+    func appKitNavigationBeginModalSession() -> NSApplication.ModalSession {
         NSApplication.shared.beginModalSession(for: self)
     }
 }

@@ -9,53 +9,53 @@ private var sheetObserverKeys = AssociatedKeys()
 
 extension SheetContent {
     @discardableResult
-    public func sheet<Content: SheetContent>(
+    private func _sheet<Content: SheetContent>(
         isSheeted: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping () -> Content
     ) -> ObserveToken {
-        sheet(item: isSheeted.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+        _sheet(item: isSheeted.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
     }
 
     @discardableResult
-    public func sheet<Item: Identifiable, Content: SheetContent>(
+    private func _sheet<Item: Identifiable, Content: SheetContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
     ) -> ObserveToken {
-        sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
+        _sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
     @_disfavoredOverload
     @discardableResult
-    public func sheet<Item: Identifiable, Content: SheetContent>(
+    private func _sheet<Item: Identifiable, Content: SheetContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
     ) -> ObserveToken {
-        sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
+        _sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
     @discardableResult
-    public func sheet<Item, ID: Hashable, Content: SheetContent>(
+    private func _sheet<Item, ID: Hashable, Content: SheetContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
     ) -> ObserveToken {
-        sheet(item: item, id: id, onDismiss: onDismiss) {
+        _sheet(item: item, id: id, onDismiss: onDismiss) {
             content($0.wrappedValue)
         }
     }
 
     @discardableResult
-    public func sheet<Item, ID: Hashable, Content: SheetContent>(
+    private func _sheet<Item, ID: Hashable, Content: SheetContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
     ) -> ObserveToken {
-        sheet(item: item, id: id) { $item in
+        _sheet(item: item, id: id) { $item in
             content($item)
         } beginSheet: { [weak self] child, _ in
             guard let self else { return }
@@ -80,7 +80,7 @@ extension SheetContent {
         }
     }
 
-    private func sheet<Item, ID: Hashable, Content: SheetContent>(
+    private func _sheet<Item, ID: Hashable, Content: SheetContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         content: @escaping (UIBinding<Item>) -> Content,

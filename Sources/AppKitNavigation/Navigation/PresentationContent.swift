@@ -3,17 +3,17 @@
 import AppKit
 
 @MainActor
-public protocol PresentationContent: NavigationContent {
+protocol PresentationContent: NavigationContent {
     func presented(from presentingViewController: NSViewController, style: NSViewController.TransitionStyle)
     func dismiss(from presentingViewController: NSViewController)
 }
 
 extension NSViewController: PresentationContent {
-    public func presented(from presentingViewController: NSViewController, style: TransitionStyle) {
+    func presented(from presentingViewController: NSViewController, style: TransitionStyle) {
         presentingViewController.present(self, for: style)
     }
 
-    public func dismiss(from presentingViewController: NSViewController) {
+    func dismiss(from presentingViewController: NSViewController) {
         presentingViewController.dismiss(self)
     }
 
