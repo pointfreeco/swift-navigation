@@ -87,7 +87,11 @@
   }
 
   extension Binding where Value: Sendable {
-    public func _printChanges(_ prefix: String = "") -> Self {
+    public func _printChanges(
+      _ prefix: String = "",
+      fileID: StaticString = #fileID,
+      line: UInt = #line
+    ) -> Self {
       Self(
         get: { self.wrappedValue },
         set: { newValue, transaction in
@@ -95,7 +99,12 @@
           debugPrint(self.wrappedValue, terminator: "", to: &oldDescription)
           var newDescription = ""
           debugPrint(newValue, terminator: "", to: &newDescription)
-          print("\(prefix.isEmpty ? "\(Self.self)" : prefix):", oldDescription, "=", newDescription)
+          print(
+            "\(prefix.isEmpty ? "\(Self.self)@\(fileID):\(line)" : prefix):",
+            oldDescription,
+            "→",
+            newDescription
+          )
           self.transaction(transaction).wrappedValue = newValue
         }
       )

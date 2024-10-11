@@ -149,6 +149,9 @@
     ///     dismisses the alert, and the action is fed to the `action` closure.
     ///   - handler: A closure that is called with an action from a particular alert button when
     ///     tapped.
+    #if compiler(>=6)
+      @MainActor
+    #endif
     public func alert<Value>(
       _ state: Binding<AlertState<Value>?>,
       action handler: @escaping (Value?) -> Void = { (_: Never?) in }
