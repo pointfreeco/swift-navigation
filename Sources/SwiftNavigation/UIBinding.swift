@@ -374,11 +374,11 @@ public struct UIBinding<Value>: Sendable {
   /// - Parameter keyPath: A key path to a specific resulting value.
   /// - Returns: A new binding.
   public subscript<Member>(
-    dynamicMember keyPath: WritableKeyPath<Value, Member>
+    dynamicMember keyPath: _SendableWritableKeyPath<Value, Member>
   ) -> UIBinding<Member> {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member> {
       UIBinding<Member>(
-        location: _UIBindingAppendKeyPath(base: location, keyPath: sendableKeyPath(keyPath)),
+        location: _UIBindingAppendKeyPath(base: location, keyPath: keyPath),
         transaction: transaction
       )
     }
@@ -391,12 +391,12 @@ public struct UIBinding<Value>: Sendable {
   /// - Returns: A new binding.
   @_disfavoredOverload
   public subscript<Member>(
-    dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+    dynamicMember keyPath: _SendableKeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
   ) -> UIBinding<Member>?
   where Value: CasePathable {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingEnumToOptionalCase(base: location, keyPath: sendableKeyPath(keyPath)),
+        location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath),
         transaction: transaction
       )
     }
@@ -408,12 +408,12 @@ public struct UIBinding<Value>: Sendable {
   /// - Parameter keyPath: A key path to a specific value.
   /// - Returns: A new binding.
   public subscript<Wrapped, Member>(
-    dynamicMember keyPath: WritableKeyPath<Wrapped, Member>
+    dynamicMember keyPath: _SendableWritableKeyPath<Wrapped, Member>
   ) -> UIBinding<Member?>
   where Value == Wrapped? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalToMember(base: location, keyPath: sendableKeyPath(keyPath)),
+        location: _UIBindingOptionalToMember(base: location, keyPath: keyPath),
         transaction: transaction
       )
     }
@@ -425,12 +425,12 @@ public struct UIBinding<Value>: Sendable {
   /// - Parameter keyPath: A case key path to a specific associated value.
   /// - Returns: A new binding.
   public subscript<V: CasePathable, Member>(
-    dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Member>>
+    dynamicMember keyPath: _SendableKeyPath<V.AllCasePaths, AnyCasePath<V, Member>>
   ) -> UIBinding<Member?>
   where Value == V? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalEnumToCase(base: location, keyPath: sendableKeyPath(keyPath)),
+        location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath),
         transaction: transaction
       )
     }
