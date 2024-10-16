@@ -93,8 +93,8 @@ active at a time. However, SwiftUI does not come with the tools to drive navigat
 model. This is where the SwiftUINavigation tools becomes useful.
 
 > [!IMPORTANT]
-> To get access to the tools described below you must depend on the [SwiftNavigation package](https://github.com/pointfreeco/swift-navigation#installation) and
-> import the **SwiftUINavigation** library.
+> To get access to the tools described below you must depend on the SwiftNavigation package
+> (see [Installation](#installation)) and import the **SwiftUINavigation** library.
 
 We start by annotating the `Destination` enum with the `@CasePathable` macro, which allows one to
 refer to the cases of an enum with dot-syntax just like one does with structs and properties:
