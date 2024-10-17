@@ -2,6 +2,23 @@ import CustomDump
 import XCTest
 
 @MainActor
+func assertEventually(
+  _ expression: @autoclosure @escaping @MainActor () -> Bool,
+  timeout: TimeInterval = 1,
+  file: StaticString = #file,
+  line: UInt = #line
+) async {
+  await _assertEventually(
+    expression(),
+    condition: { $0 },
+    assert: XCTAssertTrue,
+    timeout: timeout,
+    file: file,
+    line: line
+  )
+}
+
+@MainActor
 func assertEventuallyEqual<T: Equatable>(
   _ expression1: @autoclosure @escaping @MainActor () -> T,
   _ expression2: @autoclosure @escaping @MainActor () -> T,
