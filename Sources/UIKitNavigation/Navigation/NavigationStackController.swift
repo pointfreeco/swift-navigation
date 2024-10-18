@@ -19,6 +19,7 @@
         }
       }
     }
+    private var didPop: Set<UINavigationPath.Element> = []
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
 
@@ -61,6 +62,10 @@
       super.viewDidLoad()
 
       super.delegate = pathDelegate
+
+      interactivePopGestureRecognizer?.addTarget(
+        self, action: #selector(interactivePopGestureRecognizerAction)
+      )
 
       if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
         traitOverrides.push = UIPushAction { [weak self] value in
@@ -152,6 +157,17 @@
           setViewControllers(newViewControllers, animated: !transaction.uiKit.disablesAnimations)
         }
       }
+    }
+
+    @objc private func interactivePopGestureRecognizerAction(
+      _ gesture: UIScreenEdgePanGestureRecognizer
+    ) {
+      guard
+        gesture.state == .began,
+        let last = path.last,
+        !viewControllers.compactMap(\.navigationID).contains(last)
+      else { return }
+      didPop.insert(last)
     }
 
     fileprivate func viewController(
@@ -307,6 +323,29 @@
           navigationController, animationControllerFor: operation, from: fromVC, to: toVC
         )
       }
+    }
+  }
+
+  extension NavigationStackController: UINavigationBarDelegate {
+    public func navigationBar(
+      _ navigationBar: UINavigationBar, shouldPop item: UINavigationItem
+    ) -> Bool {
+      if let navigationID = viewControllers
+        .first(where: { $0.navigationItem == item })?
+        .navigationID
+      {
+        didPop.insert(navigationID)
+      }
+      return true
+    }
+
+    public func navigationBar(_ navigationBar: UINavigationBar, didPop item: UINavigationItem) {
+      path.removeAll(where: { didPop.contains($0) })
+      didPop.removeAll()
+    }
+
+    public func navigationBar(_ navigationBar: UINavigationBar, didPush item: UINavigationItem) {
+      didPop.removeAll()
     }
   }
 
