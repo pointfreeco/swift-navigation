@@ -63,9 +63,11 @@
 
       super.delegate = pathDelegate
 
-      interactivePopGestureRecognizer?.addTarget(
-        self, action: #selector(interactivePopGestureRecognizerAction)
-      )
+      #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
+        interactivePopGestureRecognizer?.addTarget(
+          self, action: #selector(interactivePopGestureRecognizerAction)
+        )
+      #endif
 
       if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
         traitOverrides.push = UIPushAction { [weak self] value in
@@ -159,16 +161,16 @@
       }
     }
 
-    @objc private func interactivePopGestureRecognizerAction(
-      _ gesture: UIScreenEdgePanGestureRecognizer
-    ) {
-      guard
-        gesture.state == .began,
-        let last = path.last,
-        !viewControllers.compactMap(\.navigationID).contains(last)
-      else { return }
-      didPop.insert(last)
-    }
+    #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
+      @objc private func interactivePopGestureRecognizerAction(_ gesture: UIGestureRecognizer) {
+        guard
+          gesture.state == .began,
+          let last = path.last,
+          !viewControllers.compactMap(\.navigationID).contains(last)
+        else { return }
+        didPop.insert(last)
+      }
+    #endif
 
     fileprivate func viewController(
       for navigationID: UINavigationPath.Element
