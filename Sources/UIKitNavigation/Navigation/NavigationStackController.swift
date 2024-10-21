@@ -183,14 +183,18 @@
     open override func popViewController(animated: Bool) -> UIViewController? {
       let viewController = super.popViewController(animated: animated)
       if let viewController, let navigationID = viewController.navigationID {
-        switch interactivePopGestureRecognizer?.state {
-        case .possible?, nil:
+        #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
+          switch interactivePopGestureRecognizer?.state {
+          case .possible?, nil:
+            path.removeAll(where: { $0 == navigationID })
+          case .began, .changed, .ended, .cancelled, .failed:
+            fallthrough
+          @unknown default:
+            break
+          }
+        #else
           path.removeAll(where: { $0 == navigationID })
-        case .began, .changed, .ended, .cancelled, .failed:
-          fallthrough
-        @unknown default:
-          break
-        }
+        #endif
       }
       return viewController
     }
