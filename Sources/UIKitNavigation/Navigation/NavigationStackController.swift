@@ -411,6 +411,7 @@
     }
 
     public func navigationBar(_ navigationBar: UINavigationBar, didPop item: UINavigationItem) {
+      guard !elementsBeingPopped.isEmpty else { return }
       path.removeAll(where: { elementsBeingPopped.contains($0) })
       elementsBeingPopped.removeAll()
     }
