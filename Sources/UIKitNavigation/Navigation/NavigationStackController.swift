@@ -19,11 +19,11 @@
         }
       }
     }
-    private var didPop: Set<UINavigationPath.Element> = []
+    private var elementsBeingPopped: Set<UINavigationPath.Element> = []
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
 
-    public override weak var delegate: (any UINavigationControllerDelegate)? {
+    open override weak var delegate: (any UINavigationControllerDelegate)? {
       get { pathDelegate.base }
       set { pathDelegate.base = newValue }
     }
@@ -161,6 +161,45 @@
       }
     }
 
+    open override func popToRootViewController(animated: Bool) -> [UIViewController]? {
+      path.removeAll()
+      return super.popToRootViewController(animated: animated)
+    }
+
+    open override func popToViewController(
+      _ viewController: UIViewController, animated: Bool
+    ) -> [UIViewController]? {
+      let viewControllers = super.popToViewController(viewController, animated: animated)
+      if let viewControllers {
+        for viewController in viewControllers {
+          if let navigationID = viewController.navigationID {
+            path.removeAll(where: { $0 == navigationID })
+          }
+        }
+      }
+      return viewControllers
+    }
+
+    open override func popViewController(animated: Bool) -> UIViewController? {
+      let viewController = super.popViewController(animated: animated)
+      if let viewController, let navigationID = viewController.navigationID {
+        switch interactivePopGestureRecognizer?.state {
+        case .possible?, nil:
+          path.removeAll(where: { $0 == navigationID })
+        case .began, .changed, .ended, .cancelled, .failed:
+          fallthrough
+        @unknown default:
+          break
+        }
+      }
+      return viewController
+    }
+
+    open override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
+      path = viewControllers.compactMap(\.navigationID)
+      super.setViewControllers(viewControllers, animated: animated)
+    }
+
     #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
       @objc private func interactivePopGestureRecognizerAction(_ gesture: UIGestureRecognizer) {
         guard
@@ -168,7 +207,7 @@
           let last = path.last,
           !viewControllers.compactMap(\.navigationID).contains(last)
         else { return }
-        didPop.insert(last)
+        elementsBeingPopped.insert(last)
       }
     #endif
 
@@ -336,18 +375,18 @@
         .first(where: { $0.navigationItem == item })?
         .navigationID
       {
-        didPop.insert(navigationID)
+        elementsBeingPopped.insert(navigationID)
       }
       return true
     }
 
     public func navigationBar(_ navigationBar: UINavigationBar, didPop item: UINavigationItem) {
-      path.removeAll(where: { didPop.contains($0) })
-      didPop.removeAll()
+      path.removeAll(where: { elementsBeingPopped.contains($0) })
+      elementsBeingPopped.removeAll()
     }
 
     public func navigationBar(_ navigationBar: UINavigationBar, didPush item: UINavigationItem) {
-      didPop.removeAll()
+      elementsBeingPopped.removeAll()
     }
   }
 
