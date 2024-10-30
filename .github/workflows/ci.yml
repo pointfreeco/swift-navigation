@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - '15.4'
+          - '16.0'
         variation:
           - ios
           - macos
