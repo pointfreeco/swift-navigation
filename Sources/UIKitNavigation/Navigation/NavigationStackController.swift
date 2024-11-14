@@ -145,7 +145,9 @@
                 found among the view controllers on the path.
                 """
               )
-              invalidIndices.insert(index)
+              if !invalidIndices.isEmpty {
+                  path.remove(atOffsets: invalidIndices)
+              }
             }
           }
           path.remove(atOffsets: invalidIndices)
