@@ -145,12 +145,12 @@
                 found among the view controllers on the path.
                 """
               )
-              if !invalidIndices.isEmpty {
-                  path.remove(atOffsets: invalidIndices)
-              }
+              invalidIndices.insert(index)
             }
           }
-          path.remove(atOffsets: invalidIndices)
+          if !invalidIndices.isEmpty {
+              path.remove(atOffsets: invalidIndices)
+          }
           setViewControllers(newViewControllers, animated: !transaction.uiKit.disablesAnimations)
         }
       }
