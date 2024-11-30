@@ -2,6 +2,6 @@
 
 import AppKit
 
-extension NSMenuItem: TargetActionProtocol, @unchecked Sendable {}
+extension NSMenuItem: TargetActionProtocol, @unchecked @retroactive Sendable {}
 
 #endif

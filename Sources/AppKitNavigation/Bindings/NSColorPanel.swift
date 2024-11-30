@@ -2,6 +2,7 @@
 
 import AppKit
 
+extension NSColorPanel: @retroactive Sendable {}
 extension NSColorPanel: TargetActionProtocol {
     public var target: AnyObject? {
         set { setTarget(newValue) }

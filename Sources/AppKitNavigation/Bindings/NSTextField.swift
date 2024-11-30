@@ -4,7 +4,8 @@ import Combine
 import SwiftNavigation
 
 @MainActor
-extension NSTextField: NSTextViewDelegate {
+extension NSTextField: @retroactive NSTextDelegate {}
+extension NSTextField: @retroactive NSTextViewDelegate {
     /// Creates a new text field with the specified frame and registers the binding against its
     /// text.
     ///
@@ -337,6 +338,6 @@ public struct AppKitTextSelection: Hashable, Sendable {
     }
 }
 
-extension AnyCancellable: @unchecked Sendable {}
+extension AnyCancellable: @unchecked @retroactive Sendable {}
 
 #endif

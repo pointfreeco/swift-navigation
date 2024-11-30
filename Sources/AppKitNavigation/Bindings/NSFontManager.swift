@@ -5,9 +5,10 @@ import ConcurrencyExtras
 import AppKit
 import IdentifiedCollections
 
-extension NSFontManager: @unchecked Sendable {
+@MainActor
+extension NSFontManager: @unchecked @retroactive Sendable {
     
-    private static let appkitNavigationDelegateKey = malloc(1)!
+   private static let appkitNavigationDelegateKey = malloc(1)!
 
     private var appkitNavigationDelegate: Delegate {
         set {
