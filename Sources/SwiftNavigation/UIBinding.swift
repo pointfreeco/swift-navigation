@@ -560,11 +560,22 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   }
 }
 
-@Perceptible
-private final class _UIBindingWrapper<Value> {
-  var value: Value
+private final class _UIBindingWrapper<Value>: Perceptible {
+  var _value: Value
+  var value: Value {
+    get {
+      _$perceptionRegistrar.access(self, keyPath: \.value)
+      return _value
+    }
+    set {
+      _$perceptionRegistrar.withMutation(of: self, keyPath: \.value) {
+        _value = newValue
+      }
+    }
+  }
+  private let _$perceptionRegistrar = PerceptionRegistrar()
   init(_ value: Value) {
-    self.value = value
+    self._value = value
   }
 }
 
