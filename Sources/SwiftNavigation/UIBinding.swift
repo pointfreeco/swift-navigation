@@ -572,8 +572,13 @@ private final class _UIBindingWrapper<Value>: Perceptible {
         _value = newValue
       }
     }
+    _modify {
+      _$perceptionRegistrar.willSet(self, keyPath: \.value)
+      defer { _$perceptionRegistrar.didSet(self, keyPath: \.value) }
+      yield &_value
+    }
   }
-  private let _$perceptionRegistrar = PerceptionRegistrar()
+  let _$perceptionRegistrar = PerceptionRegistrar()
   init(_ value: Value) {
     self._value = value
   }
