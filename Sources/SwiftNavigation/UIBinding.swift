@@ -560,7 +560,7 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   }
 }
 
-private final class _UIBindingWrapper<Value>: Perceptible {
+private final class _UIBindingWrapper<Value>: Perceptible, Observable {
   var _value: Value
   var value: Value {
     get {
