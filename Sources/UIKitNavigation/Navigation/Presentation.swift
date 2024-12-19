@@ -445,13 +445,15 @@
 
   @MainActor
   private class Presented {
-    weak var controller: UIViewController?
+    var controller: UIViewController?
     let presentationID: AnyHashable?
     deinit {
       // NB: This can only be assumed because it is held in a UIViewController and is guaranteed to
       //     deinit alongside it on the main thread. If we use this other places we should force it
       //     to be a UIViewController as well, to ensure this functionality.
       MainActor._assumeIsolated {
+        defer { controller = nil }
+
         guard let controller, controller.parent == nil else { return }
         controller.dismiss(animated: false)
       }
