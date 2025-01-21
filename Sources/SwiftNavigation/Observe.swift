@@ -172,9 +172,9 @@ private func onChange(
 ///   }
 /// }
 /// ```
-public final class ObserveToken: @unchecked Sendable, HashableObject {
+public final class ObserveToken: Sendable, HashableObject {
   fileprivate let _isCancelled = LockIsolated(false)
-  public var onCancel: @Sendable () -> Void
+  public let onCancel: @Sendable () -> Void
 
   public var isCancelled: Bool {
     _isCancelled.withValue { $0 }
