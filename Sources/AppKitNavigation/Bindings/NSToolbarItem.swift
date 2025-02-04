@@ -2,16 +2,7 @@
 
 import AppKit
 
-extension NSToolbarItem: NSTargetActionProtocol {
-    public var appkitNavigationTarget: AnyObject? {
-        set { target = newValue }
-        get { target }
-    }
-
-    public var appkitNavigationAction: Selector? {
-        set { action = newValue }
-        get { action }
-    }
-}
+extension NSToolbarItem: @retroactive Sendable {}
+extension NSToolbarItem: TargetActionProtocol {}
 
 #endif

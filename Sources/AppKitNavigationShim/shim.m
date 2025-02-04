@@ -27,6 +27,8 @@
     method_exchangeImplementations(
         class_getInstanceMethod(NSViewController.class, @selector(dismissViewController:)),
         class_getInstanceMethod(NSViewController.class, @selector(AppKitNavigation_dismissViewController:))
+        );
+  method_exchangeImplementations(
         class_getInstanceMethod(NSSavePanel.class, NSSelectorFromString(@"setFinalURL:")),
         class_getInstanceMethod(NSSavePanel.class, @selector(AppKitNavigation_setFinalURL:))
         );

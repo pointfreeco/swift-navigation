@@ -1176,7 +1176,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftUINavigation;
 		};
->>>>>>> origin/appkit-navigation-bindings
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CA47378C272F08EF0012CAC3 /* Project object */;
