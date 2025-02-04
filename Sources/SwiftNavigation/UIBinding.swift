@@ -1,6 +1,10 @@
 import ConcurrencyExtras
 import IssueReporting
 
+#if canImport(Observation)
+  import Observation
+#endif
+
 /// A property wrapper type that can read and write an observable value.
 ///
 /// Like SwiftUI's `Binding`, but works for UIKit, AppKit, and non-Apple platforms such as
@@ -378,7 +382,7 @@ public struct UIBinding<Value>: Sendable {
   ) -> UIBinding<Member> {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member> {
       UIBinding<Member>(
-        location: _UIBindingAppendKeyPath(base: location, keyPath: sendableKeyPath(keyPath)),
+        location: _UIBindingAppendKeyPath(base: location, keyPath: keyPath.unsafeSendable()),
         transaction: transaction
       )
     }
@@ -396,7 +400,7 @@ public struct UIBinding<Value>: Sendable {
   where Value: CasePathable {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingEnumToOptionalCase(base: location, keyPath: sendableKeyPath(keyPath)),
+        location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath.unsafeSendable()),
         transaction: transaction
       )
     }
@@ -413,7 +417,7 @@ public struct UIBinding<Value>: Sendable {
   where Value == Wrapped? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalToMember(base: location, keyPath: sendableKeyPath(keyPath)),
+        location: _UIBindingOptionalToMember(base: location, keyPath: keyPath.unsafeSendable()),
         transaction: transaction
       )
     }
@@ -430,7 +434,7 @@ public struct UIBinding<Value>: Sendable {
   where Value == V? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalEnumToCase(base: location, keyPath: sendableKeyPath(keyPath)),
+        location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath.unsafeSendable()),
         transaction: transaction
       )
     }
@@ -560,13 +564,33 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   }
 }
 
-@Perceptible
-private final class _UIBindingWrapper<Value> {
-  var value: Value
+private final class _UIBindingWrapper<Value>: Perceptible {
+  var _value: Value
+  var value: Value {
+    get {
+      _$perceptionRegistrar.access(self, keyPath: \.value)
+      return _value
+    }
+    set {
+      _$perceptionRegistrar.withMutation(of: self, keyPath: \.value) {
+        _value = newValue
+      }
+    }
+    _modify {
+      _$perceptionRegistrar.willSet(self, keyPath: \.value)
+      defer { _$perceptionRegistrar.didSet(self, keyPath: \.value) }
+      yield &_value
+    }
+  }
+  let _$perceptionRegistrar = PerceptionRegistrar()
   init(_ value: Value) {
-    self.value = value
+    self._value = value
   }
 }
+
+#if canImport(Observation)
+  extension _UIBindingWrapper: Observable {}
+#endif
 
 private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
   let value: Value
