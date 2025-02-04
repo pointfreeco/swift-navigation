@@ -10,12 +10,12 @@ extension NSSavePanel {
     }
 
     @discardableResult
-    public func bind(url binding: UIBinding<URL?>) -> ObservationToken {
+    public func bind(url binding: UIBinding<URL?>) -> ObserveToken {
         appKitNavigation_onFinalURL = { url in
             binding.wrappedValue = url
         }
 
-        let observationToken = ObservationToken { [weak self] in
+        let observationToken = ObserveToken { [weak self] in
             guard let self else { return }
             MainActor._assumeIsolated {
                 self.appKitNavigation_onFinalURL = nil
@@ -38,12 +38,12 @@ extension NSOpenPanel {
     }
 
     @discardableResult
-    public func bind(urls binding: UIBinding<[URL]>) -> ObservationToken {
+    public func bind(urls binding: UIBinding<[URL]>) -> ObserveToken {
         appKitNavigation_onFinalURLs = { urls in
             binding.wrappedValue = urls
         }
 
-        let observationToken = ObservationToken { [weak self] in
+        let observationToken = ObserveToken { [weak self] in
             guard let self else { return }
             MainActor._assumeIsolated {
                 self.appKitNavigation_onFinalURLs = nil

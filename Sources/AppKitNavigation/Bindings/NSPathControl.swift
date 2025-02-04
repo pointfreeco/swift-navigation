@@ -21,7 +21,7 @@ extension NSPathControl {
     ///   selected url changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(url: UIBinding<URL?>) -> ObservationToken {
+    public func bind(url: UIBinding<URL?>) -> ObserveToken {
         bind(url, to: \.url)
     }
 }

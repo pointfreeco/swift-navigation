@@ -14,6 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface NSSavePanel (AppKitNavigation)
+@property (nullable) void (^ AppKitNavigation_onFinalURL)(NSURL *_Nullable);
+@property (nullable) void (^ AppKitNavigation_onFinalURLs)(NSArray<NSURL *> *);
+@end
+
 NS_ASSUME_NONNULL_END
 #endif
 #endif /* if __has_include(<TargetConditionals.h>) */

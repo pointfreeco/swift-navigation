@@ -9,8 +9,7 @@ private final class Model {
 }
 
 final class UIBindableTests: XCTestCase {
-  @MainActor
-  func testDynamicMemberLookupBindable() throws {
+  func testDynamicMemberLookupBindable() {
     @UIBindable var model = Model()
     let textBinding = $model.text
     XCTAssert(type(of: textBinding) == UIBinding<String>.self)
@@ -24,8 +23,7 @@ final class UIBindableTests: XCTestCase {
     XCTAssertEqual(textBinding.wrappedValue, "Blob, Jr.")
   }
 
-  @MainActor
-  func testEquatableHashable() throws {
+  func testEquatableHashable() {
     let model = Model()
     @UIBindable var model1 = model
     @UIBindable var model2 = model

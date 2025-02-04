@@ -1,3 +1,4 @@
+import ConcurrencyExtras
 import IssueReporting
 
 /// A property wrapper type that can read and write an observable value.
@@ -116,7 +117,7 @@ import IssueReporting
 /// ```
 ///
 /// And you can also build your own navigation tools by utilizing ``UIBinding`` and
-/// ``observe(isolation:_:)-93yzu``. You can even build navigation tools for non-Apple platforms,
+/// ``observe(isolation:_:)-9xf99``. You can even build navigation tools for non-Apple platforms,
 /// such as Windows, Linux, Wasm and more.
 ///
 /// For example, it is possible to build a tool that drives alerts in HTML from a binding of a
@@ -243,7 +244,12 @@ public struct UIBinding<Value>: Sendable {
 
   /// Creates a binding by projecting the base optional value to a Boolean value.
   ///
-  /// - Parameter base: A value to project to a Boolean value.
+  /// - Parameters:
+  ///   - base: A value to project to a Boolean value.
+  ///   - fileID: The source `#fileID` associated with the binding.
+  ///   - filePath: The source `#filePath` associated with the binding.
+  ///   - line: The source `#line` associated with the binding.
+  ///   - column: The source `#column` associated with the binding.
   public init<V>(
     _ base: UIBinding<V?>,
     fileID: StaticString = #fileID,
@@ -372,7 +378,7 @@ public struct UIBinding<Value>: Sendable {
   ) -> UIBinding<Member> {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member> {
       UIBinding<Member>(
-        location: _UIBindingAppendKeyPath(base: location, keyPath: keyPath),
+        location: _UIBindingAppendKeyPath(base: location, keyPath: sendableKeyPath(keyPath)),
         transaction: transaction
       )
     }
@@ -390,7 +396,7 @@ public struct UIBinding<Value>: Sendable {
   where Value: CasePathable {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath),
+        location: _UIBindingEnumToOptionalCase(base: location, keyPath: sendableKeyPath(keyPath)),
         transaction: transaction
       )
     }
@@ -407,7 +413,7 @@ public struct UIBinding<Value>: Sendable {
   where Value == Wrapped? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalToMember(base: location, keyPath: keyPath),
+        location: _UIBindingOptionalToMember(base: location, keyPath: sendableKeyPath(keyPath)),
         transaction: transaction
       )
     }
@@ -424,7 +430,7 @@ public struct UIBinding<Value>: Sendable {
   where Value == V? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath),
+        location: _UIBindingOptionalEnumToCase(base: location, keyPath: sendableKeyPath(keyPath)),
         transaction: transaction
       )
     }
@@ -468,14 +474,14 @@ extension UIBinding: Identifiable where Value: Identifiable {
 }
 
 /// A unique identifier for a binding.
-public struct UIBindingIdentifier: Hashable {
-  private let location: AnyHashable
+public struct UIBindingIdentifier: Hashable, Sendable {
+  private let location: AnyHashableSendable
 
   /// Creates an instance that uniquely identifies the given binding.
   ///
   /// - Parameter binding: An instance of a binding.
   public init<Value>(_ binding: UIBinding<Value>) {
-    self.location = AnyHashable(binding.location)
+    self.location = AnyHashableSendable(binding.location)
   }
 }
 
@@ -579,12 +585,10 @@ private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
   }
 }
 
-private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding, @unchecked
-  Sendable
-{
+private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding, Sendable {
   let base: Base
-  let keyPath: WritableKeyPath<Base.Value, Value>
-  init(base: Base, keyPath: WritableKeyPath<Base.Value, Value>) {
+  let keyPath: _SendableWritableKeyPath<Base.Value, Value>
+  init(base: Base, keyPath: _SendableWritableKeyPath<Base.Value, Value>) {
     self.base = base
     self.keyPath = keyPath
   }
@@ -672,13 +676,14 @@ where Base.Value: Hashable {
   }
 }
 
-private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding, @unchecked
-  Sendable
+private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding
 where Base.Value: CasePathable {
   let base: Base
-  let keyPath: KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
+  let keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
   let casePath: AnyCasePath<Base.Value, Case>
-  init(base: Base, keyPath: KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>) {
+  init(
+    base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
+  ) {
     self.base = base
     self.keyPath = keyPath
     self.casePath = Base.Value.allCasePaths[keyPath: keyPath]
@@ -704,7 +709,7 @@ where Base.Value: CasePathable {
 
 private final class _UIBindingOptionalToBool<
   Base: _UIBinding<Wrapped?>, Wrapped
->: _UIBinding, @unchecked Sendable {
+>: _UIBinding {
   let base: Base
   let fileID: StaticString
   let filePath: StaticString
@@ -755,10 +760,10 @@ private final class _UIBindingOptionalToBool<
 
 private final class _UIBindingOptionalToMember<
   Base: _UIBinding<Wrapped?>, Wrapped, Value
->: _UIBinding, @unchecked Sendable {
+>: _UIBinding {
   let base: Base
-  let keyPath: WritableKeyPath<Wrapped, Value>
-  init(base: Base, keyPath: WritableKeyPath<Wrapped, Value>) {
+  let keyPath: _SendableWritableKeyPath<Wrapped, Value>
+  init(base: Base, keyPath: _SendableWritableKeyPath<Wrapped, Value>) {
     self.base = base
     self.keyPath = keyPath
   }
@@ -785,11 +790,11 @@ private final class _UIBindingOptionalToMember<
 
 private final class _UIBindingOptionalEnumToCase<
   Base: _UIBinding<Enum?>, Enum: CasePathable, Case
->: _UIBinding, @unchecked Sendable {
+>: _UIBinding {
   let base: Base
-  let keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
+  let keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
   let casePath: AnyCasePath<Enum, Case>
-  init(base: Base, keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
+  init(base: Base, keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
     self.base = base
     self.keyPath = keyPath
     self.casePath = Enum.allCasePaths[keyPath: keyPath]
@@ -813,7 +818,7 @@ private final class _UIBindingOptionalEnumToCase<
   }
 }
 
-private final class _UIBindingPrintChanges<Base: _UIBinding>: _UIBinding, @unchecked Sendable {
+private final class _UIBindingPrintChanges<Base: _UIBinding>: _UIBinding {
   let base: Base
   let prefix: String
   let fileID: StaticString

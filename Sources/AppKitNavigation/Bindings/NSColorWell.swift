@@ -20,7 +20,7 @@ extension NSColorWell {
     ///   when the selected color changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(color: UIBinding<NSColor>) -> ObservationToken {
+    public func bind(color: UIBinding<NSColor>) -> ObserveToken {
         bind(color, to: \.color)
     }
 }

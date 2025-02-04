@@ -1,5 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
 import UIKitNavigation
+import UIKitNavigationShim
 import XCTest
 
 final class NavigationStackTests: XCTestCase {

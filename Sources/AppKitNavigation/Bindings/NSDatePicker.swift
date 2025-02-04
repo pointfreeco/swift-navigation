@@ -20,7 +20,7 @@ extension NSDatePicker {
     ///   selected date changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(date: UIBinding<Date>) -> ObservationToken {
+    public func bind(date: UIBinding<Date>) -> ObserveToken {
         bind(date, to: \.dateValue)
     }
 }

@@ -4,7 +4,8 @@ import Combine
 import SwiftNavigation
 
 @MainActor
-extension NSTextField: NSTextViewDelegate {
+extension NSTextField: @retroactive NSTextDelegate {}
+extension NSTextField: @retroactive NSTextViewDelegate {
     /// Creates a new text field with the specified frame and registers the binding against its
     /// text.
     ///
@@ -35,7 +36,7 @@ extension NSTextField: NSTextViewDelegate {
     ///   changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(text: UIBinding<String>) -> ObservationToken {
+    public func bind(text: UIBinding<String>) -> ObserveToken {
         bind(text, to: \.stringValue)
     }
 
@@ -45,7 +46,7 @@ extension NSTextField: NSTextViewDelegate {
     ///   the attributed text changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(attributedText: UIBinding<NSAttributedString>) -> ObservationToken {
+    public func bind(attributedText: UIBinding<NSAttributedString>) -> ObserveToken {
         bind(attributedText, to: \.attributedStringValue)
     }
 
@@ -55,7 +56,7 @@ extension NSTextField: NSTextViewDelegate {
     ///   the selected text range changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(selection: UIBinding<AppKitTextSelection?>) -> ObservationToken {
+    public func bind(selection: UIBinding<AppKitTextSelection?>) -> ObserveToken {
         let editingChangedAction = NotificationCenter.default.publisher(for: NSTextField.textDidChangeNotification, object: self)
             .sink { [weak self] _ in
                 guard let self else { return }
@@ -72,7 +73,7 @@ extension NSTextField: NSTextViewDelegate {
             }
         }
 
-        let observationToken = ObservationToken { [weak self] in
+        let observationToken = ObserveToken { [weak self] in
             MainActor._assumeIsolated {
                 editingChangedAction.cancel()
                 editingDidEndAction.cancel()
@@ -220,7 +221,7 @@ extension NSTextField: NSTextViewDelegate {
     @discardableResult
     public func bind<Value: Hashable>(
         focus: UIBinding<Value?>, equals value: Value
-    ) -> ObservationToken {
+    ) -> ObserveToken {
         focusToken?.cancel()
         let editingDidBeginAction = NotificationCenter.default.publisher(for: NSTextField.textDidBeginEditingNotification, object: self).sink { _ in
             focus.wrappedValue = value
@@ -242,7 +243,7 @@ extension NSTextField: NSTextViewDelegate {
                 break
             }
         }
-        let outerToken = ObservationToken {
+        let outerToken = ObserveToken {
             editingDidBeginAction.cancel()
             editingDidEndAction.cancel()
             innerToken.cancel()
@@ -302,12 +303,12 @@ extension NSTextField: NSTextViewDelegate {
     ///   automatically dismisses focus.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(focus condition: UIBinding<Bool>) -> ObservationToken {
+    public func bind(focus condition: UIBinding<Bool>) -> ObserveToken {
         bind(focus: condition.toOptionalUnit, equals: Bool.Unit())
     }
 
-    private var focusToken: ObservationToken? {
-        get { objc_getAssociatedObject(self, Self.focusTokenKey) as? ObservationToken }
+    private var focusToken: ObserveToken? {
+        get { objc_getAssociatedObject(self, Self.focusTokenKey) as? ObserveToken }
         set {
             objc_setAssociatedObject(
                 self, Self.focusTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
@@ -337,6 +338,6 @@ public struct AppKitTextSelection: Hashable, Sendable {
     }
 }
 
-extension AnyCancellable: @unchecked Sendable {}
+extension AnyCancellable: @unchecked @retroactive Sendable {}
 
 #endif

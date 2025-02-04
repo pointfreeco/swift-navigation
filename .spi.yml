@@ -3,6 +3,7 @@ builder:
   configs:
   - documentation_targets:
     - SwiftNavigation
+    - AppKitNavigation
     - SwiftUINavigation
     - UIKitNavigation
     swift_version: 6.0

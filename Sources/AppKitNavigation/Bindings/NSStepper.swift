@@ -19,7 +19,7 @@ extension NSStepper {
     ///   value changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(value: UIBinding<Double>) -> ObservationToken {
+    public func bind(value: UIBinding<Double>) -> ObserveToken {
         bind(value, to: \.doubleValue)
     }
 }

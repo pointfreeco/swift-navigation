@@ -2,13 +2,14 @@
 
 import AppKit
 
-extension NSColorPanel: NSTargetActionProtocol {
-    public var appkitNavigationTarget: AnyObject? {
+extension NSColorPanel: @retroactive Sendable {}
+extension NSColorPanel: TargetActionProtocol {
+    public var target: AnyObject? {
         set { setTarget(newValue) }
         get { value(forKeyPath: "target") as? AnyObject }
     }
 
-    public var appkitNavigationAction: Selector? {
+    public var action: Selector? {
         set { setAction(newValue) }
         get { value(forKeyPath: "action") as? Selector }
     }
@@ -33,7 +34,7 @@ extension NSColorPanel {
     ///   when the selected color changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(color: UIBinding<NSColor>) -> ObservationToken {
+    public func bind(color: UIBinding<NSColor>) -> ObserveToken {
         bind(color, to: \.color)
     }
 }
