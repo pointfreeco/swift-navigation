@@ -11,7 +11,7 @@
       filePath: StaticString = #filePath,
       line: UInt = #line,
       column: UInt = #column
-    ) -> ObservationToken {
+    ) -> ObserveToken {
       let token = observe { [weak self] in
         guard let self else { return }
         guard let identifier = selectedTab.wrappedValue else {
@@ -41,25 +41,25 @@
           selectedTab.wrappedValue = controller.selectedTab?.identifier
         }
       }
-      let observationToken = ObservationToken {
+      let observeToken = ObserveToken {
         token.cancel()
         observation.invalidate()
       }
-      self.observationToken = observationToken
-      return observationToken
+      self.observeToken = observeToken
+      return observeToken
     }
 
-    private var observationToken: ObservationToken? {
+    private var observeToken: ObserveToken? {
       get {
-        objc_getAssociatedObject(self, Self.observationTokenKey) as? ObservationToken
+        objc_getAssociatedObject(self, Self.observeTokenKey) as? ObserveToken
       }
       set {
         objc_setAssociatedObject(
-          self, Self.observationTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self, Self.observeTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }
 
-    private static let observationTokenKey = malloc(1)!
+    private static let observeTokenKey = malloc(1)!
   }
 #endif

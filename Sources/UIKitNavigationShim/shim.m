@@ -37,49 +37,56 @@
     - (void)UIKitNavigation_viewDidAppear:(BOOL)animated {
       [self UIKitNavigation_viewDidAppear:animated];
 
-      if (self.hasViewAppeared) {
+      if (self._UIKitNavigation_hasViewAppeared) {
         return;
       }
-      self.hasViewAppeared = YES;
-      for (void (^work)() in self.onViewAppear) {
+      self._UIKitNavigation_hasViewAppeared = YES;
+      for (void (^work)() in self._UIKitNavigation_onViewAppear) {
         work();
       }
-      self.onViewAppear = @[];
+      self._UIKitNavigation_onViewAppear = @[];
     }
 
     - (void)UIKitNavigation_viewDidDisappear:(BOOL)animated {
       [self UIKitNavigation_viewDidDisappear:animated];
 
-      if ((self.isBeingDismissed || self.isMovingFromParentViewController) && self.onDismiss != NULL) {
-        self.onDismiss();
-        self.onDismiss = nil;
+      if ((self.isBeingDismissed || self.isMovingFromParentViewController) && self._UIKitNavigation_onDismiss != NULL) {
+        if ([self isKindOfClass:UIAlertController.class]) {
+          dispatch_async(dispatch_get_main_queue(), ^{
+            self._UIKitNavigation_onDismiss();
+            self._UIKitNavigation_onDismiss = nil;
+          });
+        } else {
+          self._UIKitNavigation_onDismiss();
+          self._UIKitNavigation_onDismiss = nil;
+        }
       }
     }
 
-    - (BOOL)hasViewAppeared {
+    - (BOOL)_UIKitNavigation_hasViewAppeared {
       return [objc_getAssociatedObject(self, hasViewAppearedKey) boolValue];
     }
 
-    - (void)setHasViewAppeared:(BOOL)hasViewAppeared {
+    - (void)set_UIKitNavigation_hasViewAppeared:(BOOL)hasViewAppeared {
       objc_setAssociatedObject(
         self, hasViewAppearedKey, @(hasViewAppeared), OBJC_ASSOCIATION_COPY_NONATOMIC
       );
     }
 
-    - (void (^)())onDismiss {
+    - (void (^)())_UIKitNavigation_onDismiss {
       return objc_getAssociatedObject(self, onDismissKey);
     }
 
-    - (void)setOnDismiss:(void (^)())onDismiss {
+    - (void)set_UIKitNavigation_onDismiss:(void (^)())onDismiss {
       objc_setAssociatedObject(self, onDismissKey, [onDismiss copy], OBJC_ASSOCIATION_COPY_NONATOMIC);
     }
 
-    - (NSMutableArray<void (^)()> *)onViewAppear {
+    - (NSMutableArray<void (^)()> *)_UIKitNavigation_onViewAppear {
       id onViewAppear = objc_getAssociatedObject(self, onViewAppearKey);
       return onViewAppear == nil ? @[] : onViewAppear;
     }
 
-    - (void)setOnViewAppear:(NSMutableArray<void (^)()> *)onViewAppear {
+    - (void)set_UIKitNavigation_onViewAppear:(NSMutableArray<void (^)()> *)onViewAppear {
       objc_setAssociatedObject(self, onViewAppearKey, onViewAppear, OBJC_ASSOCIATION_COPY_NONATOMIC);
     }
 

@@ -1,7 +1,7 @@
 #if canImport(SwiftUI)
   import SwiftUI
 
-  extension Binding {
+  extension Binding where Value: Sendable {
     func didSet(_ perform: @escaping @Sendable (Value) -> Void) -> Self {
       .init(
         get: { self.wrappedValue },

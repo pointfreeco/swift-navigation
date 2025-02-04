@@ -7,144 +7,270 @@ private var modalObserverKeys = AssociatedKeys()
 
 private typealias ModalObserver<Content: ModalContent> = NavigationObserver<NSObject, Content>
 
+// MARK: - Modal Session - NSWindow
 @MainActor
 extension NSObject {
-    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
-    ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
-    ///
-    /// - Parameters:
-    ///   - isSheeted: A binding to a Boolean value that determines whether to sheet the representable
-    ///   - onDismiss: The closure to execute when dismissing the representable.
-    ///   - content: A closure that returns the representable to display over the current window content.
+
     @discardableResult
-    public func modal<Content: ModalContent>(
+    public func modalSession(
+        isModaled: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(isModaled: isModaled, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modalSession<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func modalSession<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modalSession<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modalSession<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _modalSession(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+// MARK: - Modal - NSWindow
+
+@MainActor
+extension NSObject {
+    @discardableResult
+    public func modal(
+        isModaled: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSWindow
+    ) -> ObserveToken {
+        _modal(isModaled: isModaled, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+// MARK: - Modal - NSAlert
+
+@MainActor
+extension NSObject {
+    @discardableResult
+    public func modal(
+        isModaled: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSAlert
+    ) -> ObserveToken {
+        _modal(isModaled: isModaled, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSAlert
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSAlert
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSAlert
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSAlert
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+// MARK: - Modal - NSSavePanel
+
+@MainActor
+extension NSObject {
+    @discardableResult
+    public func modal(
+        isModaled: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(isModaled: isModaled, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func modal<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func modal<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSSavePanel
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+// MARK: - Private Modal
+@MainActor
+extension NSObject {
+
+    @discardableResult
+    fileprivate func _modal<Content: ModalContent>(
         isModaled: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping () -> Content
-    ) -> ObservationToken {
-        modal(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
-    }
-    
-    @discardableResult
-    public func modalSession<Content: ModalSessionContent>(
-        isModaled: UIBinding<Bool>,
-        onDismiss: (() -> Void)? = nil,
-        content: @escaping () -> Content
-    ) -> ObservationToken {
-        modalSession(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+    ) -> ObserveToken {
+        _modal(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
     }
 
-    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
-    ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
-    ///
-    /// - Parameters:
-    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
-    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user. If `item`'s
-    ///     identity changes, the view controller is dismissed and replaced with a new one using the
-    ///     same process.
-    ///   - onDismiss: The closure to execute when dismissing the view controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
     @discardableResult
-    public func modal<Item: Identifiable, Content: ModalContent>(
+    fileprivate func _modal<Item: Identifiable, Content: ModalContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
-    ) -> ObservationToken {
-        modal(item: item, id: \.id, onDismiss: onDismiss, content: content)
-    }
-    
-    @discardableResult
-    public func modalSession<Item: Identifiable, Content: ModalSessionContent>(
-        item: UIBinding<Item?>,
-        onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> Content
-    ) -> ObservationToken {
-        modalSession(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    ) -> ObserveToken {
+        _modal(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
-    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
-    ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
-    ///
-    /// - Parameters:
-    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
-    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user. If `item`'s
-    ///     identity changes, the view controller is dismissed and replaced with a new one using the
-    ///     same process.
-    ///   - onDismiss: The closure to execute when dismissing the view controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
     @_disfavoredOverload
     @discardableResult
-    public func modal<Item: Identifiable, Content: ModalContent>(
+    fileprivate func _modal<Item: Identifiable, Content: ModalContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
-    ) -> ObservationToken {
-        modal(item: item, id: \.id, onDismiss: onDismiss, content: content)
-    }
-    
-    @_disfavoredOverload
-    @discardableResult
-    public func modalSession<Item: Identifiable, Content: ModalSessionContent>(
-        item: UIBinding<Item?>,
-        onDismiss: (() -> Void)? = nil,
-        content: @escaping (UIBinding<Item>) -> Content
-    ) -> ObservationToken {
-        modalSession(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    ) -> ObserveToken {
+        _modal(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
-    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
-    ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
-    ///
-    /// - Parameters:
-    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
-    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user. If `item`'s
-    ///     identity changes, the view controller is dismissed and replaced with a new one using the
-    ///     same process.
-    ///   - id: The key path to the provided item's identifier.
-    ///   - onDismiss: The closure to execute when dismissing the view controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
     @discardableResult
-    public func modal<Item, ID: Hashable, Content: ModalContent>(
+    fileprivate func _modal<Item, ID: Hashable, Content: ModalContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
-    ) -> ObservationToken {
-        modal(item: item, id: id, onDismiss: onDismiss) {
+    ) -> ObserveToken {
+        _modal(item: item, id: id, onDismiss: onDismiss) {
             content($0.wrappedValue)
         }
     }
-    
+
     @discardableResult
-    public func modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
-        item: UIBinding<Item?>,
-        id: KeyPath<Item, ID>,
-        onDismiss: (() -> Void)? = nil,
-        content: @escaping (Item) -> Content
-    ) -> ObservationToken {
-        modalSession(item: item, id: id, onDismiss: onDismiss) {
-            content($0.wrappedValue)
-        }
-    }
-    
-    @discardableResult
-    public func modal<Item, ID: Hashable, Content: ModalContent>(
+    fileprivate func _modal<Item, ID: Hashable, Content: ModalContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
-    ) -> ObservationToken {
-        modal(item: item, id: id) { $item in
+    ) -> ObserveToken {
+        _modal(item: item, id: id) { $item in
             content($item)
         } beginModal: { modalContent, _ in
             if NSApplication.shared.modalWindow != nil {
@@ -171,14 +297,56 @@ extension NSObject {
         }
     }
 
+    // MARK: - Modal Session
+
     @discardableResult
-    public func modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
+    fileprivate func _modalSession<Content: ModalSessionContent>(
+        isModaled: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> Content
+    ) -> ObserveToken {
+        _modalSession(item: isModaled.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+    }
+
+    @discardableResult
+    fileprivate func _modalSession<Item: Identifiable, Content: ModalSessionContent>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> Content
+    ) -> ObserveToken {
+        _modalSession(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    fileprivate func _modalSession<Item: Identifiable, Content: ModalSessionContent>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> Content
+    ) -> ObserveToken {
+        _modalSession(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    fileprivate func _modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> Content
+    ) -> ObserveToken {
+        _modalSession(item: item, id: id, onDismiss: onDismiss) {
+            content($0.wrappedValue)
+        }
+    }
+
+    @discardableResult
+    fileprivate func _modalSession<Item, ID: Hashable, Content: ModalSessionContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
-    ) -> ObservationToken {
-        modal(item: item, id: id) { $item in
+    ) -> ObserveToken {
+        _modal(item: item, id: id) { $item in
             content($item)
         } beginModal: { modalContent, _ in
             if let modaledWindow = NSApplication.shared.modalWindow, let modalSession = ModalWindowsObserver.shared.modalSessionByWindow[modaledWindow] {
@@ -204,8 +372,8 @@ extension NSObject {
             }
         }
     }
-    
-    private func modal<Item, ID: Hashable, Content: ModalContent>(
+
+    private func _modal<Item, ID: Hashable, Content: ModalContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         content: @escaping (UIBinding<Item>) -> Content,
@@ -217,7 +385,7 @@ extension NSObject {
             _ child: Content,
             _ transaction: UITransaction
         ) -> Void
-    ) -> ObservationToken {
+    ) -> ObserveToken {
         let modalObserver: ModalObserver<Content> = modalObserver()
         return modalObserver.observe(
             item: item,

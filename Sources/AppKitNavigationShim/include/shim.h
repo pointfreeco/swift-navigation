@@ -8,17 +8,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSViewController (AppKitNavigation)
 
-@property BOOL hasViewAppeared;
-@property (nullable) void (^ onDismiss)();
-@property NSArray<void (^)()> *onViewAppear;
+@property BOOL _AppKitNavigation_hasViewAppeared;
+@property (nullable) void (^ _AppKitNavigation_onDismiss)();
+@property NSArray<void (^)()> *_AppKitNavigation_onViewAppear;
 
 @end
-
-@interface NSSavePanel (AppKitNavigation)
-@property (nullable) void (^ AppKitNavigation_onFinalURL)(NSURL *_Nullable);
-@property (nullable) void (^ AppKitNavigation_onFinalURLs)(NSArray<NSURL *> *);
-@end
-
 
 NS_ASSUME_NONNULL_END
 #endif

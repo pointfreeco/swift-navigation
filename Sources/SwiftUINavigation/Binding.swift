@@ -62,7 +62,7 @@
     ///   element is a duplicate of the first.
     public func removeDuplicates(
       by isDuplicate: @Sendable @escaping (Value, Value) -> Bool
-    ) -> Self {
+    ) -> Self where Value: Sendable {
       .init(
         get: { self.wrappedValue },
         set: { newValue, transaction in
@@ -73,7 +73,7 @@
     }
   }
 
-  extension Binding where Value: Equatable {
+  extension Binding where Value: Equatable, Value: Sendable {
     /// Creates a binding that ignores writes to its wrapped value when equivalent to the new value.
     ///
     /// Useful to minimize writes to bindings passed to SwiftUI APIs. For example, [`NavigationLink`
@@ -86,8 +86,12 @@
     }
   }
 
-  extension Binding {
-    public func _printChanges(_ prefix: String = "") -> Self {
+  extension Binding where Value: Sendable {
+    public func _printChanges(
+      _ prefix: String = "",
+      fileID: StaticString = #fileID,
+      line: UInt = #line
+    ) -> Self {
       Self(
         get: { self.wrappedValue },
         set: { newValue, transaction in
@@ -95,7 +99,12 @@
           debugPrint(self.wrappedValue, terminator: "", to: &oldDescription)
           var newDescription = ""
           debugPrint(newValue, terminator: "", to: &newDescription)
-          print("\(prefix.isEmpty ? "\(Self.self)" : prefix):", oldDescription, "=", newDescription)
+          print(
+            "\(prefix.isEmpty ? "\(Self.self)@\(fileID):\(line)" : prefix):",
+            oldDescription,
+            "→",
+            newDescription
+          )
           self.transaction(transaction).wrappedValue = newValue
         }
       )

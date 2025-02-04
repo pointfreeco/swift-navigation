@@ -144,7 +144,6 @@ public struct ConfirmationDialogState<Action>: Identifiable {
   ///   - title: The title of the dialog.
   ///   - actions: A ``ButtonStateBuilder`` returning the dialog's actions.
   ///   - message: The message for the dialog.
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   public init(
     titleVisibility: ConfirmationDialogStateTitleVisibility,
     title: () -> TextState,

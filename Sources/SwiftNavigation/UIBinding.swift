@@ -440,6 +440,25 @@ public struct UIBinding<Value>: Sendable {
     binding.transaction = transaction
     return binding
   }
+
+  public func _printChanges(
+    _ prefix: String = "",
+    fileID: StaticString = #fileID,
+    line: UInt = #line
+  ) -> Self {
+    func open(_ location: some _UIBinding<Value>) -> Self {
+      Self(
+        location: _UIBindingPrintChanges(
+          base: location,
+          prefix: prefix,
+          fileID: fileID,
+          line: line
+        ),
+        transaction: transaction
+      )
+    }
+    return open(location)
+  }
 }
 
 extension UIBinding: Identifiable where Value: Identifiable {
@@ -791,5 +810,40 @@ private final class _UIBindingOptionalEnumToCase<
   func hash(into hasher: inout Hasher) {
     hasher.combine(base)
     hasher.combine(keyPath)
+  }
+}
+
+private final class _UIBindingPrintChanges<Base: _UIBinding>: _UIBinding, @unchecked Sendable {
+  let base: Base
+  let prefix: String
+  let fileID: StaticString
+  let line: UInt
+  init(base: Base, prefix: String, fileID: StaticString, line: UInt) {
+    self.base = base
+    self.prefix = prefix
+    self.fileID = fileID
+    self.line = line
+  }
+  var wrappedValue: Base.Value {
+    get { base.wrappedValue }
+    set {
+      var oldDescription = ""
+      debugPrint(base.wrappedValue, terminator: "", to: &oldDescription)
+      var newDescription = ""
+      debugPrint(newValue, terminator: "", to: &newDescription)
+      print(
+        "\(prefix.isEmpty ? "UIBinding<\(Value.self)>@\(fileID):\(line)" : prefix):",
+        oldDescription,
+        "→",
+        newDescription
+      )
+      base.wrappedValue = newValue
+    }
+  }
+  static func == (lhs: _UIBindingPrintChanges, rhs: _UIBindingPrintChanges) -> Bool {
+    lhs.base == rhs.base
+  }
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(base)
   }
 }

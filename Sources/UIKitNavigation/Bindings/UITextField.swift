@@ -33,7 +33,7 @@
     ///   changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(text: UIBinding<String>) -> ObservationToken {
+    public func bind(text: UIBinding<String>) -> ObserveToken {
       bind(UIBinding(text), to: \.text, for: .editingChanged)
     }
 
@@ -43,7 +43,7 @@
     ///   the attributed text changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(attributedText: UIBinding<NSAttributedString>) -> ObservationToken {
+    public func bind(attributedText: UIBinding<NSAttributedString>) -> ObserveToken {
       bind(UIBinding(attributedText), to: \.attributedText, for: .editingChanged)
     }
 
@@ -53,7 +53,7 @@
     ///   the selected text range changes.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(selection: UIBinding<UITextSelection?>) -> ObservationToken {
+    public func bind(selection: UIBinding<UITextSelection?>) -> ObserveToken {
       let editingChangedAction = UIAction { [weak self] _ in
         guard let self else { return }
         selection.wrappedValue = self.textSelection
@@ -70,7 +70,7 @@
           selection.wrappedValue = control.textSelection
         }
       }
-      let observationToken = ObservationToken { [weak self] in
+      let observeToken = ObserveToken { [weak self] in
         MainActor._assumeIsolated {
           self?.removeAction(editingChangedAction, for: [.editingChanged, .editingDidBegin])
           self?.removeAction(editingDidEndAction, for: .editingDidEnd)
@@ -78,8 +78,8 @@
         token.cancel()
         observation.invalidate()
       }
-      observationTokens[\UITextField.selectedTextRange] = observationToken
-      return observationToken
+      observeTokens[\UITextField.selectedTextRange] = observeToken
+      return observeToken
     }
 
     fileprivate var textSelection: UITextSelection? {
@@ -194,7 +194,7 @@
     @discardableResult
     public func bind<Value: Hashable>(
       focus: UIBinding<Value?>, equals value: Value
-    ) -> ObservationToken {
+    ) -> ObserveToken {
       self.focusToken?.cancel()
       let editingDidBeginAction = UIAction { _ in focus.wrappedValue = value }
       let editingDidEndAction = UIAction { _ in
@@ -214,7 +214,7 @@
           break
         }
       }
-      let outerToken = ObservationToken { [weak self] in
+      let outerToken = ObserveToken { [weak self] in
         MainActor._assumeIsolated {
           self?.removeAction(editingDidBeginAction, for: .editingDidBegin)
           self?.removeAction(editingDidEndAction, for: [.editingDidEnd, .editingDidEndOnExit])
@@ -276,12 +276,12 @@
     ///   automatically dismisses focus.
     /// - Returns: A cancel token.
     @discardableResult
-    public func bind(focus condition: UIBinding<Bool>) -> ObservationToken {
+    public func bind(focus condition: UIBinding<Bool>) -> ObserveToken {
       bind(focus: condition.toOptionalUnit, equals: Bool.Unit())
     }
 
-    private var focusToken: ObservationToken? {
-      get { objc_getAssociatedObject(self, Self.focusTokenKey) as? ObservationToken }
+    private var focusToken: ObserveToken? {
+      get { objc_getAssociatedObject(self, Self.focusTokenKey) as? ObserveToken }
       set {
         objc_setAssociatedObject(
           self, Self.focusTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC

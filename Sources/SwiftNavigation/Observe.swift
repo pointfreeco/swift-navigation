@@ -58,7 +58,7 @@ import ConcurrencyExtras
   public func observe(
     isolation: (any Actor)? = #isolation,
     @_inheritActorContext _ apply: @escaping @Sendable () -> Void
-  ) -> ObservationToken {
+  ) -> ObserveToken {
     observe(isolation: isolation) { _ in apply() }
   }
 
@@ -74,7 +74,7 @@ import ConcurrencyExtras
   public func observe(
     isolation: (any Actor)? = #isolation,
     @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
-  ) -> ObservationToken {
+  ) -> ObserveToken {
     let actor = ActorProxy(base: isolation)
     return observe(
       apply,
@@ -102,23 +102,36 @@ private actor ActorProxy {
   }
 }
 
-@_spi(Internals)
-public func observe(
+func observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
   ) -> Void = {
     Task(operation: $1)
   }
-) -> ObservationToken {
-  let token = ObservationToken()
+) -> ObserveToken {
+  let token = ObserveToken()
   onChange(
     { [weak token] transaction in
       guard
         let token,
         !token.isCancelled
       else { return }
-      apply(transaction)
+
+      var perform: @Sendable () -> Void = { apply(transaction) }
+      for key in transaction.storage.keys {
+        guard let keyType = key.keyType as? any _UICustomTransactionKey.Type
+        else { continue }
+        func open<K: _UICustomTransactionKey>(_: K.Type) {
+          perform = { [perform] in
+            K.perform(value: transaction[K.self]) {
+              perform()
+            }
+          }
+        }
+        open(keyType)
+      }
+      perform()
     },
     task: task
   )
@@ -144,12 +157,12 @@ private func onChange(
 ///
 /// When this token is deallocated it cancels the observation it was associated with. Store this
 /// token in another object to keep the observation alive. You can do with this with a set of
-/// ``ObservationToken``s and the ``store(in:)-1hsqo`` method:
+/// ``ObserveToken``s and the ``store(in:)-1hsqo`` method:
 ///
 /// ```swift
 /// class Coordinator {
 ///   let model = Model()
-///   var tokens: Set<ObservationToken> = []
+///   var tokens: Set<ObserveToken> = []
 ///
 ///   func start() {
 ///     observe { [weak self] in
@@ -159,7 +172,7 @@ private func onChange(
 ///   }
 /// }
 /// ```
-public final class ObservationToken: @unchecked Sendable, HashableObject {
+public final class ObserveToken: @unchecked Sendable, HashableObject {
   fileprivate let _isCancelled = LockIsolated(false)
   public var onCancel: @Sendable () -> Void
 
@@ -191,14 +204,14 @@ public final class ObservationToken: @unchecked Sendable, HashableObject {
   /// Stores this observation token instance in the specified collection.
   ///
   /// - Parameter collection: The collection in which to store this observation token.
-  public func store(in collection: inout some RangeReplaceableCollection<ObservationToken>) {
+  public func store(in collection: inout some RangeReplaceableCollection<ObserveToken>) {
     collection.append(self)
   }
 
   /// Stores this observation token instance in the specified set.
   ///
   /// - Parameter set: The set in which to store this observation token.
-  public func store(in set: inout Set<ObservationToken>) {
+  public func store(in set: inout Set<ObserveToken>) {
     set.insert(self)
   }
 }

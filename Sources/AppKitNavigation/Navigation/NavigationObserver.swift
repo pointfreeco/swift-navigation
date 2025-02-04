@@ -26,7 +26,7 @@ class NavigationObserver<Owner: AnyObject, Content: NavigationContent>: NSObject
             _ content: Content,
             _ transaction: UITransaction
         ) -> Void
-    ) -> ObservationToken {
+    ) -> ObserveToken {
         let key = UIBindingIdentifier(item)
         return observe { [weak self] transaction in
             guard let self else { return }
@@ -84,6 +84,5 @@ class Navigated<Content: NavigationContent> {
         self.id = id
     }
 }
-
 
 #endif

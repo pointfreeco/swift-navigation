@@ -1,4 +1,7 @@
 #if canImport(UIKit) && !os(watchOS)
+  import SwiftNavigation
+  import UIKit
+
   extension UITransaction {
     /// Creates a transaction and assigns its animation property.
     ///
@@ -14,8 +17,42 @@
       set { self[UIKitKey.self] = newValue }
     }
 
-    private enum UIKitKey: UITransactionKey {
+    private enum UIKitKey: _UICustomTransactionKey {
       static let defaultValue = UIKit()
+
+      static func perform(
+        value: UIKit,
+        operation: @Sendable () -> Void
+      ) {
+        MainActor._assumeIsolated {
+          #if os(watchOS)
+            operation()
+          #else
+            if value.disablesAnimations {
+              UIView.performWithoutAnimation { operation() }
+              for completion in value.animationCompletions {
+                completion(true)
+              }
+            } else if let animation = value.animation {
+              return animation.perform(
+                { operation() },
+                completion: value.animationCompletions.isEmpty
+                  ? nil
+                  : {
+                    for completion in value.animationCompletions {
+                      completion($0)
+                    }
+                  }
+              )
+            } else {
+              operation()
+              for completion in value.animationCompletions {
+                completion(true)
+              }
+            }
+          #endif
+        }
+      }
     }
 
     /// UIKit-specific data associated with a ``UITransaction``.

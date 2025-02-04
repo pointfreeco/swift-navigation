@@ -7,103 +7,206 @@ private typealias SheetObserver<FromContent: SheetContent, ToContent: SheetConte
 @MainActor
 private var sheetObserverKeys = AssociatedKeys()
 
-extension SheetContent {
-    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
-    ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
-    ///
-    /// - Parameters:
-    ///   - isSheeted: A binding to a Boolean value that determines whether to sheet the representable
-    ///   - onDismiss: The closure to execute when dismissing the representable.
-    ///   - content: A closure that returns the representable to display over the current window content.
+extension NSWindow {
     @discardableResult
-    public func sheet<Content: SheetContent>(
+    public func sheet(
+        isSheeted: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSWindow
+    ) -> ObserveToken {
+        _sheet(isSheeted: isSheeted, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSWindow
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSWindow
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+extension NSWindow {
+    @discardableResult
+    public func sheet(
+        isSheeted: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSAlert
+    ) -> ObserveToken {
+        _sheet(isSheeted: isSheeted, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSAlert
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSAlert
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSAlert
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSAlert
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+extension NSWindow {
+    @discardableResult
+    public func sheet(
+        isSheeted: UIBinding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping () -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(isSheeted: isSheeted, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @_disfavoredOverload
+    @discardableResult
+    public func sheet<Item: Identifiable>(
+        item: UIBinding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(item: item, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (Item) -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+
+    @discardableResult
+    public func sheet<Item, ID: Hashable>(
+        item: UIBinding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (() -> Void)? = nil,
+        content: @escaping (UIBinding<Item>) -> NSSavePanel
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+    }
+}
+
+
+extension SheetContent {
+    @discardableResult
+    fileprivate func _sheet<Content: SheetContent>(
         isSheeted: UIBinding<Bool>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping () -> Content
-    ) -> ObservationToken {
-        sheet(item: isSheeted.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+    ) -> ObserveToken {
+        _sheet(item: isSheeted.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
     }
 
-    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
-    ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
-    ///
-    /// - Parameters:
-    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
-    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user. If `item`'s
-    ///     identity changes, the view controller is dismissed and replaced with a new one using the
-    ///     same process.
-    ///   - onDismiss: The closure to execute when dismissing the view controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
     @discardableResult
-    public func sheet<Item: Identifiable, Content: SheetContent>(
+    fileprivate func _sheet<Item: Identifiable, Content: SheetContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
-    ) -> ObservationToken {
-        sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    ) -> ObserveToken {
+        _sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
-    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
-    ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
-    ///
-    /// - Parameters:
-    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
-    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user. If `item`'s
-    ///     identity changes, the view controller is dismissed and replaced with a new one using the
-    ///     same process.
-    ///   - onDismiss: The closure to execute when dismissing the view controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
     @_disfavoredOverload
     @discardableResult
-    public func sheet<Item: Identifiable, Content: SheetContent>(
+    fileprivate func _sheet<Item: Identifiable, Content: SheetContent>(
         item: UIBinding<Item?>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
-    ) -> ObservationToken {
-        sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
+    ) -> ObserveToken {
+        _sheet(item: item, id: \.id, onDismiss: onDismiss, content: content)
     }
 
-    /// Sheet a representable modally when a binding to a Boolean value you provide is true.
-    ///
-    /// Like SwiftUI's `sheet`, `fullScreenCover`, and `popover` view modifiers, but for AppKit.
-    ///
-    /// - Parameters:
-    ///   - item: A binding to an optional source of truth for the view controller. When `item` is
-    ///     non-`nil`, the item's content is passed to the `content` closure. You display this
-    ///     content in a view controller that you create that is displayed to the user. If `item`'s
-    ///     identity changes, the view controller is dismissed and replaced with a new one using the
-    ///     same process.
-    ///   - id: The key path to the provided item's identifier.
-    ///   - onDismiss: The closure to execute when dismissing the view controller.
-    ///   - content: A closure that returns the view controller to display over the current view
-    ///     controller's content.
     @discardableResult
-    public func sheet<Item, ID: Hashable, Content: SheetContent>(
+    fileprivate func _sheet<Item, ID: Hashable, Content: SheetContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (Item) -> Content
-    ) -> ObservationToken {
-        sheet(item: item, id: id, onDismiss: onDismiss) {
+    ) -> ObserveToken {
+        _sheet(item: item, id: id, onDismiss: onDismiss) {
             content($0.wrappedValue)
         }
     }
 
     @discardableResult
-    public func sheet<Item, ID: Hashable, Content: SheetContent>(
+    fileprivate func _sheet<Item, ID: Hashable, Content: SheetContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         onDismiss: (() -> Void)? = nil,
         content: @escaping (UIBinding<Item>) -> Content
-    ) -> ObservationToken {
-        sheet(item: item, id: id) { $item in
+    ) -> ObserveToken {
+        _sheet(item: item, id: id) { $item in
             content($item)
         } beginSheet: { [weak self] child, _ in
             guard let self else { return }
@@ -128,7 +231,7 @@ extension SheetContent {
         }
     }
 
-    private func sheet<Item, ID: Hashable, Content: SheetContent>(
+    private func _sheet<Item, ID: Hashable, Content: SheetContent>(
         item: UIBinding<Item?>,
         id: KeyPath<Item, ID>,
         content: @escaping (UIBinding<Item>) -> Content,
@@ -140,7 +243,7 @@ extension SheetContent {
             _ child: Content,
             _ transaction: UITransaction
         ) -> Void
-    ) -> ObservationToken {
+    ) -> ObserveToken {
         let sheetObserver: SheetObserver<Self, Content> = sheetObserver()
         return sheetObserver.observe(
             item: item,
@@ -162,18 +265,10 @@ extension SheetContent {
     }
 }
 
-extension NSWindow {
-    func endSheeted() {
-        guard sheetParent != nil else {
-            return
-        }
-        sheetParent?.endSheet(self)
-    }
-}
-
 extension Navigated where Content: SheetContent {
     func clearup() {
-        content?.currentWindow?.endSheeted()
+        guard let window = content?.currentWindow else { return }
+        window.sheetParent?.endSheet(window)
     }
 }
 
