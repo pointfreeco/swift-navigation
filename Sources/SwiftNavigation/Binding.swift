@@ -16,12 +16,13 @@
       line: UInt = #line,
       column: UInt = #column
     ) where Value == Bool {
-      self = base[
-        fileID: HashableStaticString(rawValue: fileID),
-        filePath: HashableStaticString(rawValue: filePath),
-        line: line,
-        column: column
-      ]
+      self =
+        base[
+          fileID: HashableStaticString(rawValue: fileID),
+          filePath: HashableStaticString(rawValue: filePath),
+          line: line,
+          column: column
+        ]
     }
   }
 

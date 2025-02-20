@@ -52,7 +52,7 @@ final class UIBindingTests: XCTestCase {
       $0.compactDescription == """
         failed - Boolean presentation binding attempted to write 'true' to a generic 'UIBinding<Item?>' \
         (i.e., 'UIBinding<Int?>').
-        
+
         This is not a valid thing to do, as there is no way to convert 'true' to a new instance of \
         'Int'.
         """
