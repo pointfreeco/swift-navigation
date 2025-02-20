@@ -121,16 +121,21 @@
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
+        let disablesAnimations = item.transaction.uiKit.disablesAnimations
+          || transaction.uiKit.disablesAnimations
         if presentedViewController != nil {
-          self.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+          self.dismiss(animated: !disablesAnimations) {
             onDismiss?()
-            self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            self.present(child, animated: !disablesAnimations)
           }
         } else {
-          self.present(child, animated: !transaction.uiKit.disablesAnimations)
+          self.present(child, animated: !disablesAnimations)
         }
       } dismiss: { [weak self] _, transaction in
-        self?.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+        self?.dismiss(animated: !(
+          item.transaction.uiKit.disablesAnimations
+          || transaction.uiKit.disablesAnimations
+        )) {
           onDismiss?()
         }
       }
@@ -206,7 +211,10 @@
           return
         }
         navigationController.pushViewController(
-          child, animated: !transaction.uiKit.disablesAnimations
+          child, animated: !(
+            item.transaction.uiKit.disablesAnimations
+            || transaction.uiKit.disablesAnimations
+          )
         )
       } dismiss: { [weak self] child, transaction in
         guard
@@ -220,7 +228,10 @@
           return
         }
         navigationController.popFromViewController(
-          child, animated: !transaction.uiKit.disablesAnimations
+          child, animated: !(
+            item.transaction.uiKit.disablesAnimations
+            || transaction.uiKit.disablesAnimations
+          )
         )
       }
     }
