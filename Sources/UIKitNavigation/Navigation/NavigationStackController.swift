@@ -148,7 +148,9 @@
               invalidIndices.insert(index)
             }
           }
-          path.remove(atOffsets: invalidIndices)
+          if !invalidIndices.isEmpty {
+              path.remove(atOffsets: invalidIndices)
+          }
           setViewControllers(newViewControllers, animated: !transaction.uiKit.disablesAnimations)
         }
       }
