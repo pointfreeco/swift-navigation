@@ -1,13 +1,13 @@
 {
-  "originHash" : "21426c7e67e0003e5a1e08c0f4323d81f8190a1dc8c3b2f9dc9f8fed20da343d",
+  "originHash" : "dadd94aa62198c583e409ca79659dfe74682ffa52469a2e320148e9ead2cfaaf",
   "pins" : [
     {
       "identity" : "swift-case-paths",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "642e6aab8e03e5f992d9c83e38c5be98cfad5078",
-        "version" : "1.5.5"
+        "branch" : "1.5.6",
+        "revision" : "bc92c4b27f9a84bfb498cdbfdf35d5a357e9161f"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "96beb108a57f24c8476ae1f309239270772b2940",
-        "version" : "1.2.5"
+        "revision" : "27d767d643fa2cf083d0a73d74fa84cacb53e85c",
+        "version" : "1.4.1"
       }
     }
   ],
