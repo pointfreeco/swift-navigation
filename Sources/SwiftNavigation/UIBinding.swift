@@ -441,6 +441,17 @@ public struct UIBinding<Value>: Sendable {
     return open(location)
   }
 
+  /// Returns a Boolean binding to a case of a given case key path with no associated value.
+  ///
+  /// - Parameter keyPath: A case key path to a case with no associated value.
+  /// - Returns: A new binding.
+  public subscript<V: CasePathable>(
+    dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Void>>
+  ) -> UIBinding<Bool>
+  where Value == V? {
+    UIBinding<Bool>(self[dynamicMember: keyPath])
+  }
+
   /// Specifies a transaction for the binding.
   ///
   /// - Parameter transaction: An instance of a ``UITransaction``.
