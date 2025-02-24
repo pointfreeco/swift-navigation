@@ -40,7 +40,7 @@ jobs:
       - name: Run tests
         run: IOS_VERSION=${{matrix.ios_version}} WATCHOS_VERSION=${{matrix.watchos_version}} make test-${{ matrix.variation }}
 
-  library-15.4-compatibility:
+  library-15-4-compatibility:
     runs-on: macos-14
     strategy:
       matrix:
