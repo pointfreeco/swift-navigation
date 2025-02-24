@@ -15,11 +15,11 @@ concurrency:
 
 jobs:
   library:
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       matrix:
         xcode:
-          - '15.4'
+          - '16.2'
         variation:
           - ios
           - macos
@@ -36,13 +36,27 @@ jobs:
       - name: Run tests
         run: make test-${{ matrix.variation }}
 
-  library-evolution:
-    name: Library Evolution
-    runs-on: macos-latest
+  library-swift-compatibility:
+    runs-on: macos-14
     strategy:
       matrix:
         xcode:
           - '15.4'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+      - name: Skip macro validation
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+      - name: Run tests
+        run: make test-ios
+
+  library-evolution:
+    name: Library Evolution
+    runs-on: macos-15
+    strategy:
+      matrix:
+        xcode:
           - '16.2'
     steps:
       - uses: actions/checkout@v4
