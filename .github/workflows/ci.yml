@@ -50,6 +50,8 @@ jobs:
           - '17.5'
         watchos_version:
           - '10.5'
+        variation:
+          - ios
     steps:
       - uses: actions/checkout@v4
       - name: Select Xcode ${{ matrix.xcode }}
