@@ -61,7 +61,7 @@ build-for-library-evolution:
 		-Xswiftc $(OTHER_SWIFT_FLAGS)
 	xcodebuild build \
 		-workspace SwiftNavigation.xcworkspace \
-		-destination platform="$(PLATFORM_IOS)" \
+		-destination platform="platform=iOS,name=generic/iOS" \
 		-scheme SwiftNavigation \
 		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
 		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
