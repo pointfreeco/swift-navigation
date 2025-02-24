@@ -14,113 +14,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  environment:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Preparing Environment Variables..."
-    outputs:
-        XCODE_15_VERSION: 15.4
-        XCODE_16_VERSION: 16.1
-
-        XCODE_15_VERSION_IOS: 17.5
-        XCODE_16_VERSION_IOS: 18.1
-
-        XCODE_15_VERSION_TVOS: 17.5
-        XCODE_16_VERSION_TVOS: 18.1
-
-        XCODE_15_VERSION_WATCHOS: 10.5
-        XCODE_16_VERSION_WATCHOS: 11.1
-
-  tests:
+  library:
     runs-on: macos-14
-    needs: environment
     strategy:
       matrix:
-        combination:
-          - xcode: ${{ needs.environment.outputs.XCODE_15_VERSION }}
-            variation: ios
-            os_version: ${{ needs.environment.outputs.XCODE_15_VERSION_IOS }}
-          - xcode: ${{ needs.environment.outputs.XCODE_16_VERSION }}
-            variation: ios
-            os_version: ${{ needs.environment.outputs.XCODE_16_VERSION_IOS }}
-
-          - xcode: ${{ needs.environment.outputs.XCODE_15_VERSION }}
-            variation: tvos
-            os_version: ${{ needs.environment.outputs.XCODE_15_VERSION_TVOS }}
-          - xcode: ${{ needs.environment.outputs.XCODE_16_VERSION }}
-            variation: tvos
-            os_version: ${{ needs.environment.outputs.XCODE_16_VERSION_TVOS }}
-
-          - xcode: ${{ needs.environment.outputs.XCODE_15_VERSION }}
-            variation: watchos
-            os_version: ${{ needs.environment.outputs.XCODE_15_VERSION_WATCHOS }}
-          - xcode: ${{ needs.environment.outputs.XCODE_16_VERSION }}
-            variation: watchos
-            os_version: ${{ needs.environment.outputs.XCODE_16_VERSION_WATCHOS }}
-
-          - xcode: ${{ needs.environment.outputs.XCODE_15_VERSION }}
-            variation: macos
-          - xcode: ${{ needs.environment.outputs.XCODE_16_VERSION }}
-            variation: macos
-
-          - xcode: ${{ needs.environment.outputs.XCODE_15_VERSION }}
-            variation: examples
-            os_version: ${{ needs.environment.outputs.XCODE_15_VERSION_IOS }}
-          - xcode: ${{ needs.environment.outputs.XCODE_16_VERSION }}
-            variation: examples
-            os_version: ${{ needs.environment.outputs.XCODE_16_VERSION_IOS }}
+        xcode:
+          - '15.4'
+        variation:
+          - ios
+          - macos
+          - tvos
+          - watchos
+          - examples
 
     steps:
       - uses: actions/checkout@v4
-      - name: Select Xcode ${{ matrix.combination.xcode }}
-        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.combination.xcode }}.app
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
       - name: Skip macro validation
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
-      - name: Set OS version
-        run: |
-          if [[ "${{ matrix.combination.variation }}" == "ios" ]]; then
-            echo "IOS_VERSION=${{ matrix.combination.os_version }}" >> "$GITHUB_ENV"
-          elif [[ "${{ matrix.combination.variation }}" == "tvos" ]]; then
-            echo "TVOS_VERSION=${{ matrix.combination.os_version }}" >> "$GITHUB_ENV"
-          elif [[ "${{ matrix.combination.variation }}" == "watchos" ]]; then
-            echo "WATCHOS_VERSION=${{ matrix.combination.os_version }}" >> "$GITHUB_ENV"
-          elif [[ "${{ matrix.combination.variation }}" == "examples" ]]; then
-            echo "IOS_VERSION=${{ matrix.combination.os_version }}" >> "$GITHUB_ENV"
-          fi
       - name: Run tests
-        run: make test-${{ matrix.combination.variation }}
+        run: make test-${{ matrix.variation }}
 
   library-evolution:
-    runs-on: macos-14
-    needs: environment
+    name: Library Evolution
+    runs-on: macos-latest
     strategy:
       matrix:
-        combination:
-          - xcode: ${{ needs.environment.outputs.XCODE_15_VERSION }}
-            variation: ios
-            os_version: ${{ needs.environment.outputs.XCODE_15_VERSION_IOS }}
-          - xcode: ${{ needs.environment.outputs.XCODE_16_VERSION }}
-            variation: ios
-            os_version: ${{ needs.environment.outputs.XCODE_16_VERSION_IOS }}
-
-          - xcode: ${{ needs.environment.outputs.XCODE_15_VERSION }}
-            variation: macos
-          - xcode: ${{ needs.environment.outputs.XCODE_16_VERSION }}
-            variation: macos
-
+        xcode:
+          - '15.4'
+          - '16.2'
     steps:
       - uses: actions/checkout@v4
-      - name: Select Xcode ${{ matrix.combination.xcode }}
-        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.combination.xcode }}.app
-      - name: Skip macro validation
-        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
-      - name: Set OS version
-        run: |
-          if [[ "${{ matrix.combination.variation }}" == "ios" ]]; then
-            echo "IOS_VERSION=${{ matrix.combination.os_version }}" >> "$GITHUB_ENV"
-          fi
-      - name: Run Library Evolution builds
-        run: make library-evolution-${{ matrix.combination.variation }}
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+      - name: Print Swift version
+        run: swift --version
+      - name: Build for Library Evolution
+        run: make build-for-library-evolution
 
   wasm:
     name: Wasm
@@ -135,7 +66,7 @@ jobs:
           curl -f -o /tmp/swift.tar.gz "https://download.swift.org/swift-6.0.2-release/ubuntu2204/swift-6.0.2-RELEASE/swift-6.0.2-RELEASE-ubuntu22.04.tar.gz"
           sudo mkdir -p $PREFIX; sudo tar -xzf /tmp/swift.tar.gz -C $PREFIX --strip-component 1
           $PREFIX/usr/bin/swift sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-6.0.2-RELEASE/swift-wasm-6.0.2-RELEASE-wasm32-unknown-wasi.artifactbundle.zip --checksum 6ffedb055cb9956395d9f435d03d53ebe9f6a8d45106b979d1b7f53358e1dcb4
-          echo "$PREFIX/usr/bin" >> "$GITHUB_PATH"
+          echo "$PREFIX/usr/bin" >> $GITHUB_PATH
 
       - name: Build tests
         run: swift build --swift-sdk wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
@@ -147,7 +78,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        config: [debug, release]
+        config: ['debug', 'release']
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
