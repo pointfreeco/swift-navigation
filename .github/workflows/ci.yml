@@ -20,10 +20,6 @@ jobs:
       matrix:
         xcode:
           - '16.2'
-        ios_version:
-          - '18.2'
-        watchos_version:
-          - '11.2'
         variation:
           - ios
           - macos
@@ -38,7 +34,7 @@ jobs:
       - name: Skip macro validation
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
       - name: Run tests
-        run: IOS_VERSION=${{matrix.ios_version}} WATCHOS_VERSION=${{matrix.watchos_version}} make test-${{ matrix.variation }}
+        run: make test-${{ matrix.variation }}
 
   library-15-4-compatibility:
     runs-on: macos-14
@@ -48,8 +44,6 @@ jobs:
           - '15.4'
         ios_version:
           - '17.5'
-        watchos_version:
-          - '10.5'
         variation:
           - ios
     steps:
@@ -59,7 +53,7 @@ jobs:
       - name: Skip macro validation
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
       - name: Run tests
-        run: IOS_VERSION=${{matrix.ios_version}} WATCHOS_VERSION=${{matrix.watchos_version}} make test-${{ matrix.variation }}
+        run: IOS_VERSION=${{matrix.ios_version}} make test-${{ matrix.variation }}
 
   library-evolution:
     name: Library Evolution
