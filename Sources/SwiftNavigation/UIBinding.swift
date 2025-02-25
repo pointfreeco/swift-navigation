@@ -1,6 +1,10 @@
 import ConcurrencyExtras
 import IssueReporting
 
+#if canImport(Observation)
+  import Observation
+#endif
+
 /// A property wrapper type that can read and write an observable value.
 ///
 /// Like SwiftUI's `Binding`, but works for UIKit, AppKit, and non-Apple platforms such as
@@ -437,6 +441,17 @@ public struct UIBinding<Value>: Sendable {
     return open(location)
   }
 
+  /// Returns a Boolean binding to a case of a given case key path with no associated value.
+  ///
+  /// - Parameter keyPath: A case key path to a case with no associated value.
+  /// - Returns: A new binding.
+  public subscript<V: CasePathable>(
+    dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Void>>
+  ) -> UIBinding<Bool>
+  where Value == V? {
+    UIBinding<Bool>(self[dynamicMember: keyPath])
+  }
+
   /// Specifies a transaction for the binding.
   ///
   /// - Parameter transaction: An instance of a ``UITransaction``.
@@ -560,7 +575,7 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   }
 }
 
-private final class _UIBindingWrapper<Value>: Perceptible, Observable {
+private final class _UIBindingWrapper<Value>: Perceptible {
   var _value: Value
   var value: Value {
     get {
@@ -583,6 +598,10 @@ private final class _UIBindingWrapper<Value>: Perceptible, Observable {
     self._value = value
   }
 }
+
+#if canImport(Observation)
+  extension _UIBindingWrapper: Observable {}
+#endif
 
 private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
   let value: Value
