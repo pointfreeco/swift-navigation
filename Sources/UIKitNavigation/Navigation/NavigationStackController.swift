@@ -19,10 +19,11 @@
         }
       }
     }
+    private var elementsBeingPopped: Set<UINavigationPath.Element> = []
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
 
-    public override weak var delegate: (any UINavigationControllerDelegate)? {
+    open override weak var delegate: (any UINavigationControllerDelegate)? {
       get { pathDelegate.base }
       set { pathDelegate.base = newValue }
     }
@@ -37,7 +38,7 @@
       self._path = path.path
       let root = root()
       self.root = root
-      self.viewControllers = [root]
+      self._setViewControllers([root], animated: true)
     }
 
     public required init(
@@ -50,7 +51,7 @@
       self._path = path.elements
       let root = root()
       self.root = root
-      self.viewControllers = [root]
+      self._setViewControllers([root], animated: true)
     }
 
     public required init?(coder aDecoder: NSCoder) {
@@ -61,6 +62,12 @@
       super.viewDidLoad()
 
       super.delegate = pathDelegate
+
+      #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
+        interactivePopGestureRecognizer?.addTarget(
+          self, action: #selector(interactivePopGestureRecognizerAction)
+        )
+      #endif
 
       if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
         traitOverrides.push = UIPushAction { [weak self] value in
@@ -90,9 +97,9 @@
         } else if difference.count == 1,
           case .remove(newPath.count, _, nil) = difference.first
         {
-          popViewController(animated: !transaction.uiKit.disablesAnimations)
+          _popViewController(animated: !transaction.uiKit.disablesAnimations)
         } else if difference.insertions.isEmpty, newPath.isEmpty {
-          popToRootViewController(animated: !transaction.uiKit.disablesAnimations)
+          _popToRootViewController(animated: !transaction.uiKit.disablesAnimations)
         } else if difference.insertions.isEmpty,
           case let offsets = difference.removals.map(\.offset),
           let first = offsets.first,
@@ -100,7 +107,7 @@
           offsets.elementsEqual(first...last),
           first == newPath.count
         {
-          popToViewController(
+          _popToViewController(
             viewControllers[first], animated: !transaction.uiKit.disablesAnimations
           )
         } else {
@@ -149,10 +156,90 @@
             }
           }
           path.remove(atOffsets: invalidIndices)
-          setViewControllers(newViewControllers, animated: !transaction.uiKit.disablesAnimations)
+          _setViewControllers(
+            newViewControllers, animated: !transaction.uiKit.disablesAnimations
+          )
         }
       }
     }
+
+    @discardableResult
+    open override func popToRootViewController(animated: Bool) -> [UIViewController]? {
+      path.removeAll()
+      return super.popToRootViewController(animated: animated)
+    }
+
+    @discardableResult
+    private func _popToRootViewController(animated: Bool) -> [UIViewController]? {
+      super.popToRootViewController(animated: animated)
+    }
+
+    @discardableResult
+    open override func popToViewController(
+      _ viewController: UIViewController, animated: Bool
+    ) -> [UIViewController]? {
+      let viewControllers = super.popToViewController(viewController, animated: animated)
+      if let viewControllers {
+        for viewController in viewControllers {
+          if let navigationID = viewController.navigationID {
+            path.removeAll(where: { $0 == navigationID })
+          }
+        }
+      }
+      return viewControllers
+    }
+
+    @discardableResult
+    private func _popToViewController(
+      _ viewController: UIViewController, animated: Bool
+    ) -> [UIViewController]? {
+      super.popToViewController(viewController, animated: animated)
+    }
+
+    @discardableResult
+    open override func popViewController(animated: Bool) -> UIViewController? {
+      let viewController = super.popViewController(animated: animated)
+      if let viewController, let navigationID = viewController.navigationID {
+        #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
+          switch interactivePopGestureRecognizer?.state {
+          case .possible?, nil:
+            path.removeAll(where: { $0 == navigationID })
+          case .began, .changed, .ended, .cancelled, .failed:
+            fallthrough
+          @unknown default:
+            break
+          }
+        #else
+          path.removeAll(where: { $0 == navigationID })
+        #endif
+      }
+      return viewController
+    }
+
+    @discardableResult
+    private func _popViewController(animated: Bool) -> UIViewController? {
+      super.popViewController(animated: animated)
+    }
+
+    open override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
+      path = viewControllers.compactMap(\.navigationID)
+      super.setViewControllers(viewControllers, animated: animated)
+    }
+
+    private func _setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
+      super.setViewControllers(viewControllers, animated: animated)
+    }
+
+    #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
+      @objc private func interactivePopGestureRecognizerAction(_ gesture: UIGestureRecognizer) {
+        guard
+          gesture.state == .began,
+          let last = path.last,
+          !viewControllers.compactMap(\.navigationID).contains(last)
+        else { return }
+        elementsBeingPopped.insert(last)
+      }
+    #endif
 
     fileprivate func viewController(
       for navigationID: UINavigationPath.Element
@@ -310,6 +397,30 @@
           navigationController, animationControllerFor: operation, from: fromVC, to: toVC
         )
       }
+    }
+  }
+
+  extension NavigationStackController: UINavigationBarDelegate {
+    public func navigationBar(
+      _ navigationBar: UINavigationBar, shouldPop item: UINavigationItem
+    ) -> Bool {
+      if let navigationID = viewControllers
+        .first(where: { $0.navigationItem == item })?
+        .navigationID
+      {
+        elementsBeingPopped.insert(navigationID)
+      }
+      return true
+    }
+
+    public func navigationBar(_ navigationBar: UINavigationBar, didPop item: UINavigationItem) {
+      guard !elementsBeingPopped.isEmpty else { return }
+      path.removeAll(where: { elementsBeingPopped.contains($0) })
+      elementsBeingPopped.removeAll()
+    }
+
+    public func navigationBar(_ navigationBar: UINavigationBar, didPush item: UINavigationItem) {
+      elementsBeingPopped.removeAll()
     }
   }
 

@@ -8,7 +8,7 @@ public struct UINavigationPath: Equatable {
   public var elements: [Element] = []
 
   @_spi(Internals)
-  public enum Element: Equatable {
+  public enum Element: Hashable {
     case eager(AnyHashable)
     case lazy(Lazy)
 
@@ -50,6 +50,15 @@ public struct UINavigationPath: Equatable {
         let (.lazy(.codable(lazy)), .lazy(.element(eager))):
         guard #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) else { fatalError() }
         return CodableRepresentation.Element(eager) == lazy
+      }
+    }
+
+    public func hash(into hasher: inout Hasher) {
+      switch self {
+      case let .eager(value), let .lazy(.element(value)):
+        hasher.combine(value)
+      case let .lazy(.codable(value)):
+        hasher.combine(value.decode())
       }
     }
   }
@@ -115,10 +124,6 @@ public struct UINavigationPath: Equatable {
     public struct Element: Hashable {
       let tag: String
       let item: String
-
-      public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.tag == rhs.tag && lhs.item == rhs.item
-      }
 
       public init(tag: String, item: String) {
         self.tag = tag
