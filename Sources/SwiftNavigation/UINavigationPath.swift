@@ -125,10 +125,6 @@ public struct UINavigationPath: Equatable {
       let tag: String
       let item: String
 
-      public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.tag == rhs.tag && lhs.item == rhs.item
-      }
-
       public init(tag: String, item: String) {
         self.tag = tag
         self.item = item
