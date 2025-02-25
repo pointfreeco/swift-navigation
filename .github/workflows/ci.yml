@@ -53,7 +53,7 @@ jobs:
       - name: Skip macro validation
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
       - name: Run tests
-        run: IOS_VERSION=${{matrix.ios_version}} make test-${{ matrix.variation }}
+        run: make IOS_VERSION=${{matrix.ios_version}} test-${{ matrix.variation }}
 
   library-evolution:
     name: Library Evolution
