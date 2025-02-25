@@ -59,6 +59,8 @@
         self = .cancel
       case .destructive:
         self = .destructive
+      @unknown default:
+        self = .default
       }
     }
   }
