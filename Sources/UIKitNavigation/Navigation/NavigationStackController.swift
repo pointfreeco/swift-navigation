@@ -338,10 +338,13 @@
           }
 
           switch navigationController.path[nextIndex] {
-          case .eager, .lazy(.codable):
-            break
           case .lazy(.element(let element)):
             navigationController.path[nextIndex] = .eager(element)
+
+          case .eager, .lazy(.codable):
+            fallthrough
+
+          @unknown default: break
           }
           return
         }
@@ -496,6 +499,7 @@
             return nil
           }
           return (destination(value as! D), value)
+        @unknown default: return nil
         }
       }
       if stackController.path.contains(where: {
@@ -546,7 +550,8 @@
             case let .eager(element), let .lazy(.element(element)):
               return element.base as! Element
             case .lazy(.codable):
-              fatalError()
+              fallthrough
+            @unknown default: fatalError()
             }
           }
         )

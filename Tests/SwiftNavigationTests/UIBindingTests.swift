@@ -44,6 +44,21 @@ final class UIBindingTests: XCTestCase {
     count = 1729
     XCTAssertEqual(count, 1729)
     XCTAssertEqual(unwrappedCountBinding.wrappedValue, 1729)
+
+    #if os(Darwin)
+      XCTExpectFailure {
+        let isCountPresent: UIBinding<Bool> = UIBinding($count)
+        isCountPresent.wrappedValue = true
+      } issueMatcher: {
+        $0.compactDescription == """
+          failed - Boolean presentation binding attempted to write 'true' to a generic 'UIBinding<Item?>' \
+          (i.e., 'UIBinding<Int?>').
+
+          This is not a valid thing to do, as there is no way to convert 'true' to a new instance of \
+          'Int'.
+          """
+      }
+    #endif
   }
 
   func testOperationToOptional() {
