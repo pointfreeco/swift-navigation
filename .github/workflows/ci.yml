@@ -15,11 +15,11 @@ concurrency:
 
 jobs:
   library:
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       matrix:
         xcode:
-          - '16.0'
+          - '16.2'
         variation:
           - ios
           - macos
@@ -36,28 +36,56 @@ jobs:
       - name: Run tests
         run: make test-${{ matrix.variation }}
 
-  wasm:
-    name: SwiftWasm
-    runs-on: ubuntu-latest
+  library-15-4-compatibility:
+    runs-on: macos-14
     strategy:
       matrix:
-        include:
-          - toolchain: swift-DEVELOPMENT-SNAPSHOT-2024-09-12-a
-            swift-sdk: swift-wasm-DEVELOPMENT-SNAPSHOT-2024-09-12-a
-            checksum: 630ce23114580dfae029f832d8ccc8b1ba5136b7f915e82f8e405650e326b562
+        xcode:
+          - '15.4'
+        ios_version:
+          - '17.5'
+        variation:
+          - ios
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+      - name: Skip macro validation
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+      - name: Run tests
+        run: make IOS_VERSION=${{matrix.ios_version}} test-${{ matrix.variation }}
+
+  library-evolution:
+    name: Library Evolution
+    runs-on: macos-15
+    strategy:
+      matrix:
+        xcode:
+          - '16.2'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+      - name: Skip macro validation
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+      - name: Build for Library Evolution
+        run: make build-for-library-evolution
+
+  wasm:
+    name: Wasm
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: bytecodealliance/actions/wasmtime/setup@v1
       - name: Install Swift and Swift SDK for WebAssembly
         run: |
           PREFIX=/opt/swift
-          SWIFT_TOOLCHAIN_TAG="${{ matrix.toolchain }}"
-          SWIFT_SDK_TAG="${{ matrix.swift-sdk }}"
           set -ex
-          curl -f -o /tmp/swift.tar.gz "https://download.swift.org/development/ubuntu2204/$SWIFT_TOOLCHAIN_TAG/$SWIFT_TOOLCHAIN_TAG-ubuntu22.04.tar.gz"
+          curl -f -o /tmp/swift.tar.gz "https://download.swift.org/swift-6.0.2-release/ubuntu2204/swift-6.0.2-RELEASE/swift-6.0.2-RELEASE-ubuntu22.04.tar.gz"
           sudo mkdir -p $PREFIX; sudo tar -xzf /tmp/swift.tar.gz -C $PREFIX --strip-component 1
-          $PREFIX/usr/bin/swift sdk install "https://github.com/swiftwasm/swift/releases/download/$SWIFT_SDK_TAG/$SWIFT_SDK_TAG-wasm32-unknown-wasi.artifactbundle.zip" --checksum ${{ matrix.checksum }}
+          $PREFIX/usr/bin/swift sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-6.0.2-RELEASE/swift-wasm-6.0.2-RELEASE-wasm32-unknown-wasi.artifactbundle.zip --checksum 6ffedb055cb9956395d9f435d03d53ebe9f6a8d45106b979d1b7f53358e1dcb4
           echo "$PREFIX/usr/bin" >> $GITHUB_PATH
+
       - name: Build tests
         run: swift build --swift-sdk wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
       - name: Run tests
