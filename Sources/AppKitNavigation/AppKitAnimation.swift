@@ -1,6 +1,7 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
   import AppKit
   import SwiftNavigation
+  import IssueReporting
 
   #if canImport(SwiftUI)
     import SwiftUI
@@ -43,7 +44,7 @@
         var result: Swift.Result<Result, Error>?
         NSAnimationContext.runAnimationGroup { context in
           context.allowsImplicitAnimation = true
-          context.duration = animation.duration
+          context.duration = animation.duration / animation.speed
           context.timingFunction = animation.timingFunction
           result = Swift.Result(catching: body)
         } completionHandler: {
@@ -74,6 +75,7 @@
 
       fileprivate struct AppKit: Hashable, @unchecked Sendable {
         fileprivate var duration: TimeInterval
+        fileprivate var speed: TimeInterval
         fileprivate var timingFunction: CAMediaTimingFunction?
 
         func hash(into hasher: inout Hasher) {
@@ -84,6 +86,35 @@
   }
 
   extension AppKitAnimation {
+    /// Changes the duration of an animation by adjusting its speed.
+    ///
+    /// - Parameter speed: The speed at which SwiftUI performs the animation.
+    /// - Returns: An animation with the adjusted speed.
+    public func speed(
+      _ speed: Double
+    ) -> Self {
+      switch framework {
+      case let .swiftUI(animation):
+        return AppKitAnimation(
+          framework: .swiftUI(animation.speed(speed))
+        )
+      case var .appKit(animation):
+        if speed != 0 {
+          animation.speed = speed
+        } else {
+          reportIssue(
+            """
+            Setting animation speed to zero is not supported for AppKit animations.
+            Replacing with `.ulpOfOne` to avoid division by zero.
+            """
+          )
+          animation.speed = .ulpOfOne
+        }
+        return AppKitAnimation(framework: .appKit(animation))
+      }
+    }
+
+
     /// Animates changes with the specified duration and timing function.
     ///
     /// A value description of `UIView.runAnimationGroup` that can be used with
