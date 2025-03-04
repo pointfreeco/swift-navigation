@@ -31,7 +31,8 @@
   /// The way a view changes over time to create a smooth visual transition from one state to
   /// another.
   public struct AppKitAnimation: Hashable, Sendable {
-    fileprivate let framework: Framework
+    @_spi(Internals)
+    public let framework: Framework
 
     @MainActor
     func perform<Result>(
@@ -68,15 +69,16 @@
       }
     }
 
-    fileprivate enum Framework: Hashable, Sendable {
+    @_spi(Internals)
+    public enum Framework: Hashable, Sendable {
       case appKit(AppKit)
       case swiftUI(Animation)
 
-      fileprivate struct AppKit: Hashable, @unchecked Sendable {
-        fileprivate var duration: TimeInterval
-        fileprivate var timingFunction: CAMediaTimingFunction?
+      public struct AppKit: Hashable, @unchecked Sendable {
+        public var duration: TimeInterval
+        public var timingFunction: CAMediaTimingFunction?
 
-        func hash(into hasher: inout Hasher) {
+        public func hash(into hasher: inout Hasher) {
           hasher.combine(duration)
         }
       }

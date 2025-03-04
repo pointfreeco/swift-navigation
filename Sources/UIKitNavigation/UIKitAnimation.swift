@@ -30,7 +30,8 @@
   /// The way a view changes over time to create a smooth visual transition from one state to
   /// another.
   public struct UIKitAnimation: Hashable, Sendable {
-    fileprivate let framework: Framework
+    @_spi(Internals)
+    public let framework: Framework
 
     @MainActor
     func perform<Result>(
@@ -115,19 +116,20 @@
       }
     }
 
-    fileprivate enum Framework: Hashable, Sendable {
+    @_spi(Internals)
+    public enum Framework: Hashable, Sendable {
       case uiKit(UIKit)
       case swiftUI(Animation)
 
-      fileprivate struct UIKit: Hashable, Sendable {
-        fileprivate var delay: TimeInterval
-        fileprivate var duration: TimeInterval
-        fileprivate var options: UIView.AnimationOptions
-        fileprivate var repeatModifier: RepeatModifier?
-        fileprivate var speed: Double = 1
-        fileprivate var style: Style
+      public struct UIKit: Hashable, Sendable {
+        public var delay: TimeInterval
+        public var duration: TimeInterval
+        public var options: UIView.AnimationOptions
+        public var repeatModifier: RepeatModifier?
+        public var speed: Double = 1
+        public var style: Style
 
-        func hash(into hasher: inout Hasher) {
+        public func hash(into hasher: inout Hasher) {
           hasher.combine(delay)
           hasher.combine(duration)
           hasher.combine(options.rawValue)
@@ -136,12 +138,12 @@
           hasher.combine(style)
         }
 
-        fileprivate struct RepeatModifier: Hashable, Sendable {
-          var autoreverses = true
-          var count: CGFloat = 1
+        public struct RepeatModifier: Hashable, Sendable {
+          public var autoreverses = true
+          public var count: CGFloat = 1
         }
 
-        fileprivate enum Style: Hashable, Sendable {
+        public enum Style: Hashable, Sendable {
           case iOS4
           case iOS7(dampingRatio: CGFloat, velocity: CGFloat)
           case iOS17(bounce: CGFloat = 0, initialSpringVelocity: CGFloat = 0)
