@@ -202,6 +202,31 @@ public struct UIBinding<Value>: Sendable {
     )
   }
 
+  @available(*, deprecated, message: "Use '@UIBindable', instead.", renamed: "UIBindable.init")
+  public init(wrappedValue value: Value) where Value: AnyObject & Perceptible {
+    self.init(
+      location: _UIBindingAppendKeyPath(
+        base: _UIBindingStrongRoot(root: _UIBindingWrapper(value)),
+        keyPath: \.value
+      ),
+      transaction: UITransaction()
+    )
+  }
+
+  #if canImport(Observation)
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    @available(*, deprecated, message: "Use '@UIBindable', instead.", renamed: "UIBindable.init")
+    public init(wrappedValue value: Value) where Value: AnyObject & Observable {
+      self.init(
+        location: _UIBindingAppendKeyPath(
+          base: _UIBindingStrongRoot(root: _UIBindingWrapper(value)),
+          keyPath: \.value
+        ),
+        transaction: UITransaction()
+      )
+    }
+  #endif
+
   /// Creates a binding from the value of another binding.
   ///
   /// You don't call this initializer directly. Instead, Swift calls it for you when you use a
