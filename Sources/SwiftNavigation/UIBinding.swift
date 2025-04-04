@@ -205,8 +205,7 @@ public struct UIBinding<Value>: Sendable {
   @available(
     *,
     deprecated,
-    message:
-      """
+    message: """
       A '@UIBinding' must be initialized with a value, not an observable reference. Use '@UIBindable', instead.
       """,
     renamed: "UIBindable.init"
