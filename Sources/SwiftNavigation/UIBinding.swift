@@ -202,6 +202,25 @@ public struct UIBinding<Value>: Sendable {
     )
   }
 
+  @available(
+    *,
+    deprecated,
+    message:
+      """
+      A '@UIBinding' must be initialized with a value, not an observable reference. Use '@UIBindable', instead.
+      """,
+    renamed: "UIBindable.init"
+  )
+  public init(wrappedValue value: Value) where Value: AnyObject {
+    self.init(
+      location: _UIBindingAppendKeyPath(
+        base: _UIBindingStrongRoot(root: _UIBindingWrapper(value)),
+        keyPath: \.value
+      ),
+      transaction: UITransaction()
+    )
+  }
+
   /// Creates a binding from the value of another binding.
   ///
   /// You don't call this initializer directly. Instead, Swift calls it for you when you use a

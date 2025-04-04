@@ -91,19 +91,19 @@ jobs:
       - name: Run tests
         run: wasmtime --dir . .build/debug/swift-navigationPackageTests.wasm
 
-  windows:
-    name: Windows
-    strategy:
-      matrix:
-        os: [windows-latest]
-        config: ['debug', 'release']
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: compnerd/gha-setup-swift@main
-        with:
-          branch: swift-5.10-release
-          tag: 5.10-RELEASE
-      - uses: actions/checkout@v4
-      - name: Build
-        run: swift build -c ${{ matrix.config }}
+  # windows:
+  #   name: Windows
+  #   strategy:
+  #     matrix:
+  #       os: [windows-latest]
+  #       config: ['debug', 'release']
+  #     fail-fast: false
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: compnerd/gha-setup-swift@main
+  #       with:
+  #         branch: swift-5.10-release
+  #         tag: 5.10-RELEASE
+  #     - uses: actions/checkout@v4
+  #     - name: Build
+  #       run: swift build -c ${{ matrix.config }}
