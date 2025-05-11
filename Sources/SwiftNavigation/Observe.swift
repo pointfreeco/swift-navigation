@@ -64,6 +64,72 @@ import ConcurrencyExtras
 
   /// Tracks access to properties of an observable model.
   ///
+  /// This function allows one to minimally observe changes in a model in order to
+  /// react to those changes. For example, if you had an observable model like so:
+  ///
+  /// ```swift
+  /// @Observable
+  /// class FeatureModel {
+  ///   var count = 0
+  /// }
+  /// ```
+  ///
+  /// Then you can use `observe` to observe changes in the model. For example, in UIKit you can
+  /// update a `UILabel`:
+  ///
+  /// ```swift
+  /// observe { _ = model.value } onChange: { [weak self] in
+  ///   guard let self else { return }
+  ///   countLabel.text = "Count: \(model.count)"
+  /// }
+  /// ```
+  ///
+  /// Anytime the `count` property of the model changes the trailing closure will be invoked again,
+  /// allowing you to update the view. Further, only changes to properties accessed in the trailing
+  /// closure will be observed.
+  ///
+  /// > Note: If you are targeting Apple's older platforms (anything before iOS 17, macOS 14,
+  /// > tvOS 17, watchOS 10), then you can use our
+  /// > [Perception](http://github.com/pointfreeco/swift-perception) library to replace Swift's
+  /// > Observation framework.
+  ///
+  /// This function also works on non-Apple platforms, such as Windows, Linux, Wasm, and more. For
+  /// example, in a Wasm app you could observe changes to the `count` property to update the inner
+  /// HTML of a tag:
+  ///
+  /// ```swift
+  /// import JavaScriptKit
+  ///
+  /// var countLabel = document.createElement("span")
+  /// _ = document.body.appendChild(countLabel)
+  ///
+  /// let token = observe { _ = model.count } onChange: {
+  ///   countLabel.innerText = .string("Count: \(model.count)")
+  /// }
+  /// ```
+  ///
+  /// And you can also build your own tools on top of `observe`.
+  ///
+  /// - Parameters:
+  ///   - isolation: The isolation of the observation.
+  ///   - tracking: A closure that contains properties to track.
+  ///   - onChange: A closure that is triggered after some tracked property has changed
+  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+  ///   is deallocated.
+  public func observe(
+    isolation: (any Actor)? = #isolation,
+    @_inheritActorContext _ tracking: @escaping @Sendable () -> Void,
+    @_inheritActorContext onChange apply: @escaping @Sendable () -> Void
+  ) -> ObserveToken {
+    observe(
+      isolation: isolation,
+      { _ in tracking() },
+      onChange: { _ in apply() }
+    )
+  }
+
+  /// Tracks access to properties of an observable model.
+  ///
   /// A version of ``observe(isolation:_:)`` that is handed the current ``UITransaction``.
   ///
   /// - Parameters:
@@ -78,6 +144,36 @@ import ConcurrencyExtras
     let actor = ActorProxy(base: isolation)
     return observe(
       apply,
+      task: { transaction, operation in
+        Task {
+          await actor.perform {
+            operation()
+          }
+        }
+      }
+    )
+  }
+
+
+/// Tracks access to properties of an observable model.
+///
+/// A version of ``observe(isolation:_:)`` that is handed the current ``UITransaction``.
+///
+/// - Parameters:
+///   - isolation: The isolation of the observation.
+///   - tracking: A closure that contains properties to track.
+///   - onChange: A closure that is triggered after some tracked property has changed
+/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+///   is deallocated.
+  public func observe(
+    isolation: (any Actor)? = #isolation,
+    @_inheritActorContext _ tracking: @escaping @Sendable (UITransaction) -> Void,
+    @_inheritActorContext onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+  ) -> ObserveToken {
+    let actor = ActorProxy(base: isolation)
+    return observe(
+      tracking,
+      onChange: apply,
       task: { transaction, operation in
         Task {
           await actor.perform {
@@ -105,7 +201,8 @@ private actor ActorProxy {
 func observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
-    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+    _ transaction: UITransaction,
+    _ operation: @escaping @Sendable () -> Void
   ) -> Void = {
     Task(operation: $1)
   }
@@ -113,6 +210,45 @@ func observe(
   let token = ObserveToken()
   onChange(
     { [weak token] transaction in
+      guard
+        let token,
+        !token.isCancelled
+      else { return }
+
+      var perform: @Sendable () -> Void = { apply(transaction) }
+      for key in transaction.storage.keys {
+        guard let keyType = key.keyType as? any _UICustomTransactionKey.Type
+        else { continue }
+        func open<K: _UICustomTransactionKey>(_: K.Type) {
+          perform = { [perform] in
+            K.perform(value: transaction[K.self]) {
+              perform()
+            }
+          }
+        }
+        open(keyType)
+      }
+      perform()
+    },
+    task: task
+  )
+  return token
+}
+
+func observe(
+  _ tracking: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  task: @escaping @Sendable (
+    _ transaction: UITransaction,
+    _ operation: @escaping @Sendable () -> Void
+  ) -> Void = {
+    Task(operation: $1)
+  }
+) -> ObserveToken {
+  let token = ObserveToken()
+  SwiftNavigation.onChange(
+    of: tracking,
+    perform: { [weak token] transaction in
       guard
         let token,
         !token.isCancelled
@@ -149,6 +285,31 @@ private func onChange(
   } onChange: {
     task(.current) {
       onChange(apply, task: task)
+    }
+  }
+}
+
+private func onChange(
+  of tracking: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  perform action: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  apply: Bool = true,
+  task: @escaping @Sendable (
+    _ transaction: UITransaction,
+    _ operation: @escaping @Sendable () -> Void
+  ) -> Void
+) {
+  if apply { action(.current) }
+
+  withPerceptionTracking {
+    tracking(.current)
+  } onChange: {
+    task(.current) {
+      onChange(
+        of: tracking,
+        perform: action,
+        apply: true,
+        task: task
+      )
     }
   }
 }

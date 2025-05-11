@@ -112,6 +112,52 @@
 
     /// Observe access to properties of an observable (or perceptible) object.
     ///
+    /// This tool allows you to set up an observation loop so that you can access fields from an
+    /// observable model in order to populate your view, and also automatically track changes to
+    /// any fields accessed in the tracking parameter so that the view is always up-to-date.
+    ///
+    /// - Parameter tracking: A closure that contains properties to track
+    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Returns: A cancellation token.
+    @discardableResult
+    public func observe(
+      _ tracking: @escaping @MainActor @Sendable () -> Void,
+      onChange apply: @escaping @MainActor @Sendable () -> Void
+    ) -> ObserveToken {
+      observe { _ in apply() }
+    }
+
+    /// Observe access to properties of an observable (or perceptible) object.
+    ///
+    /// A version of ``observe(_:)`` that is passed the current transaction.
+    ///
+    /// - Parameter tracking: A closure that contains properties to track
+    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Returns: A cancellation token.
+    @discardableResult
+    public func observe(
+      _ tracking: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void,
+      onChange apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
+    ) -> ObserveToken {
+      let token = SwiftNavigation.observe { transaction in
+        MainActor._assumeIsolated {
+          tracking(transaction)
+        }
+      } onChange: { transaction in
+        MainActor._assumeIsolated {
+          apply(transaction)
+        }
+      } task: { transaction, work in
+        DispatchQueue.main.async {
+          withUITransaction(transaction, work)
+        }
+      }
+      tokens.append(token)
+      return token
+    }
+
+    /// Observe access to properties of an observable (or perceptible) object.
+    ///
     /// A version of ``observe(_:)`` that is passed the current transaction.
     ///
     /// - Parameter apply: A closure that contains properties to track and is invoked when the value
