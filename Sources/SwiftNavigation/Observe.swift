@@ -291,14 +291,13 @@ private func onChange(
 
 private func onChange(
   of tracking: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  perform action: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  apply: Bool = true,
+  perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction,
     _ operation: @escaping @Sendable () -> Void
   ) -> Void
 ) {
-  if apply { action(.current) }
+  operation(.current)
 
   withPerceptionTracking {
     tracking(.current)
@@ -306,8 +305,7 @@ private func onChange(
     task(.current) {
       onChange(
         of: tracking,
-        perform: action,
-        apply: true,
+        perform: operation,
         task: task
       )
     }
