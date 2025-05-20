@@ -247,7 +247,10 @@ func observe(
 ) -> ObserveToken {
   let token = ObserveToken()
   SwiftNavigation.onChange(
-    of: tracking,
+    of: { [weak token] transaction in
+      guard let token, !token.isCancelled else { return }
+      tracking(transaction)
+    },
     perform: { [weak token] transaction in
       guard
         let token,
