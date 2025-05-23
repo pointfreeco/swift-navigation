@@ -37,7 +37,17 @@
       handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
     ) {
       self.init(
-        title: state.titleVisibility == .visible ? String(state: state.title) : nil,
+        title: {
+          switch state.titleVisibility {
+          case .automatic:
+            let title = String(state: state.title)
+            return title.isEmpty ? nil : title
+          case .hidden:
+            return nil
+          case .visible:
+            return String(state: state.title)
+          }
+        }(),
         message: state.message.map { String(state: $0) },
         preferredStyle: .actionSheet
       )
