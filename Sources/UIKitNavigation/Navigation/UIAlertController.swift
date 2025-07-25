@@ -46,6 +46,8 @@
             return nil
           case .visible:
             return String(state: state.title)
+          @unknown default:
+            return nil
           }
         }(),
         message: state.message.map { String(state: $0) },
