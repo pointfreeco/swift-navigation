@@ -2,7 +2,7 @@ import SwiftNavigation
 import Perception
 import XCTest
 
-class ObserveTests: XCTestCase {
+class NestingObserveTests: XCTestCase {
   #if swift(>=6)
     func testIsolation() async {
       await MainActor.run {
@@ -13,23 +13,6 @@ class ObserveTests: XCTestCase {
         XCTAssertEqual(count, 1)
         _ = token
       }
-    }
-  #endif
-
-  #if !os(WASI)
-    @MainActor
-    func testTokenStorage() async {
-      var count = 0
-      var tokens: Set<ObserveToken> = []
-      observe {
-        count += 1
-      }
-      .store(in: &tokens)
-      observe {
-        count += 1
-      }
-      .store(in: &tokens)
-      XCTAssertEqual(count, 2)
     }
   #endif
 
@@ -57,14 +40,11 @@ class ObserveTests: XCTestCase {
 
       await Task.yield()
 
-      // See ObserveTests+Nesting for the correct approah for nested observations
       XCTAssertEqual(
         MockTracker.shared.entries.map(\.label),
         [
           "ChildObject.Model.value.didSet",
           "ChildObject.value.didSet",
-          "ChildObject.bind", // redundant update
-          "ChildObject.value.didSet"
         ]
       )
     }
@@ -84,10 +64,10 @@ class ObserveTests: XCTestCase {
       MockTracker.shared.track((), with: "ParentObject.bind")
 
       tokens = [
-        observe { [weak self] in
+        observe { _ = model.value } onChange: { [weak self] in
           self?.value = model.value
         },
-        observe { [weak self] in
+        observe { _ = model.child } onChange: { [weak self] in
           self?.child.bind(model.child)
         }
       ]
@@ -116,7 +96,7 @@ class ObserveTests: XCTestCase {
       MockTracker.shared.track((), with: "ChildObject.bind")
 
       tokens = [
-        observe { [weak self] in
+        observe { _ = model.value } onChange: { [weak self] in
           self?.value = model.value
         }
       ]
