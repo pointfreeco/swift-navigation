@@ -346,11 +346,10 @@
       stackController.path.append(.lazy(.element(value)))
     }
 
-    @discardableResult
     public func navigationDestination<D: Hashable>(
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
-    ) -> ObserveToken {
+    ) {
       guard let navigationController = navigationController ?? self as? UINavigationController
       else {
         reportIssue(
@@ -358,7 +357,7 @@
           Can't register navigation destination: "navigationController" is "nil".
           """
         )
-        return ObserveToken {}
+        return
       }
       guard let stackController = navigationController as? NavigationStackController
       else {
@@ -367,7 +366,7 @@
           Tried to apply a "navigationDestination" to a non-"NavigationStackController".
           """
         )
-        return ObserveToken {}
+        return
       }
 
       stackController.destinations[NavigationStackController.DestinationType(data)] = {
@@ -394,7 +393,7 @@
         @unknown default: return nil
         }
       }
-      return observe { transaction in
+      func resolvePath() {
         if stackController.path.contains(where: {
           guard case .lazy = $0, $0.elementType == D.self else { return false }
           return true
@@ -402,6 +401,11 @@
           stackController.path = stackController.path
         }
       }
+      #if DEBUG
+        _PerceptionLocals.$skipPerceptionChecking.withValue(true, operation: resolvePath)
+      #else
+        resolvePath()
+      #endif
     }
 
     fileprivate var navigationID: UINavigationPath.Element? {
