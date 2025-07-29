@@ -556,7 +556,13 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
     self.keyPath = keyPath
     self.objectIdentifier = ObjectIdentifier(root)
     self.root = root
-    self.value = root[keyPath: keyPath]
+    #if DEBUG
+      self.value = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+        root[keyPath: keyPath]
+      }
+    #else
+      self.value = root[keyPath: keyPath]
+    #endif
     self.fileID = fileID
     self.filePath = filePath
     self.line = line
