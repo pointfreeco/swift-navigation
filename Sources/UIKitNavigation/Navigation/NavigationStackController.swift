@@ -402,7 +402,9 @@
         }
       }
       #if DEBUG
-        _PerceptionLocals.$skipPerceptionChecking.withValue(true, operation: resolvePath)
+        _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+          resolvePath()
+        }
       #else
         resolvePath()
       #endif
