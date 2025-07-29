@@ -45,7 +45,7 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(count, 1729)
     XCTAssertEqual(unwrappedCountBinding.wrappedValue, 1729)
 
-    #if canImport(Darwin)
+    #if os(Darwin)
       XCTExpectFailure {
         let isCountPresent: UIBinding<Bool> = UIBinding($count)
         isCountPresent.wrappedValue = true

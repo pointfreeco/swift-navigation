@@ -16,7 +16,7 @@
         }
       } matching: { issue in
         issue.description == """
-          Issue recorded: An animated action was performed asynchronously: …
+          Expectation failed: An animated action was performed asynchronously: …
 
             Action:
               ButtonStateAction.send(
