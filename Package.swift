@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 
 import PackageDescription
 
@@ -57,7 +57,7 @@ let package = Package(
     .target(
       name: "SwiftUINavigation",
       dependencies: [
-        "SwiftNavigation",
+        "UIKitNavigation",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
@@ -82,7 +82,7 @@ let package = Package(
     .target(
       name: "AppKitNavigation",
       dependencies: [
-        "SwiftNavigation"
+        "SwiftNavigation",
       ]
     ),
     .testTarget(
@@ -91,17 +91,6 @@ let package = Package(
         "UIKitNavigation"
       ]
     ),
-  ]
+  ],
+  swiftLanguageModes: [.v6]
 )
-
-for target in package.targets {
-  target.swiftSettings = target.swiftSettings ?? []
-  target.swiftSettings!.append(contentsOf: [
-    .enableExperimentalFeature("StrictConcurrency")
-  ])
-  // target.swiftSettings?.append(
-  //   .unsafeFlags([
-  //     "-enable-library-evolution",
-  //   ])
-  // )
-}
