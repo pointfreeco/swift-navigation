@@ -393,12 +393,21 @@
         @unknown default: return nil
         }
       }
-      if stackController.path.contains(where: {
-        guard case .lazy = $0, $0.elementType == D.self else { return false }
-        return true
-      }) {
-        stackController.path = stackController.path
+      func resolvePath() {
+        if stackController.path.contains(where: {
+          guard case .lazy = $0, $0.elementType == D.self else { return false }
+          return true
+        }) {
+          stackController.path = stackController.path
+        }
       }
+      #if DEBUG
+        _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+          resolvePath()
+        }
+      #else
+        resolvePath()
+      #endif
     }
 
     fileprivate var navigationID: UINavigationPath.Element? {
