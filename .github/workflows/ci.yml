@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - '16.2'
+          - '16.4'
         variation:
           - ios
           - macos
@@ -42,7 +42,7 @@ jobs:
   #   strategy:
   #     matrix:
   #       xcode:
-  #         - '16.2'
+  #         - '16.4'
   #   steps:
   #     - uses: actions/checkout@v4
   #     - name: Select Xcode ${{ matrix.xcode }}
