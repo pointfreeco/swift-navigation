@@ -47,6 +47,7 @@ let package = Package(
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "Perception", package: "swift-perception"),
+        .product(name: "PerceptionCore", package: "swift-perception"),
       ]
     ),
     .testTarget(
