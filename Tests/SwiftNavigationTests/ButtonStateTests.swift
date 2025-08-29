@@ -15,7 +15,8 @@
           await Task.yield()
         }
       } matching: { issue in
-        issue.description.hasSuffix("""
+        issue.description.hasSuffix(
+          """
           An animated action was performed asynchronously: …
 
             Action:
