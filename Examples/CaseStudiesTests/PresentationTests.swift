@@ -43,6 +43,27 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor
+  func testPresents_Dismissal() async throws {
+    let vc = BasicViewController()
+    try await setUp(controller: vc)
+
+    await assertEventuallyNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.isPresented = true
+    }
+    await assertEventuallyNotNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, true)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.presentedViewController?.dismiss(animated: false)
+    }
+    await assertEventuallyNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.model.isPresented, false)
+    await assertEventuallyEqual(vc.isPresenting, false)
+  }
+
+  @MainActor
   func testPresents_TraitDismissal() async throws {
     let vc = BasicViewController()
     try await setUp(controller: vc)
@@ -53,12 +74,14 @@ final class PresentationTests: XCTestCase {
       vc.model.isPresented = true
     }
     await assertEventuallyNotNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, true)
 
     withUITransaction(\.uiKit.disablesAnimations, true) {
       vc.presentedViewController?.traitCollection.dismiss()
     }
     await assertEventuallyNil(vc.presentedViewController)
     await assertEventuallyEqual(vc.model.isPresented, false)
+    await assertEventuallyEqual(vc.isPresenting, false)
   }
 
   @MainActor
