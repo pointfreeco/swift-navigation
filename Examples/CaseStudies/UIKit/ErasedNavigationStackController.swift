@@ -81,6 +81,10 @@ private class NumberFeatureViewController: UIViewController {
     self.number = number
     super.init(nibName: nil, bundle: nil)
     title = "Feature \(number)"
+
+    navigationDestination(for: String.self) { string in
+      StringFeatureViewController(string: string)
+    }
   }
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
@@ -88,10 +92,6 @@ private class NumberFeatureViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
-
-    navigationDestination(for: String.self) { string in
-      StringFeatureViewController(string: string)
-    }
 
     let numberButton = UIButton(
       type: .system,
@@ -137,6 +137,10 @@ private class StringFeatureViewController: UIViewController {
     self.string = string
     super.init(nibName: nil, bundle: nil)
     title = "Feature '\(string)'"
+
+    navigationDestination(for: Bool.self) { bool in
+      BoolFeatureViewController(bool: bool)
+    }
   }
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
@@ -144,10 +148,6 @@ private class StringFeatureViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .systemBackground
-
-    navigationDestination(for: Bool.self) { bool in
-      BoolFeatureViewController(bool: bool)
-    }
 
     let numberButton = UIButton(
       type: .system,
