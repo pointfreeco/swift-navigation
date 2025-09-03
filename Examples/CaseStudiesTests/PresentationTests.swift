@@ -43,7 +43,27 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor
-  func testPresents_Dismissal() async throws {
+  func testPresents_Alert() async throws {
+    let vc = BasicViewController()
+    try await setUp(controller: vc)
+
+    await assertEventuallyNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.destination = .alert("This is an alert!")
+    }
+    await assertEventuallyNotNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, true)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.destination = nil
+    }
+    await assertEventuallyNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, false)
+  }
+
+  @MainActor
+  func testPresents_NavigationDismissal() async throws {
     let vc = BasicViewController()
     try await setUp(controller: vc)
 
@@ -60,6 +80,27 @@ final class PresentationTests: XCTestCase {
     }
     await assertEventuallyNil(vc.presentedViewController)
     await assertEventuallyEqual(vc.model.isPresented, false)
+    await assertEventuallyEqual(vc.isPresenting, false)
+  }
+
+  @MainActor
+  func testPresents_AlertDismissal() async throws {
+    let vc = BasicViewController()
+    try await setUp(controller: vc)
+
+    await assertEventuallyNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.destination = .alert("This is an alert!")
+    }
+    await assertEventuallyNotNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, true)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.presentedViewController?.dismiss(animated: false)
+    }
+    await assertEventuallyNil(vc.presentedViewController)
+    await assertEventuallyNil(vc.model.destination)
     await assertEventuallyEqual(vc.isPresenting, false)
   }
 
@@ -486,18 +527,30 @@ private final class Model: Identifiable {
   var presentedChild: Model?
   var pushedChild: Model?
   var text: String
+  var destination: Destination?
+
+  @CasePathable
+  @dynamicMemberLookup
+  enum Destination {
+    case alert(String)
+    case drillDown(Int)
+    case sheet(Int)
+    case sheetWithoutPayload
+  }
   init(
     isPresented: Bool = false,
     isPushed: Bool = false,
     presentedChild: Model? = nil,
     pushedChild: Model? = nil,
-    text: String = ""
+    text: String = "",
+    destination: Destination? = nil
   ) {
     self.isPresented = isPresented
     self.isPushed = isPushed
     self.presentedChild = presentedChild
     self.pushedChild = pushedChild
     self.text = text
+    self.destination = destination
   }
 }
 
@@ -542,6 +595,12 @@ private class BasicViewController: UIViewController {
     } content: { [weak self] model in
       self?.isPresenting = true
       return BasicViewController(model: model)
+    }
+    present(item: $model.destination.alert, id: \.self) { [weak self] in
+      self?.isPresenting = false
+    } content: { [weak self] title in
+      self?.isPresenting = true
+      return UIAlertController(title: title, message: nil, preferredStyle: .alert)
     }
     navigationDestination(isPresented: $model.isPushed) {
       ViewController()
