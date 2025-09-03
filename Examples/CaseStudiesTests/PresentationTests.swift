@@ -43,6 +43,35 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor
+  func testPresents_Dismissal() async throws {
+    let vc = BasicViewController()
+    try await setUp(controller: vc)
+
+    await assertEventuallyNil(vc.presentedViewController)
+
+    func runDismissalSteps() async throws {
+      withUITransaction(\.uiKit.disablesAnimations, true) {
+        vc.model.isPresented = true
+      }
+      await assertEventuallyNotNil(vc.presentedViewController)
+
+      withUITransaction(\.uiKit.disablesAnimations, true) {
+        vc.presentedViewController?.dismiss(animated: false)
+      }
+      await assertEventuallyNil(vc.presentedViewController)
+      await assertEventuallyEqual(vc.model.isPresented, false)
+      await assertEventuallyEqual(vc.isPresenting, false)
+    }
+
+    // Race condition exists in dismissal logic that seems to
+    // only occur in tests. Run repeatedly to catch a single
+    // failure since odds of a failure are about 30%
+    for _ in 0..<100 {
+      try await runDismissalSteps()
+     }
+  }
+
+  @MainActor
   func testPresents_TraitDismissal() async throws {
     let vc = BasicViewController()
     try await setUp(controller: vc)
@@ -59,6 +88,7 @@ final class PresentationTests: XCTestCase {
     }
     await assertEventuallyNil(vc.presentedViewController)
     await assertEventuallyEqual(vc.model.isPresented, false)
+    await assertEventuallyEqual(vc.isPresenting, false)
   }
 
   @MainActor
