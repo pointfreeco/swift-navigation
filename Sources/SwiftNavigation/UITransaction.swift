@@ -39,7 +39,9 @@ public func withUITransaction<R, V>(
 /// The root transaction for a state change comes from the binding that changed, plus any global
 /// values set by calling ``withUITransaction(_:_:)``.
 public struct UITransaction: Sendable {
-  @TaskLocal package static var current = Self()
+  /// Current TaskLocal transaction
+  @_spi(Internals)
+  @TaskLocal public static var current = Self()
 
   var storage: OrderedDictionary<Key, any Sendable> = [:]
 
