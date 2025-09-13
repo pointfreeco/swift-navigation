@@ -51,15 +51,10 @@
       [self UIKitNavigation_viewDidDisappear:animated];
 
       if ((self.isBeingDismissed || self.isMovingFromParentViewController) && self._UIKitNavigation_onDismiss != NULL) {
-        if ([self isKindOfClass:UIAlertController.class]) {
-          dispatch_async(dispatch_get_main_queue(), ^{
-            self._UIKitNavigation_onDismiss();
-            self._UIKitNavigation_onDismiss = nil;
-          });
-        } else {
-          self._UIKitNavigation_onDismiss();
+        self._UIKitNavigation_onDismiss();
+        dispatch_async(dispatch_get_main_queue(), ^{
           self._UIKitNavigation_onDismiss = nil;
-        }
+        });
       }
     }
 
