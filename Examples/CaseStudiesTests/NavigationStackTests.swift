@@ -424,7 +424,6 @@ private class MockAnimator: NSObject, UIViewControllerAnimatedTransitioning {
   }
 }
 
-
 private class MockNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
   var interactionController: UIPercentDrivenInteractiveTransition?
   var interactionExpectation: XCTestExpectation?
