@@ -292,6 +292,56 @@ final class NavigationStackTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 5)
     await assertEventuallyEqual(path, [1, 2, 3, 4])
   }
+
+  @MainActor
+  func testInteractivePopViaGestureAction() async throws {
+    @UIBinding var path = [Int]()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ChildViewController(number: number)
+    }
+    try await setUp(controller: nav)
+
+    nav.traitCollection.push(value: 1)
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(path, [1])
+
+    let interaction = MockInteractiveTransition()
+    let delegate = MockNavigationControllerDelegate()
+    delegate.interactionController = interaction
+    nav.delegate = delegate
+
+    let interactionExpectation = expectation(
+      description: "navigationController(_:interactionControllerFor:) called"
+    )
+    delegate.interactionExpectation = interactionExpectation
+
+    await MainActor.run {
+      _ = nav.popViewController(animated: true)
+    }
+
+    await fulfillment(of: [interactionExpectation], timeout: 1.0)
+
+    XCTAssertTrue(delegate.didCallInteractionController)
+    XCTAssertFalse(interaction.didFinish)
+
+    await MainActor.run {
+      interaction.update(0.5)
+      interaction.finish()
+    }
+
+    let predicate = NSPredicate(format: "viewControllers.@count == 1")
+    let vcCountExpectation = XCTNSPredicateExpectation(
+      predicate: predicate,
+      object: nav
+    )
+    await fulfillment(of: [vcCountExpectation], timeout: 2.0)
+
+    XCTAssertTrue(interaction.didFinish)
+    XCTAssertEqual(nav.viewControllers.count, 1)
+  }
 }
 
 private final class ChildViewController: UIViewController {
@@ -315,5 +365,87 @@ private final class ChildViewController: UIViewController {
     navigationDestination(isPresented: $isLeafPresented) { [weak self] in
       ChildViewController(number: self?.number ?? 0)
     }
+  }
+}
+
+private class MockInteractiveTransition: UIPercentDrivenInteractiveTransition {
+  private(set) var didFinish = false
+
+  override func finish() {
+    super.finish()
+    didFinish = true
+  }
+}
+
+private class MockAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+  let duration: TimeInterval
+
+  init(duration: TimeInterval = 0.25) {
+    self.duration = duration
+    super.init()
+  }
+  func transitionDuration(
+    using transitionContext: UIViewControllerContextTransitioning?
+  ) -> TimeInterval {
+    return duration
+  }
+  func animateTransition(
+    using transitionContext: UIViewControllerContextTransitioning
+  ) {
+    // Basic animation that moves the fromView out and the toView in.
+    guard
+      let container = transitionContext.containerView as UIView?,
+      let fromVC = transitionContext.viewController(forKey: .from),
+      let toVC = transitionContext.viewController(forKey: .to)
+    else {
+      transitionContext.completeTransition(false)
+      return
+    }
+
+    let fromView = fromVC.view!
+    let toView = toVC.view!
+
+    // Place toView below and set starting frame
+    let initialFrame = transitionContext.initialFrame(for: fromVC)
+    toView.frame = initialFrame.offsetBy(dx: initialFrame.width, dy: 0)
+    container.addSubview(toView)
+
+    UIView.animate(
+      withDuration: transitionDuration(using: transitionContext),
+      delay: 0,
+      options: [.curveLinear]
+    ) {
+      fromView.frame = initialFrame.offsetBy(dx: -initialFrame.width / 3.0, dy: 0)
+      toView.frame = initialFrame
+    } completion: { finished in
+      let cancelled = transitionContext.transitionWasCancelled
+      transitionContext.completeTransition(!cancelled)
+    }
+  }
+}
+
+
+private class MockNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
+  var interactionController: UIPercentDrivenInteractiveTransition?
+  var interactionExpectation: XCTestExpectation?
+  var didCallInteractionController = false
+
+  func navigationController(
+    _ navigationController: UINavigationController,
+    animationControllerFor operation: UINavigationController.Operation,
+    from fromVC: UIViewController,
+    to toVC: UIViewController
+  ) -> UIViewControllerAnimatedTransitioning? {
+    return MockAnimator()
+  }
+  func navigationController(
+    _ navigationController: UINavigationController,
+    interactionControllerFor animationController: UIViewControllerAnimatedTransitioning
+  ) -> UIViewControllerInteractiveTransitioning? {
+    didCallInteractionController = true
+    DispatchQueue.main.async { [weak self] in
+      self?.interactionExpectation?.fulfill()
+    }
+    return interactionController
   }
 }
