@@ -24,6 +24,9 @@
       for button in state.buttons {
         addAction(UIAlertAction(button, action: handler))
       }
+      if state.buttons.isEmpty {
+        addAction(UIAlertAction(title: "OK", style: .cancel))
+      }
     }
 
     /// Creates and returns a view controller for displaying an action sheet using a data
@@ -56,6 +59,9 @@
       )
       for button in state.buttons {
         addAction(UIAlertAction(button, action: handler))
+      }
+      if state.buttons.isEmpty {
+        addAction(UIAlertAction(title: "OK", style: .cancel))
       }
     }
   }
