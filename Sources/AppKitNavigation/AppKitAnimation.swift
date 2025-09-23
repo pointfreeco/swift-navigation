@@ -102,8 +102,8 @@
         } else {
           reportIssue(
             """
-            Setting animation speed to zero is not supported for AppKit animations.
-            Replacing with `.ulpOfOne` to avoid division by zero.
+            Setting animation speed to zero is not supported for AppKit animations. \
+            Replace with '.ulpOfOne' to avoid division by zero.
             """
           )
           animation.speed = .ulpOfOne
