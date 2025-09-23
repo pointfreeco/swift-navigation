@@ -1,7 +1,11 @@
-PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iOS 17.5,iPhone \d\+ Pro [^M])
+IOS_VERSION = 18.5
+TVOS_VERSION = 18.5
+WATCHOS_VERSION = 11.5
+OTHER_SWIFT_FLAGS="-DRESILIENT_LIBRARIES"
+PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iOS $(IOS_VERSION),iPhone \d\+ Pro [^M])
 PLATFORM_MACOS = macOS
-PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,tvOS 17.5,TV)
-PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,watchOS 10.5,Watch)
+PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,tvOS $(TVOS_VERSION),TV)
+PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,watchOS $(WATCHOS_VERSION),Watch)
 
 TEST_RUNNER_CI = $(CI)
 
@@ -9,7 +13,7 @@ default: test
 
 test: test-ios test-macos test-tvos test-watchos test-examples
 
-test-ios:
+test-ios: warm-simulator
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
@@ -18,7 +22,7 @@ test-ios:
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme DynamicFramework \
 		-destination platform="$(PLATFORM_IOS)"
-test-macos:
+test-macos: warm-simulator
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
@@ -27,7 +31,7 @@ test-macos:
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme DynamicFramework \
 		-destination platform="$(PLATFORM_MACOS)"
-test-tvos:
+test-tvos: warm-simulator
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
@@ -36,7 +40,7 @@ test-tvos:
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme DynamicFramework \
 		-destination platform="$(PLATFORM_TVOS)"
-test-watchos:
+test-watchos: warm-simulator
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme SwiftNavigation \
@@ -46,11 +50,24 @@ test-watchos:
 		-scheme DynamicFramework \
 		-destination platform="$(PLATFORM_WATCHOS)"
 
-test-examples:
+test-examples: warm-simulator
 	xcodebuild test \
 		-workspace SwiftNavigation.xcworkspace \
 		-scheme CaseStudies \
 		-destination platform="$(PLATFORM_IOS)"
+
+build-for-library-evolution: warm-simulator
+	swift build \
+		-c release \
+		-Xswiftc -emit-module-interface \
+		-Xswiftc -enable-library-evolution \
+		-Xswiftc $(OTHER_SWIFT_FLAGS)
+	xcodebuild build \
+		-workspace SwiftNavigation.xcworkspace \
+		-destination platform="$(PLATFORM_IOS)" \
+		-scheme SwiftNavigation \
+		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+		OTHER_SWIFT_FLAGS=$(OTHER_SWIFT_FLAGS)
 
 DOC_WARNINGS := $(shell xcodebuild clean docbuild \
 	-scheme SwiftUINavigation \
@@ -73,7 +90,13 @@ format:
 		--recursive \
 		./Examples ./Package.swift ./Sources ./Tests
 
-.PHONY: format test-all test-docs
+warm-simulator:
+	@test "$(PLATFORM_IOS)" != "" \
+		&& xcrun simctl boot $(PLATFORM_ID) \
+		&& open -a Simulator --args -CurrentDeviceUDID $(PLATFORM_IOS) \
+		|| exit 0
+
+.PHONY: format test-all test-docs warm-simulator
 
 define udid_for
 $(shell xcrun simctl list devices available '$(1)' | grep '$(2)' | sort -r | head -1 | awk -F '[()]' '{ print $$(NF-3) }')

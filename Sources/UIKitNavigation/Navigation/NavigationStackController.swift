@@ -148,7 +148,9 @@
               invalidIndices.insert(index)
             }
           }
-          path.remove(atOffsets: invalidIndices)
+          if !invalidIndices.isEmpty {
+            path.remove(atOffsets: invalidIndices)
+          }
           setViewControllers(newViewControllers, animated: !transaction.uiKit.disablesAnimations)
         }
       }
@@ -194,9 +196,24 @@
       weak var base: (any UINavigationControllerDelegate)?
 
       override func responds(to aSelector: Selector!) -> Bool {
-        aSelector == #selector(navigationController(_:didShow:animated:))
-          || MainActor._assumeIsolated { base?.responds(to: aSelector) }
-            ?? false
+        #if !os(tvOS) && !os(watchOS)
+          aSelector == #selector(navigationController(_:willShow:animated:))
+            || aSelector == #selector(navigationController(_:didShow:animated:))
+            || aSelector == #selector(navigationControllerSupportedInterfaceOrientations(_:))
+            || aSelector == #selector(
+              navigationControllerPreferredInterfaceOrientationForPresentation(_:))
+            || aSelector == #selector(navigationController(_:interactionControllerFor:))
+            || aSelector == #selector(navigationController(_:animationControllerFor:from:to:))
+            || MainActor._assumeIsolated { base?.responds(to: aSelector) }
+              ?? false
+        #else
+          aSelector == #selector(navigationController(_:willShow:animated:))
+            || aSelector == #selector(navigationController(_:didShow:animated:))
+            || aSelector == #selector(navigationController(_:interactionControllerFor:))
+            || aSelector == #selector(navigationController(_:animationControllerFor:from:to:))
+            || MainActor._assumeIsolated { base?.responds(to: aSelector) }
+              ?? false
+        #endif
       }
 
       func navigationController(
@@ -251,10 +268,13 @@
           }
 
           switch navigationController.path[nextIndex] {
-          case .eager, .lazy(.codable):
-            break
           case .lazy(.element(let element)):
             navigationController.path[nextIndex] = .eager(element)
+
+          case .eager, .lazy(.codable):
+            fallthrough
+
+          @unknown default: break
           }
           return
         }
@@ -385,14 +405,24 @@
             return nil
           }
           return (destination(value as! D), value)
+        @unknown default: return nil
         }
       }
-      if stackController.path.contains(where: {
-        guard case .lazy = $0, $0.elementType == D.self else { return false }
-        return true
-      }) {
-        stackController.path = stackController.path
+      func resolvePath() {
+        if stackController.path.contains(where: {
+          guard case .lazy = $0, $0.elementType == D.self else { return false }
+          return true
+        }) {
+          stackController.path = stackController.path
+        }
       }
+      #if DEBUG
+        _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+          resolvePath()
+        }
+      #else
+        resolvePath()
+      #endif
     }
 
     fileprivate var navigationID: UINavigationPath.Element? {
@@ -435,7 +465,8 @@
             case let .eager(element), let .lazy(.element(element)):
               return element.base as! Element
             case .lazy(.codable):
-              fatalError()
+              fallthrough
+            @unknown default: fatalError()
             }
           }
         )

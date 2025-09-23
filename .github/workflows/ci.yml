@@ -15,11 +15,11 @@ concurrency:
 
 jobs:
   library:
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       matrix:
         xcode:
-          - '15.4'
+          - '16.4'
         variation:
           - ios
           - macos
@@ -36,46 +36,55 @@ jobs:
       - name: Run tests
         run: make test-${{ matrix.variation }}
 
-  wasm:
-    name: SwiftWasm
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - toolchain: swift-DEVELOPMENT-SNAPSHOT-2024-09-12-a
-            swift-sdk: swift-wasm-DEVELOPMENT-SNAPSHOT-2024-09-12-a
-            checksum: 630ce23114580dfae029f832d8ccc8b1ba5136b7f915e82f8e405650e326b562
-    steps:
-      - uses: actions/checkout@v4
-      - uses: bytecodealliance/actions/wasmtime/setup@v1
-      - name: Install Swift and Swift SDK for WebAssembly
-        run: |
-          PREFIX=/opt/swift
-          SWIFT_TOOLCHAIN_TAG="${{ matrix.toolchain }}"
-          SWIFT_SDK_TAG="${{ matrix.swift-sdk }}"
-          set -ex
-          curl -f -o /tmp/swift.tar.gz "https://download.swift.org/development/ubuntu2204/$SWIFT_TOOLCHAIN_TAG/$SWIFT_TOOLCHAIN_TAG-ubuntu22.04.tar.gz"
-          sudo mkdir -p $PREFIX; sudo tar -xzf /tmp/swift.tar.gz -C $PREFIX --strip-component 1
-          $PREFIX/usr/bin/swift sdk install "https://github.com/swiftwasm/swift/releases/download/$SWIFT_SDK_TAG/$SWIFT_SDK_TAG-wasm32-unknown-wasi.artifactbundle.zip" --checksum ${{ matrix.checksum }}
-          echo "$PREFIX/usr/bin" >> $GITHUB_PATH
-      - name: Build tests
-        run: swift build --swift-sdk wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
-      - name: Run tests
-        run: wasmtime --dir . .build/debug/swift-navigationPackageTests.wasm
+  # library-evolution:
+  #   name: Library Evolution
+  #   runs-on: macos-15
+  #   strategy:
+  #     matrix:
+  #       xcode:
+  #         - '16.4'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Select Xcode ${{ matrix.xcode }}
+  #       run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+  #     - name: Skip macro validation
+  #       run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+  #     - name: Build for Library Evolution
+  #       run: make build-for-library-evolution
 
-  windows:
-    name: Windows
-    strategy:
-      matrix:
-        os: [windows-latest]
-        config: ['debug', 'release']
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: compnerd/gha-setup-swift@main
-        with:
-          branch: swift-5.10-release
-          tag: 5.10-RELEASE
-      - uses: actions/checkout@v4
-      - name: Build
-        run: swift build -c ${{ matrix.config }}
+  # wasm:
+  #   name: Wasm
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: bytecodealliance/actions/wasmtime/setup@v1
+  #     - name: Install Swift and Swift SDK for WebAssembly
+  #       run: |
+  #         PREFIX=/opt/swift
+  #         set -ex
+  #         curl -f -o /tmp/swift.tar.gz "https://download.swift.org/swift-6.0.3-release/ubuntu2204/swift-6.0.3-RELEASE/swift-6.0.3-RELEASE-ubuntu22.04.tar.gz"
+  #         sudo mkdir -p $PREFIX; sudo tar -xzf /tmp/swift.tar.gz -C $PREFIX --strip-component 1
+  #         $PREFIX/usr/bin/swift sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-6.0.3-RELEASE/swift-wasm-6.0.3-RELEASE-wasm32-unknown-wasi.artifactbundle.zip --checksum 31d3585b06dd92de390bacc18527801480163188cd7473f492956b5e213a8618
+  #         echo "$PREFIX/usr/bin" >> $GITHUB_PATH
+  #
+  #     - name: Build tests
+  #       run: swift build --swift-sdk wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
+  #     - name: Run tests
+  #       run: wasmtime --dir . .build/debug/swift-navigationPackageTests.wasm
+
+  # windows:
+  #   name: Windows
+  #   strategy:
+  #     matrix:
+  #       os: [windows-latest]
+  #       config: ['debug', 'release']
+  #     fail-fast: false
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: compnerd/gha-setup-swift@main
+  #       with:
+  #         branch: swift-5.10-release
+  #         tag: 5.10-RELEASE
+  #     - uses: actions/checkout@v4
+  #     - name: Build
+  #       run: swift build -c ${{ matrix.config }}

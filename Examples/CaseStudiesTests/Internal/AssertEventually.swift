@@ -20,8 +20,8 @@ func assertEventually(
 
 @MainActor
 func assertEventuallyEqual<T: Equatable>(
-  _ expression1: @autoclosure @escaping @MainActor () -> T,
-  _ expression2: @autoclosure @escaping @MainActor () -> T,
+  _ expression1: @autoclosure () -> T,
+  _ expression2: @autoclosure () -> T,
   timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
@@ -39,8 +39,8 @@ func assertEventuallyEqual<T: Equatable>(
 
 @MainActor
 func assertEventuallyNoDifference<T: Equatable>(
-  _ expression1: @autoclosure @escaping @MainActor () -> T,
-  _ expression2: @autoclosure @escaping @MainActor () -> T,
+  _ expression1: @autoclosure () -> T,
+  _ expression2: @autoclosure () -> T,
   timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
@@ -68,8 +68,8 @@ func assertEventuallyNoDifference<T: Equatable>(
 
 @MainActor
 func assertEventuallyNotEqual<T: Equatable>(
-  _ expression1: @autoclosure @escaping @MainActor () -> T,
-  _ expression2: @autoclosure @escaping @MainActor () -> T,
+  _ expression1: @autoclosure () -> T,
+  _ expression2: @autoclosure () -> T,
   timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
@@ -87,7 +87,7 @@ func assertEventuallyNotEqual<T: Equatable>(
 
 @MainActor
 func assertEventuallyNil<T>(
-  _ expression: @autoclosure @escaping @MainActor () -> T?,
+  _ expression: @autoclosure () -> T?,
   timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
@@ -104,7 +104,7 @@ func assertEventuallyNil<T>(
 
 @MainActor
 func assertEventuallyNotNil<T>(
-  _ expression: @autoclosure @escaping @MainActor () -> T?,
+  _ expression: @autoclosure () -> T?,
   timeout: TimeInterval = 1,
   file: StaticString = #file,
   line: UInt = #line
@@ -121,8 +121,8 @@ func assertEventuallyNotNil<T>(
 
 @MainActor
 private func _assertEventually<T>(
-  _ expression1: @autoclosure @escaping @MainActor () -> T,
-  _ expression2: @autoclosure @escaping @MainActor () -> T,
+  _ expression1: @autoclosure () -> T,
+  _ expression2: @autoclosure () -> T,
   condition: (T, T) -> Bool,
   assert: (
     @autoclosure () -> T,
@@ -154,7 +154,7 @@ private func _assertEventually<T>(
 
 @MainActor
 private func _assertEventually<T>(
-  _ expression: @autoclosure @escaping @MainActor () -> T,
+  _ expression: @autoclosure () -> T,
   condition: (T) -> Bool,
   assert: (@autoclosure () -> T, @autoclosure () -> String, StaticString, UInt) -> Void,
   timeout: TimeInterval,
@@ -172,6 +172,6 @@ private func _assertEventually<T>(
       assert(value, "", file, line)
       return
     }
-    await Task.yield()
+    await Task { try? await Task.sleep(nanoseconds: 1000) }.value
   }
 }

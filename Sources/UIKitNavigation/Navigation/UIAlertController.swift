@@ -24,6 +24,9 @@
       for button in state.buttons {
         addAction(UIAlertAction(button, action: handler))
       }
+      if state.buttons.isEmpty {
+        addAction(UIAlertAction(title: "OK", style: .cancel))
+      }
     }
 
     /// Creates and returns a view controller for displaying an action sheet using a data
@@ -37,12 +40,28 @@
       handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
     ) {
       self.init(
-        title: state.titleVisibility == .visible ? String(state: state.title) : nil,
+        title: {
+          switch state.titleVisibility {
+          case .automatic:
+            let title = String(state: state.title)
+            return title.isEmpty ? nil : title
+          case .hidden:
+            return nil
+          case .visible:
+            return String(state: state.title)
+          @unknown default:
+            let title = String(state: state.title)
+            return title.isEmpty ? nil : title
+          }
+        }(),
         message: state.message.map { String(state: $0) },
         preferredStyle: .actionSheet
       )
       for button in state.buttons {
         addAction(UIAlertAction(button, action: handler))
+      }
+      if state.buttons.isEmpty {
+        addAction(UIAlertAction(title: "OK", style: .cancel))
       }
     }
   }
@@ -59,6 +78,8 @@
         self = .cancel
       case .destructive:
         self = .destructive
+      @unknown default:
+        self = .default
       }
     }
   }

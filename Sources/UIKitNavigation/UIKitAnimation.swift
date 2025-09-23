@@ -43,7 +43,7 @@
           if #available(iOS 18, macOS 15, tvOS 18, visionOS 2, watchOS 11, *) {
             var result: Swift.Result<Result, Error>?
             UIView.animate(
-              with: animation,
+              animation,
               changes: { result = Swift.Result(catching: body) },
               completion: completion.map { completion in { completion(true) } }
             )

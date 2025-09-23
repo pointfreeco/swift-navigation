@@ -1,6 +1,10 @@
 import ConcurrencyExtras
 import IssueReporting
 
+#if canImport(Observation)
+  import Observation
+#endif
+
 /// A property wrapper type that can read and write an observable value.
 ///
 /// Like SwiftUI's `Binding`, but works for UIKit, AppKit, and non-Apple platforms such as
@@ -198,6 +202,24 @@ public struct UIBinding<Value>: Sendable {
     )
   }
 
+  @available(
+    *,
+    deprecated,
+    message: """
+      A '@UIBinding' must be initialized with a value, not an observable reference. Use '@UIBindable', instead.
+      """,
+    renamed: "UIBindable.init"
+  )
+  public init(wrappedValue value: Value) where Value: AnyObject {
+    self.init(
+      location: _UIBindingAppendKeyPath(
+        base: _UIBindingStrongRoot(root: _UIBindingWrapper(value)),
+        keyPath: \.value
+      ),
+      transaction: UITransaction()
+    )
+  }
+
   /// Creates a binding from the value of another binding.
   ///
   /// You don't call this initializer directly. Instead, Swift calls it for you when you use a
@@ -374,11 +396,11 @@ public struct UIBinding<Value>: Sendable {
   /// - Parameter keyPath: A key path to a specific resulting value.
   /// - Returns: A new binding.
   public subscript<Member>(
-    dynamicMember keyPath: _SendableWritableKeyPath<Value, Member>
+    dynamicMember keyPath: WritableKeyPath<Value, Member>
   ) -> UIBinding<Member> {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member> {
       UIBinding<Member>(
-        location: _UIBindingAppendKeyPath(base: location, keyPath: keyPath),
+        location: _UIBindingAppendKeyPath(base: location, keyPath: keyPath.unsafeSendable()),
         transaction: transaction
       )
     }
@@ -391,12 +413,12 @@ public struct UIBinding<Value>: Sendable {
   /// - Returns: A new binding.
   @_disfavoredOverload
   public subscript<Member>(
-    dynamicMember keyPath: _SendableKeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+    dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
   ) -> UIBinding<Member>?
   where Value: CasePathable {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath),
+        location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath.unsafeSendable()),
         transaction: transaction
       )
     }
@@ -408,12 +430,12 @@ public struct UIBinding<Value>: Sendable {
   /// - Parameter keyPath: A key path to a specific value.
   /// - Returns: A new binding.
   public subscript<Wrapped, Member>(
-    dynamicMember keyPath: _SendableWritableKeyPath<Wrapped, Member>
+    dynamicMember keyPath: WritableKeyPath<Wrapped, Member>
   ) -> UIBinding<Member?>
   where Value == Wrapped? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalToMember(base: location, keyPath: keyPath),
+        location: _UIBindingOptionalToMember(base: location, keyPath: keyPath.unsafeSendable()),
         transaction: transaction
       )
     }
@@ -425,16 +447,27 @@ public struct UIBinding<Value>: Sendable {
   /// - Parameter keyPath: A case key path to a specific associated value.
   /// - Returns: A new binding.
   public subscript<V: CasePathable, Member>(
-    dynamicMember keyPath: _SendableKeyPath<V.AllCasePaths, AnyCasePath<V, Member>>
+    dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Member>>
   ) -> UIBinding<Member?>
   where Value == V? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath),
+        location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath.unsafeSendable()),
         transaction: transaction
       )
     }
     return open(location)
+  }
+
+  /// Returns a Boolean binding to a case of a given case key path with no associated value.
+  ///
+  /// - Parameter keyPath: A case key path to a case with no associated value.
+  /// - Returns: A new binding.
+  public subscript<V: CasePathable>(
+    dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Void>>
+  ) -> UIBinding<Bool>
+  where Value == V? {
+    UIBinding<Bool>(self[dynamicMember: keyPath])
   }
 
   /// Specifies a transaction for the binding.
@@ -523,7 +556,13 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
     self.keyPath = keyPath
     self.objectIdentifier = ObjectIdentifier(root)
     self.root = root
-    self.value = root[keyPath: keyPath]
+    #if DEBUG
+      self.value = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+        root[keyPath: keyPath]
+      }
+    #else
+      self.value = root[keyPath: keyPath]
+    #endif
     self.fileID = fileID
     self.filePath = filePath
     self.line = line
@@ -560,13 +599,33 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   }
 }
 
-@Perceptible
-private final class _UIBindingWrapper<Value> {
-  var value: Value
+private final class _UIBindingWrapper<Value>: Perceptible {
+  var _value: Value
+  var value: Value {
+    get {
+      _$perceptionRegistrar.access(self, keyPath: \.value)
+      return _value
+    }
+    set {
+      _$perceptionRegistrar.withMutation(of: self, keyPath: \.value) {
+        _value = newValue
+      }
+    }
+    _modify {
+      _$perceptionRegistrar.willSet(self, keyPath: \.value)
+      defer { _$perceptionRegistrar.didSet(self, keyPath: \.value) }
+      yield &_value
+    }
+  }
+  let _$perceptionRegistrar = PerceptionRegistrar()
   init(_ value: Value) {
-    self.value = value
+    self._value = value
   }
 }
+
+#if canImport(Observation)
+  extension _UIBindingWrapper: Observable {}
+#endif
 
 private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
   let value: Value
