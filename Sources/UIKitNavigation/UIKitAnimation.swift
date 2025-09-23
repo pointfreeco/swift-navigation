@@ -1,5 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
   import UIKit
+  import IssueReporting
 
   #if canImport(SwiftUI)
     import SwiftUI
@@ -71,8 +72,8 @@
           var result: Swift.Result<Result, Error>?
           withoutActuallyEscaping(animations) { animations in
             UIView.animate(
-              withDuration: animation.duration * animation.speed,
-              delay: animation.delay * animation.speed,
+              withDuration: animation.duration / animation.speed,
+              delay: animation.delay / animation.speed,
               options: animation.options,
               animations: { result = Swift.Result(catching: animations) },
               completion: completion
@@ -84,8 +85,8 @@
           var result: Swift.Result<Result, Error>?
           withoutActuallyEscaping(animations) { animations in
             UIView.animate(
-              withDuration: animation.duration * animation.speed,
-              delay: animation.delay * animation.speed,
+              withDuration: animation.duration / animation.speed,
+              delay: animation.delay / animation.speed,
               usingSpringWithDamping: dampingRatio,
               initialSpringVelocity: velocity,
               options: animation.options,
@@ -99,10 +100,10 @@
           if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
             var result: Swift.Result<Result, Error>?
             UIView.animate(
-              springDuration: animation.duration * animation.speed,
+              springDuration: animation.duration / animation.speed,
               bounce: bounce,
               initialSpringVelocity: initialSpringVelocity,
-              delay: animation.delay * animation.speed,
+              delay: animation.delay / animation.speed,
               options: animation.options,
               animations: { result = Swift.Result(catching: animations) },
               completion: completion
@@ -220,7 +221,18 @@
           framework: .swiftUI(animation.speed(speed))
         )
       case var .uiKit(animation):
-        animation.speed = speed
+        if speed != 0 {
+          animation.speed = speed
+        } else {
+          reportIssue(
+            """
+            Setting animation speed to zero is not supported for UIKit animations.
+            
+            Replace with '.ulpOfOne' to avoid division by zero.
+            """
+          )
+          animation.speed = .ulpOfOne
+        }
         return UIKitAnimation(framework: .uiKit(animation))
       }
     }
