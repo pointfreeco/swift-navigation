@@ -75,7 +75,7 @@
 
       fileprivate struct AppKit: Hashable, @unchecked Sendable {
         fileprivate var duration: TimeInterval
-        fileprivate var speed: TimeInterval
+        fileprivate var speed: TimeInterval = 1
         fileprivate var timingFunction: CAMediaTimingFunction?
 
         func hash(into hasher: inout Hasher) {
