@@ -83,7 +83,7 @@
         }
       }
     }
-    
+
     /// Changes the duration of an animation by adjusting its speed.
     ///
     /// - Parameter speed: The speed at which SwiftUI performs the animation.

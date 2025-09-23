@@ -227,7 +227,7 @@
           reportIssue(
             """
             Setting animation speed to zero is not supported for UIKit animations.
-            
+
             Replace with '.ulpOfOne' to avoid division by zero.
             """
           )
