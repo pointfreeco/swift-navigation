@@ -68,7 +68,7 @@ final class PresentationTests: XCTestCase {
     // failure since odds of a failure are about 30%
     for _ in 0..<100 {
       try await runDismissalSteps()
-     }
+    }
   }
 
   @MainActor

@@ -52,7 +52,7 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
       showSheetButton,
       drillDownButton,
       showSheetFromBooleanButton,
-      dismissLabel
+      dismissLabel,
     ])
     stack.axis = .vertical
     stack.spacing = 12
