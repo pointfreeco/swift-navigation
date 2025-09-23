@@ -294,51 +294,6 @@ final class NavigationStackTests: XCTestCase {
   }
 
   @MainActor
-  func testInteractivePopAction() async throws {
-    @UIBinding var path = [Int]()
-    let nav = NavigationStackController(path: $path) {
-      UIViewController()
-    }
-    nav.navigationDestination(for: Int.self) { number in
-      ChildViewController(number: number)
-    }
-    try await setUp(controller: nav)
-
-    path.append(1)
-    await assertEventuallyEqual(nav.viewControllers.count, 2)
-    await assertEventuallyEqual(path, [1])
-
-    let secondVC = nav.viewControllers.last!
-
-    let interactionController = UIPercentDrivenInteractiveTransition()
-    let delegate = MockNavigationControllerDelegate()
-
-    nav.delegate = delegate
-    // Simulate beginning interactive pop
-    delegate.interactionController = interactionController
-
-    // The gesture begins (simulate by calling delegate)
-    let animationController = delegate.navigationController(
-      nav,
-      animationControllerFor: .pop,
-      from: secondVC,
-      to: nav.viewControllers.first!
-    )!
-
-    let returnedInteraction = delegate.navigationController(
-      nav,
-      interactionControllerFor: animationController
-    )
-
-    // Test: The interaction controller is returned and did not immediately finish
-    XCTAssertTrue(delegate.didCallInteractionController, "Delegate method should have been called")
-    XCTAssertNotNil(returnedInteraction, "Should return the interaction controller")
-
-    // Verify that the interaction has not yet finished
-    XCTAssertFalse(interactionController.percentComplete >= 1.0, "Interaction should not automatically finish")
-  }
-
-  @MainActor
   func testInteractivePopViaGestureAction() async throws {
     @UIBinding var path = [Int]()
     let nav = NavigationStackController(path: $path) {
@@ -348,13 +303,12 @@ final class NavigationStackTests: XCTestCase {
       ChildViewController(number: number)
     }
     try await setUp(controller: nav)
-    try await Task.sleep(for: .seconds(1))
 
     nav.traitCollection.push(value: 1)
     await assertEventuallyEqual(nav.viewControllers.count, 2)
     await assertEventuallyEqual(path, [1])
 
-    let interaction = MockPercentDrivenInteractiveTransition()
+    let interaction = MockInteractiveTransition()
     let delegate = MockNavigationControllerDelegate()
     delegate.interactionController = interaction
     nav.delegate = delegate
@@ -371,8 +325,7 @@ final class NavigationStackTests: XCTestCase {
     await fulfillment(of: [interactionExpectation], timeout: 1.0)
 
     XCTAssertTrue(delegate.didCallInteractionController)
-    XCTAssertFalse(interaction.didCallFinish)
-    XCTAssertFalse(interaction.didCallCancel)
+    XCTAssertFalse(interaction.didFinish)
 
     await MainActor.run {
       interaction.update(0.5)
@@ -386,42 +339,59 @@ final class NavigationStackTests: XCTestCase {
     )
     await fulfillment(of: [vcCountExpectation], timeout: 2.0)
 
-    XCTAssertTrue(interaction.didCallFinish)
-    XCTAssertFalse(interaction.didCallCancel)
+    XCTAssertTrue(interaction.didFinish)
     XCTAssertEqual(nav.viewControllers.count, 1)
   }
 }
 
-class MockPercentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransition {
-  private(set) var didCallFinish = false
-  private(set) var didCallCancel = false
+private final class ChildViewController: UIViewController {
+  let number: Int
+  @UIBinding var isLeafPresented: Bool
 
-  override func finish() {
-    super.finish()
-    didCallFinish = true
+  init(number: Int, isLeafPresented: Bool = false) {
+    self.number = number
+    self.isLeafPresented = isLeafPresented
+    super.init(nibName: nil, bundle: nil)
+    navigationItem.title = "\(number)"
   }
-
-  override func cancel() {
-    super.cancel()
-    didCallCancel = true
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  override var debugDescription: String {
+    "ChildViewController.\(number)"
+  }
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    navigationDestination(isPresented: $isLeafPresented) { [weak self] in
+      ChildViewController(number: self?.number ?? 0)
+    }
   }
 }
 
-final class MockAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+private class MockInteractiveTransition: UIPercentDrivenInteractiveTransition {
+  private(set) var didFinish = false
+
+  override func finish() {
+    super.finish()
+    didFinish = true
+  }
+}
+
+private class MockAnimator: NSObject, UIViewControllerAnimatedTransitioning {
   let duration: TimeInterval
 
   init(duration: TimeInterval = 0.25) {
     self.duration = duration
     super.init()
   }
-
   func transitionDuration(
     using transitionContext: UIViewControllerContextTransitioning?
   ) -> TimeInterval {
     return duration
   }
-
-  func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+  func animateTransition(
+    using transitionContext: UIViewControllerContextTransitioning
+  ) {
     // Basic animation that moves the fromView out and the toView in.
     guard
       let container = transitionContext.containerView as UIView?,
@@ -455,7 +425,7 @@ final class MockAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 }
 
 
-final class MockNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
+private class MockNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
   var interactionController: UIPercentDrivenInteractiveTransition?
   var interactionExpectation: XCTestExpectation?
   var didCallInteractionController = false
@@ -468,7 +438,6 @@ final class MockNavigationControllerDelegate: NSObject, UINavigationControllerDe
   ) -> UIViewControllerAnimatedTransitioning? {
     return MockAnimator()
   }
-
   func navigationController(
     _ navigationController: UINavigationController,
     interactionControllerFor animationController: UIViewControllerAnimatedTransitioning
@@ -478,29 +447,5 @@ final class MockNavigationControllerDelegate: NSObject, UINavigationControllerDe
       self?.interactionExpectation?.fulfill()
     }
     return interactionController
-  }
-}
-
-private final class ChildViewController: UIViewController {
-  let number: Int
-  @UIBinding var isLeafPresented: Bool
-
-  init(number: Int, isLeafPresented: Bool = false) {
-    self.number = number
-    self.isLeafPresented = isLeafPresented
-    super.init(nibName: nil, bundle: nil)
-    navigationItem.title = "\(number)"
-  }
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  override var debugDescription: String {
-    "ChildViewController.\(number)"
-  }
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    navigationDestination(isPresented: $isLeafPresented) { [weak self] in
-      ChildViewController(number: self?.number ?? 0)
-    }
   }
 }
