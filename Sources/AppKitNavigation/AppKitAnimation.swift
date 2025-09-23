@@ -83,9 +83,7 @@
         }
       }
     }
-  }
-
-  extension AppKitAnimation {
+    
     /// Changes the duration of an animation by adjusting its speed.
     ///
     /// - Parameter speed: The speed at which SwiftUI performs the animation.
@@ -113,8 +111,9 @@
         return AppKitAnimation(framework: .appKit(animation))
       }
     }
+  }
 
-
+  extension AppKitAnimation {
     /// Animates changes with the specified duration and timing function.
     ///
     /// A value description of `UIView.runAnimationGroup` that can be used with
