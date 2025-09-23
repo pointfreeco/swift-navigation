@@ -56,10 +56,9 @@ import ConcurrencyExtras
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
   public func observe(
-    isolation: (any Actor)? = #isolation,
-    @_inheritActorContext _ apply: @escaping @Sendable () -> Void
+    @_inheritActorContext _ apply: @escaping @isolated(any) @Sendable () -> Void
   ) -> ObserveToken {
-    observe(isolation: isolation) { _ in apply() }
+    observe { _ in Result(catching: apply).get() }
   }
 
   /// Tracks access to properties of an observable model.
@@ -72,37 +71,21 @@ import ConcurrencyExtras
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
   public func observe(
-    isolation: (any Actor)? = #isolation,
-    @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+    @_inheritActorContext
+    _ apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
-    let actor = ActorProxy(base: isolation)
-    return observe(
+    _observe(
       apply,
       task: { transaction, operation in
         Task {
-          await actor.perform {
-            operation()
-          }
+          await operation()
         }
       }
     )
   }
 #endif
 
-private actor ActorProxy {
-  let base: (any Actor)?
-  init(base: (any Actor)?) {
-    self.base = base
-  }
-  nonisolated var unownedExecutor: UnownedSerialExecutor {
-    (base ?? MainActor.shared).unownedExecutor
-  }
-  func perform(_ operation: @Sendable () -> Void) {
-    operation()
-  }
-}
-
-func observe(
+func _observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
@@ -141,7 +124,7 @@ func observe(
 private func onChange(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
-    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+    _ transaction: UITransaction, _ operation: @escaping @isolated(any) @Sendable () -> Void
   ) -> Void
 ) {
   withPerceptionTracking {
