@@ -121,10 +121,14 @@
     /// - Returns: A cancellation token.
     @discardableResult
     public func observe(
-      _ tracking: @escaping @MainActor @Sendable () -> Void,
+      _ context: @escaping @MainActor @Sendable () -> Void,
       onChange apply: @escaping @MainActor @Sendable () -> Void
     ) -> ObserveToken {
-      observe { _ in apply() }
+      observe { _ in
+        context()
+      } onChange: { _ in
+        apply()
+      }
     }
 
     /// Observe access to properties of an observable (or perceptible) object.
@@ -136,12 +140,12 @@
     /// - Returns: A cancellation token.
     @discardableResult
     public func observe(
-      _ tracking: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void,
+      _ context: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void,
       onChange apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
     ) -> ObserveToken {
       let token = SwiftNavigation.observe { transaction in
         MainActor._assumeIsolated {
-          tracking(transaction)
+          context(transaction)
         }
       } onChange: { transaction in
         MainActor._assumeIsolated {

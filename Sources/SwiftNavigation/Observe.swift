@@ -55,9 +55,10 @@ import ConcurrencyExtras
   ///   - apply: A closure that contains properties to track.
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
+  @inlinable
   public func observe(
     isolation: (any Actor)? = #isolation,
-    @_inheritActorContext _ apply: @escaping @Sendable () -> Void
+    _ apply: @escaping @Sendable () -> Void
   ) -> ObserveToken {
     observe(isolation: isolation) { _ in apply() }
   }
@@ -116,10 +117,11 @@ import ConcurrencyExtras
   ///   - onChange: A closure that is triggered after some tracked property has changed
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
+  @inlinable
   public func observe(
     isolation: (any Actor)? = #isolation,
-    @_inheritActorContext _ tracking: @escaping @Sendable () -> Void,
-    @_inheritActorContext onChange apply: @escaping @Sendable () -> Void
+    _ tracking: @escaping @Sendable () -> Void,
+    onChange apply: @escaping @Sendable () -> Void
   ) -> ObserveToken {
     observe(
       isolation: isolation,
@@ -137,43 +139,63 @@ import ConcurrencyExtras
   ///   - apply: A closure that contains properties to track.
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
+  @inlinable
   public func observe(
     isolation: (any Actor)? = #isolation,
-    @_inheritActorContext _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+    _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
-    let actor = ActorProxy(base: isolation)
     return observe(
+      isolation: isolation,
       apply,
-      task: { transaction, operation in
-        Task {
-          await actor.perform {
-            operation()
-          }
-        }
-      }
+      onChange: apply
     )
   }
 
 
-/// Tracks access to properties of an observable model.
-///
-/// A version of ``observe(isolation:_:)`` that is handed the current ``UITransaction``.
-///
-/// - Parameters:
-///   - isolation: The isolation of the observation.
-///   - tracking: A closure that contains properties to track.
-///   - onChange: A closure that is triggered after some tracked property has changed
-/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
-///   is deallocated.
+  /// Tracks access to properties of an observable model.
+  ///
+  /// A version of ``observe(isolation:_:)`` that is handed the current ``UITransaction``.
+  ///
+  /// - Parameters:
+  ///   - isolation: The isolation of the observation.
+  ///   - tracking: A closure that contains properties to track.
+  ///   - onChange: A closure that is triggered after some tracked property has changed
+  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+  ///   is deallocated.
   public func observe(
     isolation: (any Actor)? = #isolation,
-    @_inheritActorContext _ tracking: @escaping @Sendable (UITransaction) -> Void,
-    @_inheritActorContext onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+    _ context: @escaping @Sendable (UITransaction) -> Void,
+    onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+  ) -> ObserveToken {
+    apply(.current)
+
+    return onChange(
+      isolation: isolation,
+      of: context,
+      perform: apply
+    )
+  }
+
+  /// Tracks access to properties of an observable model.
+  ///
+  /// A version of ``observe(isolation:_:onChange:)`` that is handed the current ``UITransaction``
+  /// that doesn't have initial application of the operation. Operation block is only called on observed context change.
+  ///
+  /// - Parameters:
+  ///   - isolation: The isolation of the observation.
+  ///   - tracking: A closure that contains properties to track.
+  ///   - onChange: A closure that is triggered after some tracked property has changed
+  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+  ///   is deallocated.
+  public func onChange(
+    isolation: (any Actor)? = #isolation,
+    of context: @escaping @Sendable (UITransaction) -> Void,
+    perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
     let actor = ActorProxy(base: isolation)
-    return observe(
-      tracking,
-      onChange: apply,
+    return onChange(
+      of: context,
+      perform: operation,
       task: { transaction, operation in
         Task {
           await actor.perform {
@@ -207,36 +229,15 @@ func observe(
     Task(operation: $1)
   }
 ) -> ObserveToken {
-  let token = ObserveToken()
-  onChange(
-    { [weak token] transaction in
-      guard
-        let token,
-        !token.isCancelled
-      else { return }
-
-      var perform: @Sendable () -> Void = { apply(transaction) }
-      for key in transaction.storage.keys {
-        guard let keyType = key.keyType as? any _UICustomTransactionKey.Type
-        else { continue }
-        func open<K: _UICustomTransactionKey>(_: K.Type) {
-          perform = { [perform] in
-            K.perform(value: transaction[K.self]) {
-              perform()
-            }
-          }
-        }
-        open(keyType)
-      }
-      perform()
-    },
+  observe(
+    apply,
+    onChange: apply,
     task: task
   )
-  return token
 }
 
 func observe(
-  _ tracking: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  _ context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction,
@@ -245,11 +246,30 @@ func observe(
     Task(operation: $1)
   }
 ) -> ObserveToken {
+  apply(.current)
+
+  return SwiftNavigation.onChange(
+    of: context,
+    perform: apply,
+    task: task
+  )
+}
+
+func onChange(
+  of context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  task: @escaping @Sendable (
+    _ transaction: UITransaction,
+    _ operation: @escaping @Sendable () -> Void
+  ) -> Void = {
+    Task(operation: $1)
+  }
+) -> ObserveToken {
   let token = ObserveToken()
-  SwiftNavigation.onChange(
+  SwiftNavigation.withRecursivePerceptionTracking(
     of: { [weak token] transaction in
       guard let token, !token.isCancelled else { return }
-      tracking(transaction)
+      context(transaction)
     },
     perform: { [weak token] transaction in
       guard
@@ -257,7 +277,7 @@ func observe(
         !token.isCancelled
       else { return }
 
-      var perform: @Sendable () -> Void = { apply(transaction) }
+      var perform: @Sendable () -> Void = { operation(transaction) }
       for key in transaction.storage.keys {
         guard let keyType = key.keyType as? any _UICustomTransactionKey.Type
         else { continue }
@@ -277,37 +297,22 @@ func observe(
   return token
 }
 
-private func onChange(
-  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
-    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
-  ) -> Void
-) {
-  withPerceptionTracking {
-    apply(.current)
-  } onChange: {
-    task(.current) {
-      onChange(apply, task: task)
-    }
-  }
-}
-
-private func onChange(
-  of tracking: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+private func withRecursivePerceptionTracking(
+  of context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction,
     _ operation: @escaping @Sendable () -> Void
   ) -> Void
 ) {
-  operation(.current)
-
   withPerceptionTracking {
-    tracking(.current)
+    context(.current)
   } onChange: {
     task(.current) {
-      onChange(
-        of: tracking,
+      operation(.current)
+
+      withRecursivePerceptionTracking(
+        of: context,
         perform: operation,
         task: task
       )
