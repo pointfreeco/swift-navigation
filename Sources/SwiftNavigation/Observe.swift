@@ -3,7 +3,9 @@ import ConcurrencyExtras
 #if swift(>=6)
   /// Tracks access to properties of an observable model.
   ///
-  /// This function allows one to minimally observe changes in a model in order to
+  /// This function is a convenient variant of ``observe(_:onChange:)-(()->Void,_)`` that
+  /// combines tracking context and onChange handler in one `apply` argument
+  /// and allows one to minimally observe changes in a model in order to
   /// react to those changes. For example, if you had an observable model like so:
   ///
   /// ```swift
@@ -50,17 +52,15 @@ import ConcurrencyExtras
   ///
   /// And you can also build your own tools on top of `observe`.
   ///
-  /// - Parameters:
-  ///   - isolation: The isolation of the observation.
-  ///   - apply: A closure that contains properties to track.
+  /// - Parameter apply: A closure that contains properties to track.
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
-  ///   is deallocated.
+  ///   is deallocated. 
   @inlinable
   public func observe(
-    isolation: (any Actor)? = #isolation,
-    _ apply: @escaping @Sendable () -> Void
+    @_inheritActorContext
+    _ apply: @escaping @isolated(any) @Sendable () -> Void
   ) -> ObserveToken {
-    observe(isolation: isolation) { _ in apply() }
+    observe { _ in Result(catching: apply).get() }
   }
 
   /// Tracks access to properties of an observable model.
@@ -79,8 +79,7 @@ import ConcurrencyExtras
   /// update a `UILabel`:
   ///
   /// ```swift
-  /// observe { _ = model.value } onChange: { [weak self] in
-  ///   guard let self else { return }
+  /// observe { [model] in model.count } onChange: { [countLabel, model] in
   ///   countLabel.text = "Count: \(model.count)"
   /// }
   /// ```
@@ -104,123 +103,86 @@ import ConcurrencyExtras
   /// var countLabel = document.createElement("span")
   /// _ = document.body.appendChild(countLabel)
   ///
-  /// let token = observe { _ = model.count } onChange: {
+  /// let token = observe { model.count } onChange: {
   ///   countLabel.innerText = .string("Count: \(model.count)")
   /// }
   /// ```
   ///
   /// And you can also build your own tools on top of `observe`.
   ///
-  /// - Parameters:
-  ///   - isolation: The isolation of the observation.
-  ///   - tracking: A closure that contains properties to track.
-  ///   - onChange: A closure that is triggered after some tracked property has changed
+  /// - Parameter context: A closure that contains properties to track.
+  /// - Parameter apply: Invoked when the value of a property changes
+  ///   > `onChange` is also invoked on initial call
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
   @inlinable
   public func observe(
-    isolation: (any Actor)? = #isolation,
-    _ tracking: @escaping @Sendable () -> Void,
-    onChange apply: @escaping @Sendable () -> Void
+    @_inheritActorContext
+    _ context: @escaping @isolated(any) @Sendable () -> Void,
+    @_inheritActorContext
+    onChange apply: @escaping @isolated(any) @Sendable () -> Void
   ) -> ObserveToken {
     observe(
-      isolation: isolation,
-      { _ in tracking() },
-      onChange: { _ in apply() }
+      { _ in Result(catching: context).get() },
+      onChange: { _ in Result(catching: apply).get() }
     )
   }
 
   /// Tracks access to properties of an observable model.
   ///
-  /// A version of ``observe(isolation:_:)`` that is handed the current ``UITransaction``.
+  /// A version of ``observe(_:)-(()->Void)`` that is handed the current ``UITransaction``.
   ///
-  /// - Parameters:
-  ///   - isolation: The isolation of the observation.
-  ///   - apply: A closure that contains properties to track.
+  /// - Parameter apply: A closure that contains properties to track.
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
-  @inlinable
   public func observe(
-    isolation: (any Actor)? = #isolation,
-    _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+    @_inheritActorContext
+    _ apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
-    return observe(
-      isolation: isolation,
+    _observe(
       apply,
-      onChange: apply
-    )
-  }
-
-
-  /// Tracks access to properties of an observable model.
-  ///
-  /// A version of ``observe(isolation:_:)`` that is handed the current ``UITransaction``.
-  ///
-  /// - Parameters:
-  ///   - isolation: The isolation of the observation.
-  ///   - tracking: A closure that contains properties to track.
-  ///   - onChange: A closure that is triggered after some tracked property has changed
-  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
-  ///   is deallocated.
-  public func observe(
-    isolation: (any Actor)? = #isolation,
-    _ context: @escaping @Sendable (UITransaction) -> Void,
-    onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
-  ) -> ObserveToken {
-    apply(.current)
-
-    return onChange(
-      isolation: isolation,
-      of: context,
-      perform: apply
-    )
-  }
-
-  /// Tracks access to properties of an observable model.
-  ///
-  /// A version of ``observe(isolation:_:onChange:)`` that is handed the current ``UITransaction``
-  /// that doesn't have initial application of the operation. Operation block is only called on observed context change.
-  ///
-  /// - Parameters:
-  ///   - isolation: The isolation of the observation.
-  ///   - tracking: A closure that contains properties to track.
-  ///   - onChange: A closure that is triggered after some tracked property has changed
-  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
-  ///   is deallocated.
-  public func onChange(
-    isolation: (any Actor)? = #isolation,
-    of context: @escaping @Sendable (UITransaction) -> Void,
-    perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void
-  ) -> ObserveToken {
-    let actor = ActorProxy(base: isolation)
-    return onChange(
-      of: context,
-      perform: operation,
       task: { transaction, operation in
         Task {
-          await actor.perform {
-            operation()
-          }
+          await operation()
+        }
+      }
+    )
+  }
+
+  /// Tracks access to properties of an observable model.
+  ///
+  /// A version of ``observe(_:onChange:)-(()->Void,_)`` that is handed the current ``UITransaction``.
+  ///
+  /// - Parameter context: A closure that contains properties to track.
+  /// - Parameter apply: Invoked when the value of a property changes
+  ///   > `onChange` is also invoked on initial call
+  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+  ///   is deallocated.
+  public func observe(
+    @_inheritActorContext
+    _ context: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+    onChange apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
+  ) -> ObserveToken {
+    _observe(
+      context,
+      onChange: apply,
+      task: { transaction, operation in
+        Task {
+          await operation()
         }
       }
     )
   }
 #endif
 
-private actor ActorProxy {
-  let base: (any Actor)?
-  init(base: (any Actor)?) {
-    self.base = base
-  }
-  nonisolated var unownedExecutor: UnownedSerialExecutor {
-    (base ?? MainActor.shared).unownedExecutor
-  }
-  func perform(_ operation: @Sendable () -> Void) {
-    operation()
-  }
-}
-
-func observe(
+/// Observes changes in given context
+///
+/// - Parameter apply: Invoked when a change occurs in observed context
+///   > `apply` is also invoked on initial call
+/// - Parameter task: The task that wraps recursive observation calls
+/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+///   is deallocated.
+func _observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction,
@@ -229,14 +191,22 @@ func observe(
     Task(operation: $1)
   }
 ) -> ObserveToken {
-  observe(
-    apply,
-    onChange: apply,
+  return SwiftNavigation.onChange(
+    of: apply,
+    perform: apply,
     task: task
   )
 }
 
-func observe(
+/// Observes changes in given context
+///
+/// - Parameter context: Observed context
+/// - Parameter apply: Invoked when a change occurs in observed context
+///   > `onChange` is also invoked on initial call
+/// - Parameter task: The task that wraps recursive observation calls
+/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+///   is deallocated.
+func _observe(
   _ context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
@@ -246,15 +216,24 @@ func observe(
     Task(operation: $1)
   }
 ) -> ObserveToken {
-  apply(.current)
-
-  return SwiftNavigation.onChange(
+  let token = SwiftNavigation.onChange(
     of: context,
     perform: apply,
     task: task
   )
+
+  apply(.current)
+  return token
 }
 
+/// Observes changes in given context
+///
+/// - Parameter context: Observed context
+/// - Parameter operation: Invoked when a change occurs in observed context
+///   > `operation` is not invoked on initial call
+/// - Parameter task: The task that wraps recursive observation calls
+/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+///   is deallocated.
 func onChange(
   of context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void,

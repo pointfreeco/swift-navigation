@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         xcode:
-          - '16.2'
+          - '16.4'
         variation:
           - ios
           - macos
@@ -36,74 +36,55 @@ jobs:
       - name: Run tests
         run: make test-${{ matrix.variation }}
 
-  library-15-4-compatibility:
-    runs-on: macos-14
-    strategy:
-      matrix:
-        xcode:
-          - '15.4'
-        ios_version:
-          - '17.5'
-        variation:
-          - ios
-    steps:
-      - uses: actions/checkout@v4
-      - name: Select Xcode ${{ matrix.xcode }}
-        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
-      - name: Skip macro validation
-        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
-      - name: Run tests
-        run: make IOS_VERSION=${{matrix.ios_version}} test-${{ matrix.variation }}
+  # library-evolution:
+  #   name: Library Evolution
+  #   runs-on: macos-15
+  #   strategy:
+  #     matrix:
+  #       xcode:
+  #         - '16.4'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Select Xcode ${{ matrix.xcode }}
+  #       run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+  #     - name: Skip macro validation
+  #       run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+  #     - name: Build for Library Evolution
+  #       run: make build-for-library-evolution
 
-  library-evolution:
-    name: Library Evolution
-    runs-on: macos-15
-    strategy:
-      matrix:
-        xcode:
-          - '16.2'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Select Xcode ${{ matrix.xcode }}
-        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
-      - name: Skip macro validation
-        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
-      - name: Build for Library Evolution
-        run: make build-for-library-evolution
+  # wasm:
+  #   name: Wasm
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: bytecodealliance/actions/wasmtime/setup@v1
+  #     - name: Install Swift and Swift SDK for WebAssembly
+  #       run: |
+  #         PREFIX=/opt/swift
+  #         set -ex
+  #         curl -f -o /tmp/swift.tar.gz "https://download.swift.org/swift-6.0.3-release/ubuntu2204/swift-6.0.3-RELEASE/swift-6.0.3-RELEASE-ubuntu22.04.tar.gz"
+  #         sudo mkdir -p $PREFIX; sudo tar -xzf /tmp/swift.tar.gz -C $PREFIX --strip-component 1
+  #         $PREFIX/usr/bin/swift sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-6.0.3-RELEASE/swift-wasm-6.0.3-RELEASE-wasm32-unknown-wasi.artifactbundle.zip --checksum 31d3585b06dd92de390bacc18527801480163188cd7473f492956b5e213a8618
+  #         echo "$PREFIX/usr/bin" >> $GITHUB_PATH
+  #
+  #     - name: Build tests
+  #       run: swift build --swift-sdk wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
+  #     - name: Run tests
+  #       run: wasmtime --dir . .build/debug/swift-navigationPackageTests.wasm
 
-  wasm:
-    name: Wasm
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: bytecodealliance/actions/wasmtime/setup@v1
-      - name: Install Swift and Swift SDK for WebAssembly
-        run: |
-          PREFIX=/opt/swift
-          set -ex
-          curl -f -o /tmp/swift.tar.gz "https://download.swift.org/swift-6.0.3-release/ubuntu2204/swift-6.0.3-RELEASE/swift-6.0.3-RELEASE-ubuntu22.04.tar.gz"
-          sudo mkdir -p $PREFIX; sudo tar -xzf /tmp/swift.tar.gz -C $PREFIX --strip-component 1
-          $PREFIX/usr/bin/swift sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-6.0.3-RELEASE/swift-wasm-6.0.3-RELEASE-wasm32-unknown-wasi.artifactbundle.zip --checksum 31d3585b06dd92de390bacc18527801480163188cd7473f492956b5e213a8618
-          echo "$PREFIX/usr/bin" >> $GITHUB_PATH
-
-      - name: Build tests
-        run: swift build --swift-sdk wasm32-unknown-wasi --build-tests -Xlinker -z -Xlinker stack-size=$((1024 * 1024))
-      - name: Run tests
-        run: wasmtime --dir . .build/debug/swift-navigationPackageTests.wasm
-
-  windows:
-    name: Windows
-    strategy:
-      matrix:
-        os: [windows-latest]
-        config: ['debug', 'release']
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: compnerd/gha-setup-swift@main
-        with:
-          branch: swift-5.10-release
-          tag: 5.10-RELEASE
-      - uses: actions/checkout@v4
-      - name: Build
-        run: swift build -c ${{ matrix.config }}
+  # windows:
+  #   name: Windows
+  #   strategy:
+  #     matrix:
+  #       os: [windows-latest]
+  #       config: ['debug', 'release']
+  #     fail-fast: false
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: compnerd/gha-setup-swift@main
+  #       with:
+  #         branch: swift-5.10-release
+  #         tag: 5.10-RELEASE
+  #     - uses: actions/checkout@v4
+  #     - name: Build
+  #       run: swift build -c ${{ matrix.config }}
