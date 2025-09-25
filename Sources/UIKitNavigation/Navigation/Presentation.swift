@@ -338,6 +338,7 @@
       ) -> Void
     ) -> ObserveToken {
       let key = UIBindingIdentifier(item)
+      var inFlightController: UIViewController?
       return observe { [weak self] transaction in
         guard let self else { return }
         if let unwrappedItem = UIBinding(item) {
@@ -349,10 +350,14 @@
             }
           }
           let childController = content(unwrappedItem)
-          let onDismiss = { [presentationID = id(unwrappedItem.wrappedValue)] in
+          let onDismiss = { [
+            weak self,
+            presentationID = id(unwrappedItem.wrappedValue)
+          ] in
             if let wrappedValue = item.wrappedValue,
               presentationID == id(wrappedValue)
             {
+              inFlightController = self?.presentedByID[key]?.controller
               item.wrappedValue = nil
             }
           }
@@ -378,6 +383,7 @@
             dismiss(controller, transaction)
           }
           self.presentedByID[key] = nil
+          inFlightController = nil
         }
       }
     }
