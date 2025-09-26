@@ -52,6 +52,17 @@
 
       if ((self.isBeingDismissed || self.isMovingFromParentViewController) && self._UIKitNavigation_onDismiss != NULL) {
         if ([self isKindOfClass:UIAlertController.class]) {
+          // NB: Currently, onDismiss is called before the UIAlertAction
+          //     is processed, which generally isn't an issue, but if you
+          //     care about the order of operations, this can be a bit thorny.
+          //     In the case of highly generalized navigation patterns in TCA,
+          //     the order is what we use to emit warnings when invalid actions
+          //     are received (like a dismiss action is received for an
+          //     already-dismissed feature), so let's address the problem with
+          //     a quick tick.
+          //
+          //     We could do this thread hop unconditionally if it makes sense
+          //     to, but let's localize to UIAlertController for now.
           dispatch_async(dispatch_get_main_queue(), ^{
             self._UIKitNavigation_onDismiss();
             self._UIKitNavigation_onDismiss = nil;
