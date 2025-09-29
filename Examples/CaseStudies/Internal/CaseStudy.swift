@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 protocol CaseStudy {
     var readMe: String { get }
     var caseStudyTitle: String { get }

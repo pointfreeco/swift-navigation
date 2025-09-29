@@ -29,6 +29,21 @@
       self[keyPath]
     }
 
+    /// Returns a binding to a Boolean for a given case key path to a case without an associated
+    /// value.
+    ///
+    /// Useful for driving navigation off an optional enumeration of destinations for navigation
+    /// APIs that take a Boolean binding.
+    ///
+    /// - Parameter keyPath: A case key path to a specific associated value.
+    /// - Returns: A new binding.
+    public subscript<Enum: CasePathable>(
+      dynamicMember keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Void>>
+    ) -> Binding<Bool>
+    where Value == Enum? {
+      Binding<Bool>(self[keyPath])
+    }
+
     /// Creates a binding by projecting the base value to an unwrapped value.
     ///
     /// Useful for producing non-optional bindings from optional ones.
