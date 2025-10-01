@@ -129,8 +129,8 @@
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { [weak self] _, transaction in
-        self?.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+      } dismiss: { [weak self] child, transaction in
+        child.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
       }
