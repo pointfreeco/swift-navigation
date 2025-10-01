@@ -131,8 +131,10 @@
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { child, transaction in
-        child.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+      } dismiss: { [weak self] _, transaction in
+        guard let self else { return }
+        let controllerToDismiss = presentedViewController ?? self
+        controllerToDismiss.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
       }

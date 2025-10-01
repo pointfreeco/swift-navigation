@@ -398,21 +398,14 @@ final class PresentationTests: XCTestCase {
 
   @MainActor func testDismissMiddlePresentation() async throws {
     class VC: ViewController {
-      static var count = 1
       @UIBinding var isPresented = false
       override func viewDidLoad() {
         super.viewDidLoad()
-        present(isPresented: $isPresented) {
-          let vc = VC()
-          vc.title = "\(VC.count)"
-          VC.count += 1
-          return vc
-        }
+        present(isPresented: $isPresented) { VC() }
       }
     }
 
     let vc = VC()
-    vc.title = "0"
     try await setUp(controller: vc)
 
     vc.isPresented = true
