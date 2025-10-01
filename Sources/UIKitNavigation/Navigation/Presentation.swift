@@ -121,8 +121,10 @@
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
-        if presentedViewController != nil {
-          self.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+        if let presentedViewController {
+          presentedViewController.dismiss(
+            animated: !transaction.uiKit.disablesAnimations
+          ) {
             onDismiss?()
             self.present(child, animated: !transaction.uiKit.disablesAnimations)
           }
@@ -350,13 +352,12 @@
             }
           }
           let childController = content(unwrappedItem)
-          let onDismiss = {
-            [
-              weak self,
-              presentationID = id(unwrappedItem.wrappedValue)
-            ] in
+          let onDismiss = { [
+            weak self,
+            presentationID = id(unwrappedItem.wrappedValue)
+          ] in
             if let wrappedValue = item.wrappedValue,
-              presentationID == id(wrappedValue)
+               presentationID == id(wrappedValue)
             {
               inFlightController = self?.presentedByID[key]?.controller
               item.wrappedValue = nil
