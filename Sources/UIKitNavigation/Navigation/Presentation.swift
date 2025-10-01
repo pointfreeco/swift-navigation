@@ -382,16 +382,7 @@
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
-            // If inFlightController is nil at this point,
-            // it means the presented controller is not
-            // the one that triggered the dismissal, so
-            // it must be 'self' that needs to be dismissed
-            let controllerToDismiss = if inFlightController != nil {
-              controller
-            } else {
-              self
-            }
-            dismiss(controllerToDismiss, transaction)
+            dismiss(controller, transaction)
           }
           self.presentedByID[key] = nil
           inFlightController = nil
