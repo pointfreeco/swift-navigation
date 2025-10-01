@@ -129,7 +129,7 @@
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { [weak self] child, transaction in
+      } dismiss: { child, transaction in
         child.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
@@ -380,7 +380,16 @@
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
-            dismiss(controller, transaction)
+            // If inFlightController is nil at this point,
+            // it means the presented controller is not
+            // the one that triggered the dismissal, so
+            // it must be 'self' that needs to be dismissed
+            let controllerToDismiss = if inFlightController != nil {
+              controller
+            } else {
+              self
+            }
+            dismiss(controllerToDismiss, transaction)
           }
           self.presentedByID[key] = nil
           inFlightController = nil
