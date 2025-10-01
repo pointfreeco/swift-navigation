@@ -121,8 +121,8 @@
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
-        if let presentedViewController {
-          presentedViewController.dismiss(
+        if presentedViewController != nil {
+          self.dismiss(
             animated: !transaction.uiKit.disablesAnimations
           ) {
             onDismiss?()
@@ -131,10 +131,8 @@
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { [weak self] _, transaction in
-        guard let self else { return }
-        let controllerToDismiss = presentedViewController ?? self
-        controllerToDismiss.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+      } dismiss: { child, transaction in
+        child.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
       }
@@ -384,7 +382,14 @@
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
-            dismiss(controller, transaction)
+            let controllerToDismiss = if let inFlightController {
+              inFlightController
+            } else if controller.presentedViewController != nil {
+              self
+            } else {
+              controller
+            }
+            dismiss(controllerToDismiss, transaction)
           }
           self.presentedByID[key] = nil
           inFlightController = nil
