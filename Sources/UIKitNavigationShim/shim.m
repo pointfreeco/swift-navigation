@@ -69,7 +69,9 @@
           });
         } else {
           self._UIKitNavigation_onDismiss();
-          self._UIKitNavigation_onDismiss = nil;
+          dispatch_async(dispatch_get_main_queue(), ^{
+            self._UIKitNavigation_onDismiss = nil;
+          });
         }
       }
     }
