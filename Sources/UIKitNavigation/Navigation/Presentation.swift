@@ -382,17 +382,20 @@
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
-            let controllerToDismiss = if let inFlightController {
-              inFlightController
+            var controllerToDismiss: UIViewController? = nil
+            if let tmpController = inFlightController {
+              controllerToDismiss = inFlightController
+              inFlightController = nil
             } else if controller.presentedViewController != nil {
-              self
+              controllerToDismiss = self
             } else {
-              controller
+              controllerToDismiss = controller
             }
-            dismiss(controllerToDismiss, transaction)
+            if let controllerToDismiss {
+              dismiss(controllerToDismiss, transaction)
+            }
           }
           self.presentedByID[key] = nil
-          inFlightController = nil
         }
       }
     }
