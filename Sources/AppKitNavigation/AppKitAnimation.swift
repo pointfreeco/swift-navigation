@@ -36,7 +36,7 @@
     @MainActor
     func perform<Result>(
       _ body: () throws -> Result,
-      completion: ((Bool?) -> Void)? = nil
+      completion: (/*@Sendable*/ (Bool?) -> Void)? = nil
     ) rethrows -> Result {
       switch framework {
       case let .appKit(animation):

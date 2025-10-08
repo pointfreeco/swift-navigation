@@ -157,6 +157,56 @@ extension NSWindow {
   }
 }
 
+extension NSViewController {
+  @discardableResult
+  public func sheet(
+    isSheeted: UIBinding<Bool>,
+    onDismiss: (() -> Void)? = nil,
+    content: @escaping () -> NSViewController
+  ) -> ObserveToken {
+    _sheet(isSheeted: isSheeted, onDismiss: onDismiss, content: content)
+  }
+
+  @discardableResult
+  public func sheet<Item: Identifiable>(
+    item: UIBinding<Item?>,
+    onDismiss: (() -> Void)? = nil,
+    content: @escaping (Item) -> NSViewController
+  ) -> ObserveToken {
+    _sheet(item: item, onDismiss: onDismiss, content: content)
+  }
+
+  @_disfavoredOverload
+  @discardableResult
+  public func sheet<Item: Identifiable>(
+    item: UIBinding<Item?>,
+    onDismiss: (() -> Void)? = nil,
+    content: @escaping (UIBinding<Item>) -> NSViewController
+  ) -> ObserveToken {
+    _sheet(item: item, onDismiss: onDismiss, content: content)
+  }
+
+  @discardableResult
+  public func sheet<Item, ID: Hashable>(
+    item: UIBinding<Item?>,
+    id: KeyPath<Item, ID>,
+    onDismiss: (() -> Void)? = nil,
+    content: @escaping (Item) -> NSViewController
+  ) -> ObserveToken {
+    _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+  }
+
+  @discardableResult
+  public func sheet<Item, ID: Hashable>(
+    item: UIBinding<Item?>,
+    id: KeyPath<Item, ID>,
+    onDismiss: (() -> Void)? = nil,
+    content: @escaping (UIBinding<Item>) -> NSViewController
+  ) -> ObserveToken {
+    _sheet(item: item, id: id, onDismiss: onDismiss, content: content)
+  }
+}
+
 extension SheetContent {
   @discardableResult
   fileprivate func _sheet<Content: SheetContent>(
@@ -209,8 +259,8 @@ extension SheetContent {
       content($item)
     } beginSheet: { [weak self] child, _ in
       guard let self else { return }
-      if let attachedSheetWindow = currentWindow?.attachedSheet {
-        self.endSheet(for: attachedSheetWindow)
+      if let attachedContent = attachedContent {
+        self.endSheet(for: attachedContent)
         onDismiss?()
         Task { @MainActor in
           await self.beginSheet(for: child)
