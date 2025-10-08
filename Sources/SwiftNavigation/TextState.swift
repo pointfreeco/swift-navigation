@@ -189,6 +189,13 @@ extension TextState {
     self.init(verbatim: String(content))
   }
 
+  @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+  public init(
+    _ resource: LocalizedStringResource
+  ) {
+    self.storage = .verbatim(String(localized: resource))
+  }
+
   #if canImport(SwiftUI)
     public init(
       _ key: LocalizedStringKey,
@@ -386,6 +393,16 @@ extension TextState {
     public func accessibilityLabel<S: StringProtocol>(_ string: S) -> Self {
       var `self` = self
       `self`.modifiers.append(.accessibilityLabel(.init(string)))
+      return `self`
+    }
+
+    @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+    public func accessibilityLabel(
+      _ resource: LocalizedStringResource
+    ) -> Self {
+      var `self` = self
+      `self`.modifiers.append(
+        .accessibilityLabel(.init(verbatim: String(localized: resource))))
       return `self`
     }
 
