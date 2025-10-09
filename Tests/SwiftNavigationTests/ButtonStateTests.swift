@@ -27,7 +27,8 @@
 
           Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, \
           or use 'SwiftUI.withAnimation' explicitly.
-          """)
+          """
+        )
       }
     }
   }

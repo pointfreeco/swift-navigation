@@ -56,6 +56,7 @@ import ConcurrencyExtras
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
   public func observe(
+    isolation: isolated (any Actor)? = #isolation,
     @_inheritActorContext _ apply: @escaping @isolated(any) @Sendable () -> Void
   ) -> ObserveToken {
     observe { _ in Result(catching: apply).get() }
@@ -71,14 +72,18 @@ import ConcurrencyExtras
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
   public func observe(
+    isolation: isolated (any Actor)? = #isolation,
     @_inheritActorContext
     _ apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
-    _observe(
+    let actor = ActorProxy(base: isolation)
+    return _observe(
       apply,
       task: { transaction, operation in
         Task {
-          await operation()
+          await actor.perform {
+            operation()
+          }
         }
       }
     )
@@ -91,7 +96,8 @@ func _observe(
     _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
   ) -> Void = {
     Task(operation: $1)
-  }
+  },
+  isolation: isolated (any Actor)? = #isolation
 ) -> ObserveToken {
   let token = ObserveToken()
   onChange(
@@ -124,7 +130,7 @@ func _observe(
 private func onChange(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
-    _ transaction: UITransaction, _ operation: @escaping @isolated(any) @Sendable () -> Void
+    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
   ) -> Void
 ) {
   withPerceptionTracking {
@@ -196,5 +202,18 @@ public final class ObserveToken: Sendable, HashableObject {
   /// - Parameter set: The set in which to store this observation token.
   public func store(in set: inout Set<ObserveToken>) {
     set.insert(self)
+  }
+}
+
+private actor ActorProxy {
+  let base: (any Actor)?
+  init(base: (any Actor)?) {
+    self.base = base
+  }
+  nonisolated var unownedExecutor: UnownedSerialExecutor {
+    (base ?? MainActor.shared).unownedExecutor
+  }
+  func perform(_ operation: @Sendable () -> Void) {
+    operation()
   }
 }
