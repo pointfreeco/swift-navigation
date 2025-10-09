@@ -142,9 +142,7 @@ import ConcurrencyExtras
     _observe(
       apply,
       task: { transaction, operation in
-        Task {
-          await operation()
-        }
+        call(operation)
       }
     )
   }
@@ -161,6 +159,7 @@ import ConcurrencyExtras
   public func observe(
     @_inheritActorContext
     _ context: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+    @_inheritActorContext
     onChange apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
     _observe(
@@ -183,10 +182,12 @@ import ConcurrencyExtras
 /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
 ///   is deallocated.
 func _observe(
-  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
+  @_inheritActorContext
+  _ apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+  @_inheritActorContext
+  task: @escaping @isolated(any) @Sendable (
     _ transaction: UITransaction,
-    _ operation: @escaping @Sendable () -> Void
+    _ operation: @escaping @isolated(any) @Sendable () -> Void
   ) -> Void = {
     Task(operation: $1)
   }
@@ -207,11 +208,14 @@ func _observe(
 /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
 ///   is deallocated.
 func _observe(
-  _ context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
+  @_inheritActorContext
+  _ context: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+  @_inheritActorContext
+  onChange apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+  @_inheritActorContext
+  task: @escaping @isolated(any) @Sendable (
     _ transaction: UITransaction,
-    _ operation: @escaping @Sendable () -> Void
+    _ operation: @escaping @isolated(any) @Sendable () -> Void
   ) -> Void = {
     Task(operation: $1)
   }
@@ -222,7 +226,7 @@ func _observe(
     task: task
   )
 
-  apply(.current)
+  callWithUITransaction(.current, apply)
   return token
 }
 
@@ -235,9 +239,12 @@ func _observe(
 /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
 ///   is deallocated.
 func onChange(
-  of context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
+  @_inheritActorContext
+  of context: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+  @_inheritActorContext
+  perform operation: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+  @_inheritActorContext
+  task: @escaping @isolated(any) @Sendable (
     _ transaction: UITransaction,
     _ operation: @escaping @Sendable () -> Void
   ) -> Void = {
@@ -248,7 +255,7 @@ func onChange(
   SwiftNavigation.withRecursivePerceptionTracking(
     of: { [weak token] transaction in
       guard let token, !token.isCancelled else { return }
-      context(transaction)
+      callWithUITransaction(transaction, context)
     },
     perform: { [weak token] transaction in
       guard
@@ -256,7 +263,7 @@ func onChange(
         !token.isCancelled
       else { return }
 
-      var perform: @Sendable () -> Void = { operation(transaction) }
+      var perform: @Sendable () -> Void = { callWithUITransaction(transaction, operation) }
       for key in transaction.storage.keys {
         guard let keyType = key.keyType as? any _UICustomTransactionKey.Type
         else { continue }
@@ -277,18 +284,21 @@ func onChange(
 }
 
 private func withRecursivePerceptionTracking(
-  of context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
+  @_inheritActorContext
+  of context: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+  @_inheritActorContext
+  perform operation: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void,
+  @_inheritActorContext
+  task: @escaping @isolated(any) @Sendable (
     _ transaction: UITransaction,
     _ operation: @escaping @Sendable () -> Void
   ) -> Void
 ) {
   withPerceptionTracking {
-    context(.current)
+    callWithUITransaction(.current, context)
   } onChange: {
-    task(.current) {
-      operation(.current)
+    callWithUITransaction(.current, task) {
+      callWithUITransaction(.current, operation)
 
       withRecursivePerceptionTracking(
         of: context,
@@ -297,6 +307,31 @@ private func withRecursivePerceptionTracking(
       )
     }
   }
+}
+
+@Sendable
+private func call(_ f: @escaping @Sendable () -> Void) {
+  f()
+}
+
+@Sendable
+private func callWithUITransaction(
+  _ transaction: UITransaction,
+  _ f: @escaping @Sendable (_ transaction: UITransaction) -> Void
+) {
+  f(transaction)
+}
+
+@Sendable
+private func callWithUITransaction(
+  _ transaction: UITransaction,
+  _ f: @escaping @Sendable (
+    _ transaction: UITransaction,
+    _ operation: @escaping @isolated(any) @Sendable () -> Void
+  ) -> Void,
+  _ operation: @escaping @isolated(any) @Sendable () -> Void
+) {
+  f(transaction, operation)
 }
 
 /// A token for cancelling observation.
