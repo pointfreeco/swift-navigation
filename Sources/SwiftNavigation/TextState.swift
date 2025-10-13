@@ -129,25 +129,38 @@ public struct TextState: Equatable, Hashable, Sendable {
       switch (lhs, rhs) {
       case let (.concatenated(l1, l2), .concatenated(r1, r2)):
         return l1 == r1 && l2 == r2
+      case (.concatenated, .localizedStringResource),
+        (.localizedStringResource, .concatenated),
+        (.concatenated, .verbatim),
+        (.verbatim, .concatenated):
+        // NB: We do not attempt to equate concatenated cases.
+        return false
+      case let (.verbatim(lhs), .verbatim(rhs)):
+        return lhs == rhs
+      case let (.verbatim(string), .localizedStringResource(resource)):
+        return string == resource.asString()
+      case let (.localizedStringResource(lhs), .localizedStringResource(rhs)):
+        return lhs.asString() == rhs.asString()
+      case let (.localizedStringResource(resource), .verbatim(string)):
+        return resource.asString() == string
 
       #if canImport(SwiftUI)
+        case (.concatenated, .localizedStringKey),
+          (.localizedStringKey, .concatenated):
+          // NB: We do not attempt to equate concatenated cases.
+          return false
+        case let (.verbatim(string), .localizedStringKey(key, table, bundle, comment)):
+          return string == key.formatted(tableName: table, bundle: bundle, comment: comment)
         case let (.localizedStringKey(lk, lt, lb, lc), .localizedStringKey(rk, rt, rb, rc)):
           return lk.formatted(tableName: lt, bundle: lb, comment: lc)
             == rk.formatted(tableName: rt, bundle: rb, comment: rc)
+        case let (.localizedStringKey(key, table, bundle, comment), .localizedStringResource(resource)):
+          return key.formatted(tableName: table, bundle: bundle, comment: comment) == resource.asString()
+        case let (.localizedStringKey(key, table, bundle, comment), .verbatim(string)):
+          return key.formatted(tableName: table, bundle: bundle, comment: comment) == string
+        case let (.localizedStringResource(resource), .localizedStringKey(key, table, bundle, comment)):
+          return resource.asString() == key.formatted(tableName: table, bundle: bundle, comment: comment)
       #endif
-
-      case let (.verbatim(lhs), .verbatim(rhs)):
-        return lhs == rhs
-
-      #if canImport(SwiftUI)
-        case let (.localizedStringKey(key, tableName, bundle, comment), .verbatim(string)),
-          let (.verbatim(string), .localizedStringKey(key, tableName, bundle, comment)):
-          return key.formatted(tableName: tableName, bundle: bundle, comment: comment) == string
-      #endif
-
-      // NB: We do not attempt to equate concatenated cases.
-      default:
-        return false
       }
     }
 
@@ -199,7 +212,7 @@ fileprivate struct LocalizedStringResourceBox: Equatable, Hashable, @unchecked S
       let lhs = lhs.value as? LocalizedStringResource,
       let rhs = rhs.value as? LocalizedStringResource
     else {
-      return false
+      preconditionFailure("LocalizedStringResourceBox should only be exposed where LocalizedStringResource is available.")
     }
 
     return lhs == rhs
