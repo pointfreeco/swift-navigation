@@ -73,7 +73,7 @@ final class TextStateTests: XCTestCase {
       )
     }
 
-  @available(macOS 13, iOS 16, tvOS 16, watchOS 9, *)
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
   func testTextStateLocalizedStringResource() {
     var dump = ""
     let resource = LocalizedStringResource("hello.world", defaultValue: "Hello, world!")
