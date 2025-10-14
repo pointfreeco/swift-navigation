@@ -196,24 +196,9 @@
       weak var base: (any UINavigationControllerDelegate)?
 
       override func responds(to aSelector: Selector!) -> Bool {
-        #if !os(tvOS) && !os(watchOS)
-          aSelector == #selector(navigationController(_:willShow:animated:))
-            || aSelector == #selector(navigationController(_:didShow:animated:))
-            || aSelector == #selector(navigationControllerSupportedInterfaceOrientations(_:))
-            || aSelector == #selector(
-              navigationControllerPreferredInterfaceOrientationForPresentation(_:))
-            || aSelector == #selector(navigationController(_:interactionControllerFor:))
-            || aSelector == #selector(navigationController(_:animationControllerFor:from:to:))
-            || MainActor._assumeIsolated { base?.responds(to: aSelector) }
-              ?? false
-        #else
-          aSelector == #selector(navigationController(_:willShow:animated:))
-            || aSelector == #selector(navigationController(_:didShow:animated:))
-            || aSelector == #selector(navigationController(_:interactionControllerFor:))
-            || aSelector == #selector(navigationController(_:animationControllerFor:from:to:))
-            || MainActor._assumeIsolated { base?.responds(to: aSelector) }
-              ?? false
-        #endif
+        aSelector == #selector(navigationController(_:didShow:animated:))
+          || MainActor._assumeIsolated { base?.responds(to: aSelector) }
+            ?? false
       }
 
       func navigationController(
