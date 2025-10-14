@@ -59,8 +59,8 @@ import ConcurrencyExtras
     @_inheritActorContext
     _ apply: @escaping @isolated(any) @Sendable () -> Void
   ) -> ObserveToken {
-    return _observe(
-      withIsolation: apply.isolation,
+    _observe(
+      isolation: apply.isolation,
       { _ in Result(catching: apply).get() }
     )
   }
@@ -78,15 +78,15 @@ import ConcurrencyExtras
     @_inheritActorContext
     _ apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
-    return _observe(
-      withIsolation: apply.isolation,
+    _observe(
+      isolation: apply.isolation,
       apply
     )
   }
 #endif
 
 func _observe(
-  withIsolation isolation: (any Actor)?,
+  isolation: (any Actor)?,
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
 ) -> ObserveToken {
   let actor = ActorProxy(base: isolation)
@@ -106,9 +106,7 @@ func _observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
-  ) -> Void = {
-    Task(operation: $1)
-  }
+  ) -> Void
 ) -> ObserveToken {
   let token = ObserveToken()
   onChange(
