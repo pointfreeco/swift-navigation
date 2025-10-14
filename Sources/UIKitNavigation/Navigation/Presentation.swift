@@ -122,15 +122,17 @@
       } present: { [weak self] child, transaction in
         guard let self else { return }
         if presentedViewController != nil {
-          self.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+          self.dismiss(
+            animated: !transaction.uiKit.disablesAnimations
+          ) {
             onDismiss?()
             self.present(child, animated: !transaction.uiKit.disablesAnimations)
           }
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { [weak self] _, transaction in
-        self?.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+      } dismiss: { child, transaction in
+        child.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
       }
@@ -356,14 +358,11 @@
             }
           }
           let childController = content(unwrappedItem)
-          let onDismiss = {
-            [
-              weak self,
-              presentationID = id(unwrappedItem.wrappedValue)
-            ] in
-            if let wrappedValue = item.wrappedValue,
-              presentationID == id(wrappedValue)
-            {
+          let onDismiss = { [
+            weak self,
+            presentationID = id(unwrappedItem.wrappedValue)
+          ] in
+            if let wrappedValue = item.wrappedValue, presentationID == id(wrappedValue) {
               inFlightController = self?.presentedByID[key]?.controller
               item.wrappedValue = nil
             }
@@ -387,10 +386,20 @@
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
-            dismiss(controller, transaction)
+            var controllerToDismiss: UIViewController? = nil
+            if inFlightController != nil {
+              controllerToDismiss = inFlightController
+              inFlightController = nil
+            } else if controller.presentedViewController != nil {
+              controllerToDismiss = self
+            } else {
+              controllerToDismiss = controller
+            }
+            if let controllerToDismiss {
+              dismiss(controllerToDismiss, transaction)
+            }
           }
           self.presentedByID[key] = nil
-          inFlightController = nil
         }
       }
     }
