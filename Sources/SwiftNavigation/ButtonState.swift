@@ -148,7 +148,7 @@ public struct ButtonStateAction<Action> {
   ) -> ButtonStateAction<NewAction> {
     switch self.type {
     #if canImport(SwiftUI)
-      case .animatedSend(let action, animation: let animation):
+      case .animatedSend(let action, let animation):
         return .send(transform(action), animation: animation)
     #endif
     case .send(let action):

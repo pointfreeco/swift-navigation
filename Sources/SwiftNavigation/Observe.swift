@@ -104,9 +104,10 @@ func _observe(
 
 func _observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
-    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
-  ) -> Void
+  task:
+    @escaping @Sendable (
+      _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+    ) -> Void
 ) -> ObserveToken {
   let token = ObserveToken()
   onChange(
@@ -138,9 +139,10 @@ func _observe(
 
 private func onChange(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
-    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
-  ) -> Void
+  task:
+    @escaping @Sendable (
+      _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+    ) -> Void
 ) {
   withPerceptionTracking {
     apply(.current)
