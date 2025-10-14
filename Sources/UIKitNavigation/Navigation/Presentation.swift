@@ -362,9 +362,7 @@
             weak self,
             presentationID = id(unwrappedItem.wrappedValue)
           ] in
-            if let wrappedValue = item.wrappedValue,
-               presentationID == id(wrappedValue)
-            {
+            if let wrappedValue = item.wrappedValue, presentationID == id(wrappedValue) {
               inFlightController = self?.presentedByID[key]?.controller
               item.wrappedValue = nil
             }
@@ -389,7 +387,7 @@
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
             var controllerToDismiss: UIViewController? = nil
-            if let tmpController = inFlightController {
+            if inFlightController != nil {
               controllerToDismiss = inFlightController
               inFlightController = nil
             } else if controller.presentedViewController != nil {
