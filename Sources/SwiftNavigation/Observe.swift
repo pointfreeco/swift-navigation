@@ -87,11 +87,12 @@ import ConcurrencyExtras
 
 func _observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
-    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
-  ) -> Void = {
-    Task(operation: $1)
-  }
+  task:
+    @escaping @Sendable (
+      _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+    ) -> Void = {
+      Task(operation: $1)
+    }
 ) -> ObserveToken {
   let token = ObserveToken()
   onChange(
@@ -123,9 +124,10 @@ func _observe(
 
 private func onChange(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task: @escaping @Sendable (
-    _ transaction: UITransaction, _ operation: @escaping @isolated(any) @Sendable () -> Void
-  ) -> Void
+  task:
+    @escaping @Sendable (
+      _ transaction: UITransaction, _ operation: @escaping @isolated(any) @Sendable () -> Void
+    ) -> Void
 ) {
   withPerceptionTracking {
     apply(.current)

@@ -40,7 +40,7 @@
       completion: ((Bool?) -> Void)? = nil
     ) rethrows -> Result {
       switch framework {
-      case let .appKit(animation):
+      case .appKit(let animation):
         var result: Swift.Result<Result, Error>?
         NSAnimationContext.runAnimationGroup { context in
           context.allowsImplicitAnimation = true
@@ -52,7 +52,7 @@
         }
         return try result!._rethrowGet()
 
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         var result: Swift.Result<Result, Error>?
         #if swift(>=6)
           if #available(macOS 15, *) {
@@ -92,11 +92,11 @@
       _ speed: Double
     ) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return AppKitAnimation(
           framework: .swiftUI(animation.speed(speed))
         )
-      case var .appKit(animation):
+      case .appKit(var animation):
         if speed != 0 {
           animation.speed = speed
         } else {
