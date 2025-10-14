@@ -56,9 +56,13 @@ import ConcurrencyExtras
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
   public func observe(
-    @_inheritActorContext _ apply: @escaping @isolated(any) @Sendable () -> Void
+    @_inheritActorContext
+    _ apply: @escaping @isolated(any) @Sendable () -> Void
   ) -> ObserveToken {
-    observe { _ in Result(catching: apply).get() }
+    _observe(
+      isolation: apply.isolation,
+      { _ in Result(catching: apply).get() }
+    )
   }
 
   /// Tracks access to properties of an observable model.
@@ -75,24 +79,34 @@ import ConcurrencyExtras
     _ apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
     _observe(
-      apply,
-      task: { transaction, operation in
-        Task {
-          await operation()
-        }
-      }
+      isolation: apply.isolation,
+      apply
     )
   }
 #endif
 
 func _observe(
-  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task:
-    @escaping @Sendable (
-      _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
-    ) -> Void = {
-      Task(operation: $1)
+  isolation: (any Actor)?,
+  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+) -> ObserveToken {
+  let actor = ActorProxy(base: isolation)
+  return _observe(
+    apply,
+    task: { transaction, operation in
+      Task {
+        await actor.perform {
+          operation()
+        }
+      }
     }
+  )
+}
+
+func _observe(
+  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+  task: @escaping @Sendable (
+    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+  ) -> Void
 ) -> ObserveToken {
   let token = ObserveToken()
   onChange(
@@ -124,10 +138,9 @@ func _observe(
 
 private func onChange(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  task:
-    @escaping @Sendable (
-      _ transaction: UITransaction, _ operation: @escaping @isolated(any) @Sendable () -> Void
-    ) -> Void
+  task: @escaping @Sendable (
+    _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
+  ) -> Void
 ) {
   withPerceptionTracking {
     apply(.current)
@@ -198,5 +211,18 @@ public final class ObserveToken: Sendable, HashableObject {
   /// - Parameter set: The set in which to store this observation token.
   public func store(in set: inout Set<ObserveToken>) {
     set.insert(self)
+  }
+}
+
+private actor ActorProxy {
+  let base: (any Actor)?
+  init(base: (any Actor)?) {
+    self.base = base
+  }
+  nonisolated var unownedExecutor: UnownedSerialExecutor {
+    (base ?? MainActor.shared).unownedExecutor
+  }
+  func perform(_ operation: @Sendable () -> Void) {
+    operation()
   }
 }
