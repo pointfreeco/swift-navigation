@@ -127,7 +127,7 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
       return vc
     }
     navigationDestination(
-      item: $model.destination.drillDown,
+      item: $model.destination.drillDown
     ) { count in
       dismissLabel.text = nil
       return UIHostingController(
