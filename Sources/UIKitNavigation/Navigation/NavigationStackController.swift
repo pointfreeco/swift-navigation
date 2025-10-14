@@ -83,7 +83,7 @@
         }
 
         if difference.count == 1,
-          case let .insert(newPath.count - 1, navigationID, nil) = difference.first,
+          case .insert(newPath.count - 1, let navigationID, nil) = difference.first,
           let viewController = viewController(for: navigationID)
         {
           pushViewController(viewController, animated: !transaction.uiKit.disablesAnimations)
@@ -374,9 +374,9 @@
         guard let stackController else { fatalError() }
 
         switch element {
-        case let .eager(value), let .lazy(.element(value)):
+        case .eager(let value), .lazy(.element(let value)):
           return (destination(value as! D), value)
-        case let .lazy(.codable(value)):
+        case .lazy(.codable(let value)):
           let index = stackController.path.firstIndex(of: element)!
           guard let value = value.decode()
           else {
@@ -427,9 +427,9 @@
   extension CollectionDifference.Change {
     fileprivate var offset: Int {
       switch self {
-      case let .insert(offset, _, _):
+      case .insert(let offset, _, _):
         return offset
-      case let .remove(offset, _, _):
+      case .remove(let offset, _, _):
         return offset
       }
     }
@@ -447,7 +447,7 @@
           startIndex..<endIndex,
           with: newValue.map {
             switch $0 {
-            case let .eager(element), let .lazy(.element(element)):
+            case .eager(let element), .lazy(.element(let element)):
               return element.base as! Element
             case .lazy(.codable):
               fallthrough

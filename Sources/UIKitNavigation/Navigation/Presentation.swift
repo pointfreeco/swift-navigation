@@ -242,10 +242,11 @@
       isPresented: UIBinding<Bool>,
       content: @escaping () -> UIViewController,
       present: @escaping (UIViewController, UITransaction) -> Void,
-      dismiss: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void
+      dismiss:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void
     ) -> ObserveToken {
       destination(
         item: isPresented.toOptionalUnit,
@@ -272,10 +273,11 @@
       item: UIBinding<Item?>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
       present: @escaping (UIViewController, UITransaction) -> Void,
-      dismiss: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void
+      dismiss:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void
     ) -> ObserveToken {
       destination(
         item: item,
@@ -306,14 +308,16 @@
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
-      present: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void,
-      dismiss: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void
+      present:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void,
+      dismiss:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void
     ) -> ObserveToken {
       destination(
         item: item,
@@ -328,14 +332,16 @@
       item: UIBinding<Item?>,
       id: @escaping (Item) -> AnyHashable?,
       content: @escaping (UIBinding<Item>) -> UIViewController,
-      present: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void,
-      dismiss: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void
+      present:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void,
+      dismiss:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void
     ) -> ObserveToken {
       let key = UIBindingIdentifier(item)
       var inFlightController: UIViewController?
