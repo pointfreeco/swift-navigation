@@ -56,10 +56,13 @@ import ConcurrencyExtras
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
   public func observe(
-    isolation: isolated (any Actor)? = #isolation,
-    @_inheritActorContext _ apply: @escaping @isolated(any) @Sendable () -> Void
+    @_inheritActorContext
+    _ apply: @escaping @isolated(any) @Sendable () -> Void
   ) -> ObserveToken {
-    observe { _ in Result(catching: apply).get() }
+    return _observe(
+      withIsolation: apply.isolation,
+      { _ in Result(catching: apply).get() }
+    )
   }
 
   /// Tracks access to properties of an observable model.
@@ -72,23 +75,32 @@ import ConcurrencyExtras
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
   public func observe(
-    isolation: isolated (any Actor)? = #isolation,
     @_inheritActorContext
     _ apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
   ) -> ObserveToken {
-    let actor = ActorProxy(base: isolation)
     return _observe(
-      apply,
-      task: { transaction, operation in
-        Task {
-          await actor.perform {
-            operation()
-          }
-        }
-      }
+      withIsolation: apply.isolation,
+      apply
     )
   }
 #endif
+
+func _observe(
+  withIsolation isolation: (any Actor)?,
+  _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+) -> ObserveToken {
+  let actor = ActorProxy(base: isolation)
+  return _observe(
+    apply,
+    task: { transaction, operation in
+      Task {
+        await actor.perform {
+          operation()
+        }
+      }
+    }
+  )
+}
 
 func _observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
@@ -96,8 +108,7 @@ func _observe(
     _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
   ) -> Void = {
     Task(operation: $1)
-  },
-  isolation: isolated (any Actor)? = #isolation
+  }
 ) -> ObserveToken {
   let token = ObserveToken()
   onChange(
