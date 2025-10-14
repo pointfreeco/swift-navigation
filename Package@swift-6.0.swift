@@ -53,7 +53,8 @@ let package = Package(
     .testTarget(
       name: "SwiftNavigationTests",
       dependencies: [
-        "SwiftNavigation"
+        "SwiftNavigation",
+        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
       ]
     ),
     .target(
@@ -67,7 +68,8 @@ let package = Package(
     .testTarget(
       name: "SwiftUINavigationTests",
       dependencies: [
-        "SwiftUINavigation"
+        "SwiftUINavigation",
+        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
       ]
     ),
     .target(
@@ -91,7 +93,8 @@ let package = Package(
     .testTarget(
       name: "UIKitNavigationTests",
       dependencies: [
-        "UIKitNavigation"
+        "UIKitNavigation",
+        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
       ]
     ),
   ],

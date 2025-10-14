@@ -61,10 +61,10 @@ public struct ButtonState<Action>: Identifiable {
   ///   `withAnimation`.
   public func withAction(_ perform: (Action?) -> Void) {
     switch self.action.type {
-    case let .send(action):
+    case .send(let action):
       perform(action)
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation):
+      case .animatedSend(let action, let animation):
         withAnimation(animation) {
           perform(action)
         }
@@ -81,10 +81,10 @@ public struct ButtonState<Action>: Identifiable {
   @MainActor
   public func withAction(_ perform: @MainActor (Action?) async -> Void) async {
     switch self.action.type {
-    case let .send(action):
+    case .send(let action):
       await perform(action)
     #if canImport(SwiftUI)
-      case let .animatedSend(action, _):
+      case .animatedSend(let action, _):
         var output = ""
         customDump(self.action, to: &output, indent: 4)
         reportIssue(
@@ -135,10 +135,10 @@ public struct ButtonStateAction<Action> {
   public var action: Action? {
     switch self.type {
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation: _):
+      case .animatedSend(let action, animation: _):
         return action
     #endif
-    case let .send(action):
+    case .send(let action):
       return action
     }
   }
@@ -148,10 +148,10 @@ public struct ButtonStateAction<Action> {
   ) -> ButtonStateAction<NewAction> {
     switch self.type {
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation: animation):
+      case .animatedSend(let action, let animation):
         return .send(transform(action), animation: animation)
     #endif
-    case let .send(action):
+    case .send(let action):
       return .send(transform(action))
     }
   }
@@ -198,7 +198,7 @@ extension ButtonState: CustomDumpReflectable {
 extension ButtonStateAction: CustomDumpReflectable {
   public var customDumpMirror: Mirror {
     switch self.type {
-    case let .send(action):
+    case .send(let action):
       return Mirror(
         self,
         children: [
@@ -207,7 +207,7 @@ extension ButtonStateAction: CustomDumpReflectable {
         displayStyle: .enum
       )
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation):
+      case .animatedSend(let action, let animation):
         return Mirror(
           self,
           children: [
@@ -236,10 +236,10 @@ extension ButtonStateAction._ActionType: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     switch self {
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation: _):
+      case .animatedSend(let action, animation: _):
         hasher.combine(action)  // TODO: Should we hash the animation?
     #endif
-    case let .send(action):
+    case .send(let action):
       hasher.combine(action)
     }
   }

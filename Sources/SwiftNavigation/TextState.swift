@@ -127,7 +127,7 @@ public struct TextState: Equatable, Hashable, Sendable {
 
     static func == (lhs: Self, rhs: Self) -> Bool {
       switch (lhs, rhs) {
-      case let (.concatenated(l1, l2), .concatenated(r1, r2)):
+      case (.concatenated(let l1, let l2), .concatenated(let r1, let r2)):
         return l1 == r1 && l2 == r2
       case (.concatenated, .localizedStringResource),
         (.localizedStringResource, .concatenated),
@@ -173,7 +173,7 @@ public struct TextState: Equatable, Hashable, Sendable {
       }
 
       switch self {
-      case let (.concatenated(first, second)):
+      case (.concatenated(let first, let second)):
         hasher.combine(Key.concatenated)
         hasher.combine(first)
         hasher.combine(second)
@@ -495,7 +495,7 @@ extension TextState {
 
     public var accessibilityLabel: TextState? {
       for modifier in self.modifiers.reversed() {
-        if case let .accessibilityLabel(accessibilityLabel) = modifier {
+        if case .accessibilityLabel(let accessibilityLabel) = modifier {
           return accessibilityLabel
         }
       }
@@ -537,7 +537,7 @@ extension TextState {
     public init(_ state: TextState) {
       let text: Text
       switch state.storage {
-      case let .concatenated(first, second):
+      case .concatenated(let first, let second):
         text = Text(first) + Text(second)
       case let .localizedStringKey(content, tableName, bundle, comment):
         text = .init(content, tableName: tableName, bundle: bundle, comment: comment)
@@ -548,16 +548,16 @@ extension TextState {
       }
       self = state.modifiers.reduce(text) { text, modifier in
         switch modifier {
-        case let .accessibilityHeading(level):
+        case .accessibilityHeading(let level):
           if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return text.accessibilityHeading(level.toSwiftUI)
           } else {
             return text
           }
-        case let .accessibilityLabel(value):
+        case .accessibilityLabel(let value):
           if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             switch value.storage {
-            case let .verbatim(string):
+            case .verbatim(let string):
               return text.accessibilityLabel(string)
             case let .localizedStringKey(key, tableName, bundle, comment):
               return text.accessibilityLabel(
@@ -573,45 +573,45 @@ extension TextState {
           } else {
             return text
           }
-        case let .accessibilityTextContentType(type):
+        case .accessibilityTextContentType(let type):
           if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return text.accessibilityTextContentType(type.toSwiftUI)
           } else {
             return text
           }
-        case let .baselineOffset(baselineOffset):
+        case .baselineOffset(let baselineOffset):
           return text.baselineOffset(baselineOffset)
-        case let .bold(isActive):
+        case .bold(let isActive):
           if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
             return text.bold(isActive)
           } else {
             return text.bold()
           }
-        case let .font(font):
+        case .font(let font):
           return text.font(font)
-        case let .fontDesign(design):
+        case .fontDesign(let design):
           if #available(iOS 16.1, macOS 13, tvOS 16.1, watchOS 9.1, *) {
             return text.fontDesign(design)
           } else {
             return text
           }
-        case let .fontWeight(weight):
+        case .fontWeight(let weight):
           return text.fontWeight(weight)
-        case let .fontWidth(width):
+        case .fontWidth(let width):
           if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
             return text.fontWidth(width?.toSwiftUI)
           } else {
             return text
           }
-        case let .foregroundColor(color):
+        case .foregroundColor(let color):
           return text.foregroundColor(color)
-        case let .italic(isActive):
+        case .italic(let isActive):
           if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
             return text.italic(isActive)
           } else {
             return text.italic()
           }
-        case let .kerning(kerning):
+        case .kerning(let kerning):
           return text.kerning(kerning)
         case .monospacedDigit:
           if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
@@ -619,39 +619,39 @@ extension TextState {
           } else {
             return text
           }
-        case let .speechAdjustedPitch(value):
+        case .speechAdjustedPitch(let value):
           if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return text.speechAdjustedPitch(value)
           } else {
             return text
           }
-        case let .speechAlwaysIncludesPunctuation(value):
+        case .speechAlwaysIncludesPunctuation(let value):
           if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return text.speechAlwaysIncludesPunctuation(value)
           } else {
             return text
           }
-        case let .speechAnnouncementsQueued(value):
+        case .speechAnnouncementsQueued(let value):
           if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return text.speechAnnouncementsQueued(value)
           } else {
             return text
           }
-        case let .speechSpellsOutCharacters(value):
+        case .speechSpellsOutCharacters(let value):
           if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return text.speechSpellsOutCharacters(value)
           } else {
             return text
           }
-        case let .strikethrough(isActive, pattern, color):
+        case .strikethrough(let isActive, let pattern, let color):
           if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
             return text.strikethrough(isActive, pattern: pattern.toSwiftUI, color: color)
           } else {
             return text.strikethrough(isActive, color: color)
           }
-        case let .tracking(tracking):
+        case .tracking(let tracking):
           return text.tracking(tracking)
-        case let .underline(isActive, pattern, color):
+        case .underline(let isActive, let pattern, let color):
           if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
             return text.underline(isActive, pattern: pattern.toSwiftUI, color: color)
           } else {
@@ -666,7 +666,7 @@ extension TextState {
 extension String {
   public init(state: TextState, locale: Locale? = nil) {
     switch state.storage {
-    case let .concatenated(lhs, rhs):
+    case .concatenated(let lhs, let rhs):
       self = String(state: lhs, locale: locale) + String(state: rhs, locale: locale)
 
     #if canImport(SwiftUI)
@@ -735,7 +735,7 @@ extension TextState: CustomDumpRepresentable {
     func dumpHelp(_ textState: Self) -> String {
       var output: String
       switch textState.storage {
-      case let .concatenated(lhs, rhs):
+      case .concatenated(let lhs, let rhs):
         output = dumpHelp(lhs) + dumpHelp(rhs)
       #if canImport(SwiftUI)
         case let .localizedStringKey(key, tableName, bundle, comment):
@@ -757,19 +757,19 @@ extension TextState: CustomDumpRepresentable {
       #if canImport(SwiftUI)
         for modifier in textState.modifiers {
           switch modifier {
-          case let .accessibilityHeading(headingLevel):
+          case .accessibilityHeading(let headingLevel):
             tag("accessibility-heading-level", headingLevel.rawValue)
-          case let .accessibilityLabel(value):
+          case .accessibilityLabel(let value):
             tag("accessibility-label", dumpHelp(value))
-          case let .accessibilityTextContentType(type):
+          case .accessibilityTextContentType(let type):
             tag("accessibility-text-content-type", type.rawValue)
-          case let .baselineOffset(baselineOffset):
+          case .baselineOffset(let baselineOffset):
             tag("baseline-offset", "\(baselineOffset)")
           case .bold(isActive: true), .fontWeight(.some(.bold)):
             output = "**\(output)**"
           case .font(.some):
             break  // TODO: capture Font description using DSL similar to TextState and print here
-          case let .fontDesign(.some(design)):
+          case .fontDesign(.some(let design)):
             func describe(design: Font.Design) -> String {
               switch design {
               case .default: return "default"
@@ -780,7 +780,7 @@ extension TextState: CustomDumpRepresentable {
               }
             }
             tag("font-design", describe(design: design))
-          case let .fontWeight(.some(weight)):
+          case .fontWeight(.some(let weight)):
             func describe(weight: Font.Weight) -> String {
               switch weight {
               case .black: return "black"
@@ -795,15 +795,15 @@ extension TextState: CustomDumpRepresentable {
               }
             }
             tag("font-weight", describe(weight: weight))
-          case let .fontWidth(.some(width)):
+          case .fontWidth(.some(let width)):
             tag("font-width", width.rawValue)
-          case let .foregroundColor(.some(color)):
+          case .foregroundColor(.some(let color)):
             tag("foreground-color", "\(color)")
           case .italic(isActive: true):
             output = "_\(output)_"
-          case let .kerning(kerning):
+          case .kerning(let kerning):
             tag("kerning", "\(kerning)")
-          case let .speechAdjustedPitch(value):
+          case .speechAdjustedPitch(let value):
             tag("speech-adjusted-pitch", "\(value)")
           case .speechAlwaysIncludesPunctuation(true):
             tag("speech-always-includes-punctuation")
@@ -811,13 +811,13 @@ extension TextState: CustomDumpRepresentable {
             tag("speech-announcements-queued")
           case .speechSpellsOutCharacters(true):
             tag("speech-spells-out-characters")
-          case let .strikethrough(isActive: true, pattern: _, color: .some(color)):
+          case .strikethrough(isActive: true, pattern: _, color: .some(let color)):
             tag("s", attribute: "color", "\(color)")
           case .strikethrough(isActive: true, pattern: _, color: .none):
             output = "~~\(output)~~"
-          case let .tracking(tracking):
+          case .tracking(let tracking):
             tag("tracking", "\(tracking)")
-          case let .underline(isActive: true, pattern: _, .some(color)):
+          case .underline(isActive: true, pattern: _, .some(let color)):
             tag("u", attribute: "color", "\(color)")
           case .underline(isActive: true, pattern: _, color: .none):
             tag("u")
