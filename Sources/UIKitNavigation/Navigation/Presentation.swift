@@ -358,10 +358,11 @@
             }
           }
           let childController = content(unwrappedItem)
-          let onDismiss = { [
-            weak self,
-            presentationID = id(unwrappedItem.wrappedValue)
-          ] in
+          let onDismiss = {
+            [
+              weak self,
+              presentationID = id(unwrappedItem.wrappedValue)
+            ] in
             if let wrappedValue = item.wrappedValue, presentationID == id(wrappedValue) {
               inFlightController = self?.presentedByID[key]?.controller
               item.wrappedValue = nil
