@@ -39,7 +39,7 @@
       completion: ((Bool?) -> Void)? = nil
     ) rethrows -> Result {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         #if swift(>=6)
           if #available(iOS 18, macOS 15, tvOS 18, visionOS 2, watchOS 11, *) {
             var result: Swift.Result<Result, Error>?
@@ -54,7 +54,7 @@
         _ = animation
         fatalError()
 
-      case let .uiKit(animation):
+      case .uiKit(let animation):
         func animations() throws -> Result {
           guard let repeatModifier = animation.repeatModifier else { return try body() }
           var result: Swift.Result<Result, Error>?
@@ -81,7 +81,7 @@
           }
           return try result!._rethrowGet()
 
-        case let .iOS7(dampingRatio, velocity):
+        case .iOS7(let dampingRatio, let velocity):
           var result: Swift.Result<Result, Error>?
           withoutActuallyEscaping(animations) { animations in
             UIView.animate(
@@ -96,7 +96,7 @@
           }
           return try result!._rethrowGet()
 
-        case let .iOS17(bounce, initialSpringVelocity):
+        case .iOS17(let bounce, let initialSpringVelocity):
           if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
             var result: Swift.Result<Result, Error>?
             UIView.animate(
@@ -156,9 +156,9 @@
     /// - Returns: An animation with a delayed start.
     public func delay(_ delay: TimeInterval) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return UIKitAnimation(framework: .swiftUI(animation.delay(delay)))
-      case var .uiKit(animation):
+      case .uiKit(var animation):
         animation.delay += delay
         return UIKitAnimation(framework: .uiKit(animation))
       }
@@ -177,11 +177,11 @@
     /// - Returns: An animation that repeats for specific number of times.
     public func repeatCount(_ repeatCount: Int, autoreverses: Bool = true) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return UIKitAnimation(
           framework: .swiftUI(animation.repeatCount(repeatCount, autoreverses: autoreverses))
         )
-      case var .uiKit(animation):
+      case .uiKit(var animation):
         animation.repeatModifier = Framework.UIKit.RepeatModifier(
           autoreverses: autoreverses,
           count: CGFloat(repeatCount)
@@ -197,11 +197,11 @@
     /// - Returns: An animation that continuously repeats.
     public func repeatForever(autoreverses: Bool = true) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return UIKitAnimation(
           framework: .swiftUI(animation.repeatForever(autoreverses: autoreverses))
         )
-      case var .uiKit(animation):
+      case .uiKit(var animation):
         animation.repeatModifier = Framework.UIKit.RepeatModifier(
           autoreverses: autoreverses,
           count: .infinity
@@ -216,11 +216,11 @@
     /// - Returns: An animation with the adjusted speed.
     public func speed(_ speed: Double) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return UIKitAnimation(
           framework: .swiftUI(animation.speed(speed))
         )
-      case var .uiKit(animation):
+      case .uiKit(var animation):
         if speed != 0 {
           animation.speed = speed
         } else {

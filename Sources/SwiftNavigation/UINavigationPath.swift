@@ -28,26 +28,26 @@ public struct UINavigationPath: Equatable {
 
     package var elementType: Any.Type? {
       switch self {
-      case let .eager(value), let .lazy(.element(value)):
+      case .eager(let value), .lazy(.element(let value)):
         return type(of: value.base)
-      case let .lazy(.codable(value)):
+      case .lazy(.codable(let value)):
         return value.decodableType
       }
     }
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
       switch (lhs, rhs) {
-      case let (.eager(lhs), .eager(rhs)),
-        let (.lazy(.element(lhs)), .eager(rhs)),
-        let (.lazy(.element(lhs)), .lazy(.element(rhs))),
-        let (.eager(lhs), .lazy(.element(rhs))):
+      case (.eager(let lhs), .eager(let rhs)),
+        (.lazy(.element(let lhs)), .eager(let rhs)),
+        (.lazy(.element(let lhs)), .lazy(.element(let rhs))),
+        (.eager(let lhs), .lazy(.element(let rhs))):
         return lhs == rhs
-      case let (.lazy(.codable(lhs)), .lazy(.codable(rhs))):
+      case (.lazy(.codable(let lhs)), .lazy(.codable(let rhs))):
         return lhs == rhs
-      case let (.eager(eager), .lazy(.codable(lazy))),
-        let (.lazy(.codable(lazy)), .eager(eager)),
-        let (.lazy(.element(eager)), .lazy(.codable(lazy))),
-        let (.lazy(.codable(lazy)), .lazy(.element(eager))):
+      case (.eager(let eager), .lazy(.codable(let lazy))),
+        (.lazy(.codable(let lazy)), .eager(let eager)),
+        (.lazy(.element(let eager)), .lazy(.codable(let lazy))),
+        (.lazy(.codable(let lazy)), .lazy(.element(let eager))):
         guard #available(iOS 14, macOS 11, tvOS 14, watchOS 7, *) else { fatalError() }
         return CodableRepresentation.Element(eager) == lazy
       }
@@ -165,11 +165,11 @@ public struct UINavigationPath: Equatable {
       elements.reserveCapacity(path.elements.count)
       for element in path.elements {
         switch element {
-        case let .eager(value),
-          let .lazy(.element(value)):
+        case .eager(let value),
+          .lazy(.element(let value)):
           guard let element = Element(value) else { return nil }
           elements.append(element)
-        case let .lazy(.codable(element)):
+        case .lazy(.codable(let element)):
           elements.append(element)
         }
       }

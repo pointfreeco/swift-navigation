@@ -155,12 +155,12 @@ class WiFiSettingsViewController: UICollectionViewController, UIKitCaseStudy {
         )
       ]
 
-    case let .selectedNetwork(networkID):
+    case .selectedNetwork(let networkID):
       guard let network = model.foundNetworks.first(where: { $0.id == networkID })
       else { return }
       configureNetwork(cell: cell, network: network, indexPath: indexPath, item: item)
 
-    case let .foundNetwork(network):
+    case .foundNetwork(let network):
       configureNetwork(cell: cell, network: network, indexPath: indexPath, item: item)
     }
 
