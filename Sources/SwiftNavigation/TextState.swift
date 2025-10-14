@@ -119,63 +119,125 @@ public struct TextState: Equatable, Hashable, Sendable {
   fileprivate enum Storage: Equatable, Hashable, @unchecked Sendable {
     indirect case concatenated(TextState, TextState)
     #if canImport(SwiftUI)
-      case localized(
-        LocalizedStringKey, tableName: String?, bundle: Bundle?, comment: StaticString?)
+      case localizedStringKey(
+        LocalizedStringKey,
+        tableName: String?,
+        bundle: Bundle?,
+        comment: StaticString?
+      )
     #endif
+    case localizedStringResource(LocalizedStringResourceBox)
     case verbatim(String)
 
     static func == (lhs: Self, rhs: Self) -> Bool {
       switch (lhs, rhs) {
       case (.concatenated(let l1, let l2), .concatenated(let r1, let r2)):
         return l1 == r1 && l2 == r2
-
-      #if canImport(SwiftUI)
-        case (
-          .localized(let lk, let lt, let lb, let lc), .localized(let rk, let rt, let rb, let rc)
-        ):
-          return lk.formatted(tableName: lt, bundle: lb, comment: lc)
-            == rk.formatted(tableName: rt, bundle: rb, comment: rc)
-      #endif
-
+      case (.concatenated, .localizedStringResource),
+        (.localizedStringResource, .concatenated),
+        (.concatenated, .verbatim),
+        (.verbatim, .concatenated):
+        // NB: We do not attempt to equate concatenated cases.
+        return false
       case (.verbatim(let lhs), .verbatim(let rhs)):
         return lhs == rhs
 
-      #if canImport(SwiftUI)
-        case (.localized(let key, let tableName, let bundle, let comment), .verbatim(let string)),
-          (.verbatim(let string), .localized(let key, let tableName, let bundle, let comment)):
-          return key.formatted(tableName: tableName, bundle: bundle, comment: comment) == string
-      #endif
+      case (.verbatim(let string), .localizedStringResource(let resource)),
+        (.localizedStringResource(let resource), .verbatim(let string)):
+        return string == resource.asString()
 
-      // NB: We do not attempt to equate concatenated cases.
-      default:
-        return false
+      case (.localizedStringResource(let lhs), .localizedStringResource(let rhs)):
+        return lhs.asString() == rhs.asString()
+
+      #if canImport(SwiftUI)
+        case (.concatenated, .localizedStringKey),
+          (.localizedStringKey, .concatenated):
+          // NB: We do not attempt to equate concatenated cases.
+          return false
+        case (
+          .verbatim(let string), .localizedStringKey(let key, let table, let bundle, let comment)
+        ),
+          (.localizedStringKey(let key, let table, let bundle, let comment), .verbatim(let string)):
+          return string == key.formatted(tableName: table, bundle: bundle, comment: comment)
+
+        case (
+          .localizedStringKey(let lk, let lt, let lb, let lc),
+          .localizedStringKey(let rk, let rt, let rb, let rc)
+        ):
+          return lk.formatted(tableName: lt, bundle: lb, comment: lc)
+            == rk.formatted(tableName: rt, bundle: rb, comment: rc)
+
+        case (
+          .localizedStringKey(let key, let table, let bundle, let comment),
+          .localizedStringResource(let resource)
+        ),
+          (
+            .localizedStringResource(let resource),
+            .localizedStringKey(let key, let table, let bundle, let comment)
+          ):
+          return key.formatted(tableName: table, bundle: bundle, comment: comment)
+            == resource.asString()
+
+      #endif
       }
     }
 
     func hash(into hasher: inout Hasher) {
-      enum Key {
-        case concatenated
-        case localized
-        case verbatim
-      }
-
       switch self {
       case (.concatenated(let first, let second)):
-        hasher.combine(Key.concatenated)
         hasher.combine(first)
         hasher.combine(second)
 
       #if canImport(SwiftUI)
-        case .localized(let key, let tableName, let bundle, let comment):
-          hasher.combine(Key.localized)
+        case .localizedStringKey(let key, let tableName, let bundle, let comment):
           hasher.combine(key.formatted(tableName: tableName, bundle: bundle, comment: comment))
       #endif
 
+      case .localizedStringResource(let resource):
+        hasher.combine(resource.asString())
+
       case .verbatim(let string):
-        hasher.combine(Key.verbatim)
         hasher.combine(string)
       }
     }
+  }
+}
+
+// MARK: - LocalizedStringResourceBox
+
+private struct LocalizedStringResourceBox: @unchecked Sendable {
+  // REVISIT: Make 'Any' into 'any Sendable' when minimum deployment target is iOS 18
+  let value: Any
+
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  init(_ resource: LocalizedStringResource) {
+    self.value = resource
+  }
+
+  func asText() -> Text {
+    guard
+      #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *),
+      let resource = value as? LocalizedStringResource
+    else {
+      preconditionFailure(
+        "LocalizedStringResourceBox should only be exposed where LocalizedStringResource is available."
+      )
+    }
+
+    return Text(resource)
+  }
+
+  func asString() -> String {
+    guard
+      #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *),
+      let resource = value as? LocalizedStringResource
+    else {
+      preconditionFailure(
+        "LocalizedStringResourceBox should only be exposed where LocalizedStringResource is available."
+      )
+    }
+
+    return String(localized: resource)
   }
 }
 
@@ -198,9 +260,23 @@ extension TextState {
       bundle: Bundle? = nil,
       comment: StaticString? = nil
     ) {
-      self.storage = .localized(key, tableName: tableName, bundle: bundle, comment: comment)
+      self.storage = .localizedStringKey(
+        key,
+        tableName: tableName,
+        bundle: bundle,
+        comment: comment
+      )
     }
   #endif
+
+  @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  public init(
+    _ resource: LocalizedStringResource
+  ) {
+    self.storage = .localizedStringResource(
+      LocalizedStringResourceBox(resource)
+    )
+  }
 
   public static func + (lhs: Self, rhs: Self) -> Self {
     .init(storage: .concatenated(lhs, rhs))
@@ -391,13 +467,27 @@ extension TextState {
       return `self`
     }
 
+    @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
     public func accessibilityLabel(
-      _ key: LocalizedStringKey, tableName: String? = nil, bundle: Bundle? = nil,
+      _ resource: LocalizedStringResource
+    ) -> Self {
+      var `self` = self
+      `self`.modifiers.append(
+        .accessibilityLabel(.init(verbatim: String(localized: resource)))
+      )
+      return `self`
+    }
+
+    public func accessibilityLabel(
+      _ key: LocalizedStringKey,
+      tableName: String? = nil,
+      bundle: Bundle? = nil,
       comment: StaticString? = nil
     ) -> Self {
       var `self` = self
       `self`.modifiers.append(
-        .accessibilityLabel(.init(key, tableName: tableName, bundle: bundle, comment: comment)))
+        .accessibilityLabel(.init(key, tableName: tableName, bundle: bundle, comment: comment))
+      )
       return `self`
     }
 
@@ -447,8 +537,10 @@ extension TextState {
       switch state.storage {
       case .concatenated(let first, let second):
         text = Text(first) + Text(second)
-      case .localized(let content, let tableName, let bundle, let comment):
+      case .localizedStringKey(let content, let tableName, let bundle, let comment):
         text = .init(content, tableName: tableName, bundle: bundle, comment: comment)
+      case .localizedStringResource(let resourceBox):
+        text = resourceBox.asText()
       case .verbatim(let content):
         text = .init(verbatim: content)
       }
@@ -465,9 +557,14 @@ extension TextState {
             switch value.storage {
             case .verbatim(let string):
               return text.accessibilityLabel(string)
-            case .localized(let key, let tableName, let bundle, let comment):
+            case .localizedStringKey(let key, let tableName, let bundle, let comment):
               return text.accessibilityLabel(
-                Text(key, tableName: tableName, bundle: bundle, comment: comment))
+                Text(key, tableName: tableName, bundle: bundle, comment: comment)
+              )
+            case .localizedStringResource(let resourceBox):
+              return text.accessibilityLabel(
+                resourceBox.asText()
+              )
             case .concatenated(_, _):
               assertionFailure("`.accessibilityLabel` does not support concatenated `TextState`")
               return text
@@ -572,7 +669,7 @@ extension String {
       self = String(state: lhs, locale: locale) + String(state: rhs, locale: locale)
 
     #if canImport(SwiftUI)
-      case .localized(let key, let tableName, let bundle, let comment):
+      case .localizedStringKey(let key, let tableName, let bundle, let comment):
         self = key.formatted(
           locale: locale,
           tableName: tableName,
@@ -580,6 +677,9 @@ extension String {
           comment: comment
         )
     #endif
+
+    case .localizedStringResource(let resourceBox):
+      self = resourceBox.asString()
 
     case .verbatim(let string):
       self = string
@@ -637,9 +737,12 @@ extension TextState: CustomDumpRepresentable {
       case .concatenated(let lhs, let rhs):
         output = dumpHelp(lhs) + dumpHelp(rhs)
       #if canImport(SwiftUI)
-        case .localized(let key, let tableName, let bundle, let comment):
+        case .localizedStringKey(let key, let tableName, let bundle, let comment):
           output = key.formatted(tableName: tableName, bundle: bundle, comment: comment)
       #endif
+      case .localizedStringResource(let resourceBox):
+        output = resourceBox.asString()
+
       case .verbatim(let string):
         output = string
       }
