@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.9
 
 import PackageDescription
 
@@ -97,7 +97,17 @@ let package = Package(
         .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
       ]
     ),
-  ],
-  swiftLanguageModes: [.v6]
+  ]
 )
 
+for target in package.targets {
+  target.swiftSettings = target.swiftSettings ?? []
+  target.swiftSettings!.append(contentsOf: [
+    .enableExperimentalFeature("StrictConcurrency")
+  ])
+  // target.swiftSettings?.append(
+  //   .unsafeFlags([
+  //     "-enable-library-evolution",
+  //   ])
+  // )
+}
