@@ -1,5 +1,5 @@
 {
-  "originHash" : "e7771155ba293db6f581e7fc2edba94abda4b6f9a3c4caa93c0e06ffd534a221",
+  "originHash" : "02849cc0317642c717337a838311b41569cf40f56f950f31fbce38ef06d67ba0",
   "pins" : [
     {
       "identity" : "swift-case-paths",
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception",
       "state" : {
-        "revision" : "30721accd0370d7c9cb5bd0f7cdf5a1a767b383d",
-        "version" : "2.0.8"
+        "revision" : "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
+        "version" : "2.0.9"
       }
     },
     {

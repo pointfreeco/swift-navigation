@@ -80,7 +80,7 @@ import IssueReporting
 /// When `PlayerViewController` initializes `PlayButton`, it passes a binding of its `isPlaying`
 /// state along. Applying the `$` prefix to a property wrapped value returns its ``projectedValue``,
 /// which returns a binding to the value. Whenever the user taps the `PlayButton`, the
-///  `PlayerViewController` updates its `isPlaying` state.
+/// `PlayerViewController` updates its `isPlaying` state.
 ///
 /// > Note: To create bindings to properties of a type that conforms to the `Observable` or
 /// > `Perceptible` protocols, use the [`@UIBindable`](<doc:UIBindable>) property wrapper.
@@ -134,7 +134,7 @@ import IssueReporting
 /// ```
 @dynamicMemberLookup
 @propertyWrapper
-public struct UIBinding<Value>: Sendable {
+public struct UIBinding<Value> {
   fileprivate let location: any _UIBinding<Value>
 
   /// The binding's transaction.
@@ -400,7 +400,7 @@ public struct UIBinding<Value>: Sendable {
   ) -> UIBinding<Member> {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member> {
       UIBinding<Member>(
-        location: _UIBindingAppendKeyPath(base: location, keyPath: keyPath.unsafeSendable()),
+        location: _UIBindingAppendKeyPath(base: location, keyPath: keyPath),
         transaction: transaction
       )
     }
@@ -418,7 +418,7 @@ public struct UIBinding<Value>: Sendable {
   where Value: CasePathable {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath.unsafeSendable()),
+        location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath),
         transaction: transaction
       )
     }
@@ -435,7 +435,7 @@ public struct UIBinding<Value>: Sendable {
   where Value == Wrapped? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalToMember(base: location, keyPath: keyPath.unsafeSendable()),
+        location: _UIBindingOptionalToMember(base: location, keyPath: keyPath),
         transaction: transaction
       )
     }
@@ -452,7 +452,7 @@ public struct UIBinding<Value>: Sendable {
   where Value == V? {
     func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
       UIBinding<Member?>(
-        location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath.unsafeSendable()),
+        location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath),
         transaction: transaction
       )
     }
@@ -506,24 +506,26 @@ extension UIBinding: Identifiable where Value: Identifiable {
   }
 }
 
+extension UIBinding: @unchecked Sendable where Value: Sendable {}
+
 /// A unique identifier for a binding.
-public struct UIBindingIdentifier: Hashable, Sendable {
-  private let location: AnyHashableSendable
+public struct UIBindingIdentifier: Hashable {
+  private let location: AnyHashable
 
   /// Creates an instance that uniquely identifies the given binding.
   ///
   /// - Parameter binding: An instance of a binding.
   public init<Value>(_ binding: UIBinding<Value>) {
-    self.location = AnyHashableSendable(binding.location)
+    self.location = AnyHashable(binding.location)
   }
 }
 
-protocol _UIBinding<Value>: AnyObject, Hashable, Sendable {
+protocol _UIBinding<Value>: AnyObject, Hashable {
   associatedtype Value
   var wrappedValue: Value { get set }
 }
 
-private final class _UIBindingStrongRoot<Root: AnyObject>: _UIBinding, @unchecked Sendable {
+private final class _UIBindingStrongRoot<Root: AnyObject>: _UIBinding {
   init(root: Root) {
     self.wrappedValue = root
   }
@@ -644,10 +646,10 @@ private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
   }
 }
 
-private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding, Sendable {
+private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding {
   let base: Base
-  let keyPath: _SendableWritableKeyPath<Base.Value, Value>
-  init(base: Base, keyPath: _SendableWritableKeyPath<Base.Value, Value>) {
+  let keyPath: WritableKeyPath<Base.Value, Value>
+  init(base: Base, keyPath: WritableKeyPath<Base.Value, Value>) {
     self.base = base
     self.keyPath = keyPath
   }
@@ -664,10 +666,7 @@ private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding
   }
 }
 
-private final class _UIBindingFromOptional<Base: _UIBinding<Value?>, Value>: _UIBinding,
-  @unchecked
-  Sendable
-{
+private final class _UIBindingFromOptional<Base: _UIBinding<Value?>, Value>: _UIBinding {
   var value: Value
   let base: Base
   init(initialValue: Value, base: Base) {
@@ -739,10 +738,10 @@ where Base.Value: Hashable {
 private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding
 where Base.Value: CasePathable {
   let base: Base
-  let keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
+  let keyPath: KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
   let casePath: AnyCasePath<Base.Value, Case>
   init(
-    base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
+    base: Base, keyPath: KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
   ) {
     self.base = base
     self.keyPath = keyPath
@@ -822,8 +821,8 @@ private final class _UIBindingOptionalToMember<
   Base: _UIBinding<Wrapped?>, Wrapped, Value
 >: _UIBinding {
   let base: Base
-  let keyPath: _SendableWritableKeyPath<Wrapped, Value>
-  init(base: Base, keyPath: _SendableWritableKeyPath<Wrapped, Value>) {
+  let keyPath: WritableKeyPath<Wrapped, Value>
+  init(base: Base, keyPath: WritableKeyPath<Wrapped, Value>) {
     self.base = base
     self.keyPath = keyPath
   }
@@ -852,9 +851,9 @@ private final class _UIBindingOptionalEnumToCase<
   Base: _UIBinding<Enum?>, Enum: CasePathable, Case
 >: _UIBinding {
   let base: Base
-  let keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
+  let keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
   let casePath: AnyCasePath<Enum, Case>
-  init(base: Base, keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
+  init(base: Base, keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
     self.base = base
     self.keyPath = keyPath
     self.casePath = Enum.allCasePaths[keyPath: keyPath]
