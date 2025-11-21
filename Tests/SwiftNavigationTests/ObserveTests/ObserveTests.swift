@@ -44,14 +44,15 @@ class ObserveTests: XCTestCase {
 
         if innerToken == nil {
           innerToken = SwiftNavigation.observe {
+            // The problem: Outer observe tracks those changes
             value = b.value
             innerCount += 1
           }
         }
       }
 
+      // a.b doesn't change here
       a.b.value += 1
-
 
       // Those are not enough to perform updates:
       // await Task.yeild()
@@ -63,8 +64,8 @@ class ObserveTests: XCTestCase {
 
       // Expected unscoped behavior, that can be optimized
       // with observation scoping
-      XCTAssertEqual(outerCount, 3) // 2 redundant updates
-      XCTAssertEqual(innerCount, 3) // 1 redundant update
+      XCTAssertEqual(outerCount, 2) // redundant update
+      XCTAssertEqual(innerCount, 2) // initial value + updated value
       _ = outerToken
       _ = innerToken
     }
@@ -92,13 +93,13 @@ class ObserveTests: XCTestCase {
     a.b.value += 1
 
     // Those are not enough to perform updates:
-    // await Task.yeild()
-    // await Task.megaYeild()
+    // await Task.yield()
+    // await Task.megaYield()
     // Falling back to Task.sleep
     try? await Task.sleep(nanoseconds: UInt64(0.5 * pow(10, 9)))
 
     XCTAssertEqual(value, 1)
-    XCTAssertEqual(outerCount, 1)
+    XCTAssertEqual(outerCount, 1) // no redundant updates here
     XCTAssertEqual(innerCount, 2) // initial value + updated value
     _ = outerToken
     _ = innerToken

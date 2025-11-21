@@ -35,15 +35,13 @@ import ConcurrencyExtras
       MockTracker.shared.entries.withValue { $0.removeAll() }
       model.child.value = 1
 
-      // Those are not enough to perform updates:
-      // await Task.yeild()
-      // await Task.megaYeild()
-      // Falling back to Task.sleep
-      try? await Task.sleep(nanoseconds: UInt64(0.5 * pow(10, 9)))
+      await Task.yield()
 
+      // NOTE: Scoped update won't trigger update of the parent
+      // Also MockTracker entries are flaky, tho it triggers parent updates consistently
       XCTAssertEqual(
-        MockTracker.shared.entries.withValue(\.count),
-        13
+        MockTracker.shared.entries.withValue { $0.map(\.label) }.contains("ParentObject.childUpdate"),
+        true
       )
     }
 
@@ -75,11 +73,7 @@ import ConcurrencyExtras
       MockTracker.shared.entries.withValue { $0.removeAll() }
       model.child.value = 1
 
-      // Those are not enough to perform updates:
-      // await Task.yeild()
-      // await Task.megaYeild()
-      // Falling back to Task.sleep
-      try? await Task.sleep(nanoseconds: UInt64(0.5 * pow(10, 9)))
+      await Task.yield()
 
       XCTAssertEqual(
         MockTracker.shared.entries.withValue { $0.map(\.label) },

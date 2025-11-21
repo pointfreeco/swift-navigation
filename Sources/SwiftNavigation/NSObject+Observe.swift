@@ -144,13 +144,9 @@
     public func observe(
       _ apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
     ) -> ObserveToken {
-      let token = SwiftNavigation._observe { transaction in
+      let token = SwiftNavigation._observe(isolation: MainActor.shared) { transaction in
         MainActor._assumeIsolated {
           apply(transaction)
-        }
-      } task: { transaction, work in
-        DispatchQueue.main.async {
-          withUITransaction(transaction, work)
         }
       }
       tokens.append(token)
@@ -169,17 +165,13 @@
       _ context: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void,
       onChange apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
     ) -> ObserveToken {
-      let token = SwiftNavigation._observe { transaction in
+      let token = SwiftNavigation._observe(isolation: MainActor.shared) { transaction in
         MainActor._assumeIsolated {
           context(transaction)
         }
       } onChange: { transaction in
         MainActor._assumeIsolated {
           apply(transaction)
-        }
-      } task: { transaction, work in
-        DispatchQueue.main.async {
-          withUITransaction(transaction, work)
         }
       }
       tokens.append(token)

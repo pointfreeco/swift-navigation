@@ -4,7 +4,7 @@
 
   class IsolationTests: XCTestCase {
     func testIsolationOnMainActor() async throws {
-      try await Task { @MainActor in
+      await Task { @MainActor in
         let model = MainActorModel()
         var didObserve = false
         let token = SwiftNavigation.observe {
@@ -13,7 +13,26 @@
           didObserve = true
         }
         model.count += 1
-        try await Task.sleep(nanoseconds: 300_000_000)
+        await Task.yield()
+        XCTAssertEqual(didObserve, true)
+        _ = token
+      }
+      .value
+    }
+
+    func testIsolationOnMainActor_derivedObservation() async throws {
+      await Task { @MainActor in
+        let model = MainActorModel()
+        var didObserve = false
+        let token = SwiftNavigation.observe {
+          _ = model.count
+          MainActor.assertIsolated()
+        } onChange: {
+          MainActor.assertIsolated()
+          didObserve = true
+        }
+        model.count += 1
+        await Task.yield()
         XCTAssertEqual(didObserve, true)
         _ = token
       }
@@ -21,7 +40,7 @@
     }
 
     func testIsolationOnGlobalActor() async throws {
-      try await Task { @GlobalActorIsolated in
+      await Task { @GlobalActorIsolated in
         let model = GlobalActorModel()
         var didObserve = false
         let token = SwiftNavigation.observe {
@@ -30,7 +49,26 @@
           didObserve = true
         }
         model.count += 1
-        try await Task.sleep(nanoseconds: 300_000_000)
+        await Task.yield()
+        XCTAssertEqual(didObserve, true)
+        _ = token
+      }
+      .value
+    }
+
+    func testIsolationOnGlobalActor_derivedObservation() async throws {
+      await Task { @GlobalActorIsolated in
+        let model = GlobalActorModel()
+        var didObserve = false
+        let token = SwiftNavigation.observe {
+          _ = model.count
+          GlobalActorIsolated.assertIsolated()
+        } onChange: {
+          GlobalActorIsolated.assertIsolated()
+          didObserve = true
+        }
+        model.count += 1
+        await Task.yield()
         XCTAssertEqual(didObserve, true)
         _ = token
       }

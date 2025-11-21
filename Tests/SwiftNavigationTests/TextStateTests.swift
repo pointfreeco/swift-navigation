@@ -72,5 +72,18 @@ final class TextStateTests: XCTestCase {
         """#
       )
     }
+
+    @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+    func testTextStateLocalizedStringResource() {
+      var dump = ""
+      let resource = LocalizedStringResource("hello.world", defaultValue: "Hello, world!")
+      customDump(TextState(resource), to: &dump)
+      XCTAssertEqual(
+        dump,
+        """
+        "Hello, world!"
+        """
+      )
+    }
   #endif
 }
