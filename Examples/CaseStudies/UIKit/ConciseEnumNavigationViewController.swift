@@ -45,12 +45,15 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
       primaryAction: UIAction { [weak self] _ in
         self?.model.destination = .drillDown(.random(in: 1...1_000))
       })
+    let dismissLabel = UILabel(frame: .zero)
+    dismissLabel.textAlignment = .center
 
     let stack = UIStackView(arrangedSubviews: [
       showAlertButton,
       showSheetButton,
       drillDownButton,
       showSheetFromBooleanButton,
+      dismissLabel,
     ])
     stack.axis = .vertical
     stack.spacing = 12
@@ -84,7 +87,13 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
       )
     }
 
-    present(item: $model.destination.alert, id: \.self) { message in
+    present(
+      item: $model.destination.alert,
+      id: \.self,
+      onDismiss: {
+        dismissLabel.text = "Alert dismissed"
+      }
+    ) { message in
       let alert = UIAlertController(
         title: "This is an alert",
         message: message,
@@ -93,22 +102,36 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
       alert.addAction(UIAlertAction(title: "OK", style: .default))
       return alert
     }
-    present(item: $model.destination.sheet, id: \.self) { count in
+    present(
+      item: $model.destination.sheet,
+      id: \.self,
+      onDismiss: {
+        dismissLabel.text = "Sheet dismissed"
+      }
+    ) { count in
       let vc = UIHostingController(
         rootView: Form { Text(count.description) }
       )
       vc.mediumDetents()
       return vc
     }
-    present(isPresented: UIBinding($model.destination.sheetWithoutPayload)) {
+    present(
+      isPresented: UIBinding($model.destination.sheetWithoutPayload),
+      onDismiss: {
+        dismissLabel.text = "Sheet from boolean dismissed"
+      }
+    ) {
       let vc = UIHostingController(
         rootView: Form { Text("Hello!") }
       )
       vc.mediumDetents()
       return vc
     }
-    navigationDestination(item: $model.destination.drillDown) { count in
-      UIHostingController(
+    navigationDestination(
+      item: $model.destination.drillDown
+    ) { count in
+      dismissLabel.text = nil
+      return UIHostingController(
         rootView: Form {
           Text(count.description)
         }

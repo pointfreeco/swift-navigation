@@ -516,10 +516,10 @@ final class NavigationPathTests: XCTestCase {
 
 @MainActor
 private protocol _ValueViewController: UIViewController {
-  associatedtype Value
+  associatedtype Value: Hashable
   var value: Value { get }
 }
-private final class ValueViewController<Value>: UIViewController, _ValueViewController {
+private final class ValueViewController<Value: Hashable>: UIViewController, _ValueViewController {
   let value: Value
   init(value: Value) {
     self.value = value

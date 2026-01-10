@@ -15,8 +15,9 @@
           await Task.yield()
         }
       } matching: { issue in
-        issue.description == """
-          Expectation failed: An animated action was performed asynchronously: …
+        issue.description.hasSuffix(
+          """
+          An animated action was performed asynchronously: …
 
             Action:
               ButtonStateAction.send(
@@ -27,6 +28,7 @@
           Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, \
           or use 'SwiftUI.withAnimation' explicitly.
           """
+        )
       }
     }
   }

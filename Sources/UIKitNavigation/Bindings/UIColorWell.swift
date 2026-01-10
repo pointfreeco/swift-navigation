@@ -11,7 +11,7 @@
     /// - Parameters:
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - selectedColor: The binding to read from for the selected color, and write to when the
-    ///     selected color is changes.
+    ///     selected color changes.
     public convenience init(frame: CGRect = .zero, selectedColor: UIBinding<UIColor?>) {
       self.init(frame: frame)
       bind(selectedColor: selectedColor)
