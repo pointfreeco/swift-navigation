@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		CA26036D2C20973600822CA5 /* DetentsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA26036C2C20973600822CA5 /* DetentsHelper.swift */; };
-		CA3D0E322C20B27B00CCF7CD /* ConnectToNetworkFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9B82C0525980034B757 /* ConnectToNetworkFeature.swift */; };
-		CA3D0E332C20B27B00CCF7CD /* NetworkDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BA2C0525980034B757 /* NetworkDetailFeature.swift */; };
+		CA3D0E322C20B27B00CCF7CD /* UIKit+ConnectToNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9B82C0525980034B757 /* UIKit+ConnectToNetworkViewController.swift */; };
+		CA3D0E332C20B27B00CCF7CD /* UIKit+NetworkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BA2C0525980034B757 /* UIKit+NetworkDetailViewController.swift */; };
 		CA3D0E342C20B27B00CCF7CD /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9B92C0525980034B757 /* Network.swift */; };
-		CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BB2C0525980034B757 /* WiFiSettingsFeature.swift */; };
+		CA3D0E352C20B27B00CCF7CD /* WiFiSettingsViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC5EB9BB2C0525980034B757 /* WiFiSettingsViewController+.swift */; };
 		CA456DA82CB810BA00F04E02 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CA456DA72CB810BA00F04E02 /* IdentifiedCollections */; };
 		CA4737CF272F09600012CAC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA4737CE272F09600012CAC3 /* Assets.xcassets */; };
 		CA4737F4272F09780012CAC3 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA4737F3272F09780012CAC3 /* SwiftUINavigation */; };
@@ -25,7 +25,7 @@
 		CA473837272F0D860012CAC3 /* FactClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473831272F0D860012CAC3 /* FactClient.swift */; };
 		CA473838272F0D860012CAC3 /* OptionalNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA473832272F0D860012CAC3 /* OptionalNavigation.swift */; };
 		CA48F2FA2C49645100BE2C3C /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F2F92C49645100BE2C3C /* SwiftUINavigation */; };
-		CA48F2FC2C49645100BE2C3C /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F2FB2C49645100BE2C3C /* UIKitNavigation */; };
+		CA48F2FC2C49645100BE2C3C /* UIKitNavigation in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = CA48F2FB2C49645100BE2C3C /* UIKitNavigation */; };
 		CA48F3022C49650100BE2C3C /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F3012C49650100BE2C3C /* IdentifiedCollections */; };
 		CA48F3052C49650F00BE2C3C /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F3042C49650F00BE2C3C /* Tagged */; };
 		CA48F3082C49651700BE2C3C /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CA48F3072C49651700BE2C3C /* ConcurrencyExtras */; };
@@ -58,6 +58,21 @@
 		CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */; };
 		DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */; };
 		DC86E8712C208D8D003C0EC9 /* Text+Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC86E8702C208D8A003C0EC9 /* Text+Template.swift */; };
+		E9836D922C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */; };
+		E9836D942C6CA07300FC6EFD /* AppKitNavigation in Frameworks */ = {isa = PBXBuildFile; platformFilters = (macos, ); productRef = E9836D932C6CA07300FC6EFD /* AppKitNavigation */; };
+		E9836D962C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9836D952C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift */; };
+		E99B05952C70CE36003D3AFF /* WiFiSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B05942C70CE36003D3AFF /* WiFiSettingsModel.swift */; };
+		E99B05972C70CE59003D3AFF /* AppKit+WiFiSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B05962C70CE59003D3AFF /* AppKit+WiFiSettingsViewController.swift */; };
+		E99B05992C70CE6E003D3AFF /* UIKit+WiFiSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B05982C70CE6E003D3AFF /* UIKit+WiFiSettingsViewController.swift */; };
+		E99B059C2C70CEFE003D3AFF /* ConnectToNetworkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B059B2C70CEFE003D3AFF /* ConnectToNetworkModel.swift */; };
+		E99B059E2C70CF18003D3AFF /* NetworkDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B059D2C70CF18003D3AFF /* NetworkDetailModel.swift */; };
+		E99B05A22C70D5E1003D3AFF /* AppKit+NetworkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B05A12C70D5E1003D3AFF /* AppKit+NetworkDetailViewController.swift */; };
+		E99B05A42C70DC50003D3AFF /* AppKit+ConnectToNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99B05A32C70DC50003D3AFF /* AppKit+ConnectToNetworkViewController.swift */; };
+		E9CD5B762C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B752C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift */; };
+		E9CD5B782C6CDEA500CE7947 /* AppKit+FocusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B772C6CDEA500CE7947 /* AppKit+FocusViewController.swift */; };
+		E9CD5B7B2C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */; };
+		E9CD5B7C2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */; };
+		E9CD5B7E2C6D14DC00CE7947 /* AppKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B7D2C6D14DC00CE7947 /* AppKitCaseStudies.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,10 +123,10 @@
 		CABE9FC0272F2C0000AFC150 /* EnumNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumNavigation.swift; sourceTree = "<group>"; };
 		CADCA3622C1CE75500DE645F /* SwiftUICaseStudies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICaseStudies.swift; sourceTree = "<group>"; };
 		CADCA3652C1CE8BE00DE645F /* CaseStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudy.swift; sourceTree = "<group>"; };
-		DC5EB9B82C0525980034B757 /* ConnectToNetworkFeature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectToNetworkFeature.swift; sourceTree = "<group>"; };
+		DC5EB9B82C0525980034B757 /* UIKit+ConnectToNetworkViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+ConnectToNetworkViewController.swift"; sourceTree = "<group>"; };
 		DC5EB9B92C0525980034B757 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
-		DC5EB9BA2C0525980034B757 /* NetworkDetailFeature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkDetailFeature.swift; sourceTree = "<group>"; };
-		DC5EB9BB2C0525980034B757 /* WiFiSettingsFeature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WiFiSettingsFeature.swift; sourceTree = "<group>"; };
+		DC5EB9BA2C0525980034B757 /* UIKit+NetworkDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+NetworkDetailViewController.swift"; sourceTree = "<group>"; };
+		DC5EB9BB2C0525980034B757 /* WiFiSettingsViewController+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WiFiSettingsViewController+.swift"; sourceTree = "<group>"; };
 		DC5EB9CB2C0525E80034B757 /* AssertEventually.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertEventually.swift; sourceTree = "<group>"; };
 		DC5EB9CC2C0525E80034B757 /* SetUp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetUp.swift; sourceTree = "<group>"; };
 		DC5EB9CD2C0525E80034B757 /* XCTTODO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTTODO.swift; sourceTree = "<group>"; };
@@ -119,6 +134,20 @@
 		DC5EB9D32C0525FA0034B757 /* NavigationStackTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
 		DC6A8410291F227400B3F6C9 /* SynchronizedBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynchronizedBindings.swift; sourceTree = "<group>"; };
 		DC86E8702C208D8A003C0EC9 /* Text+Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text+Template.swift"; sourceTree = "<group>"; };
+		E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+MinimalObservationViewController.swift"; sourceTree = "<group>"; };
+		E9836D952C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+NSControlBindingsViewController.swift"; sourceTree = "<group>"; };
+		E99B05942C70CE36003D3AFF /* WiFiSettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiSettingsModel.swift; sourceTree = "<group>"; };
+		E99B05962C70CE59003D3AFF /* AppKit+WiFiSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+WiFiSettingsViewController.swift"; sourceTree = "<group>"; };
+		E99B05982C70CE6E003D3AFF /* UIKit+WiFiSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIKit+WiFiSettingsViewController.swift"; sourceTree = "<group>"; };
+		E99B059B2C70CEFE003D3AFF /* ConnectToNetworkModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToNetworkModel.swift; sourceTree = "<group>"; };
+		E99B059D2C70CF18003D3AFF /* NetworkDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDetailModel.swift; sourceTree = "<group>"; };
+		E99B05A12C70D5E1003D3AFF /* AppKit+NetworkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+NetworkDetailViewController.swift"; sourceTree = "<group>"; };
+		E99B05A32C70DC50003D3AFF /* AppKit+ConnectToNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+ConnectToNetworkViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B752C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+EnumControlsViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B772C6CDEA500CE7947 /* AppKit+FocusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+FocusViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppKit+BasicsNavigationViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppKit+ConciseEnumNavigationViewController.swift"; sourceTree = "<group>"; };
+		E9CD5B7D2C6D14DC00CE7947 /* AppKitCaseStudies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKitCaseStudies.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +169,7 @@
 				CA48F2FA2C49645100BE2C3C /* SwiftUINavigation in Frameworks */,
 				CA48F3052C49650F00BE2C3C /* Tagged in Frameworks */,
 				CA48F2FC2C49645100BE2C3C /* UIKitNavigation in Frameworks */,
+				E9836D942C6CA07300FC6EFD /* AppKitNavigation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,6 +247,8 @@
 				CA9D70492C1F642A003B672A /* Internal */,
 				CADCA3642C1CE80B00DE645F /* SwiftUI */,
 				CA9D704A2C1F6431003B672A /* UIKit */,
+				E9836D902C6C9E3000FC6EFD /* AppKit */,
+				DC5EB9BC2C0525980034B757 /* WiFiFeature */,
 			);
 			path = CaseStudies;
 			sourceTree = "<group>";
@@ -258,7 +290,6 @@
 				CA9D704F2C1FB431003B672A /* StaticNavigationStackController.swift */,
 				CA9D70592C208977003B672A /* UIControlBindingsViewController.swift */,
 				CA9D70442C1F6001003B672A /* UIKitCaseStudies.swift */,
-				DC5EB9BC2C0525980034B757 /* WiFiFeature */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -288,10 +319,10 @@
 		DC5EB9BC2C0525980034B757 /* WiFiFeature */ = {
 			isa = PBXGroup;
 			children = (
-				DC5EB9B82C0525980034B757 /* ConnectToNetworkFeature.swift */,
 				DC5EB9B92C0525980034B757 /* Network.swift */,
-				DC5EB9BA2C0525980034B757 /* NetworkDetailFeature.swift */,
-				DC5EB9BB2C0525980034B757 /* WiFiSettingsFeature.swift */,
+				E99B05A02C70CF43003D3AFF /* ConnectToNetworkFeature */,
+				E99B059F2C70CF38003D3AFF /* NetworkDetailFeature */,
+				E99B059A2C70CEE1003D3AFF /* WiFiSettingsFeature */,
 			);
 			path = WiFiFeature;
 			sourceTree = "<group>";
@@ -304,6 +335,51 @@
 				DC5EB9CD2C0525E80034B757 /* XCTTODO.swift */,
 			);
 			path = Internal;
+			sourceTree = "<group>";
+		};
+		E9836D902C6C9E3000FC6EFD /* AppKit */ = {
+			isa = PBXGroup;
+			children = (
+				E9CD5B7D2C6D14DC00CE7947 /* AppKitCaseStudies.swift */,
+				E9836D912C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift */,
+				E9836D952C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift */,
+				E9CD5B752C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift */,
+				E9CD5B772C6CDEA500CE7947 /* AppKit+FocusViewController.swift */,
+				E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */,
+				E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */,
+			);
+			path = AppKit;
+			sourceTree = "<group>";
+		};
+		E99B059A2C70CEE1003D3AFF /* WiFiSettingsFeature */ = {
+			isa = PBXGroup;
+			children = (
+				E99B05942C70CE36003D3AFF /* WiFiSettingsModel.swift */,
+				DC5EB9BB2C0525980034B757 /* WiFiSettingsViewController+.swift */,
+				E99B05962C70CE59003D3AFF /* AppKit+WiFiSettingsViewController.swift */,
+				E99B05982C70CE6E003D3AFF /* UIKit+WiFiSettingsViewController.swift */,
+			);
+			path = WiFiSettingsFeature;
+			sourceTree = "<group>";
+		};
+		E99B059F2C70CF38003D3AFF /* NetworkDetailFeature */ = {
+			isa = PBXGroup;
+			children = (
+				E99B059D2C70CF18003D3AFF /* NetworkDetailModel.swift */,
+				E99B05A12C70D5E1003D3AFF /* AppKit+NetworkDetailViewController.swift */,
+				DC5EB9BA2C0525980034B757 /* UIKit+NetworkDetailViewController.swift */,
+			);
+			path = NetworkDetailFeature;
+			sourceTree = "<group>";
+		};
+		E99B05A02C70CF43003D3AFF /* ConnectToNetworkFeature */ = {
+			isa = PBXGroup;
+			children = (
+				E99B059B2C70CEFE003D3AFF /* ConnectToNetworkModel.swift */,
+				E99B05A32C70DC50003D3AFF /* AppKit+ConnectToNetworkViewController.swift */,
+				DC5EB9B82C0525980034B757 /* UIKit+ConnectToNetworkViewController.swift */,
+			);
+			path = ConnectToNetworkFeature;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -359,6 +435,7 @@
 				CA48F3012C49650100BE2C3C /* IdentifiedCollections */,
 				CA48F3042C49650F00BE2C3C /* Tagged */,
 				CA48F3072C49651700BE2C3C /* ConcurrencyExtras */,
+				E9836D932C6CA07300FC6EFD /* AppKitNavigation */,
 			);
 			productName = CaseStudies;
 			productReference = CA473804272F0D330012CAC3 /* CaseStudies.app */;
@@ -511,30 +588,44 @@
 			buildActionMask = 2147483647;
 			files = (
 				CABE9FC1272F2C0000AFC150 /* EnumNavigation.swift in Sources */,
+				E9CD5B782C6CDEA500CE7947 /* AppKit+FocusViewController.swift in Sources */,
+				E9836D922C6CA03E00FC6EFD /* AppKit+MinimalObservationViewController.swift in Sources */,
+				E99B059E2C70CF18003D3AFF /* NetworkDetailModel.swift in Sources */,
+				E99B059C2C70CEFE003D3AFF /* ConnectToNetworkModel.swift in Sources */,
+				E9CD5B7B2C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift in Sources */,
 				DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */,
+				E99B05992C70CE6E003D3AFF /* UIKit+WiFiSettingsViewController.swift in Sources */,
+				E99B05A42C70DC50003D3AFF /* AppKit+ConnectToNetworkViewController.swift in Sources */,
 				CA9D70502C1FB431003B672A /* StaticNavigationStackController.swift in Sources */,
 				CA473837272F0D860012CAC3 /* FactClient.swift in Sources */,
+				E9CD5B7C2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift in Sources */,
 				CA9D704E2C1FAFAD003B672A /* ConciseEnumNavigationViewController.swift in Sources */,
 				CA9D70582C2088B7003B672A /* MinimalObservationViewController.swift in Sources */,
 				CA9D70562C2087DC003B672A /* EnumControls.swift in Sources */,
 				CA473836272F0D860012CAC3 /* CaseStudiesApp.swift in Sources */,
 				CA473834272F0D860012CAC3 /* RootView.swift in Sources */,
-				CA3D0E322C20B27B00CCF7CD /* ConnectToNetworkFeature.swift in Sources */,
-				CA3D0E332C20B27B00CCF7CD /* NetworkDetailFeature.swift in Sources */,
+				CA3D0E322C20B27B00CCF7CD /* UIKit+ConnectToNetworkViewController.swift in Sources */,
+				E9836D962C6CADBB00FC6EFD /* AppKit+NSControlBindingsViewController.swift in Sources */,
+				CA3D0E332C20B27B00CCF7CD /* UIKit+NetworkDetailViewController.swift in Sources */,
 				CA3D0E342C20B27B00CCF7CD /* Network.swift in Sources */,
-				CA3D0E352C20B27B00CCF7CD /* WiFiSettingsFeature.swift in Sources */,
+				CA3D0E352C20B27B00CCF7CD /* WiFiSettingsViewController+.swift in Sources */,
+				E99B05972C70CE59003D3AFF /* AppKit+WiFiSettingsViewController.swift in Sources */,
 				CA26036D2C20973600822CA5 /* DetentsHelper.swift in Sources */,
 				CA9D705A2C208977003B672A /* UIControlBindingsViewController.swift in Sources */,
 				CA601BB02C236544006B0C5F /* FocusViewController.swift in Sources */,
+				E99B05952C70CE36003D3AFF /* WiFiSettingsModel.swift in Sources */,
 				CA9D70472C1F6108003B672A /* AlertDialogState.swift in Sources */,
 				CA9D70452C1F6001003B672A /* UIKitCaseStudies.swift in Sources */,
 				CADCA3632C1CE75500DE645F /* SwiftUICaseStudies.swift in Sources */,
 				CA9D705E2C2089DD003B672A /* EnumControlsViewController.swift in Sources */,
+				E99B05A22C70D5E1003D3AFF /* AppKit+NetworkDetailViewController.swift in Sources */,
 				CA601BAE2C234613006B0C5F /* AnimationsViewController.swift in Sources */,
 				CADCA3662C1CE8BE00DE645F /* CaseStudy.swift in Sources */,
 				CA49D9542C20D4DF00E6C5BB /* ErasedNavigationStackController.swift in Sources */,
+				E9CD5B762C6CD7A200CE7947 /* AppKit+EnumControlsViewController.swift in Sources */,
 				CA9D70542C1FB4FA003B672A /* BasicsNavigationViewController.swift in Sources */,
 				DC86E8712C208D8D003C0EC9 /* Text+Template.swift in Sources */,
+				E9CD5B7E2C6D14DC00CE7947 /* AppKitCaseStudies.swift in Sources */,
 				CA473838272F0D860012CAC3 /* OptionalNavigation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -770,6 +861,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.CaseStudies;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -799,6 +892,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.CaseStudies;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -810,6 +905,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -819,6 +915,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.CaseStudiesTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -832,6 +930,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -841,6 +940,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.CaseStudiesTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CaseStudies.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CaseStudies";
@@ -1057,13 +1158,13 @@
 			package = CA48F3062C49651700BE2C3C /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
 			productName = ConcurrencyExtras;
 		};
+		E9836D932C6CA07300FC6EFD /* AppKitNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppKitNavigation;
+		};
 		CAAFA9D22C8B422800BB2BA1 /* UIKitNavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = UIKitNavigation;
-		};
-		CAAFA9D62C8B468000BB2BA1 /* AppKitNavigation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AppKitNavigation;
 		};
 		CAAFA9D82C8B468000BB2BA1 /* SwiftNavigation */ = {
 			isa = XCSwiftPackageProductDependency;

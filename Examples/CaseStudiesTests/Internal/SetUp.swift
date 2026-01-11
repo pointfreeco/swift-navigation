@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 import XCTest
 
@@ -16,3 +17,4 @@ extension XCTestCase {
     try await Task.sleep(for: .milliseconds(100))
   }
 }
+#endif
