@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "swift-navigation-fork",
+  name: "swift-navigation",
   platforms: [
     .iOS(.v13),
     .macOS(.v10_15),
