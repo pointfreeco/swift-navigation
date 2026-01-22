@@ -227,6 +227,175 @@
       }
     }
 
+    /// Pushes view controllers onto the receiver's stack using the given items as data sources,
+    /// coordinating between them to avoid race conditions when switching destinations.
+    ///
+    /// Like SwiftUI's `navigationDestination(item:)` view modifier, but for UIKit, and handles
+    /// switching between multiple destinations by using `setViewControllers` instead of separate
+    /// dismiss and push operations.
+    ///
+    /// - Parameters:
+    ///   - item1: A binding to an optional source of truth for the first view controller.
+    ///   - content1: A closure that returns the first view controller to display.
+    ///   - item2: A binding to an optional source of truth for the second view controller.
+    ///   - content2: A closure that returns the second view controller to display.
+    @_disfavoredOverload
+    @discardableResult
+    public func navigationDestination<Item1, Item2>(
+      item1: UIBinding<Item1?>,
+      content1: @escaping (UIBinding<Item1>) -> UIViewController,
+      item2: UIBinding<Item2?>,
+      content2: @escaping (UIBinding<Item2>) -> UIViewController
+    ) -> ObserveToken {
+      let key1 = UIBindingIdentifier(item1)
+      let key2 = UIBindingIdentifier(item2)
+      
+      return observe { [weak self] transaction in
+        guard let self else { return }
+        guard
+          let navigationController = self.navigationController ?? self as? UINavigationController
+        else {
+          reportIssue(
+            """
+            Can't present navigation item: "navigationController" is "nil".
+            """
+          )
+          return
+        }
+        
+        let presented1 = presentedByID[key1]
+        let presented2 = presentedByID[key2]
+        let unwrappedItem1 = UIBinding(item1)
+        let unwrappedItem2 = UIBinding(item2)
+        
+        // Case 1: Switching from item1 to item2
+        if presented1?.controller != nil, unwrappedItem1 == nil, let item = unwrappedItem2 {
+          let childController = content2(item)
+          let onDismiss = { [weak self] in
+            if item2.wrappedValue != nil {
+              item2.wrappedValue = nil
+            }
+          }
+          childController._UIKitNavigation_onDismiss = onDismiss
+          if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+            childController.traitOverrides.dismiss = UIDismissAction { _ in
+              onDismiss()
+            }
+          }
+          
+          self.presentedByID[key2] = Presented(childController, id: nil)
+          self.presentedByID[key1] = nil
+          
+          var currentStack = navigationController.viewControllers
+          if let lastVC = currentStack.last, lastVC !== self {
+            currentStack[currentStack.count - 1] = childController
+            navigationController.setViewControllers(
+              currentStack, animated: !transaction.uiKit.disablesAnimations
+            )
+          } else {
+            navigationController.pushViewController(
+              childController, animated: !transaction.uiKit.disablesAnimations
+            )
+          }
+          return
+        }
+        
+        // Case 2: Switching from item2 to item1
+        if presented2?.controller != nil, unwrappedItem2 == nil, let item = unwrappedItem1 {
+          let childController = content1(item)
+          let onDismiss = { [weak self] in
+            if item1.wrappedValue != nil {
+              item1.wrappedValue = nil
+            }
+          }
+          childController._UIKitNavigation_onDismiss = onDismiss
+          if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+            childController.traitOverrides.dismiss = UIDismissAction { _ in
+              onDismiss()
+            }
+          }
+          
+          self.presentedByID[key1] = Presented(childController, id: nil)
+          self.presentedByID[key2] = nil
+          
+          var currentStack = navigationController.viewControllers
+          if let lastVC = currentStack.last, lastVC !== self {
+            currentStack[currentStack.count - 1] = childController
+            navigationController.setViewControllers(
+              currentStack, animated: !transaction.uiKit.disablesAnimations
+            )
+          } else {
+            navigationController.pushViewController(
+              childController, animated: !transaction.uiKit.disablesAnimations
+            )
+          }
+          return
+        }
+        
+        // Case 3: Normal push for item1
+        if let item = unwrappedItem1, presented1 == nil {
+          let childController = content1(item)
+          let onDismiss = { [weak self] in
+            if item1.wrappedValue != nil {
+              item1.wrappedValue = nil
+            }
+          }
+          childController._UIKitNavigation_onDismiss = onDismiss
+          if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+            childController.traitOverrides.dismiss = UIDismissAction { _ in
+              onDismiss()
+            }
+          }
+          
+          self.presentedByID[key1] = Presented(childController, id: nil)
+          navigationController.pushViewController(
+            childController, animated: !transaction.uiKit.disablesAnimations
+          )
+          return
+        }
+        
+        // Case 4: Normal push for item2
+        if let item = unwrappedItem2, presented2 == nil {
+          let childController = content2(item)
+          let onDismiss = { [weak self] in
+            if item2.wrappedValue != nil {
+              item2.wrappedValue = nil
+            }
+          }
+          childController._UIKitNavigation_onDismiss = onDismiss
+          if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+            childController.traitOverrides.dismiss = UIDismissAction { _ in
+              onDismiss()
+            }
+          }
+          
+          self.presentedByID[key2] = Presented(childController, id: nil)
+          navigationController.pushViewController(
+            childController, animated: !transaction.uiKit.disablesAnimations
+          )
+          return
+        }
+        
+        // Case 5: Normal dismiss for item1
+        if unwrappedItem1 == nil, let presented = presented1, let controller = presented.controller {
+          self.presentedByID[key1] = nil
+          navigationController.popFromViewController(
+            controller, animated: !transaction.uiKit.disablesAnimations
+          )
+          return
+        }
+        
+        // Case 6: Normal dismiss for item2
+        if unwrappedItem2 == nil, let presented = presented2, let controller = presented.controller {
+          self.presentedByID[key2] = nil
+          navigationController.popFromViewController(
+            controller, animated: !transaction.uiKit.disablesAnimations
+          )
+          return
+        }
+      }
+    }
+
     /// Presents a view controller when a binding to a Boolean value you provide is true.
     ///
     /// This helper powers ``present(isPresented:onDismiss:content:)`` and
