@@ -87,6 +87,7 @@
     ///     alert state.
     ///   - message: A view builder returning the message for the alert given the current alert
     ///     state.
+    @_disfavoredOverload
     public func alert<Item, A: View, M: View>(
       item: Binding<Item?>,
       title: (Item) -> Text,
@@ -216,6 +217,7 @@
     ///   - title: A closure returning the alert's title given the current alert state.
     ///   - actions: A view builder returning the alert's actions given a binding to the current
     ///     alert state.
+    @_disfavoredOverload
     public func alert<Item, A: View>(
       item: Binding<Item?>,
       title: (Item) -> Text,
