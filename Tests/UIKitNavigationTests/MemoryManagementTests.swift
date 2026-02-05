@@ -57,12 +57,57 @@
       }
       XCTAssertNil(weakModel)
     }
+
+    @MainActor
+    func testNavigationDestinations_ObservationDoesNotRetainModel() {
+      weak var weakModel: Model?
+      do {
+        @UIBindable var model = Model()
+        weakModel = model
+        let vc = UIViewController()
+        let nav = UINavigationController(rootViewController: vc)
+        _ = nav.view // Force view to load
+        vc.navigationDestinations([
+          UIBindingIdentifier($model.child): UIViewController.DestinationItem(
+            item: $model.child,
+            content: { _ in UIViewController() }
+          ),
+          UIBindingIdentifier($model.child2): UIViewController.DestinationItem(
+            item: $model.child2,
+            content: { _ in UIViewController() }
+          )
+        ])
+      }
+      XCTAssertNil(weakModel)
+    }
+
+    @MainActor
+    func testPresents_ObservationDoesNotRetainModel() {
+      weak var weakModel: Model?
+      do {
+        @UIBindable var model = Model()
+        weakModel = model
+        let vc = UIViewController()
+        vc.presents([
+          UIBindingIdentifier($model.child): UIViewController.DestinationItem(
+            item: $model.child,
+            content: { _ in UIViewController() }
+          ),
+          UIBindingIdentifier($model.child2): UIViewController.DestinationItem(
+            item: $model.child2,
+            content: { _ in UIViewController() }
+          )
+        ])
+      }
+      XCTAssertNil(weakModel)
+    }
   }
 
   @Perceptible
   private final class Model: Identifiable {
     var isPresented = false
     var child: Model? = nil
+    var child2: Model? = nil
     var path = UINavigationPath()
     var text = ""
   }
