@@ -36,9 +36,20 @@
         }
         self.selectedTab = tab
       }
-      let observation = observe(\.selectedTab) { controller, _ in
+      let observation = tabBar.observe(\.selectedItem) { [weak self] tabBar, _ in
+        guard let self else { return }
         MainActor.assumeIsolated {
-          selectedTab.wrappedValue = controller.selectedTab?.identifier
+          let identifier: String?
+          if let item = tabBar.selectedItem,
+             let items = tabBar.items,
+             let index = items.firstIndex(of: item),
+             tabs.indices.contains(index) {
+            identifier = tabs[index].identifier
+          } else {
+            identifier = self.selectedTab?.identifier
+          }
+          guard selectedTab.wrappedValue != identifier else { return }
+          selectedTab.wrappedValue = identifier
         }
       }
       let observeToken = ObserveToken {
