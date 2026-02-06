@@ -56,7 +56,7 @@
       item: Binding<Item?>,
       id: KeyPath<Item, ID>,
       attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
-      arrowEdge: Edge = .top,
+      arrowEdge: Edge? = nil,
       @ViewBuilder content: @escaping (Binding<Item>) -> Content
     ) -> some View {
       popover(
@@ -91,7 +91,7 @@
     public func popover<Item: Identifiable, Content: View>(
       item: Binding<Item?>,
       attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
-      arrowEdge: Edge = .top,
+      arrowEdge: Edge? = nil,
       @ViewBuilder content: @escaping (Binding<Item>) -> Content
     ) -> some View {
       popover(
@@ -127,7 +127,7 @@
       item: Binding<Item?>,
       id: KeyPath<Item, ID>,
       attachmentAnchor: PopoverAttachmentAnchor = .rect(.bounds),
-      arrowEdge: Edge = .top,
+      arrowEdge: Edge? = nil,
       @ViewBuilder content: @escaping (Item) -> Content
     ) -> some View {
       popover(item: item, id: id, attachmentAnchor: attachmentAnchor, arrowEdge: arrowEdge) {
