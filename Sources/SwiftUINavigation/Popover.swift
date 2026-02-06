@@ -47,7 +47,7 @@
     ///   - attachmentAnchor: The positioning anchor that defines the attachment point of the
     ///     popover.
     ///   - arrowEdge: The edge of the `attachmentAnchor` that defines the location of the popover's
-    ///     arrow.
+    ///     arrow. The default is `nil`, which results in the system allowing any arrow edge.
     ///   - content: A closure returning the content of the popover.
     @_disfavoredOverload
     @available(tvOS, unavailable)
@@ -83,7 +83,7 @@
     ///   - attachmentAnchor: The positioning anchor that defines the attachment point of the
     ///     popover.
     ///   - arrowEdge: The edge of the `attachmentAnchor` that defines the location of the popover's
-    ///     arrow.
+    ///     arrow. The default is `nil`, which results in the system allowing any arrow edge.
     ///   - content: A closure returning the content of the popover.
     @_disfavoredOverload
     @available(tvOS, unavailable)
@@ -119,7 +119,7 @@
     ///   - attachmentAnchor: The positioning anchor that defines the attachment point of the
     ///     popover.
     ///   - arrowEdge: The edge of the `attachmentAnchor` that defines the location of the popover's
-    ///     arrow.
+    ///     arrow. The default is `nil`, which results in the system allowing any arrow edge.
     ///   - content: A closure returning the content of the popover.
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
