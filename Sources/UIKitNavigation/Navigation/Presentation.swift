@@ -121,12 +121,22 @@
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
-        if presentedViewController != nil {
-          self.dismiss(
-            animated: !transaction.uiKit.disablesAnimations
-          ) {
-            onDismiss?()
-            self.present(child, animated: !transaction.uiKit.disablesAnimations)
+        if let presentedViewController {
+          if presentedViewController.isBeingDismissed {
+            let oldViewControllerOnDismiss = presentedViewController._UIKitNavigation_onDismiss
+            // If already being dismissed wait for it to be dismissed
+            // and present the new after that.
+            presentedViewController._UIKitNavigation_onDismiss = {
+              oldViewControllerOnDismiss?()
+              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            }
+          } else {
+            self.dismiss(
+              animated: !transaction.uiKit.disablesAnimations
+            ) {
+              onDismiss?()
+              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            }
           }
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
