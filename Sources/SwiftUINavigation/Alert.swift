@@ -235,6 +235,22 @@
     ///
     /// See <doc:AlertsDialogs> for more information on how to use this API.
     ///
+    /// - Parameter state: A binding to optional alert state that determines whether an alert should
+    ///   be presented. When the binding is updated with non-`nil` value, it is unwrapped and used
+    ///   to populate the fields of an alert that the system displays to the user. When the user
+    ///   presses or taps one of the alert's actions, the system sets this value to `nil` and
+    ///   dismisses the alert, and the action is fed to the `action` closure.
+    #if compiler(>=6)
+      @MainActor
+    #endif
+    public func alert<Value>(_ state: Binding<AlertState<Value>?>) -> some View {
+      alert(state) { _ in }
+    }
+
+    /// Presents an alert from a binding to optional alert state.
+    ///
+    /// See <doc:AlertsDialogs> for more information on how to use this API.
+    ///
     /// - Parameters:
     ///   - state: A binding to optional alert state that determines whether an alert should be
     ///     presented. When the binding is updated with non-`nil` value, it is unwrapped and used to
@@ -248,7 +264,7 @@
     #endif
     public func alert<Value>(
       _ state: Binding<AlertState<Value>?>,
-      action handler: @escaping (Value?) -> Void = { (_: Never?) in }
+      action handler: @escaping (Value?) -> Void
     ) -> some View {
       alert(item: state) {
         Text($0.title)
@@ -278,7 +294,7 @@
     ///     tapped.
     public func alert<Value: Sendable>(
       _ state: Binding<AlertState<Value>?>,
-      action handler: @escaping @Sendable (Value?) async -> Void = { (_: Never?) async in }
+      action handler: @escaping @Sendable (Value?) async -> Void
     ) -> some View {
       alert(item: state) {
         Text($0.title)

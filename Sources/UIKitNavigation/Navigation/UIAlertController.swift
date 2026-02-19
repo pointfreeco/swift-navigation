@@ -9,12 +9,19 @@
   extension UIAlertController {
     /// Creates and returns a view controller for displaying an alert using a data description.
     ///
+    /// - Parameter state: A data description of the alert.
+    public convenience init<Action>(state: AlertState<Action>) {
+      self.init(state: state) { _ in }
+    }
+
+    /// Creates and returns a view controller for displaying an alert using a data description.
+    ///
     /// - Parameters:
     ///   - state: A data description of the alert.
     ///   - handler: A closure that is invoked with an action held in `state`.
     public convenience init<Action>(
       state: AlertState<Action>,
-      handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
+      handler: @escaping (_ action: Action?) -> Void
     ) {
       self.init(
         title: String(state: state.title),
@@ -32,12 +39,20 @@
     /// Creates and returns a view controller for displaying an action sheet using a data
     /// description.
     ///
+    /// - Parameter state: A data description of the alert.
+    public convenience init<Action>(state: ConfirmationDialogState<Action>) {
+      self.init(state: state) { _ in }
+    }
+
+    /// Creates and returns a view controller for displaying an action sheet using a data
+    /// description.
+    ///
     /// - Parameters:
     ///   - state: A data description of the alert.
     ///   - handler: A closure that is invoked with an action held in `state`.
     public convenience init<Action>(
       state: ConfirmationDialogState<Action>,
-      handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
+      handler: @escaping (_ action: Action?) -> Void
     ) {
       self.init(
         title: {
@@ -92,7 +107,13 @@
   extension UIAlertAction {
     public convenience init<Action>(
       _ button: ButtonState<Action>,
-      action handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
+    ) {
+      self.init(button) { _ in }
+    }
+
+    public convenience init<Action>(
+      _ button: ButtonState<Action>,
+      action handler: @escaping (_ action: Action?) -> Void
     ) {
       self.init(
         title: String(state: button.label),
