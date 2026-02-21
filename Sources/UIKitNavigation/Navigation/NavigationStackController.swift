@@ -343,14 +343,19 @@
         )
         return
       }
-      stackController.path.append(.lazy(.element(value)))
+      withUITransaction(\.stackController, stackController) {
+        stackController.path.append(.lazy(.element(value)))
+      }
     }
 
     public func navigationDestination<D: Hashable>(
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
     ) {
-      guard let navigationController = navigationController ?? self as? UINavigationController
+      guard
+        let navigationController = UITransaction.current.stackController
+          ?? navigationController
+          ?? self as? UINavigationController
       else {
         reportIssue(
           """
@@ -457,5 +462,16 @@
         )
       }
     }
+  }
+
+  private extension UITransaction {
+    var stackController: NavigationStackController? {
+      get { self[NavigationStackControllerKey.self] }
+      set { self[NavigationStackControllerKey.self] = newValue }
+    }
+  }
+
+  private enum NavigationStackControllerKey: UITransactionKey {
+    static let defaultValue: NavigationStackController? = nil
   }
 #endif
