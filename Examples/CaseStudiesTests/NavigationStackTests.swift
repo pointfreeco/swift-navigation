@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import UIKitNavigation
 import UIKitNavigationShim
 import XCTest
@@ -317,3 +318,4 @@ private final class ChildViewController: UIViewController {
     }
   }
 }
+#endif

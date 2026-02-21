@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import UIKit
 import UIKitNavigation
@@ -119,3 +120,4 @@ class BasicsNavigationViewController: UIViewController, UIKitCaseStudy {
     rootViewController: BasicsNavigationViewController()
   )
 }
+#endif

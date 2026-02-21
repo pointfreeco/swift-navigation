@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import UIKitNavigation
 import XCTest
 
@@ -142,3 +143,4 @@ final class RuntimeWarningTests: XCTestCase {
     try await setUp(controller: vc)
   }
 }
+#endif

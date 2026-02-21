@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 
 extension UIViewController {
@@ -10,3 +11,4 @@ extension UIViewController {
     }
   }
 }
+#endif
