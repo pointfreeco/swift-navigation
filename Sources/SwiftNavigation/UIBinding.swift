@@ -506,6 +506,10 @@ extension UIBinding: Identifiable where Value: Identifiable {
   }
 }
 
+#if SwiftNavigationSharing
+
+#endif
+
 /// A unique identifier for a binding.
 public struct UIBindingIdentifier: Hashable, Sendable {
   private let location: AnyHashableSendable
