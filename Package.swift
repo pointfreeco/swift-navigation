@@ -48,6 +48,13 @@ let package = Package(
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "Perception", package: "swift-perception"),
         .product(name: "PerceptionCore", package: "swift-perception"),
+        .product(
+          name: "Sharing",
+          package: "swift-sharing",
+          condition: .when(traits: [
+            "SwiftNavigationSharing"
+          ])
+        ),
       ]
     ),
     .testTarget(
@@ -100,3 +107,26 @@ let package = Package(
   ],
   swiftLanguageModes: [.v6]
 )
+
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
+
+// Workaround to ensure that all traits are included in documentation. Swift Package Index adds
+// SPI_GENERATE_DOCS (https://github.com/SwiftPackageIndex/SwiftPackageIndex-Server/issues/2336)
+// when building documentation, so only tweak the default traits in this condition.
+let spiGenerateDocs = ProcessInfo.processInfo.environment["SPI_GENERATE_DOCS"] != nil
+let enableAllTraits = spiGenerateDocs
+
+package.traits.formUnion([
+  .trait(
+    name: "SwiftNavigationSharing",
+    description: ""
+  ),
+])
+
+package.traits.insert(.default(
+  enabledTraits: Set(enableAllTraits ? package.traits.map(\.name) : [])
+))
