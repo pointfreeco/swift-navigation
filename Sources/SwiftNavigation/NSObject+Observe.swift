@@ -1,6 +1,7 @@
 #if canImport(ObjectiveC)
   import Dispatch
   import ObjectiveC
+  import ConcurrencyExtras
 
   @MainActor
   extension NSObject {
@@ -11,7 +12,7 @@
     /// any accessed fields so that the view is always up-to-date.
     ///
     /// It is most useful when dealing with non-SwiftUI views, such as UIKit views and controller.
-    /// You can invoke the ``observe(_:)`` method a single time in the `viewDidLoad` and update all
+    /// You can invoke the ``observe(_:)-(()->Void)`` method a single time in the `viewDidLoad` and update all
     /// the view elements:
     ///
     /// ```swift
@@ -37,7 +38,7 @@
     /// ever mutated, this trailing closure will be called again, allowing us to update the view
     /// again.
     ///
-    /// Generally speaking you can usually have a single ``observe(_:)`` in the entry point of your
+    /// Generally speaking you can usually have a single ``observe(_:)-(()->Void)`` in the entry point of your
     /// view, such as `viewDidLoad` for `UIViewController`. This works even if you have many UI
     /// components to update:
     ///
@@ -64,7 +65,7 @@
     /// a label or the `isHidden` of a button.
     ///
     /// However, if there is heavy work you need to perform when state changes, then it is best to
-    /// put that in its own ``observe(_:)``. For example, if you needed to reload a table view or
+    /// put that in its own ``observe(_:)-(()->Void)``. For example, if you needed to reload a table view or
     /// collection view when a collection changes:
     ///
     /// ```swift
@@ -106,13 +107,77 @@
     ///   of a property changes.
     /// - Returns: A cancellation token.
     @discardableResult
-    public func observe(_ apply: @escaping @MainActor @Sendable () -> Void) -> ObserveToken {
+    public func observe(
+      _ apply: @escaping @MainActor @Sendable () -> Void
+    ) -> ObserveToken {
       observe { _ in apply() }
     }
 
     /// Observe access to properties of an observable (or perceptible) object.
     ///
-    /// A version of ``observe(_:)`` that is passed the current transaction.
+    /// This tool allows you to set up an observation loop so that you can access fields from an
+    /// observable model in order to populate your view, and also automatically track changes to
+    /// any fields accessed in the tracking parameter so that the view is always up-to-date.
+    ///
+    /// - Parameter tracking: A closure that contains properties to track
+    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Returns: A cancellation token.
+    @discardableResult
+    public func observe(
+      _ context: @escaping @MainActor @Sendable () -> Void,
+      onChange apply: @escaping @MainActor @Sendable () -> Void
+    ) -> ObserveToken {
+      observe { _ in
+        context()
+      } onChange: { _ in
+        apply()
+      }
+    }
+
+    /// Observe access to a property of an observable (or perceptible) object.
+    ///
+    /// A version of ``observe(_:onChange:)-(()->Void,_)`` that is passed updated value.
+    ///
+    /// - Parameter tracking: A closure that contains properties to track
+    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Returns: A cancellation token.
+    @discardableResult
+    public func observe<T>(
+      _ context: @escaping @MainActor @Sendable @autoclosure () -> T,
+      onChange apply: @escaping @MainActor @Sendable (T) -> Void
+    ) -> ObserveToken {
+      observe(context()) { apply($1) }
+    }
+
+    /// Observe access to a property of an observable (or perceptible) objectt.
+    ///
+    /// A version of ``observe(_:onChange:)-(_,(T)->Void)`` that is passed the current transaction
+    /// alongside.updated value
+    ///
+    /// - Parameter context: An access to property to track
+    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Returns: A cancellation token.
+    @discardableResult
+    public func observe<T>(
+      _ context: @escaping @MainActor @Sendable @autoclosure () -> T,
+      onChange apply: @escaping @MainActor @Sendable (_ transaction: UITransaction, T) -> Void
+    ) -> ObserveToken {
+      let token = SwiftNavigation._observe(isolation: MainActor.shared) { _ in
+        MainActor._assumeIsolated {
+          UncheckedSendable(context())
+        }
+      } onChange: { transaction, value in
+        MainActor._assumeIsolated {
+          apply(transaction, value.wrappedValue)
+        }
+      }
+      tokens.append(token)
+      return token
+    }
+
+    /// Observe access to properties of an observable (or perceptible) object.
+    ///
+    /// A version of ``observe(_:)-(()->Void)`` that is passed the current transaction.
     ///
     /// - Parameter apply: A closure that contains properties to track and is invoked when the value
     ///   of a property changes.
@@ -121,13 +186,34 @@
     public func observe(
       _ apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
     ) -> ObserveToken {
-      let token = SwiftNavigation._observe { transaction in
+      let token = SwiftNavigation._observe(isolation: MainActor.shared) { transaction in
         MainActor._assumeIsolated {
           apply(transaction)
         }
-      } task: { transaction, work in
-        DispatchQueue.main.async {
-          withUITransaction(transaction, work)
+      }
+      tokens.append(token)
+      return token
+    }
+
+    /// Observe access to properties of an observable (or perceptible) object.
+    ///
+    /// A version of ``observe(_:onChange:)-(()->Void,_)`` that is passed the current transaction.
+    ///
+    /// - Parameter context: A closure that contains properties to track
+    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Returns: A cancellation token.
+    @discardableResult
+    public func observe(
+      _ context: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void,
+      onChange apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
+    ) -> ObserveToken {
+      let token = SwiftNavigation._observe(isolation: MainActor.shared) { transaction in
+        MainActor._assumeIsolated {
+          context(transaction)
+        }
+      } onChange: { transaction, _ in
+        MainActor._assumeIsolated {
+          apply(transaction)
         }
       }
       tokens.append(token)
