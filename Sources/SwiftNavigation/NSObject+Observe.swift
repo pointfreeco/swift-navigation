@@ -1,6 +1,7 @@
 #if canImport(ObjectiveC)
   import Dispatch
   import ObjectiveC
+  import ConcurrencyExtras
 
   @MainActor
   extension NSObject {
@@ -133,6 +134,47 @@
       }
     }
 
+    /// Observe access to a property of an observable (or perceptible) object.
+    ///
+    /// A version of ``observe(_:onChange:)-(()->Void,_)`` that is passed updated value.
+    ///
+    /// - Parameter tracking: A closure that contains properties to track
+    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Returns: A cancellation token.
+    @discardableResult
+    public func observe<T>(
+      _ context: @escaping @MainActor @Sendable @autoclosure () -> T,
+      onChange apply: @escaping @MainActor @Sendable (T) -> Void
+    ) -> ObserveToken {
+      observe(context()) { apply($1) }
+    }
+
+    /// Observe access to a property of an observable (or perceptible) objectt.
+    ///
+    /// A version of ``observe(_:onChange:)-(_,(T)->Void)`` that is passed the current transaction
+    /// alongside.updated value
+    ///
+    /// - Parameter context: An access to property to track
+    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Returns: A cancellation token.
+    @discardableResult
+    public func observe<T>(
+      _ context: @escaping @MainActor @Sendable @autoclosure () -> T,
+      onChange apply: @escaping @MainActor @Sendable (_ transaction: UITransaction, T) -> Void
+    ) -> ObserveToken {
+      let token = SwiftNavigation._observe(isolation: MainActor.shared) { _ in
+        MainActor._assumeIsolated {
+          UncheckedSendable(context())
+        }
+      } onChange: { transaction, value in
+        MainActor._assumeIsolated {
+          apply(transaction, value.wrappedValue)
+        }
+      }
+      tokens.append(token)
+      return token
+    }
+
     /// Observe access to properties of an observable (or perceptible) object.
     ///
     /// A version of ``observe(_:)-(()->Void)`` that is passed the current transaction.
@@ -157,7 +199,7 @@
     ///
     /// A version of ``observe(_:onChange:)-(()->Void,_)`` that is passed the current transaction.
     ///
-    /// - Parameter tracking: A closure that contains properties to track
+    /// - Parameter context: A closure that contains properties to track
     /// - Parameter onChange: Invoked when the value of a property changes
     /// - Returns: A cancellation token.
     @discardableResult
@@ -169,7 +211,7 @@
         MainActor._assumeIsolated {
           context(transaction)
         }
-      } onChange: { transaction in
+      } onChange: { transaction, _ in
         MainActor._assumeIsolated {
           apply(transaction)
         }
