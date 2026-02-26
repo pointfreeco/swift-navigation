@@ -1,6 +1,10 @@
 import SwiftNavigation
 import XCTest
 
+#if SwiftNavigationSharing
+  import Sharing
+#endif
+
 final class UIBindingTests: XCTestCase {
   func testInitProjectedValue() {
     @UIBinding var text = ""
@@ -191,4 +195,19 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(result, .success(1729))
     XCTAssertEqual(countBinding.wrappedValue, 1729)
   }
+
+  #if SwiftNavigationSharing
+    func testSharedBinding() {
+      let count = Shared(value: 0)
+      let binding = Binding(count)
+
+      binding.wrappedValue += 1
+      XCTAssertEqual(binding.wrappedValue, 1)
+      XCTAssertEqual(count.wrappedValue, 1)
+
+      count.withLock { $0 += 1 }
+      XCTAssertEqual(binding.wrappedValue, 2)
+      XCTAssertEqual(binding.wrappedValue, 2)
+    }
+  #endif
 }
