@@ -1,6 +1,93 @@
 import ConcurrencyExtras
 
 #if swift(>=6)
+/// Tracks access to properties of an observable model.
+///
+/// A version of ``observe(_:onChange:)-(_,(T)->Void)`` that is handed the current ``UITransaction``.
+///
+/// - Parameter context: An autoclosure that returns property to track.
+/// - Parameter apply: Invoked when the value of a property changes
+///   > `onChange` is also invoked on initial call
+/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+///   is deallocated.
+  public func observe<T>(
+    @_inheritActorContext
+    _ context: @escaping @isolated(any) @Sendable @autoclosure () -> T,
+    @_inheritActorContext
+    onChange apply: @escaping @isolated(any) @Sendable (UITransaction, T) -> Void
+  ) -> ObserveToken {
+    _observe(
+      isolation: context.isolation,
+      { _ in _assumeNotThrowing(call: context) },
+      onChange: { _assumeNotThrowing(call: apply, with: $0, $1) }
+    )
+  }
+
+  /// Tracks access to property of an observable model.
+  ///
+  /// This function allows one to minimally observe changes in a model in order to
+  /// react to those changes. For example, if you had an observable model like so:
+  ///
+  /// ```swift
+  /// @Observable
+  /// class FeatureModel {
+  ///   var count = 0
+  /// }
+  /// ```
+  ///
+  /// Then you can use `observe` to observe changes in the model. For example, in UIKit you can
+  /// update a `UILabel`:
+  ///
+  /// ```swift
+  /// observe(model.count) { [countLabel] value in
+  ///   countLabel.text = "Count: \(value)"
+  /// }
+  /// ```
+  ///
+  /// Anytime the `count` property of the model changes the trailing closure will be invoked again,
+  /// allowing you to update the view. Further, only changes to properties accessed in the trailing
+  /// closure will be observed.
+  ///
+  /// > Note: If you are targeting Apple's older platforms (anything before iOS 17, macOS 14,
+  /// > tvOS 17, watchOS 10), then you can use our
+  /// > [Perception](http://github.com/pointfreeco/swift-perception) library to replace Swift's
+  /// > Observation framework.
+  ///
+  /// This function also works on non-Apple platforms, such as Windows, Linux, Wasm, and more. For
+  /// example, in a Wasm app you could observe changes to the `count` property to update the inner
+  /// HTML of a tag:
+  ///
+  /// ```swift
+  /// import JavaScriptKit
+  ///
+  /// var countLabel = document.createElement("span")
+  /// _ = document.body.appendChild(countLabel)
+  ///
+  /// let token = observe(model.count) { value in
+  ///   countLabel.innerText = .string("Count: \(value)")
+  /// }
+  /// ```
+  ///
+  /// And you can also build your own tools on top of `observe`.
+  ///
+/// - Parameter context: An autoclosure that returns property to track.
+  /// - Parameter apply: Invoked when the value of a property changes
+  ///   > `onChange` is also invoked on initial call
+  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+  ///   is deallocated.
+  public func observe<T>(
+    @_inheritActorContext
+    _ context: @escaping @isolated(any) @Sendable @autoclosure () -> T,
+    @_inheritActorContext
+    onChange apply: @escaping @isolated(any) @Sendable (T) -> Void
+  ) -> ObserveToken {
+    _observe(
+      isolation: context.isolation,
+      { _ in _assumeNotThrowing(call: context) },
+      onChange: { _assumeNotThrowing(call: apply, with: $1) }
+    )
+  }
+
   /// Tracks access to properties of an observable model.
   ///
   /// This function is a convenient variant of ``observe(_:onChange:)-(()->Void,_)`` that
@@ -61,7 +148,7 @@ import ConcurrencyExtras
   ) -> ObserveToken {
     _observe(
       isolation: apply.isolation,
-      { _ in Result(catching: apply).get() }
+      { _ in _assumeNotThrowing(call: apply) }
     )
   }
 
@@ -125,8 +212,8 @@ import ConcurrencyExtras
   ) -> ObserveToken {
     _observe(
       isolation: context.isolation,
-      { _ in Result(catching: context).get() },
-      onChange: { _ in Result(catching: apply).get() }
+      { _ in _assumeNotThrowing(call: context) },
+      onChange: { _, _ in _assumeNotThrowing(call: apply) }
     )
   }
 
@@ -165,7 +252,9 @@ import ConcurrencyExtras
     _observe(
       isolation: context.isolation,
       context,
-      onChange: apply
+      onChange: { transaction, _ in
+        _assumeNotThrowing(call: apply, with: transaction)
+      }
     )
   }
 #endif
@@ -207,13 +296,13 @@ func _observe(
 /// - Parameter task: The task that wraps recursive observation calls
 /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
 ///   is deallocated.
-func _observe(
+func _observe<T>(
   isolation: (any Actor)?,
-  _ context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  onChange apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
+  _ context: @escaping @Sendable (_ transaction: UITransaction) -> T,
+  onChange apply: @escaping @Sendable (_ transaction: UITransaction, T) -> Void
 ) -> ObserveToken {
   let actor = ActorProxy(base: isolation)
-  let token = onChange(
+  let observation = onChange(
     of: context,
     perform: apply,
     task: { transaction, operation in
@@ -225,8 +314,8 @@ func _observe(
     }
   )
 
-  apply(.current)
-  return token
+  apply(.current, observation.initialValue)
+  return observation.token
 }
 
 // MARK: - onChange
@@ -285,29 +374,35 @@ func onChange(
 /// - Parameter task: The task that wraps recursive observation calls
 /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
 ///   is deallocated.
-func onChange(
-  of context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+func onChange<T>(
+  of context: @escaping @Sendable (_ transaction: UITransaction) -> T,
+  perform operation: @escaping @Sendable (_ transaction: UITransaction, T) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction,
     _ operation: @escaping @Sendable () -> Void
   ) -> Void = {
     Task(operation: $1)
   }
-) -> ObserveToken {
+) -> (token: ObserveToken, initialValue: T) {
   let token = ObserveToken()
-  SwiftNavigation.withRecursivePerceptionTracking(
+
+  // Token is just initialized and strongly held, value is effectively
+  // runtime-guaranteed
+  let initialValue: T! = SwiftNavigation.withRecursivePerceptionTracking(
     of: { [weak token] transaction in
-      guard let token, !token.isCancelled else { return }
-      context(transaction)
+      guard let token, !token.isCancelled else { return nil }
+      return context(transaction)
     },
-    perform: { [weak token] transaction in
+    perform: { [weak token] transaction, value in
       guard
         let token,
+        let value,
         !token.isCancelled
       else { return }
 
-      var perform: @Sendable () -> Void = { operation(transaction) }
+      let uncheckedSendableValue = UncheckedSendable(value)
+
+      var perform: @Sendable () -> Void = { operation(transaction, uncheckedSendableValue.value) }
       for key in transaction.storage.keys {
         guard let keyType = key.keyType as? any _UICustomTransactionKey.Type
         else { continue }
@@ -324,7 +419,7 @@ func onChange(
     },
     task: task
   )
-  return token
+  return (token, initialValue)
 }
 
 // MARK: - Perception
@@ -346,25 +441,23 @@ private func withRecursivePerceptionTracking(
   }
 }
 
-private func withRecursivePerceptionTracking(
-  of context: @escaping @Sendable (_ transaction: UITransaction) -> Void,
-  perform operation: @escaping @Sendable (_ transaction: UITransaction) -> Void,
+private func withRecursivePerceptionTracking<T>(
+  of context: @escaping @Sendable (_ transaction: UITransaction) -> T,
+  perform operation: @escaping @Sendable (_ transaction: UITransaction, T) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction,
     _ operation: @escaping @Sendable () -> Void
   ) -> Void
-) {
+) -> T {
   withPerceptionTracking {
     context(.current)
   } onChange: {
     task(.current) {
-      operation(.current)
-
-      withRecursivePerceptionTracking(
+      operation(.current, withRecursivePerceptionTracking(
         of: context,
         perform: operation,
         task: task
-      )
+      ))
     }
   }
 }
@@ -447,4 +540,13 @@ private actor ActorProxy {
   func perform(_ operation: @Sendable () -> Void) {
     operation()
   }
+}
+
+// MARK: Isolation workaround
+
+private func _assumeNotThrowing<each Arg, Output>(
+  call body: (repeat each Arg) throws(Error) -> Output,
+  with args: repeat each Arg
+) -> Output {
+  try! body(repeat each args)
 }
