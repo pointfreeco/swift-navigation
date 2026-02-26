@@ -118,7 +118,11 @@ import Foundation
 // SPI_GENERATE_DOCS (https://github.com/SwiftPackageIndex/SwiftPackageIndex-Server/issues/2336)
 // when building documentation, so only tweak the default traits in this condition.
 let spiGenerateDocs = ProcessInfo.processInfo.environment["SPI_GENERATE_DOCS"] != nil
-let enableAllTraits = spiGenerateDocs
+
+// Enable all traits for other CI actions.
+let enableAllTraitsExplicit = ProcessInfo.processInfo.environment["ENABLE_ALL_TRAITS"] != nil
+
+let enableAllTraits = spiGenerateDocs || enableAllTraitsExplicit
 
 package.traits.formUnion([
   .trait(
