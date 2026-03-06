@@ -140,7 +140,7 @@ import ConcurrencyExtras
 
       await Task.yield()
 
-      token = observe(model.value) { value, _ in
+      token = observe(model, \.value) { value in
         tracker.track("didSet \(value)")
       }
 

@@ -136,17 +136,19 @@
 
     /// Observe access to a property of an observable (or perceptible) object.
     ///
-    /// A version of ``observe(_:onChange:)-(()->Void,_)`` that is passed updated value.
+    /// A version of ``observe(_:_:onChange:)-(()->Void,_)`` that is passed updated value.
     ///
-    /// - Parameter context: A closure that contains properties to track
+    /// - Parameter object: Observable object to derive observation from.
+    /// - Parameter context: Access to a property to track.
     /// - Parameter apply: Invoked when the value of a property changes
     /// - Returns: A cancellation token.
     @discardableResult
-    public func observe<T>(
-      _ context: @escaping @MainActor @Sendable @autoclosure () -> T,
-      onChange apply: @escaping @MainActor @Sendable (T) -> Void
+    public func observe<Object: Perceptible & Sendable, Value>(
+      _ object: Object,
+      _ context: @escaping @MainActor @Sendable (Object) -> Value,
+      onChange apply: @escaping @MainActor @Sendable (Value) -> Void
     ) -> ObserveToken {
-      observe(context()) { apply($1) }
+      observe(object, context) { value, _ in apply(value) }
     }
 
     /// Observe access to a property of an observable (or perceptible) objectt.
@@ -154,21 +156,23 @@
     /// A version of ``observe(_:onChange:)-(_,(T)->Void)`` that is passed the current transaction
     /// alongside.updated value
     ///
-    /// - Parameter context: An access to property to track
+    /// - Parameter object: Observable object to derive observation from.
+    /// - Parameter context: Access to a property to track.
     /// - Parameter onChange: Invoked when the value of a property changes
     /// - Returns: A cancellation token.
     @discardableResult
-    public func observe<T>(
-      _ context: @escaping @MainActor @Sendable @autoclosure () -> T,
-      onChange apply: @escaping @MainActor @Sendable (_ transaction: UITransaction, T) -> Void
+    public func observe<Object: Perceptible & Sendable, Value>(
+      _ object: Object,
+      _ context: @escaping @MainActor @Sendable (Object) -> Value,
+      onChange apply: @escaping @MainActor @Sendable (Value, _ transaction: UITransaction) -> Void
     ) -> ObserveToken {
       let token = SwiftNavigation._observe(isolation: MainActor.shared) { _ in
         MainActor._assumeIsolated {
-          UncheckedSendable(context())
+          UncheckedSendable(context(object))
         }
-      } onChange: { transaction, value in
+      } onChange: { value, transaction in
         MainActor._assumeIsolated {
-          apply(transaction, value.wrappedValue)
+          apply(value.wrappedValue, transaction)
         }
       }
       tokens.append(token)
@@ -211,7 +215,7 @@
         MainActor._assumeIsolated {
           context(transaction)
         }
-      } onChange: { transaction, _ in
+      } onChange: { _, transaction in
         MainActor._assumeIsolated {
           apply(transaction)
         }

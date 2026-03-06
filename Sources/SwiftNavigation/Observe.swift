@@ -1,24 +1,26 @@
 import ConcurrencyExtras
 
 #if swift(>=6)
-/// Tracks access to properties of an observable model.
-///
-/// A version of ``observe(_:onChange:)-(_,(T)->Void)`` that is handed the current ``UITransaction``.
-///
-/// - Parameter context: An autoclosure that returns property to track.
-/// - Parameter apply: Invoked when the value of a property changes
-///   > `onChange` is also invoked on initial call
-/// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
-///   is deallocated.
-  public func observe<T>(
+  /// Tracks access to properties of an observable model.
+  ///
+  /// A version of ``observe(_:_:onChange:)-(_,(T)->Void)`` that is handed the current ``UITransaction``.
+  ///
+  /// - Parameter object: Observable object to derive observation from.
+  /// - Parameter context: Access to a property to track.
+  /// - Parameter apply: Invoked when the value of a property changes
+  ///   > `onChange` is also invoked on initial call
+  /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
+  ///   is deallocated.
+  public func observe<Object: Perceptible & Sendable, Value>(
+    object: Object,
     @_inheritActorContext
-    _ context: @escaping @isolated(any) @Sendable @autoclosure () -> T,
+    _ context: @escaping @isolated(any) @Sendable (Object) -> Value,
     @_inheritActorContext
-    onChange apply: @escaping @isolated(any) @Sendable (T, UITransaction) -> Void
+    onChange apply: @escaping @isolated(any) @Sendable (Value, UITransaction) -> Void
   ) -> ObserveToken {
     _observe(
       isolation: context.isolation,
-      { _ in _assumeNotThrowing(call: context) },
+      { _ in _assumeNotThrowing(call: context, with: object) },
       onChange: { _assumeNotThrowing(call: apply, with: $0, $1) }
     )
   }
@@ -70,20 +72,22 @@ import ConcurrencyExtras
   ///
   /// And you can also build your own tools on top of `observe`.
   ///
-/// - Parameter context: An autoclosure that returns property to track.
+  /// - Parameter object: Observable object to derive observation from.
+  /// - Parameter context: Access to a property to track.
   /// - Parameter apply: Invoked when the value of a property changes
   ///   > `onChange` is also invoked on initial call
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
-  public func observe<T>(
+  public func observe<Object: Perceptible & Sendable, Value>(
+    object: Object,
     @_inheritActorContext
-    _ context: @escaping @isolated(any) @Sendable @autoclosure () -> T,
+    _ context: @escaping @isolated(any) @Sendable (Object) -> Value,
     @_inheritActorContext
-    onChange apply: @escaping @isolated(any) @Sendable (T) -> Void
+    onChange apply: @escaping @isolated(any) @Sendable (Value) -> Void
   ) -> ObserveToken {
     _observe(
       isolation: context.isolation,
-      { _ in _assumeNotThrowing(call: context) },
+      { _ in _assumeNotThrowing(call: context, with: object) },
       onChange: { value, _ in _assumeNotThrowing(call: apply, with: value) }
     )
   }
