@@ -14,7 +14,7 @@ import ConcurrencyExtras
     @_inheritActorContext
     _ context: @escaping @isolated(any) @Sendable @autoclosure () -> T,
     @_inheritActorContext
-    onChange apply: @escaping @isolated(any) @Sendable (UITransaction, T) -> Void
+    onChange apply: @escaping @isolated(any) @Sendable (T, UITransaction) -> Void
   ) -> ObserveToken {
     _observe(
       isolation: context.isolation,
@@ -84,7 +84,7 @@ import ConcurrencyExtras
     _observe(
       isolation: context.isolation,
       { _ in _assumeNotThrowing(call: context) },
-      onChange: { _assumeNotThrowing(call: apply, with: $1) }
+      onChange: { value, _ in _assumeNotThrowing(call: apply, with: value) }
     )
   }
 
@@ -252,7 +252,7 @@ import ConcurrencyExtras
     _observe(
       isolation: context.isolation,
       context,
-      onChange: { transaction, _ in
+      onChange: { _, transaction in
         _assumeNotThrowing(call: apply, with: transaction)
       }
     )
@@ -299,7 +299,7 @@ func _observe(
 func _observe<T>(
   isolation: (any Actor)?,
   _ context: @escaping @Sendable (_ transaction: UITransaction) -> T,
-  onChange apply: @escaping @Sendable (_ transaction: UITransaction, T) -> Void
+  onChange apply: @escaping @Sendable (T, _ transaction: UITransaction) -> Void
 ) -> ObserveToken {
   let actor = ActorProxy(base: isolation)
   let observation = onChange(
@@ -314,7 +314,7 @@ func _observe<T>(
     }
   )
 
-  apply(.current, observation.initialValue)
+  apply(observation.initialValue, .current)
   return observation.token
 }
 
@@ -376,7 +376,7 @@ func onChange(
 ///   is deallocated.
 func onChange<T>(
   of context: @escaping @Sendable (_ transaction: UITransaction) -> T,
-  perform operation: @escaping @Sendable (_ transaction: UITransaction, T) -> Void,
+  perform operation: @escaping @Sendable (T, _ transaction: UITransaction) -> Void,
   task: @escaping @Sendable (
     _ transaction: UITransaction,
     _ operation: @escaping @Sendable () -> Void
@@ -402,7 +402,7 @@ func onChange<T>(
 
       let uncheckedSendableValue = UncheckedSendable(value)
 
-      var perform: @Sendable () -> Void = { operation(transaction, uncheckedSendableValue.value) }
+      var perform: @Sendable () -> Void = { operation(uncheckedSendableValue.value, transaction) }
       for key in transaction.storage.keys {
         guard let keyType = key.keyType as? any _UICustomTransactionKey.Type
         else { continue }
