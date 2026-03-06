@@ -119,8 +119,8 @@
     /// observable model in order to populate your view, and also automatically track changes to
     /// any fields accessed in the tracking parameter so that the view is always up-to-date.
     ///
-    /// - Parameter tracking: A closure that contains properties to track
-    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Parameter context: A closure that contains properties to track
+    /// - Parameter apply: Invoked when the value of a property changes
     /// - Returns: A cancellation token.
     @discardableResult
     public func observe(
@@ -138,8 +138,8 @@
     ///
     /// A version of ``observe(_:onChange:)-(()->Void,_)`` that is passed updated value.
     ///
-    /// - Parameter tracking: A closure that contains properties to track
-    /// - Parameter onChange: Invoked when the value of a property changes
+    /// - Parameter context: A closure that contains properties to track
+    /// - Parameter apply: Invoked when the value of a property changes
     /// - Returns: A cancellation token.
     @discardableResult
     public func observe<T>(
