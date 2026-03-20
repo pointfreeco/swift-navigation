@@ -170,6 +170,20 @@ public struct UIBinding<Value>: Sendable {
     )
   }
 
+  package init<Root: AnyObject>(
+    strongRoot: Root,
+    keyPath: WritableKeyPath<Root, Value>,
+    transaction: UITransaction = UITransaction()
+  ) {
+    self.init(
+      location: _UIBindingAppendKeyPath(
+        base: _UIBindingStrongRoot(root: strongRoot),
+        keyPath: keyPath.unsafeSendable()
+      ),
+      transaction: transaction
+    )
+  }
+
   /// Creates a binding that stores an initial wrapped value.
   ///
   /// You don't call this initializer directly. Instead, Swift calls it for you when you declare a
@@ -529,7 +543,7 @@ private final class _UIBindingStrongRoot<Root: AnyObject>: _UIBinding, @unchecke
   }
   var wrappedValue: Root
   static func == (lhs: _UIBindingStrongRoot, rhs: _UIBindingStrongRoot) -> Bool {
-    lhs === rhs
+    lhs.wrappedValue === rhs.wrappedValue
   }
   func hash(into hasher: inout Hasher) {
     hasher.combine(ObjectIdentifier(wrappedValue))

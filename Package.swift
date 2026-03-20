@@ -27,9 +27,14 @@ let package = Package(
       name: "AppKitNavigation",
       targets: ["AppKitNavigation"]
     ),
+    .library(
+      name: "SwiftNavigationSharing",
+      targets: ["SwiftNavigationSharing"]
+    ),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.7.4"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.6"),
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
@@ -90,11 +95,25 @@ let package = Package(
         "SwiftNavigation"
       ]
     ),
+    .target(
+      name: "SwiftNavigationSharing",
+      dependencies: [
+        .product(name: "Sharing", package: "swift-sharing"),
+        "SwiftNavigation",
+      ]
+    ),
     .testTarget(
       name: "UIKitNavigationTests",
       dependencies: [
         "UIKitNavigation",
         .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
+      ]
+    ),
+    .testTarget(
+      name: "SwiftNavigationSharingTests",
+      dependencies: [
+        .product(name: "Sharing", package: "swift-sharing"),
+        "SwiftNavigationSharing",
       ]
     ),
   ],

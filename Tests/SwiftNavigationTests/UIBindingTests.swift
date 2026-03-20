@@ -1,7 +1,37 @@
 import SwiftNavigation
+#if canImport(Testing)
+  import Testing
+#endif
 import XCTest
 
 final class UIBindingTests: XCTestCase {
+  func testInitStrongRoot() {
+    let state = TestState()
+
+    let binding = UIBinding(strongRoot: state, keyPath: \.value)
+
+    XCTAssertEqual(binding.wrappedValue, 0)
+
+    state.value = 1
+    XCTAssertEqual(binding.wrappedValue, 1)
+
+    binding.wrappedValue = 2
+    XCTAssertEqual(state.value, 2)
+    XCTAssertEqual(binding.wrappedValue, 2)
+  }
+
+  func testInitStrongRootIdentifier() {
+    let state = TestState()
+    let binding = UIBinding(strongRoot: state, keyPath: \.value)
+    let copy = binding
+
+    XCTAssertEqual(UIBindingIdentifier(binding), UIBindingIdentifier(copy))
+    XCTAssertEqual(
+      UIBindingIdentifier(binding).hashValue,
+      UIBindingIdentifier(copy).hashValue
+    )
+  }
+
   func testInitProjectedValue() {
     @UIBinding var text = ""
     let textBinding = UIBinding(projectedValue: $text)
@@ -192,3 +222,42 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(countBinding.wrappedValue, 1729)
   }
 }
+
+@Perceptible
+private final class TestState {
+  var observedTransactions = [Bool]()
+  var value = 0 {
+    didSet {
+      observedTransactions.append(UITransaction.current.isSet)
+    }
+  }
+}
+
+#if canImport(Testing)
+  @MainActor
+  struct UIBindingSwiftTestingTests {
+    @Test
+    func initStrongRootTransaction() async throws {
+      var tokens: Set<ObserveToken> = []
+      let state = TestState()
+      var transaction = UITransaction()
+      transaction.isSet = true
+
+      let binding = UIBinding(strongRoot: state, keyPath: \.value).transaction(transaction)
+
+      var didObserve = false
+      SwiftNavigation.observe {
+        _ = binding.wrappedValue
+        didObserve = true
+      }
+      .store(in: &tokens)
+
+      binding.wrappedValue = 1
+
+      try await Task.sleep(for: .milliseconds(300))
+      #expect(state.value == 1)
+      #expect(state.observedTransactions == [true])
+      #expect(didObserve)
+    }
+  }
+#endif
