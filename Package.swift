@@ -36,7 +36,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
-    .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.7.5"),
+    .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.8.0"),
   ],
   targets: [
     .target(
@@ -53,7 +53,7 @@ let package = Package(
           name: "Sharing",
           package: "swift-sharing",
           condition: .when(traits: [
-            "SwiftNavigationSharing"
+            "Sharing"
           ])
         ),
       ]
@@ -127,7 +127,7 @@ let enableAllTraits = spiGenerateDocs || enableAllTraitsExplicit
 
 package.traits.formUnion([
   .trait(
-    name: "SwiftNavigationSharing",
+    name: "Sharing",
     description: ""
   ),
 ])

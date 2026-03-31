@@ -1,7 +1,7 @@
 import SwiftNavigation
 import XCTest
 
-#if SwiftNavigationSharing
+#if Sharing
   import Sharing
 #endif
 
@@ -196,7 +196,7 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(countBinding.wrappedValue, 1729)
   }
 
-  #if SwiftNavigationSharing
+  #if Sharing
     func testSharedBinding() {
       let count = Shared(value: 0)
       let binding = Binding(count)

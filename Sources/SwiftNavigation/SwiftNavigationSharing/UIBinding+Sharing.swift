@@ -1,5 +1,5 @@
 #if SwiftNavigationSharing
-@_spi(Internals) import Sharing
+@_spi(References) import Sharing
 import PerceptionCore
 import SwiftUI
 
@@ -35,7 +35,7 @@ extension UIBinding {
       #endif
     }
     func open<V>(_ reference: some MutableReference<V> & Observable) -> UIBinding<Value> {
-      @SwiftUI.Bindable var reference = reference
+      @UIBindable var reference = reference
       return $reference._wrappedValue as! UIBinding<Value>
     }
     self = open(reference)
