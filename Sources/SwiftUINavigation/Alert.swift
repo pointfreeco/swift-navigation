@@ -243,7 +243,7 @@
     #if compiler(>=6)
       @MainActor
     #endif
-    public func alert<Value>(_ state: Binding<AlertState<Value>?>) -> some View {
+    public func alert(_ state: Binding<AlertState<Never>?>) -> some View {
       alert(state) { _ in }
     }
 
@@ -309,16 +309,28 @@
   }
 
   @available(
-    iOS, introduced: 13, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
+    iOS,
+    introduced: 13,
+    deprecated: 100000,
+    message: "use 'View.alert(_:action:)' instead."
   )
   @available(
-    macOS, introduced: 10.15, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
+    macOS,
+    introduced: 10.15,
+    deprecated: 100000,
+    message: "use 'View.alert(_:action:)' instead."
   )
   @available(
-    tvOS, introduced: 13, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
+    tvOS,
+    introduced: 13,
+    deprecated: 100000,
+    message: "use 'View.alert(_:action:)' instead."
   )
   @available(
-    watchOS, introduced: 6, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
+    watchOS,
+    introduced: 6,
+    deprecated: 100000,
+    message: "use 'View.alert(_:action:)' instead."
   )
   extension Alert {
     /// Creates an alert from alert state.
