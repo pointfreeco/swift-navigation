@@ -128,7 +128,7 @@ let enableAllTraits = spiGenerateDocs || enableAllTraitsExplicit
 package.traits.formUnion([
   .trait(
     name: "Sharing",
-    description: ""
+    description: "Enables Sharing integration with SwiftNavigation"
   ),
 ])
 
