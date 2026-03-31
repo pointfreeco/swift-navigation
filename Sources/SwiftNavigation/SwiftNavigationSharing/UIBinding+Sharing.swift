@@ -1,4 +1,4 @@
-#if SwiftNavigationSharing
+#if Sharing
 @_spi(References) import Sharing
 import PerceptionCore
 import SwiftUI
