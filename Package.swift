@@ -110,9 +110,9 @@ let package = Package(
 )
 
 #if canImport(FoundationEssentials)
-import FoundationEssentials
+  import FoundationEssentials
 #else
-import Foundation
+  import Foundation
 #endif
 
 // Workaround to ensure that all traits are included in documentation. Swift Package Index adds
@@ -129,9 +129,10 @@ package.traits.formUnion([
   .trait(
     name: "Sharing",
     description: "Enables Sharing integration with SwiftNavigation"
-  ),
+  )
 ])
 
-package.traits.insert(.default(
-  enabledTraits: Set(enableAllTraits ? package.traits.map(\.name) : [])
-))
+package.traits.insert(
+  .default(
+    enabledTraits: Set(enableAllTraits ? package.traits.map(\.name) : [])
+  ))
