@@ -16,6 +16,8 @@ concurrency:
 jobs:
   library:
     runs-on: macos-15
+    env:
+      ENABLE_ALL_TRAITS: 1
     strategy:
       matrix:
         xcode:
