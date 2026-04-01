@@ -231,14 +231,14 @@ class WiFiSettingsViewController: UICollectionViewController, UIKitCaseStudy {
     model.networkTapped(network)
   }
 
-  enum Section: Hashable, Sendable {
+  nonisolated enum Section: Hashable, Sendable {
     case top
     case foundNetworks
   }
 
   @CasePathable
   @dynamicMemberLookup
-  enum Item: Hashable, Sendable {
+  nonisolated enum Item: Hashable, Sendable {
     case isOn
     case selectedNetwork(Network.ID)
     case foundNetwork(Network)

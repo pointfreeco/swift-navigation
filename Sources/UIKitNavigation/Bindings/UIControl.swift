@@ -67,6 +67,7 @@
       }
       // NB: This key path must only be accessed on the main actor
       @UncheckedSendable var uncheckedKeyPath = keyPath
+      nonisolated(unsafe) let binding = binding
       let observation = observe(keyPath) { [$uncheckedKeyPath] control, _ in
         guard isSetting.withValue({ !$0 }) else { return }
         MainActor._assumeIsolated {
