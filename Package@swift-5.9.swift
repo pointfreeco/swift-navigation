@@ -35,6 +35,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
   ],
   targets: [
@@ -87,8 +88,13 @@ let package = Package(
     .target(
       name: "AppKitNavigation",
       dependencies: [
-        "SwiftNavigation"
+        "SwiftNavigation",
+        "AppKitNavigationShim",
+        .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
       ]
+    ),
+    .target(
+      name: "AppKitNavigationShim"
     ),
     .testTarget(
       name: "UIKitNavigationTests",

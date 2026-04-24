@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 import UIKitNavigation
 
@@ -111,3 +112,4 @@ extension Int {
     set { self = Int(newValue) }
   }
 }
+#endif
