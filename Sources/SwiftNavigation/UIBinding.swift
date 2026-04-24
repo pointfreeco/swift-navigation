@@ -665,8 +665,7 @@ private final class _UIBindingAppendKeyPath<Base: _UIBinding, Value>: _UIBinding
 }
 
 private final class _UIBindingFromOptional<Base: _UIBinding<Value?>, Value>: _UIBinding,
-  @unchecked
-  Sendable
+  @unchecked Sendable
 {
   var value: Value
   let base: Base

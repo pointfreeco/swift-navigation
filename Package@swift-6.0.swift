@@ -1,12 +1,6 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.0
 
 import PackageDescription
-
-#if canImport(FoundationEssentials)
-  import FoundationEssentials
-#else
-  import Foundation
-#endif
 
 let package = Package(
   name: "swift-navigation",
@@ -34,12 +28,6 @@ let package = Package(
       targets: ["AppKitNavigation"]
     ),
   ],
-  traits: [
-    .trait(
-      name: "Sharing",
-      description: "Enables Sharing integration with SwiftNavigation"
-    )
-  ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
@@ -47,9 +35,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
-    .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.8.0"),
   ],
   targets: [
     .target(
@@ -62,13 +48,6 @@ let package = Package(
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "Perception", package: "swift-perception"),
         .product(name: "PerceptionCore", package: "swift-perception"),
-        .product(
-          name: "Sharing",
-          package: "swift-sharing",
-          condition: .when(traits: [
-            "Sharing"
-          ])
-        ),
       ]
     ),
     .testTarget(
@@ -108,13 +87,8 @@ let package = Package(
     .target(
       name: "AppKitNavigation",
       dependencies: [
-        "SwiftNavigation",
-        "AppKitNavigationShim",
-        .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
+        "SwiftNavigation"
       ]
-    ),
-    .target(
-      name: "AppKitNavigationShim"
     ),
     .testTarget(
       name: "UIKitNavigationTests",
@@ -125,15 +99,4 @@ let package = Package(
     ),
   ],
   swiftLanguageModes: [.v6]
-)
-
-let enableAllTraits =
-  ProcessInfo.processInfo.environment["ENABLE_ALL_TRAITS"] != nil
-  // NB: https://github.com/SwiftPackageIndex/SwiftPackageIndex-Server/issues/2336
-  || ProcessInfo.processInfo.environment["SPI_GENERATE_DOCS"] != nil
-
-package.traits.insert(
-  .default(
-    enabledTraits: Set(enableAllTraits ? package.traits.map(\.name) : [])
-  )
 )
