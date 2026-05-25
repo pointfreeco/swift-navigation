@@ -30,6 +30,9 @@
       if let role = self.role {
         children.append(("role", role))
       }
+      if self.isPreferred {
+        children.append(("isPreferred", self.isPreferred))
+      }
       children.append(("action", self.action))
       children.append(("label", self.label))
       return Mirror(
