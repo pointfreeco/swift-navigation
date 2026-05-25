@@ -1,4 +1,5 @@
 #if canImport(UIKit) && !os(watchOS)
+  import IssueReporting
   import UIKit
 
   @available(iOS 13, *)
@@ -28,9 +29,7 @@
         message: state.message.map { String(state: $0) },
         preferredStyle: .alert
       )
-      for button in state.buttons {
-        addAction(UIAlertAction(button, action: handler))
-      }
+      self.addActions(state.buttons, stateName: "AlertState", handler: handler)
       if state.buttons.isEmpty {
         addAction(UIAlertAction(title: "OK", style: .cancel))
       }
@@ -72,11 +71,30 @@
         message: state.message.map { String(state: $0) },
         preferredStyle: .actionSheet
       )
-      for button in state.buttons {
-        addAction(UIAlertAction(button, action: handler))
-      }
+      self.addActions(state.buttons, stateName: "ConfirmationDialogState", handler: handler)
       if state.buttons.isEmpty {
         addAction(UIAlertAction(title: "OK", style: .cancel))
+      }
+    }
+
+    private func addActions<Action>(
+      _ buttons: [ButtonState<Action>],
+      stateName: String,
+      handler: @escaping (_ action: Action?) -> Void
+    ) {
+      let actions = buttons.map { UIAlertAction($0, action: handler) }
+      for action in actions {
+        self.addAction(action)
+      }
+      let preferred = zip(buttons, actions).filter(\.0.isPreferred).map(\.1)
+      self.preferredAction = preferred.first
+      if preferred.count > 1 {
+        reportIssue(
+          """
+          'UIAlertController' received '\(stateName)' with multiple preferred buttons. Will use \
+          the first preferred button.
+          """
+        )
       }
     }
   }
