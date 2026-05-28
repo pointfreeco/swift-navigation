@@ -1,4 +1,6 @@
+public import CasePaths
 import ConcurrencyExtras
+import PerceptionCore
 import IssueReporting
 
 #if canImport(Observation)

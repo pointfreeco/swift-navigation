@@ -1,7 +1,10 @@
 #if canImport(UIKit) && !os(watchOS)
+  import CustomDump
   import IssueReporting
-  @_spi(Internals) import SwiftNavigation
-  import UIKit
+  import PerceptionCore
+  @_spi(Internals) public import SwiftNavigation
+  import SwiftUI
+  public import UIKit
 
   open class NavigationStackController: UINavigationController {
     fileprivate var destinations:
@@ -101,7 +104,8 @@
           first == newPath.count
         {
           popToViewController(
-            viewControllers[first], animated: !transaction.uiKit.disablesAnimations
+            viewControllers[first],
+            animated: !transaction.uiKit.disablesAnimations
           )
         } else {
           var newPath = newPath
@@ -207,7 +211,9 @@
         animated: Bool
       ) {
         base?.navigationController?(
-          navigationController, willShow: viewController, animated: animated
+          navigationController,
+          willShow: viewController,
+          animated: animated
         )
       }
 
@@ -218,7 +224,9 @@
       ) {
         defer {
           base?.navigationController?(
-            navigationController, didShow: viewController, animated: animated
+            navigationController,
+            didShow: viewController,
+            animated: animated
           )
         }
         let navigationController = navigationController as! NavigationStackController
@@ -298,7 +306,8 @@
         interactionControllerFor animationController: any UIViewControllerAnimatedTransitioning
       ) -> (any UIViewControllerInteractiveTransitioning)? {
         base?.navigationController?(
-          navigationController, interactionControllerFor: animationController
+          navigationController,
+          interactionControllerFor: animationController
         )
       }
 
@@ -309,7 +318,10 @@
         to toVC: UIViewController
       ) -> (any UIViewControllerAnimatedTransitioning)? {
         base?.navigationController?(
-          navigationController, animationControllerFor: operation, from: fromVC, to: toVC
+          navigationController,
+          animationControllerFor: operation,
+          from: fromVC,
+          to: toVC
         )
       }
     }
@@ -416,7 +428,10 @@
       }
       set {
         objc_setAssociatedObject(
-          self, Self.navigationIDKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self,
+          Self.navigationIDKey,
+          newValue,
+          .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }

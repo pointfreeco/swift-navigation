@@ -1,8 +1,8 @@
-import CustomDump
+public import CustomDump
 import Foundation
 
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 #endif
 
 /// An equatable description of SwiftUI `Text`. Useful for storing rich text in feature models
@@ -699,7 +699,7 @@ extension String {
     ) -> String {
       let children = Array(Mirror(reflecting: self).children)
       let key = children[0].value as! String
-      let arguments: [CVarArg] = Array(Mirror(reflecting: children[2].value).children)
+      let arguments: [any CVarArg] = Array(Mirror(reflecting: children[2].value).children)
         .compactMap {
           let children = Array(Mirror(reflecting: $0.value).children)
           let value: Any
@@ -712,7 +712,7 @@ extension String {
             value = children[0].value
             formatter = children[1].value as? Formatter
           }
-          return formatter?.string(for: value) ?? value as! CVarArg
+          return formatter?.string(for: value) ?? value as! any CVarArg
         }
 
       let format = NSLocalizedString(

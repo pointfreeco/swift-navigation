@@ -1,6 +1,7 @@
 #if canImport(SwiftUI)
-  import CasePaths
-  import SwiftUI
+  public import CasePaths
+  import SwiftNavigation
+  public import SwiftUI
 
   extension Binding {
     /// Returns a binding to the associated value of a given case key path.

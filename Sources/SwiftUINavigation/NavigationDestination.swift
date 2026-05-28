@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
-  import SwiftUI
+  import SwiftNavigation
+  public import SwiftUI
 
   @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
   extension View {
