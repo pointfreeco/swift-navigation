@@ -23,7 +23,16 @@
       }
     }
     private let pathDelegate = PathDelegate()
-    private var root: UIViewController?
+
+    public var rootViewController: UIViewController {
+      didSet {
+        if viewControllers.isEmpty {
+          viewControllers = [rootViewController]
+        } else {
+          viewControllers[0] = rootViewController
+        }
+      }
+    }
 
     public override weak var delegate: (any UINavigationControllerDelegate)? {
       get { pathDelegate.base }
@@ -36,11 +45,11 @@
       path: UIBinding<Data>,
       root: () -> UIViewController
     ) where Data.Element: Hashable {
+      let root = root()
+      self.rootViewController = root
       super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
       self._path = path.path
-      let root = root()
-      self.root = root
-      self.viewControllers = [root]
+      self.viewControllers = [rootViewController]
     }
 
     public required init(
@@ -49,10 +58,10 @@
       path: UIBinding<UINavigationPath>,
       root: () -> UIViewController
     ) {
+      let root = root()
+      self.rootViewController = root
       super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
       self._path = path.elements
-      let root = root()
-      self.root = root
       self.viewControllers = [root]
     }
 
@@ -79,8 +88,8 @@
         let difference = newPath.difference(from: viewControllers.compactMap(\.navigationID))
 
         guard !difference.isEmpty else {
-          if viewControllers.isEmpty, let root {
-            setViewControllers([root], animated: true)
+          if viewControllers.isEmpty {
+            setViewControllers([rootViewController], animated: true)
           }
           return
         }
@@ -111,7 +120,7 @@
           var newPath = newPath
           let oldViewControllers =
             viewControllers.isEmpty
-            ? root.map { [$0] } ?? []
+            ? [rootViewController]
             : viewControllers
           var newViewControllers: [UIViewController] = []
           newViewControllers.reserveCapacity(max(viewControllers.count, newPath.count))
