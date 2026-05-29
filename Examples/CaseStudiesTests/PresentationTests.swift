@@ -486,6 +486,71 @@ final class PresentationTests: XCTestCase {
     )
     await assertEventuallyNotNil(vc.presentedChild)
   }
+
+  @MainActor func testOnDismissCalledForInteractiveDismissal() async throws {
+    let vc = BasicViewController()
+    try await setUp(controller: vc)
+
+    await assertEventuallyNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.isPresented = true
+    }
+    await assertEventuallyNotNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, true)
+
+    vc.presentedViewController!.dismiss(animated: false)
+    await assertEventuallyNil(vc.presentedViewController)
+    await assertEventuallyEqual(vc.isPresenting, false)
+  }
+
+  @Observable
+  fileprivate final class Destinations: Identifiable {
+    @CasePathable
+    enum Destination {
+      case presentedA
+      case presentedB
+    }
+    var destination: Destination?
+  }
+  @MainActor func testOnDismissNotCalledForUnrelatedDismissal() async throws {
+    class A: ViewController {}
+    class B: ViewController {}
+    class VC: ViewController {
+      @UIBindable var model = Destinations()
+      var onDismissA: (() -> Void)?
+      var onDismissB: (() -> Void)?
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        present(isPresented: UIBinding($model.destination.presentedA)) { [weak self] in
+          self?.onDismissA?()
+        } content: {
+          A()
+        }
+        present(isPresented: UIBinding($model.destination.presentedB)) { [weak self] in
+          self?.onDismissB?()
+        } content: {
+          B()
+        }
+      }
+    }
+    let vc = VC()
+    vc.onDismissB = { XCTFail() }
+    try await setUp(controller: vc)
+
+    await assertEventuallyNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.destination = .presentedA
+    }
+    await assertEventually(vc.presentedViewController is A)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.destination = .presentedB
+    }
+    await assertEventually(vc.presentedViewController is B)
+    vc.onDismissB = nil
+  }
 }
 
 @Observable
@@ -524,7 +589,7 @@ private class ViewController: UIViewController {
 
 private class BasicViewController: UIViewController {
   @UIBindable var model: Model
-  var isPresenting = false
+  private(set) var isPresenting = false
   init(model: Model = Model()) {
     self.model = model
     super.init(nibName: nil, bundle: nil)
