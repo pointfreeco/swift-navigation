@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
-  import SwiftUI
+  import SwiftNavigation
+  public import SwiftUI
 
   extension NavigationLink {
     /// Creates a navigation link that presents the destination view when a bound value is

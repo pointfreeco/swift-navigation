@@ -1,6 +1,7 @@
 #if canImport(SwiftUI) && canImport(UIKit) && !os(watchOS)
-  import SwiftUI
-  import UIKit
+  import PerceptionCore
+  public import SwiftUI
+  public import UIKit
 
   /// Wraps a UIKit view controller in a SwiftUI view.
   ///

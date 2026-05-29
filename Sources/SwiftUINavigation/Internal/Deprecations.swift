@@ -1,4 +1,5 @@
-import SwiftUI
+public import SwiftNavigation
+public import SwiftUI
 
 // NB: Deprecated after 2.7.0
 

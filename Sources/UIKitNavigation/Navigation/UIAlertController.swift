@@ -1,5 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
-  import UIKit
+  public import SwiftNavigation
+  public import UIKit
 
   @available(iOS 13, *)
   @available(macCatalyst 13, *)

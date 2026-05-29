@@ -1,6 +1,7 @@
 #if canImport(UIKit) && !os(watchOS)
   import IssueReporting
-  import UIKit
+  public import SwiftNavigation
+  public import UIKit
 
   @available(iOS 14, tvOS 14, *)
   extension UISegmentedControl {

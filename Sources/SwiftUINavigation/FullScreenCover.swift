@@ -1,5 +1,5 @@
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 
   @available(iOS 14, tvOS 14, watchOS 7, *)
   @available(macOS, unavailable)

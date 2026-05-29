@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftNavigation
+  public import SwiftUI
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension Visibility {

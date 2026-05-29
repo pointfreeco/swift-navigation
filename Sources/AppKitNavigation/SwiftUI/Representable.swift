@@ -1,6 +1,7 @@
 #if canImport(SwiftUI) && canImport(AppKit)
-  import AppKit
-  import SwiftUI
+  public import AppKit
+  import PerceptionCore
+  public import SwiftUI
 
   /// Wraps an AppKit view controller in a SwiftUI view.
   ///
