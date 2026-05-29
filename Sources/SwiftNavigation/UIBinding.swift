@@ -1,7 +1,7 @@
 public import CasePaths
 import ConcurrencyExtras
-import PerceptionCore
 import IssueReporting
+import PerceptionCore
 
 #if canImport(Observation)
   import Observation
