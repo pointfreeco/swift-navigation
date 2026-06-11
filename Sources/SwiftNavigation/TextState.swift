@@ -227,14 +227,18 @@ private struct LocalizedStringResourceBox: @unchecked Sendable {
     return Text(resource)
   }
 
-  func asString() -> String {
+  func asString(locale: Locale? = nil) -> String {
     guard
       #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *),
-      let resource = value as? LocalizedStringResource
+      var resource = value as? LocalizedStringResource
     else {
       preconditionFailure(
         "LocalizedStringResourceBox should only be exposed where LocalizedStringResource is available."
       )
+    }
+    
+    if let locale {
+      resource.locale = locale
     }
 
     return String(localized: resource)
@@ -679,7 +683,7 @@ extension String {
     #endif
 
     case .localizedStringResource(let resourceBox):
-      self = resourceBox.asString()
+      self = resourceBox.asString(locale: locale)
 
     case .verbatim(let string):
       self = string
