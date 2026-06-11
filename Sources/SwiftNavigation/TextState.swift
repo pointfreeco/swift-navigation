@@ -236,7 +236,7 @@ private struct LocalizedStringResourceBox: @unchecked Sendable {
         "LocalizedStringResourceBox should only be exposed where LocalizedStringResource is available."
       )
     }
-    
+
     if let locale {
       resource.locale = locale
     }
