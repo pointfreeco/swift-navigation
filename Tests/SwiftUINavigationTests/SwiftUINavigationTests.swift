@@ -30,47 +30,49 @@
       XCTAssertEqual(unwrapped.wrappedValue, 1729)
     }
 
-    @MainActor
-    func testBindingCase() throws {
-      struct MyError: Error, Equatable {}
-      var value: Result<Int, MyError>? = nil
-      let binding = Binding(get: { value }, set: { value = $0 })
+    #if CasePaths
+      @MainActor
+      func testBindingCase() throws {
+        struct MyError: Error, Equatable {}
+        var value: Result<Int, MyError>? = nil
+        let binding = Binding(get: { value }, set: { value = $0 })
 
-      let success = binding.success
-      let failure = binding.failure
-      XCTAssertEqual(binding.wrappedValue, nil)
-      XCTAssertEqual(success.wrappedValue, nil)
-      XCTAssertEqual(failure.wrappedValue, nil)
+        let success = binding.success
+        let failure = binding.failure
+        XCTAssertEqual(binding.wrappedValue, nil)
+        XCTAssertEqual(success.wrappedValue, nil)
+        XCTAssertEqual(failure.wrappedValue, nil)
 
-      binding.wrappedValue = .success(1)
-      XCTAssertEqual(binding.wrappedValue, .success(1))
-      XCTAssertEqual(success.wrappedValue, 1)
-      XCTAssertEqual(failure.wrappedValue, nil)
+        binding.wrappedValue = .success(1)
+        XCTAssertEqual(binding.wrappedValue, .success(1))
+        XCTAssertEqual(success.wrappedValue, 1)
+        XCTAssertEqual(failure.wrappedValue, nil)
 
-      success.wrappedValue = 42
-      XCTAssertEqual(binding.wrappedValue, .success(42))
-      XCTAssertEqual(success.wrappedValue, 42)
-      XCTAssertEqual(failure.wrappedValue, nil)
+        success.wrappedValue = 42
+        XCTAssertEqual(binding.wrappedValue, .success(42))
+        XCTAssertEqual(success.wrappedValue, 42)
+        XCTAssertEqual(failure.wrappedValue, nil)
 
-      failure.wrappedValue = MyError()
-      XCTAssertEqual(binding.wrappedValue, .success(42))
-      XCTAssertEqual(success.wrappedValue, 42)
-      XCTAssertEqual(failure.wrappedValue, nil)
+        failure.wrappedValue = MyError()
+        XCTAssertEqual(binding.wrappedValue, .success(42))
+        XCTAssertEqual(success.wrappedValue, 42)
+        XCTAssertEqual(failure.wrappedValue, nil)
 
-      success.wrappedValue = nil
-      XCTAssertEqual(binding.wrappedValue, nil)
-      XCTAssertEqual(success.wrappedValue, nil)
-      XCTAssertEqual(failure.wrappedValue, nil)
+        success.wrappedValue = nil
+        XCTAssertEqual(binding.wrappedValue, nil)
+        XCTAssertEqual(success.wrappedValue, nil)
+        XCTAssertEqual(failure.wrappedValue, nil)
 
-      binding.wrappedValue = .failure(MyError())
-      XCTAssertEqual(binding.wrappedValue, .failure(MyError()))
-      XCTAssertEqual(success.wrappedValue, nil)
-      XCTAssertEqual(failure.wrappedValue, MyError())
+        binding.wrappedValue = .failure(MyError())
+        XCTAssertEqual(binding.wrappedValue, .failure(MyError()))
+        XCTAssertEqual(success.wrappedValue, nil)
+        XCTAssertEqual(failure.wrappedValue, MyError())
 
-      failure.wrappedValue = nil
-      XCTAssertEqual(binding.wrappedValue, nil)
-      XCTAssertEqual(success.wrappedValue, nil)
-      XCTAssertEqual(failure.wrappedValue, nil)
-    }
+        failure.wrappedValue = nil
+        XCTAssertEqual(binding.wrappedValue, nil)
+        XCTAssertEqual(success.wrappedValue, nil)
+        XCTAssertEqual(failure.wrappedValue, nil)
+      }
+    #endif
   }
 #endif  // canImport(SwiftUI)

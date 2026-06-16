@@ -1,4 +1,4 @@
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && CasePaths
   import CustomDump
   import SwiftUI
   import SwiftUINavigation
@@ -63,4 +63,4 @@
       )
     }
   }
-#endif  // canImport(SwiftUI)
+#endif  // canImport(SwiftUI) && CasePaths
