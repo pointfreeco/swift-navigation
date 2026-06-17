@@ -50,4 +50,4 @@
       self.content(self.$value)
     }
   }
-#endif  // canImport(SwiftUI)
+#endif

@@ -83,4 +83,4 @@
   extension SceneStorage: _Bindable {}
 
   extension State: _Bindable {}
-#endif  // canImport(SwiftUI)
+#endif

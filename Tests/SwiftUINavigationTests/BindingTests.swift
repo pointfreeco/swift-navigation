@@ -63,4 +63,4 @@
       )
     }
   }
-#endif  // canImport(SwiftUI) && CasePaths
+#endif && CasePaths

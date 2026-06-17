@@ -3,4 +3,4 @@
     @_exported import CasePaths
   #endif
   @_exported import SwiftNavigation
-#endif  // canImport(SwiftUI)
+#endif
