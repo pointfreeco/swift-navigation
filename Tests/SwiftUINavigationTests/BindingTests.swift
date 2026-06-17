@@ -63,4 +63,4 @@
       )
     }
   }
-#endif && CasePaths
+#endif
