@@ -36,9 +36,13 @@ let package = Package(
   ],
   traits: [
     .trait(
+      name: "CasePaths",
+      description: "Drive enum navigation and form data with CasePaths"
+    ),
+    .trait(
       name: "Sharing",
-      description: "Enables Sharing integration with SwiftNavigation"
-    )
+      description: "Derive bindings from '@Shared' state"
+    ),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
@@ -54,7 +58,13 @@ let package = Package(
     .target(
       name: "SwiftNavigation",
       dependencies: [
-        .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(
+          name: "CasePaths",
+          package: "swift-case-paths",
+          condition: .when(traits: [
+            "CasePaths"
+          ])
+        ),
         .product(name: "CustomDump", package: "swift-custom-dump"),
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
@@ -81,7 +91,13 @@ let package = Package(
       name: "SwiftUINavigation",
       dependencies: [
         "UIKitNavigation",
-        .product(name: "CasePaths", package: "swift-case-paths"),
+        .product(
+          name: "CasePaths",
+          package: "swift-case-paths",
+          condition: .when(traits: [
+            "CasePaths"
+          ])
+        ),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
     ),
@@ -128,7 +144,7 @@ let enableAllTraits =
 
 package.traits.insert(
   .default(
-    enabledTraits: Set(enableAllTraits ? package.traits.map(\.name) : [])
+    enabledTraits: Set(enableAllTraits ? package.traits.map(\.name) : ["CasePaths"])
   )
 )
 

@@ -1,4 +1,6 @@
 #if !EXCLUDE_EXPORTS
-  @_exported import CasePaths
+  #if CasePaths
+    @_exported import CasePaths
+  #endif
   @_exported import Perception
 #endif
