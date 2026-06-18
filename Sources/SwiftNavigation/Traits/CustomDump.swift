@@ -1,6 +1,10 @@
 #if CustomDump
   public import CustomDump
 
+  #if canImport(SwiftUI)
+    import SwiftUI
+  #endif
+
   extension AlertState: CustomDumpReflectable {
     public var customDumpMirror: Mirror {
       var children: [(label: String?, value: Any)] = [

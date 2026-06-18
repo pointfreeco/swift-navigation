@@ -48,12 +48,12 @@ import Foundation
 ///   (interpolated `SwiftUI.Image`s, for example). ``TextState`` also uses reflection to determine
 ///   `LocalizedStringKey` equatability, so be mindful of edge cases.
 public struct TextState: Equatable, Hashable, Sendable {
-  fileprivate let storage: Storage
+  let storage: Storage
 
   #if canImport(SwiftUI)
-    fileprivate var modifiers: [Modifier] = []
+    var modifiers: [Modifier] = []
 
-    fileprivate enum Modifier: Equatable, Hashable, Sendable {
+    enum Modifier: Equatable, Hashable, Sendable {
       case accessibilityHeading(AccessibilityHeadingLevel)
       case accessibilityLabel(TextState)
       case accessibilityTextContentType(AccessibilityTextContentType)
@@ -115,7 +115,7 @@ public struct TextState: Equatable, Hashable, Sendable {
 
   // NB: LocalizedStringKey is documented as being Sendable, but its conformance appears to be
   //     unavailable.
-  fileprivate enum Storage: Equatable, Hashable, @unchecked Sendable {
+  enum Storage: Equatable, Hashable, @unchecked Sendable {
     indirect case concatenated(TextState, TextState)
     #if canImport(SwiftUI)
       case localizedStringKey(
@@ -204,7 +204,7 @@ public struct TextState: Equatable, Hashable, Sendable {
 
 // MARK: - LocalizedStringResourceBox
 
-private struct LocalizedStringResourceBox: @unchecked Sendable {
+struct LocalizedStringResourceBox: @unchecked Sendable {
   // REVISIT: Make 'Any' into 'any Sendable' when minimum deployment target is iOS 18
   let value: Any
 
@@ -694,7 +694,7 @@ extension String {
   extension LocalizedStringKey {
     // NB: `LocalizedStringKey` conforms to `Equatable` but returns false for equivalent format
     //     strings. To account for this we reflect on it to extract and string-format its storage.
-    fileprivate func formatted(
+    func formatted(
       locale: Locale? = nil,
       tableName: String? = nil,
       bundle: Bundle? = nil,
