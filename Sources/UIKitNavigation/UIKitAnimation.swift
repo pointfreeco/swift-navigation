@@ -1,9 +1,10 @@
 #if canImport(UIKit) && !os(watchOS)
-  import UIKit
+  public import UIKit
   import IssueReporting
+  import SwiftNavigation
 
   #if canImport(SwiftUI)
-    import SwiftUI
+    public import SwiftUI
   #endif
 
   /// Executes a closure with the specified animation and returns the result.
@@ -42,7 +43,7 @@
       case .swiftUI(let animation):
         #if swift(>=6)
           if #available(iOS 18, macOS 15, tvOS 18, visionOS 2, watchOS 11, *) {
-            var result: Swift.Result<Result, Error>?
+            var result: Swift.Result<Result, any Error>?
             UIView.animate(
               animation,
               changes: { result = Swift.Result(catching: body) },
@@ -57,7 +58,7 @@
       case .uiKit(let animation):
         func animations() throws -> Result {
           guard let repeatModifier = animation.repeatModifier else { return try body() }
-          var result: Swift.Result<Result, Error>?
+          var result: Swift.Result<Result, any Error>?
           UIView.modifyAnimations(
             withRepeatCount: repeatModifier.count,
             autoreverses: repeatModifier.autoreverses
@@ -69,7 +70,7 @@
 
         switch animation.style {
         case .iOS4:
-          var result: Swift.Result<Result, Error>?
+          var result: Swift.Result<Result, any Error>?
           withoutActuallyEscaping(animations) { animations in
             UIView.animate(
               withDuration: animation.duration / animation.speed,
@@ -82,7 +83,7 @@
           return try result!._rethrowGet()
 
         case .iOS7(let dampingRatio, let velocity):
-          var result: Swift.Result<Result, Error>?
+          var result: Swift.Result<Result, any Error>?
           withoutActuallyEscaping(animations) { animations in
             UIView.animate(
               withDuration: animation.duration / animation.speed,
@@ -98,7 +99,7 @@
 
         case .iOS17(let bounce, let initialSpringVelocity):
           if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
-            var result: Swift.Result<Result, Error>?
+            var result: Swift.Result<Result, any Error>?
             UIView.animate(
               springDuration: animation.duration / animation.speed,
               bounce: bounce,

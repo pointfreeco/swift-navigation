@@ -1,8 +1,8 @@
-import CustomDump
+public import CustomDump
 import Foundation
 
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 #endif
 
 /// An equatable description of SwiftUI `Text`. Useful for storing rich text in feature models
@@ -227,14 +227,18 @@ private struct LocalizedStringResourceBox: @unchecked Sendable {
     return Text(resource)
   }
 
-  func asString() -> String {
+  func asString(locale: Locale? = nil) -> String {
     guard
       #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *),
-      let resource = value as? LocalizedStringResource
+      var resource = value as? LocalizedStringResource
     else {
       preconditionFailure(
         "LocalizedStringResourceBox should only be exposed where LocalizedStringResource is available."
       )
+    }
+
+    if let locale {
+      resource.locale = locale
     }
 
     return String(localized: resource)
@@ -679,7 +683,7 @@ extension String {
     #endif
 
     case .localizedStringResource(let resourceBox):
-      self = resourceBox.asString()
+      self = resourceBox.asString(locale: locale)
 
     case .verbatim(let string):
       self = string
@@ -699,7 +703,7 @@ extension String {
     ) -> String {
       let children = Array(Mirror(reflecting: self).children)
       let key = children[0].value as! String
-      let arguments: [CVarArg] = Array(Mirror(reflecting: children[2].value).children)
+      let arguments: [any CVarArg] = Array(Mirror(reflecting: children[2].value).children)
         .compactMap {
           let children = Array(Mirror(reflecting: $0.value).children)
           let value: Any
@@ -712,7 +716,7 @@ extension String {
             value = children[0].value
             formatter = children[1].value as? Formatter
           }
-          return formatter?.string(for: value) ?? value as! CVarArg
+          return formatter?.string(for: value) ?? value as! any CVarArg
         }
 
       let format = NSLocalizedString(
