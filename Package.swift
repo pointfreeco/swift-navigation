@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 
 import CompilerPluginSupport
 import PackageDescription
@@ -51,7 +51,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", branch: "macro-support"),
+    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.8.0"),
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
@@ -152,7 +152,8 @@ let package = Package(
         "UIKitNavigationShim",
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-      ]
+      ],
+      linkerSettings: [.unsafeFlags(["-ObjC"])]
     ),
     .target(
       name: "UIKitNavigationShim"
