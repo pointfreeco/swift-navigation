@@ -1,5 +1,6 @@
 #if canImport(UIKit) && !os(tvOS) && !os(watchOS)
-  import UIKit
+  public import SwiftNavigation
+  public import UIKit
 
   @available(iOS 14, *)
   @available(tvOS, unavailable)

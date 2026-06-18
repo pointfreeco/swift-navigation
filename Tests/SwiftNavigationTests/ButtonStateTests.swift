@@ -1,6 +1,8 @@
 #if canImport(Testing)
   import CustomDump
+  import Foundation
   import SwiftNavigation
+  import SwiftUI
   import Testing
 
   struct ButtonStateTests {

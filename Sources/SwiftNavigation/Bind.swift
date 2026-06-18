@@ -1,5 +1,5 @@
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 
   extension View {
     /// Synchronizes model state to view state via two-way bindings.
@@ -83,4 +83,4 @@
   extension SceneStorage: _Bindable {}
 
   extension State: _Bindable {}
-#endif  // canImport(SwiftUI)
+#endif

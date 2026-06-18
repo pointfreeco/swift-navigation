@@ -1,5 +1,6 @@
 import CustomDump
 import SwiftNavigation
+import SwiftUI
 import XCTest
 
 final class TextStateTests: XCTestCase {
