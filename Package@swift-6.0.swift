@@ -1,5 +1,7 @@
 // swift-tools-version: 6.0
 
+import CompilerPluginSupport
+import Foundation
 import PackageDescription
 
 let package = Package(
@@ -30,17 +32,30 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
-    .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.6"),
+    .package(url: "https://github.com/pointfreeco/swift-case-paths", branch: "macro-support"),
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
+    .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
+    .package(url: "https://github.com/swiftlang/swift-syntax", "509.0.0"..<"605.0.0"),
   ],
   targets: [
+    .macro(
+      name: "SwiftNavigationMacros",
+      dependencies: [
+        .product(name: "CasePathsMacrosSupport", package: "swift-case-paths"),
+        .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+        .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+        .product(name: "SwiftSyntax", package: "swift-syntax"),
+        .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
+        .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+      ]
+    ),
     .target(
       name: "SwiftNavigation",
       dependencies: [
+        "SwiftNavigationMacros",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
@@ -101,7 +116,7 @@ let package = Package(
   swiftLanguageModes: [.v6]
 )
 
-for target in package.targets {
+for target in package.targets where target.name != "SwiftNavigationMacros" {
   target.swiftSettings = target.swiftSettings ?? []
   target.swiftSettings?.append(contentsOf: [
     .define("CasePaths"),
@@ -112,4 +127,19 @@ for target in package.targets {
     .enableUpcomingFeature("MemberImportVisibility"),
     .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
   ])
+}
+
+if ProcessInfo.processInfo.environment["OMIT_MACRO_TESTS"] == nil {
+  package.dependencies.append(
+    .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0")
+  )
+  package.targets.append(
+    .testTarget(
+      name: "SwiftNavigationMacrosTests",
+      dependencies: [
+        "SwiftNavigationMacros",
+        .product(name: "MacroTesting", package: "swift-macro-testing"),
+      ]
+    )
+  )
 }
