@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftNavigation
+  public import SwiftUI
 
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension Visibility {
@@ -169,8 +170,8 @@
     ///   used to populate the fields of a dialog that the system displays to the user. When the
     ///   user presses or taps one of the dialog's actions, the system sets this value to `nil` and
     ///   dismisses the dialog, and the action is fed to the `action` closure.
-    public func confirmationDialog<Value>(
-      _ state: Binding<ConfirmationDialogState<Value>?>,
+    public func confirmationDialog(
+      _ state: Binding<ConfirmationDialogState<Never>?>,
     ) -> some View {
       confirmationDialog(state) { _ in }
     }
@@ -277,4 +278,4 @@
       )
     }
   }
-#endif  // canImport(SwiftUI)
+#endif

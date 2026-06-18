@@ -1,9 +1,9 @@
-import CustomDump
-import Foundation
+public import CustomDump
+public import Foundation
 import IssueReporting
 
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 #endif
 
 public struct ButtonState<Action>: Identifiable {
@@ -380,7 +380,7 @@ func debugCaseOutput(_ value: Any) -> String {
     }
   }
 
-  return (value as? CustomDebugStringConvertible)?.debugDescription
+  return (value as? any CustomDebugStringConvertible)?.debugDescription
     ?? "\(typeName(type(of: value)))\(debugCaseOutputHelp(value))"
 }
 

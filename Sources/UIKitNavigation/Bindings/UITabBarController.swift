@@ -1,6 +1,7 @@
 #if swift(>=6) && canImport(UIKit) && !os(tvOS) && !os(watchOS)
   import IssueReporting
-  import UIKit
+  public import SwiftNavigation
+  public import UIKit
 
   @available(iOS 18, tvOS 18, visionOS 2, *)
   extension UITabBarController {
@@ -55,7 +56,10 @@
       }
       set {
         objc_setAssociatedObject(
-          self, Self.observeTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self,
+          Self.observeTokenKey,
+          newValue,
+          .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }
