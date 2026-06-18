@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.1
 
 import CompilerPluginSupport
 import PackageDescription
@@ -142,8 +142,7 @@ let package = Package(
         "UIKitNavigationShim",
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-      ],
-      linkerSettings: [.unsafeFlags(["-ObjC"])]
+      ]
     ),
     .target(
       name: "UIKitNavigationShim"
