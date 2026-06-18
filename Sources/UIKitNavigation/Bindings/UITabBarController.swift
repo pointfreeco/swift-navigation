@@ -1,5 +1,4 @@
 #if swift(>=6) && canImport(UIKit) && !os(tvOS) && !os(watchOS)
-  import IssueReporting
   public import SwiftNavigation
   public import UIKit
 

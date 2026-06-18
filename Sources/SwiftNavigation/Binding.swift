@@ -1,5 +1,4 @@
 #if canImport(SwiftUI)
-  import IssueReporting
   public import SwiftUI
 
   extension Binding {
