@@ -1,7 +1,7 @@
 #if canImport(UIKit) && !os(watchOS)
   import IssueReporting
-  @_spi(Internals) import SwiftNavigation
-  import UIKit
+  @_spi(Internals) public import SwiftNavigation
+  public import UIKit
   @_implementationOnly import UIKitNavigationShim
 
   extension UIViewController {
@@ -121,16 +121,26 @@
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
-        if presentedViewController != nil {
-          self.dismiss(animated: !transaction.uiKit.disablesAnimations) {
-            onDismiss?()
-            self.present(child, animated: !transaction.uiKit.disablesAnimations)
+        if let presentedViewController {
+          if presentedViewController.isBeingDismissed {
+            let oldViewControllerOnDismiss = presentedViewController._UIKitNavigation_onDismiss
+            presentedViewController._UIKitNavigation_onDismiss = {
+              oldViewControllerOnDismiss?()
+              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            }
+          } else {
+            self.dismiss(
+              animated: !transaction.uiKit.disablesAnimations
+            ) {
+              onDismiss?()
+              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            }
           }
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
         }
-      } dismiss: { [weak self] _, transaction in
-        self?.dismiss(animated: !transaction.uiKit.disablesAnimations) {
+      } dismiss: { child, transaction in
+        child.dismiss(animated: !transaction.uiKit.disablesAnimations) {
           onDismiss?()
         }
       }
@@ -242,10 +252,11 @@
       isPresented: UIBinding<Bool>,
       content: @escaping () -> UIViewController,
       present: @escaping (UIViewController, UITransaction) -> Void,
-      dismiss: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void
+      dismiss:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void
     ) -> ObserveToken {
       destination(
         item: isPresented.toOptionalUnit,
@@ -272,10 +283,11 @@
       item: UIBinding<Item?>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
       present: @escaping (UIViewController, UITransaction) -> Void,
-      dismiss: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void
+      dismiss:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void
     ) -> ObserveToken {
       destination(
         item: item,
@@ -306,14 +318,16 @@
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
       content: @escaping (UIBinding<Item>) -> UIViewController,
-      present: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void,
-      dismiss: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void
+      present:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void,
+      dismiss:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void
     ) -> ObserveToken {
       destination(
         item: item,
@@ -328,16 +342,19 @@
       item: UIBinding<Item?>,
       id: @escaping (Item) -> AnyHashable?,
       content: @escaping (UIBinding<Item>) -> UIViewController,
-      present: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void,
-      dismiss: @escaping (
-        _ child: UIViewController,
-        _ transaction: UITransaction
-      ) -> Void
+      present:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void,
+      dismiss:
+        @escaping (
+          _ child: UIViewController,
+          _ transaction: UITransaction
+        ) -> Void
     ) -> ObserveToken {
       let key = UIBindingIdentifier(item)
+      var inFlightController: UIViewController?
       return observe { [weak self] transaction in
         guard let self else { return }
         if let unwrappedItem = UIBinding(item) {
@@ -349,10 +366,13 @@
             }
           }
           let childController = content(unwrappedItem)
-          let onDismiss = { [presentationID = id(unwrappedItem.wrappedValue)] in
-            if let wrappedValue = item.wrappedValue,
-              presentationID == id(wrappedValue)
-            {
+          let onDismiss = {
+            [
+              weak self,
+              presentationID = id(unwrappedItem.wrappedValue)
+            ] in
+            if let wrappedValue = item.wrappedValue, presentationID == id(wrappedValue) {
+              inFlightController = self?.presentedByID[key]?.controller
               item.wrappedValue = nil
             }
           }
@@ -375,7 +395,18 @@
           }
         } else if let presented = presentedByID[key] {
           if let controller = presented.controller {
-            dismiss(controller, transaction)
+            var controllerToDismiss: UIViewController? = nil
+            if inFlightController != nil {
+              controllerToDismiss = inFlightController
+              inFlightController = nil
+            } else if controller.presentedViewController != nil {
+              controllerToDismiss = self
+            } else {
+              controllerToDismiss = controller
+            }
+            if let controllerToDismiss {
+              dismiss(controllerToDismiss, transaction)
+            }
           }
           self.presentedByID[key] = nil
         }

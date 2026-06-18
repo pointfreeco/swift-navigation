@@ -1,8 +1,10 @@
 #if canImport(UIKit) && !os(watchOS)
-  import UIKit
+  public import UIKit
+  import IssueReporting
+  import SwiftNavigation
 
   #if canImport(SwiftUI)
-    import SwiftUI
+    public import SwiftUI
   #endif
 
   /// Executes a closure with the specified animation and returns the result.
@@ -38,10 +40,10 @@
       completion: ((Bool?) -> Void)? = nil
     ) rethrows -> Result {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         #if swift(>=6)
           if #available(iOS 18, macOS 15, tvOS 18, visionOS 2, watchOS 11, *) {
-            var result: Swift.Result<Result, Error>?
+            var result: Swift.Result<Result, any Error>?
             UIView.animate(
               animation,
               changes: { result = Swift.Result(catching: body) },
@@ -53,10 +55,10 @@
         _ = animation
         fatalError()
 
-      case let .uiKit(animation):
+      case .uiKit(let animation):
         func animations() throws -> Result {
           guard let repeatModifier = animation.repeatModifier else { return try body() }
-          var result: Swift.Result<Result, Error>?
+          var result: Swift.Result<Result, any Error>?
           UIView.modifyAnimations(
             withRepeatCount: repeatModifier.count,
             autoreverses: repeatModifier.autoreverses
@@ -68,11 +70,11 @@
 
         switch animation.style {
         case .iOS4:
-          var result: Swift.Result<Result, Error>?
+          var result: Swift.Result<Result, any Error>?
           withoutActuallyEscaping(animations) { animations in
             UIView.animate(
-              withDuration: animation.duration * animation.speed,
-              delay: animation.delay * animation.speed,
+              withDuration: animation.duration / animation.speed,
+              delay: animation.delay / animation.speed,
               options: animation.options,
               animations: { result = Swift.Result(catching: animations) },
               completion: completion
@@ -80,12 +82,12 @@
           }
           return try result!._rethrowGet()
 
-        case let .iOS7(dampingRatio, velocity):
-          var result: Swift.Result<Result, Error>?
+        case .iOS7(let dampingRatio, let velocity):
+          var result: Swift.Result<Result, any Error>?
           withoutActuallyEscaping(animations) { animations in
             UIView.animate(
-              withDuration: animation.duration * animation.speed,
-              delay: animation.delay * animation.speed,
+              withDuration: animation.duration / animation.speed,
+              delay: animation.delay / animation.speed,
               usingSpringWithDamping: dampingRatio,
               initialSpringVelocity: velocity,
               options: animation.options,
@@ -95,14 +97,14 @@
           }
           return try result!._rethrowGet()
 
-        case let .iOS17(bounce, initialSpringVelocity):
+        case .iOS17(let bounce, let initialSpringVelocity):
           if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
-            var result: Swift.Result<Result, Error>?
+            var result: Swift.Result<Result, any Error>?
             UIView.animate(
-              springDuration: animation.duration * animation.speed,
+              springDuration: animation.duration / animation.speed,
               bounce: bounce,
               initialSpringVelocity: initialSpringVelocity,
-              delay: animation.delay * animation.speed,
+              delay: animation.delay / animation.speed,
               options: animation.options,
               animations: { result = Swift.Result(catching: animations) },
               completion: completion
@@ -155,9 +157,9 @@
     /// - Returns: An animation with a delayed start.
     public func delay(_ delay: TimeInterval) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return UIKitAnimation(framework: .swiftUI(animation.delay(delay)))
-      case var .uiKit(animation):
+      case .uiKit(var animation):
         animation.delay += delay
         return UIKitAnimation(framework: .uiKit(animation))
       }
@@ -176,11 +178,11 @@
     /// - Returns: An animation that repeats for specific number of times.
     public func repeatCount(_ repeatCount: Int, autoreverses: Bool = true) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return UIKitAnimation(
           framework: .swiftUI(animation.repeatCount(repeatCount, autoreverses: autoreverses))
         )
-      case var .uiKit(animation):
+      case .uiKit(var animation):
         animation.repeatModifier = Framework.UIKit.RepeatModifier(
           autoreverses: autoreverses,
           count: CGFloat(repeatCount)
@@ -196,11 +198,11 @@
     /// - Returns: An animation that continuously repeats.
     public func repeatForever(autoreverses: Bool = true) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return UIKitAnimation(
           framework: .swiftUI(animation.repeatForever(autoreverses: autoreverses))
         )
-      case var .uiKit(animation):
+      case .uiKit(var animation):
         animation.repeatModifier = Framework.UIKit.RepeatModifier(
           autoreverses: autoreverses,
           count: .infinity
@@ -215,12 +217,23 @@
     /// - Returns: An animation with the adjusted speed.
     public func speed(_ speed: Double) -> Self {
       switch framework {
-      case let .swiftUI(animation):
+      case .swiftUI(let animation):
         return UIKitAnimation(
           framework: .swiftUI(animation.speed(speed))
         )
-      case var .uiKit(animation):
-        animation.speed = speed
+      case .uiKit(var animation):
+        if speed != 0 {
+          animation.speed = speed
+        } else {
+          reportIssue(
+            """
+            Setting animation speed to zero is not supported for UIKit animations.
+
+            Replace with '.ulpOfOne' to avoid division by zero.
+            """
+          )
+          animation.speed = .ulpOfOne
+        }
         return UIKitAnimation(framework: .uiKit(animation))
       }
     }

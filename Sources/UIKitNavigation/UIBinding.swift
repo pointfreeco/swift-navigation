@@ -1,4 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
+  public import SwiftNavigation
+
   extension UIBinding {
     /// Specifies an animation to perform when the binding value changes.
     ///

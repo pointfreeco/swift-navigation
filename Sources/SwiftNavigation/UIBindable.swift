@@ -1,4 +1,4 @@
-import Perception
+public import Perception
 
 #if canImport(Observation)
   import Observation

@@ -1,6 +1,8 @@
 #if canImport(Testing)
   import CustomDump
+  import Foundation
   import SwiftNavigation
+  import SwiftUI
   import Testing
 
   struct ButtonStateTests {
@@ -27,7 +29,8 @@
 
           Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, \
           or use 'SwiftUI.withAnimation' explicitly.
-          """)
+          """
+        )
       }
     }
   }
