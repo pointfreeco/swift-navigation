@@ -131,6 +131,7 @@ for target in package.targets {
     .define("CasePaths"),
     .define("CustomDump"),
     .define("IssueReporting"),
+    .define("Perception"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("ImmutableWeakCaptures"),
     .enableUpcomingFeature("InferIsolatedConformances"),

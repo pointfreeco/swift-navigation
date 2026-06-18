@@ -49,6 +49,10 @@ let package = Package(
       description: "Surface logical issues as unobtrusive runtime warnings"
     ),
     .trait(
+      name: "Perception",
+      description: "Back-port Swift Observation to older platforms"
+    ),
+    .trait(
       name: "Sharing",
       description: "Derive bindings from '@Shared' state"
     ),
@@ -98,8 +102,20 @@ let package = Package(
           ])
         ),
         .product(name: "OrderedCollections", package: "swift-collections"),
-        .product(name: "Perception", package: "swift-perception"),
-        .product(name: "PerceptionCore", package: "swift-perception"),
+        .product(
+          name: "Perception",
+          package: "swift-perception",
+          condition: .when(traits: [
+            "Perception"
+          ])
+        ),
+        .product(
+          name: "PerceptionCore",
+          package: "swift-perception",
+          condition: .when(traits: [
+            "Perception"
+          ])
+        ),
         .product(
           name: "Sharing",
           package: "swift-sharing",
@@ -199,7 +215,12 @@ package.traits.insert(
     enabledTraits: Set(
       enableAllTraits
         ? package.traits.map(\.name)
-        : ["CasePaths", "CustomDump", "IssueReporting"]
+        : [
+          "CasePaths",
+          "CustomDump",
+          "IssueReporting",
+          "Perception",
+        ]
     )
   )
 )

@@ -1,6 +1,5 @@
 #if canImport(SwiftUI) && canImport(AppKit)
   public import AppKit
-  import PerceptionCore
   public import SwiftUI
 
   /// Wraps an AppKit view controller in a SwiftUI view.
@@ -12,7 +11,7 @@
   >: NSViewControllerRepresentable {
     private let base: NSViewControllerType
     public init(_ base: () -> NSViewControllerType) {
-      self.base = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+      self.base = skippingPerceptionChecking {
         base()
       }
     }
@@ -27,7 +26,7 @@
   public struct NSViewRepresenting<NSViewType: NSView>: NSViewRepresentable {
     private let base: NSViewType
     public init(_ base: () -> NSViewType) {
-      self.base = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+      self.base = skippingPerceptionChecking {
         base()
       }
     }

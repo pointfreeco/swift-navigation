@@ -18,6 +18,9 @@
     ///   - keyPath: A key path to the control's value.
     ///   - event: The control-specific events for which the binding is updated.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind<Value>(
       _ binding: UIBinding<Value>,
@@ -39,6 +42,9 @@
     ///     control, a new value that can be used to configure the control, and a transaction, which
     ///     can be used to determine how and if the change should be animated.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind<Value>(
       _ binding: UIBinding<Value>,

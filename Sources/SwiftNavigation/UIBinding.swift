@@ -1,5 +1,4 @@
 import ConcurrencyExtras
-import PerceptionCore
 
 #if canImport(Observation)
   import Observation
@@ -192,6 +191,9 @@ public struct UIBinding<Value>: Sendable {
   /// > properties directly.
   ///
   /// - Parameter value: An initial value to store in the state property.
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   public init(wrappedValue value: Value) {
     self.init(
       location: _UIBindingAppendKeyPath(
@@ -202,6 +204,9 @@ public struct UIBinding<Value>: Sendable {
     )
   }
 
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   @available(
     *,
     deprecated,
@@ -511,7 +516,7 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
     self.objectIdentifier = ObjectIdentifier(root)
     self.root = root
     #if DEBUG
-      self.value = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+      self.value = skippingPerceptionChecking {
         root[keyPath: keyPath]
       }
     #else
@@ -553,33 +558,36 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   }
 }
 
-private final class _UIBindingWrapper<Value>: Perceptible {
+#if !Perception
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+#endif
+private final class _UIBindingWrapper<Value>: _Observable {
   var _value: Value
   var value: Value {
     get {
-      _$perceptionRegistrar.access(self, keyPath: \.value)
+      _$registrar.access(self, keyPath: \.value)
       return _value
     }
     set {
-      _$perceptionRegistrar.withMutation(of: self, keyPath: \.value) {
+      _$registrar.withMutation(of: self, keyPath: \.value) {
         _value = newValue
       }
     }
     _modify {
-      _$perceptionRegistrar.willSet(self, keyPath: \.value)
-      defer { _$perceptionRegistrar.didSet(self, keyPath: \.value) }
+      _$registrar.willSet(self, keyPath: \.value)
+      defer { _$registrar.didSet(self, keyPath: \.value) }
       yield &_value
     }
   }
-  let _$perceptionRegistrar = PerceptionRegistrar()
+  #if Perception
+    let _$registrar = PerceptionRegistrar()
+  #else
+    let _$registrar = ObservationRegistrar()
+  #endif
   init(_ value: Value) {
     self._value = value
   }
 }
-
-#if canImport(Observation)
-  extension _UIBindingWrapper: Observable {}
-#endif
 
 private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
   let value: Value
