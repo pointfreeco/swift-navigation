@@ -479,9 +479,9 @@
 
   private func typeName(_ type: Any.Type) -> String {
     #if CustomDump
-      return String(customDumping: elementType)
+      return String(customDumping: type)
     #else
-      return "\(String(reflecting: elementType)).self"
+      return "\(String(reflecting: type)).self"
     #endif
   }
 #endif
