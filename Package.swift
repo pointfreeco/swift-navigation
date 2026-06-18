@@ -41,6 +41,10 @@ let package = Package(
       description: "Drive enum navigation and form data with CasePaths"
     ),
     .trait(
+      name: "CustomDump",
+      description: "Pretty-print and diff SwiftNavigation's data types"
+    ),
+    .trait(
       name: "Sharing",
       description: "Derive bindings from '@Shared' state"
     ),
@@ -74,7 +78,13 @@ let package = Package(
             "CasePaths"
           ])
         ),
-        .product(name: "CustomDump", package: "swift-custom-dump"),
+        .product(
+          name: "CustomDump",
+          package: "swift-custom-dump",
+          condition: .when(traits: [
+            "CustomDump"
+          ])
+        ),
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
         .product(name: "OrderedCollections", package: "swift-collections"),
@@ -171,7 +181,7 @@ let enableAllTraits =
 
 package.traits.insert(
   .default(
-    enabledTraits: Set(enableAllTraits ? package.traits.map(\.name) : ["CasePaths"])
+    enabledTraits: Set(enableAllTraits ? package.traits.map(\.name) : ["CasePaths", "CustomDump"])
   )
 )
 

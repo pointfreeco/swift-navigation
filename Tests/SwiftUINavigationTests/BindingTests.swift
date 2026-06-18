@@ -1,4 +1,4 @@
-#if canImport(SwiftUI) && CasePaths
+#if canImport(SwiftUI) && CasePaths && CustomDump
   import CustomDump
   import SwiftUI
   import SwiftUINavigation

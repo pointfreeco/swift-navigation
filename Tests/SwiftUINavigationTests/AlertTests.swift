@@ -1,4 +1,4 @@
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && CustomDump
   import CustomDump
   import SwiftUI
   import SwiftNavigation
