@@ -3,7 +3,7 @@ import SwiftSyntaxMacros
 
 @main
 struct SwiftNavigationPlugin: CompilerPlugin {
-  let providingMacros: [Macro.Type] = [
+  let providingMacros: [any Macro.Type] = [
     CaseBindableMacro.self
   ]
 }

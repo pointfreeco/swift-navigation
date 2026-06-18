@@ -50,6 +50,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-case-paths", branch: "macro-support"),
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
+    .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.8.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
@@ -57,17 +58,6 @@ let package = Package(
     .package(url: "https://github.com/swiftlang/swift-syntax", "509.0.0"..<"605.0.0"),
   ],
   targets: [
-    .macro(
-      name: "SwiftNavigationMacros",
-      dependencies: [
-        .product(name: "CasePathsMacrosSupport", package: "swift-case-paths"),
-        .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
-        .product(name: "SwiftDiagnostics", package: "swift-syntax"),
-        .product(name: "SwiftSyntax", package: "swift-syntax"),
-        .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
-        .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-      ]
-    ),
     .target(
       name: "SwiftNavigation",
       dependencies: [
@@ -106,6 +96,24 @@ let package = Package(
         .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
       ]
     ),
+    .macro(
+      name: "SwiftNavigationMacros",
+      dependencies: [
+        .product(name: "CasePathsMacrosSupport", package: "swift-case-paths"),
+        .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+        .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+        .product(name: "SwiftSyntax", package: "swift-syntax"),
+        .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
+        .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+      ]
+    ),
+    .testTarget(
+      name: "SwiftNavigationMacrosTests",
+      dependencies: [
+        "SwiftNavigationMacros",
+        .product(name: "MacroTesting", package: "swift-macro-testing"),
+      ]
+    ),
     .target(
       name: "SwiftUINavigation",
       dependencies: [
@@ -139,17 +147,17 @@ let package = Package(
     .target(
       name: "UIKitNavigationShim"
     ),
-    .target(
-      name: "AppKitNavigation",
-      dependencies: [
-        "SwiftNavigation"
-      ]
-    ),
     .testTarget(
       name: "UIKitNavigationTests",
       dependencies: [
         "UIKitNavigation",
         .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
+      ]
+    ),
+    .target(
+      name: "AppKitNavigation",
+      dependencies: [
+        "SwiftNavigation"
       ]
     ),
   ],
@@ -167,7 +175,7 @@ package.traits.insert(
   )
 )
 
-for target in package.targets where target.name != "SwiftNavigationMacros" {
+for target in package.targets {
   target.swiftSettings = target.swiftSettings ?? []
   target.swiftSettings?.append(contentsOf: [
     .enableUpcomingFeature("ExistentialAny"),
@@ -177,19 +185,4 @@ for target in package.targets where target.name != "SwiftNavigationMacros" {
     .enableUpcomingFeature("MemberImportVisibility"),
     .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
   ])
-}
-
-if ProcessInfo.processInfo.environment["OMIT_MACRO_TESTS"] == nil {
-  package.dependencies.append(
-    .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0")
-  )
-  package.targets.append(
-    .testTarget(
-      name: "SwiftNavigationMacrosTests",
-      dependencies: [
-        "SwiftNavigationMacros",
-        .product(name: "MacroTesting", package: "swift-macro-testing"),
-      ]
-    )
-  )
 }
