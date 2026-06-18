@@ -486,6 +486,21 @@ final class PresentationTests: XCTestCase {
     )
     await assertEventuallyNotNil(vc.presentedChild)
   }
+
+  @MainActor
+  func testPushViewController_ManualPopMultiple() async throws {
+    let vc = BasicViewController(
+      model: Model(pushedChild: Model(pushedChild: Model()))
+    )
+    let nav = UINavigationController(rootViewController: vc)
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+
+    nav.popToViewController(nav.viewControllers[0], animated: false)
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyNil(vc.model.pushedChild)
+  }
 }
 
 @Observable
