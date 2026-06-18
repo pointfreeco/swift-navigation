@@ -42,9 +42,10 @@
         MainActor.assumeIsolated {
           let identifier: String?
           if let item = tabBar.selectedItem,
-             let items = tabBar.items,
-             let index = items.firstIndex(of: item),
-             tabs.indices.contains(index) {
+            let items = tabBar.items,
+            let index = items.firstIndex(of: item),
+            tabs.indices.contains(index)
+          {
             identifier = tabs[index].identifier
           } else {
             identifier = self.selectedTab?.identifier
