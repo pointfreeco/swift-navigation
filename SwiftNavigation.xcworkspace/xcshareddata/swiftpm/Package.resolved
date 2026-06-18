@@ -1,5 +1,5 @@
 {
-  "originHash" : "6a2b8a399b4ecd341ac962bb4e3d8cdd1e82aa4d176a1dee24abf4f793e90274",
+  "originHash" : "d41c8b0a6ba5d587f961e7f69d2abad4bb521d63202170099ffba66afe6d025a",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "branch" : "macro-support",
-        "revision" : "6e91f6fc0e717ec407a69274e3a871b60940bed8"
+        "revision" : "1197e80bc7e4b177051b6869ef93d8ac3ad677da",
+        "version" : "1.8.0"
       }
     },
     {
