@@ -5,7 +5,7 @@ contact_links:
     url: https://github.com/pointfreeco/swift-navigation/discussions
     about: SwiftUI Navigation Q&A, ideas, and more
   - name: Documentation
-    url: https://pointfreeco.github.io/swift-navigation/main/documentation/swiftnavigation/
+    url: https://swiftpackageindex.com/pointfreeco/swift-navigation/main/documentation/swiftnavigation
     about: Read SwiftUI Navigation's documentation
   - name: Videos
     url: https://www.pointfree.co/

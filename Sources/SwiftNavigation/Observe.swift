@@ -1,4 +1,6 @@
 import ConcurrencyExtras
+import OrderedCollections
+import PerceptionCore
 
 #if swift(>=6)
   /// Tracks access to properties of an observable model.

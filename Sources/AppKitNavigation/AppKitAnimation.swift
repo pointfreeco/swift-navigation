@@ -1,10 +1,10 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
   import AppKit
-  import SwiftNavigation
   import IssueReporting
+  import SwiftNavigation
 
   #if canImport(SwiftUI)
-    import SwiftUI
+    public import SwiftUI
   #endif
 
   /// Executes a closure with the specified animation and returns the result.
@@ -41,7 +41,7 @@
     ) rethrows -> Result {
       switch framework {
       case .appKit(let animation):
-        var result: Swift.Result<Result, Error>?
+        var result: Swift.Result<Result, any Error>?
         NSAnimationContext.runAnimationGroup { context in
           context.allowsImplicitAnimation = true
           context.duration = animation.duration / animation.speed
@@ -53,7 +53,7 @@
         return try result!._rethrowGet()
 
       case .swiftUI(let animation):
-        var result: Swift.Result<Result, Error>?
+        var result: Swift.Result<Result, any Error>?
         #if swift(>=6)
           if #available(macOS 15, *) {
             NSAnimationContext.animate(animation) {

@@ -1,5 +1,5 @@
 #if canImport(UIKit) && !os(watchOS)
-  import SwiftNavigation
+  public import SwiftNavigation
   import UIKit
 
   extension UITransaction {
