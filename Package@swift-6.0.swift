@@ -77,6 +77,7 @@ let package = Package(
       name: "SwiftNavigationMacrosTests",
       dependencies: [
         "SwiftNavigationMacros",
+        .product(name: "CasePathsMacrosSupport", package: "swift-case-paths"),
         .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]
     ),

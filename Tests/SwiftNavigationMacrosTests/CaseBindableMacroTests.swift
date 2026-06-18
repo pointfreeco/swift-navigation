@@ -1,19 +1,21 @@
 #if canImport(MacroTesting)
+  import CasePathsMacrosSupport
   import MacroTesting
+  import SnapshotTesting
   import SwiftNavigationMacros
-  import XCTest
+  import Testing
 
-  final class CaseBindableMacroTests: XCTestCase {
-    override func invokeTest() {
-      withMacroTesting(
-        // record: .failed,
-        macros: [CaseBindableMacro.self]
-      ) {
-        super.invokeTest()
-      }
-    }
-
-    func testBasics() {
+  @Suite(
+    .macros(
+      [
+        CaseBindableMacro.self,
+        CasePathableMacro.self,
+      ],
+      record: .failed
+    )
+  )
+  struct CaseBindableMacroTests {
+    @Test func basics() {
       assertMacro {
         """
         @CaseBindable
@@ -151,7 +153,7 @@
       }
     }
 
-    func testExistingCasePathable() {
+    @Test func casePathableOverlap() {
       assertMacro {
         """
         @CasePathable
@@ -163,10 +165,49 @@
         """
       } expansion: {
         #"""
-        @CasePathable
         enum Status {
           case inStock(quantity: Int)
           case discontinued
+
+          public struct AllCasePaths: CasePaths.CasePathReflectable, Swift.Sendable, Swift.Sequence {
+            public subscript(root: Status) -> CasePaths.PartialCaseKeyPath<Status> {
+              if root.is(\.inStock) {
+                return \.inStock
+              }
+              if root.is(\.discontinued) {
+                return \.discontinued
+              }
+              return \.never
+            }
+            public var inStock: CasePaths.AnyCasePath<Status, Int> {
+              ._$embed(Status.inStock) {
+                guard case let .inStock(v0) = $0 else {
+                  return nil
+                }
+                return v0
+              }
+            }
+            public var discontinued: CasePaths.AnyCasePath<Status, Void> {
+              ._$embed({
+                  Status.discontinued
+                }) {
+                guard case .discontinued = $0 else {
+                  return nil
+                }
+                return ()
+              }
+            }
+            public func makeIterator() -> Swift.IndexingIterator<[CasePaths.PartialCaseKeyPath<Status>]> {
+              var allCasePaths: [CasePaths.PartialCaseKeyPath<Status>] = []
+              allCasePaths.append(\.inStock)
+              allCasePaths.append(\.discontinued)
+              return allCasePaths.makeIterator()
+            }
+          }
+
+          public static var allCasePaths: AllCasePaths {
+            AllCasePaths()
+          }
 
           public enum UIBindingEnumeration {
             case inStock(SwiftNavigation.UIBinding<Int>)
@@ -202,24 +243,12 @@
           #endif
         }
 
+        extension Status: CasePaths.CasePathable, CasePaths.CasePathIterable {
+        }
+
         extension Status: SwiftNavigation.CaseBindable {
         }
         """#
-      }
-    }
-
-    func testNotAnEnum() {
-      assertMacro {
-        """
-        @CaseBindable
-        struct Status {}
-        """
-      } diagnostics: {
-        """
-        @CaseBindable
-        ╰─ 🛑 '@CaseBindable' can only be applied to enums
-        struct Status {}
-        """
       }
     }
   }
