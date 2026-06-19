@@ -1,6 +1,5 @@
 #if canImport(UIKit) && !os(watchOS)
   public import UIKit
-  import IssueReporting
   import SwiftNavigation
 
   #if canImport(SwiftUI)

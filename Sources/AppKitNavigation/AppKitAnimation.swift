@@ -1,6 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
   import AppKit
-  import IssueReporting
   import SwiftNavigation
 
   #if canImport(SwiftUI)

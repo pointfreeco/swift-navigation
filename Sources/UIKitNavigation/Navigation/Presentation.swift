@@ -1,5 +1,4 @@
 #if canImport(UIKit) && !os(watchOS)
-  import IssueReporting
   @_spi(Internals) public import SwiftNavigation
   public import UIKit
   @_implementationOnly import UIKitNavigationShim

@@ -1,5 +1,4 @@
 public import Foundation
-import IssueReporting
 
 #if CustomDump
   import CustomDump

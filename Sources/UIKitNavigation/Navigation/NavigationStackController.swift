@@ -1,5 +1,4 @@
 #if canImport(UIKit) && !os(watchOS)
-  import IssueReporting
   import PerceptionCore
   @_spi(Internals) public import SwiftNavigation
   import SwiftUI
