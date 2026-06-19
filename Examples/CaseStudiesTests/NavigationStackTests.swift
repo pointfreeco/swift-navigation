@@ -262,6 +262,30 @@ final class NavigationStackTests: XCTestCase {
   }
 
   @MainActor
+  func testPopWithReentrantMutation_DoesNotRepush() async throws {
+    @UIBinding var path = [Int]()
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { number in
+      ChildViewController(number: number)
+    }
+    try await setUp(controller: nav)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      path = [1, 2]
+    }
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+    await assertEventuallyEqual(path, [1, 2])
+
+    nav.popViewController(animated: false)
+    path = path
+
+    await assertEventuallyEqual(nav.viewControllers.count, 2)
+    await assertEventuallyEqual(path, [1])
+  }
+
+  @MainActor
   func testPushAction() async throws {
     @UIBinding var path = [Int]()
     let nav = NavigationStackController(path: $path) {
