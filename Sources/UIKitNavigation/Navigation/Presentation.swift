@@ -226,11 +226,6 @@
         guard
           let navigationController = self?.navigationController ?? self as? UINavigationController
         else {
-          reportIssue(
-            """
-            Can't dismiss navigation item: "navigationController" is "nil".
-            """
-          )
           return
         }
         navigationController.popFromViewController(
