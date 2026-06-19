@@ -510,6 +510,33 @@ final class NavigationPathTests: XCTestCase {
   }
 
   @MainActor
+  func testDeepLink_InitRegisteredNavigationDestination() async throws {
+    var initialPath = UINavigationPath()
+    initialPath.append(1)
+    initialPath.append("Hello")
+    initialPath.append(true)
+    @UIBinding var path = initialPath
+
+    let nav = NavigationStackController(path: $path) {
+      UIViewController()
+    }
+    nav.navigationDestination(for: Int.self) { int in
+      InitIntegerViewController(value: int)
+    }
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 4, timeout: 2)
+    await assertEventuallyNoDifference(
+      nav.values,
+      [1, "Hello", true] as [AnyHashable]
+    )
+    await assertEventuallyNoDifference(
+      path.elements,
+      [.eager(1), .eager("Hello"), .eager(true)]
+    )
+  }
+
+  @MainActor
   func testRegisterNavigationDestinationTypeMultipleTimes_LastOneWins() async throws {
     @UIBinding var path = UINavigationPath()
     let nav = NavigationStackController(path: $path) {

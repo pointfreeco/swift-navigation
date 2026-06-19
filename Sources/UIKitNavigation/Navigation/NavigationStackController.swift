@@ -168,7 +168,9 @@
       guard
         let destinationType = navigationID.elementType,
         let destination = destinations[DestinationType(destinationType)],
-        let (viewController, element) = destination(navigationID)
+        let (viewController, element) = withUITransaction(\.stackController, self, {
+          destination(navigationID)
+        })
       else {
         return nil
       }
@@ -357,9 +359,7 @@
         )
         return
       }
-      withUITransaction(\.stackController, stackController) {
-        stackController.path.append(.lazy(.element(value)))
-      }
+      stackController.path.append(.lazy(.element(value)))
     }
 
     public func navigationDestination<D: Hashable>(
