@@ -539,6 +539,7 @@ final class PresentationTests: XCTestCase {
     }
     var destination: Destination?
   }
+
   @MainActor func testOnDismissNotCalledForUnrelatedDismissal() async throws {
     class A: ViewController {}
     class B: ViewController {}
@@ -576,6 +577,21 @@ final class PresentationTests: XCTestCase {
     }
     await assertEventually(vc.presentedViewController is B)
     vc.onDismissB = nil
+  }
+
+  @MainActor
+  func testPushViewController_ManualPopMultiple() async throws {
+    let vc = BasicViewController(
+      model: Model(pushedChild: Model(pushedChild: Model()))
+    )
+    let nav = UINavigationController(rootViewController: vc)
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+
+    nav.popToViewController(nav.viewControllers[0], animated: false)
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyNil(vc.model.pushedChild)
   }
 }
 
