@@ -131,6 +131,7 @@ for target in package.targets {
   target.swiftSettings?.append(contentsOf: [
     .define("CasePaths"),
     .define("CustomDump"),
+    .define("IssueReporting"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("ImmutableWeakCaptures"),
     .enableUpcomingFeature("InferIsolatedConformances"),

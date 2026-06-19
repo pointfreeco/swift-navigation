@@ -1,5 +1,4 @@
 import ConcurrencyExtras
-import IssueReporting
 import PerceptionCore
 
 #if canImport(Observation)
