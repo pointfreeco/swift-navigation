@@ -1,4 +1,3 @@
-public import CustomDump
 public import Foundation
 
 /// A data type that describes the state of an alert that can be shown to the user. The `Action`
@@ -174,25 +173,6 @@ public struct AlertState<Action>: Identifiable {
       buttons: self.buttons.map { $0.map(transform) },
       message: self.message,
       title: self.title
-    )
-  }
-}
-
-extension AlertState: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    var children: [(label: String?, value: Any)] = [
-      ("title", self.title)
-    ]
-    if !self.buttons.isEmpty {
-      children.append(("actions", self.buttons))
-    }
-    if let message {
-      children.append(("message", message))
-    }
-    return Mirror(
-      self,
-      children: children,
-      displayStyle: .struct
     )
   }
 }

@@ -1,4 +1,4 @@
-#if canImport(Testing)
+#if canImport(Testing) && CustomDump
   import CustomDump
   import Foundation
   import SwiftNavigation

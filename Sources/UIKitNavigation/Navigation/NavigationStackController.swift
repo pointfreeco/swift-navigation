@@ -1,10 +1,13 @@
 #if canImport(UIKit) && !os(watchOS)
-  import CustomDump
   import IssueReporting
   import PerceptionCore
   @_spi(Internals) public import SwiftNavigation
   import SwiftUI
   public import UIKit
+
+  #if CustomDump
+    import CustomDump
+  #endif
 
   open class NavigationStackController: UINavigationController {
     fileprivate var destinations:
@@ -145,8 +148,8 @@
             {
               reportIssue(
                 """
-                No "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
-                found among the view controllers on the path.
+                No "navigationDestination(for: \(typeName(elementType))) { … }" was found among \
+                the view controllers on the path.
                 """
               )
               invalidIndices.insert(index)
@@ -251,8 +254,8 @@
               reportIssue(
                 """
                 Missing navigation destination while decoding a "UINavigationPath". No \
-                "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
-                found among the view controllers on the path.
+                "navigationDestination(for: \(typeName(elementType))) { … }" was found among the \
+                view controllers on the path.
                 """
               )
             }
@@ -472,5 +475,13 @@
         )
       }
     }
+  }
+
+  private func typeName(_ type: Any.Type) -> String {
+    #if CustomDump
+      return String(customDumping: type)
+    #else
+      return "\(String(reflecting: type)).self"
+    #endif
   }
 #endif
