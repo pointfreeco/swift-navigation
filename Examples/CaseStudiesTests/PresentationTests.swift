@@ -138,6 +138,32 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor
+  func testPresents_ChangePresentedScreenInPresented() async throws {
+    let vc = BasicViewController()
+    try await setUp(controller: vc)
+
+    await assertEventuallyNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.presentedChild = Model()
+    }
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.presentedChild?.presentedChild = Model()
+    }
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    try await Task.sleep(for: .seconds(0.5))
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.presentedChild?.presentedChild = Model()
+    }
+
+    try await Task.sleep(for: .seconds(0.5))
+    await assertEventuallyNotNil(vc.presentedViewController)
+  }
+
+  @MainActor
   func testPushViewController_IsPushed() async throws {
     let vc = BasicViewController()
     let nav = UINavigationController(rootViewController: vc)
@@ -485,6 +511,21 @@ final class PresentationTests: XCTestCase {
       1
     )
     await assertEventuallyNotNil(vc.presentedChild)
+  }
+
+  @MainActor
+  func testPushViewController_ManualPopMultiple() async throws {
+    let vc = BasicViewController(
+      model: Model(pushedChild: Model(pushedChild: Model()))
+    )
+    let nav = UINavigationController(rootViewController: vc)
+    try await setUp(controller: nav)
+
+    await assertEventuallyEqual(nav.viewControllers.count, 3)
+
+    nav.popToViewController(nav.viewControllers[0], animated: false)
+    await assertEventuallyEqual(nav.viewControllers.count, 1)
+    await assertEventuallyNil(vc.model.pushedChild)
   }
 }
 
