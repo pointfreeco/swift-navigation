@@ -1,9 +1,10 @@
-import CustomDump
-import Foundation
-import IssueReporting
+public import Foundation
 
+#if CustomDump
+  import CustomDump
+#endif
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 #endif
 
 public struct ButtonState<Action>: Identifiable {
@@ -61,10 +62,10 @@ public struct ButtonState<Action>: Identifiable {
   ///   `withAnimation`.
   public func withAction(_ perform: (Action?) -> Void) {
     switch self.action.type {
-    case let .send(action):
+    case .send(let action):
       perform(action)
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation):
+      case .animatedSend(let action, let animation):
         withAnimation(animation) {
           perform(action)
         }
@@ -81,12 +82,16 @@ public struct ButtonState<Action>: Identifiable {
   @MainActor
   public func withAction(_ perform: @MainActor (Action?) async -> Void) async {
     switch self.action.type {
-    case let .send(action):
+    case .send(let action):
       await perform(action)
     #if canImport(SwiftUI)
-      case let .animatedSend(action, _):
+      case .animatedSend(let action, _):
         var output = ""
-        customDump(self.action, to: &output, indent: 4)
+        #if CustomDump
+          customDump(action, to: &output, indent: 4)
+        #else
+          output.append("    \(action)")
+        #endif
         reportIssue(
           """
           An animated action was performed asynchronously: …
@@ -135,10 +140,10 @@ public struct ButtonStateAction<Action> {
   public var action: Action? {
     switch self.type {
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation: _):
+      case .animatedSend(let action, animation: _):
         return action
     #endif
-    case let .send(action):
+    case .send(let action):
       return action
     }
   }
@@ -148,10 +153,10 @@ public struct ButtonStateAction<Action> {
   ) -> ButtonStateAction<NewAction> {
     switch self.type {
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation: animation):
+      case .animatedSend(let action, let animation):
         return .send(transform(action), animation: animation)
     #endif
-    case let .send(action):
+    case .send(let action):
       return .send(transform(action))
     }
   }
@@ -179,47 +184,6 @@ public enum ButtonStateRole: Sendable {
   case destructive
 }
 
-extension ButtonState: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    var children: [(label: String?, value: Any)] = []
-    if let role = self.role {
-      children.append(("role", role))
-    }
-    children.append(("action", self.action))
-    children.append(("label", self.label))
-    return Mirror(
-      self,
-      children: children,
-      displayStyle: .struct
-    )
-  }
-}
-
-extension ButtonStateAction: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    switch self.type {
-    case let .send(action):
-      return Mirror(
-        self,
-        children: [
-          "send": action as Any
-        ],
-        displayStyle: .enum
-      )
-    #if canImport(SwiftUI)
-      case let .animatedSend(action, animation):
-        return Mirror(
-          self,
-          children: [
-            "send": (action, animation: animation)
-          ],
-          displayStyle: .enum
-        )
-    #endif
-    }
-  }
-}
-
 extension ButtonStateAction: Equatable where Action: Equatable {}
 extension ButtonStateAction._ActionType: Equatable where Action: Equatable {}
 extension ButtonStateRole: Equatable {}
@@ -236,10 +200,10 @@ extension ButtonStateAction._ActionType: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     switch self {
     #if canImport(SwiftUI)
-      case let .animatedSend(action, animation: _):
+      case .animatedSend(let action, animation: _):
         hasher.combine(action)  // TODO: Should we hash the animation?
     #endif
-    case let .send(action):
+    case .send(let action):
       hasher.combine(action)
     }
   }
@@ -379,9 +343,12 @@ func debugCaseOutput(_ value: Any) -> String {
       return ""
     }
   }
-
-  return (value as? CustomDebugStringConvertible)?.debugDescription
-    ?? "\(typeName(type(of: value)))\(debugCaseOutputHelp(value))"
+  #if CustomDump
+    if let description = (value as? any CustomDebugStringConvertible)?.debugDescription {
+      return description
+    }
+  #endif
+  return "\(typeName(type(of: value)))\(debugCaseOutputHelp(value))"
 }
 
 private func isUnlabeledArgument(_ label: String) -> Bool {

@@ -1,7 +1,7 @@
 #if canImport(UIKit) && !os(watchOS)
   import ConcurrencyExtras
-  @_spi(Internals) import SwiftNavigation
-  import UIKit
+  @_spi(Internals) public import SwiftNavigation
+  public import UIKit
 
   /// A protocol used to extend `UIControl`.
   @MainActor

@@ -1,5 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-  import SwiftNavigation
+  public import SwiftNavigation
 
   extension UIBinding {
     /// Specifies an animation to perform when the binding value changes.

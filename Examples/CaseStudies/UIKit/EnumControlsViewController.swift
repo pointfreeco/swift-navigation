@@ -12,11 +12,11 @@ class EnumControlsViewController: UIViewController, UIKitCaseStudy {
     • A Boolean for whether an item is on back order when it is _not_ in stock, which can drive a \
     switch.
 
-    This library provides tools to chain deeper into a binding's case by applying the \
-    `@CasePathable` macro.
+    By applying the `@CaseBindable` macro to the enum you can switch over a binding's cases \
+    directly, and each case is handed a binding to its associated value.
     """
 
-  @CasePathable
+  @CaseBindable
   enum Status {
     case inStock(quantity: Int)
     case outOfStock(isOnBackOrder: Bool)
@@ -89,17 +89,13 @@ class EnumControlsViewController: UIViewController, UIKitCaseStudy {
       inStockStack.isHidden = !status.is(\.inStock)
       outOfStockStack.isHidden = !status.is(\.outOfStock)
 
-      switch status {
-      case .inStock:
-        if let quantity = $status.inStock {
-          quantityLabel.text = "Quantity: \(quantity.wrappedValue)"
-          quantityStepper.bind(value: quantity.asDouble)
-        }
+      switch $status.cases {
+      case .inStock(let $quantity):
+        quantityLabel.text = "Quantity: \($quantity.wrappedValue)"
+        quantityStepper.bind(value: $quantity.asDouble)
 
-      case .outOfStock:
-        if let isOnBackOrder = $status.outOfStock {
-          isOnBackOrderSwitch.bind(isOn: isOnBackOrder)
-        }
+      case .outOfStock(let $isOnBackOrder):
+        isOnBackOrderSwitch.bind(isOn: $isOnBackOrder)
       }
     }
   }

@@ -6,4 +6,5 @@ builder:
     - AppKitNavigation
     - SwiftUINavigation
     - UIKitNavigation
+    platform: ios
     swift_version: 6.0
