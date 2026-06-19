@@ -14,17 +14,18 @@ package func reportIssue(
   line: UInt = #line,
   column: UInt = #column
 ) {
+  guard let message = message() else { return }
   #if IssueReporting
     IssueReporting.reportIssue(
-      message(),
+      message,
       fileID: fileID,
       filePath: filePath,
       line: line,
       column: column
     )
   #elseif canImport(os)
-    logger.warning("\(message())")
+    logger.warning("\(message)")
   #else
-    print(message())
+    print(message)
   #endif
 }
