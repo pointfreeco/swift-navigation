@@ -1,6 +1,6 @@
 #if canImport(ObjectiveC)
   import Dispatch
-  import ObjectiveC
+  public import ObjectiveC
 
   @MainActor
   extension NSObject {
@@ -121,7 +121,7 @@
     public func observe(
       _ apply: @escaping @MainActor @Sendable (_ transaction: UITransaction) -> Void
     ) -> ObserveToken {
-      let token = SwiftNavigation.observe { transaction in
+      let token = SwiftNavigation._observe { transaction in
         MainActor._assumeIsolated {
           apply(transaction)
         }

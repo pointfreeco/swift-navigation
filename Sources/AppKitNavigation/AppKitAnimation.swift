@@ -3,7 +3,7 @@
   import SwiftNavigation
 
   #if canImport(SwiftUI)
-    import SwiftUI
+    public import SwiftUI
   #endif
 
   /// Executes a closure with the specified animation and returns the result.
@@ -39,11 +39,11 @@
       completion: ((Bool?) -> Void)? = nil
     ) rethrows -> Result {
       switch framework {
-      case let .appKit(animation):
-        var result: Swift.Result<Result, Error>?
+      case .appKit(let animation):
+        var result: Swift.Result<Result, any Error>?
         NSAnimationContext.runAnimationGroup { context in
           context.allowsImplicitAnimation = true
-          context.duration = animation.duration
+          context.duration = animation.duration / animation.speed
           context.timingFunction = animation.timingFunction
           result = Swift.Result(catching: body)
         } completionHandler: {
@@ -51,8 +51,8 @@
         }
         return try result!._rethrowGet()
 
-      case let .swiftUI(animation):
-        var result: Swift.Result<Result, Error>?
+      case .swiftUI(let animation):
+        var result: Swift.Result<Result, any Error>?
         #if swift(>=6)
           if #available(macOS 15, *) {
             NSAnimationContext.animate(animation) {
@@ -74,11 +74,40 @@
 
       fileprivate struct AppKit: Hashable, @unchecked Sendable {
         fileprivate var duration: TimeInterval
+        fileprivate var speed: TimeInterval = 1
         fileprivate var timingFunction: CAMediaTimingFunction?
 
         func hash(into hasher: inout Hasher) {
           hasher.combine(duration)
         }
+      }
+    }
+
+    /// Changes the duration of an animation by adjusting its speed.
+    ///
+    /// - Parameter speed: The speed at which SwiftUI performs the animation.
+    /// - Returns: An animation with the adjusted speed.
+    public func speed(
+      _ speed: Double
+    ) -> Self {
+      switch framework {
+      case .swiftUI(let animation):
+        return AppKitAnimation(
+          framework: .swiftUI(animation.speed(speed))
+        )
+      case .appKit(var animation):
+        if speed != 0 {
+          animation.speed = speed
+        } else {
+          reportIssue(
+            """
+            Setting animation speed to zero is not supported for AppKit animations. \
+            Replace with '.ulpOfOne' to avoid division by zero.
+            """
+          )
+          animation.speed = .ulpOfOne
+        }
+        return AppKitAnimation(framework: .appKit(animation))
       }
     }
   }

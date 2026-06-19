@@ -87,9 +87,9 @@ struct ItemRowView: View {
             .font(.title3)
 
           switch model.item.status {
-          case let .inStock(quantity):
+          case .inStock(let quantity):
             Text("In stock: \(quantity)")
-          case let .outOfStock(isOnBackOrder):
+          case .outOfStock(let isOnBackOrder):
             Text("Out of stock\(isOnBackOrder ? ": on back order" : "")")
           }
         }

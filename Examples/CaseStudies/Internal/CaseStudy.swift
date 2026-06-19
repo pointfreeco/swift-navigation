@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKitNavigation
 
+@MainActor
 protocol CaseStudy {
   var readMe: String { get }
   var caseStudyTitle: String { get }

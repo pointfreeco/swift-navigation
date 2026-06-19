@@ -193,7 +193,7 @@ class FeatureViewController: UIViewController {
     present(item: $model.destination.addItem) { addItemModel in
       AddItemViewController(model: addItemModel)
     }
-    present(isPresented: Binding($model.destination.deleteItemAlert)) {
+    present(isPresented: UIBinding($model.destination.deleteItemAlert)) {
       let alert = UIAlertController(title: "Delete?", message: message, preferredStyle: .alert)
       alert.addAction(UIAlertAction(title: "Yes", style: .destructive))
       alert.addAction(UIAlertAction(title: "No", style: .cancel))

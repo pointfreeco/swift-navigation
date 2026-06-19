@@ -1,7 +1,12 @@
 #if canImport(UIKit) && !os(watchOS)
-  import IssueReporting
-  @_spi(Internals) import SwiftNavigation
-  import UIKit
+  import PerceptionCore
+  @_spi(Internals) public import SwiftNavigation
+  import SwiftUI
+  public import UIKit
+
+  #if CustomDump
+    import CustomDump
+  #endif
 
   open class NavigationStackController: UINavigationController {
     fileprivate var destinations:
@@ -83,7 +88,7 @@
         }
 
         if difference.count == 1,
-          case let .insert(newPath.count - 1, navigationID, nil) = difference.first,
+          case .insert(newPath.count - 1, let navigationID, nil) = difference.first,
           let viewController = viewController(for: navigationID)
         {
           pushViewController(viewController, animated: !transaction.uiKit.disablesAnimations)
@@ -101,7 +106,8 @@
           first == newPath.count
         {
           popToViewController(
-            viewControllers[first], animated: !transaction.uiKit.disablesAnimations
+            viewControllers[first],
+            animated: !transaction.uiKit.disablesAnimations
           )
         } else {
           var newPath = newPath
@@ -141,14 +147,16 @@
             {
               reportIssue(
                 """
-                No "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
-                found among the view controllers on the path.
+                No "navigationDestination(for: \(typeName(elementType))) { … }" was found among \
+                the view controllers on the path.
                 """
               )
               invalidIndices.insert(index)
             }
           }
-          path.remove(atOffsets: invalidIndices)
+          if !invalidIndices.isEmpty {
+            path.remove(atOffsets: invalidIndices)
+          }
           setViewControllers(newViewControllers, animated: !transaction.uiKit.disablesAnimations)
         }
       }
@@ -205,7 +213,9 @@
         animated: Bool
       ) {
         base?.navigationController?(
-          navigationController, willShow: viewController, animated: animated
+          navigationController,
+          willShow: viewController,
+          animated: animated
         )
       }
 
@@ -216,7 +226,9 @@
       ) {
         defer {
           base?.navigationController?(
-            navigationController, didShow: viewController, animated: animated
+            navigationController,
+            didShow: viewController,
+            animated: animated
           )
         }
         let navigationController = navigationController as! NavigationStackController
@@ -241,8 +253,8 @@
               reportIssue(
                 """
                 Missing navigation destination while decoding a "UINavigationPath". No \
-                "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
-                found among the view controllers on the path.
+                "navigationDestination(for: \(typeName(elementType))) { … }" was found among the \
+                view controllers on the path.
                 """
               )
             }
@@ -251,10 +263,13 @@
           }
 
           switch navigationController.path[nextIndex] {
-          case .eager, .lazy(.codable):
-            break
           case .lazy(.element(let element)):
             navigationController.path[nextIndex] = .eager(element)
+
+          case .eager, .lazy(.codable):
+            fallthrough
+
+          @unknown default: break
           }
           return
         }
@@ -293,7 +308,8 @@
         interactionControllerFor animationController: any UIViewControllerAnimatedTransitioning
       ) -> (any UIViewControllerInteractiveTransitioning)? {
         base?.navigationController?(
-          navigationController, interactionControllerFor: animationController
+          navigationController,
+          interactionControllerFor: animationController
         )
       }
 
@@ -304,7 +320,10 @@
         to toVC: UIViewController
       ) -> (any UIViewControllerAnimatedTransitioning)? {
         base?.navigationController?(
-          navigationController, animationControllerFor: operation, from: fromVC, to: toVC
+          navigationController,
+          animationControllerFor: operation,
+          from: fromVC,
+          to: toVC
         )
       }
     }
@@ -374,9 +393,9 @@
         guard let stackController else { fatalError() }
 
         switch element {
-        case let .eager(value), let .lazy(.element(value)):
+        case .eager(let value), .lazy(.element(let value)):
           return (destination(value as! D), value)
-        case let .lazy(.codable(value)):
+        case .lazy(.codable(let value)):
           let index = stackController.path.firstIndex(of: element)!
           guard let value = value.decode()
           else {
@@ -390,14 +409,24 @@
             return nil
           }
           return (destination(value as! D), value)
+        @unknown default: return nil
         }
       }
-      if stackController.path.contains(where: {
-        guard case .lazy = $0, $0.elementType == D.self else { return false }
-        return true
-      }) {
-        stackController.path = stackController.path
+      func resolvePath() {
+        if stackController.path.contains(where: {
+          guard case .lazy = $0, $0.elementType == D.self else { return false }
+          return true
+        }) {
+          stackController.path = stackController.path
+        }
       }
+      #if DEBUG
+        _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+          resolvePath()
+        }
+      #else
+        resolvePath()
+      #endif
     }
 
     fileprivate var navigationID: UINavigationPath.Element? {
@@ -406,7 +435,10 @@
       }
       set {
         objc_setAssociatedObject(
-          self, Self.navigationIDKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self,
+          Self.navigationIDKey,
+          newValue,
+          .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }
@@ -417,9 +449,9 @@
   extension CollectionDifference.Change {
     fileprivate var offset: Int {
       switch self {
-      case let .insert(offset, _, _):
+      case .insert(let offset, _, _):
         return offset
-      case let .remove(offset, _, _):
+      case .remove(let offset, _, _):
         return offset
       }
     }
@@ -437,10 +469,11 @@
           startIndex..<endIndex,
           with: newValue.map {
             switch $0 {
-            case let .eager(element), let .lazy(.element(element)):
+            case .eager(let element), .lazy(.element(let element)):
               return element.base as! Element
             case .lazy(.codable):
-              fatalError()
+              fallthrough
+            @unknown default: fatalError()
             }
           }
         )
@@ -457,5 +490,13 @@
 
   private enum NavigationStackControllerKey: UITransactionKey {
     static let defaultValue: NavigationStackController? = nil
+  }
+
+  private func typeName(_ type: Any.Type) -> String {
+    #if CustomDump
+      return String(customDumping: type)
+    #else
+      return "\(String(reflecting: type)).self"
+    #endif
   }
 #endif

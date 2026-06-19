@@ -1,5 +1,4 @@
-import CustomDump
-import Foundation
+public import Foundation
 
 /// A data type that describes the state of a confirmation dialog that can be shown to the user. The
 /// `Action` generic is the type of actions that can be sent from tapping on a button in the sheet.
@@ -211,28 +210,6 @@ public enum ConfirmationDialogStateTitleVisibility: Sendable {
   ///
   /// See `SwiftUI.Visibility.visible` for more information.
   case visible
-}
-
-@available(iOS 13, macOS 12, tvOS 13, watchOS 6, *)
-extension ConfirmationDialogState: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    var children: [(label: String?, value: Any)] = []
-    if self.titleVisibility != .automatic {
-      children.append(("titleVisibility", self.titleVisibility))
-    }
-    children.append(("title", self.title))
-    if !self.buttons.isEmpty {
-      children.append(("actions", self.buttons))
-    }
-    if let message {
-      children.append(("message", message))
-    }
-    return Mirror(
-      self,
-      children: children,
-      displayStyle: .struct
-    )
-  }
 }
 
 @available(iOS 13, macOS 12, tvOS 13, watchOS 6, *)

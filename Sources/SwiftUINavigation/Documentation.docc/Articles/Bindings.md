@@ -70,6 +70,7 @@ struct SignInView: View {
 ### Dynamic case lookup
 
 - ``SwiftUI/Binding/subscript(dynamicMember:)-9abgy``
+- ``SwiftUI/Binding/subscript(dynamicMember:)-4i40p``
 - ``SwiftUI/Binding/subscript(dynamicMember:)-8vc80``
 
 ### Unwrapping bindings

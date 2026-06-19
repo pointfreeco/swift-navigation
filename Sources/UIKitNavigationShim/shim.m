@@ -17,6 +17,10 @@
 
     + (void)load {
       method_exchangeImplementations(
+        class_getInstanceMethod(UIViewController.class, @selector(didMoveToParentViewController:)),
+        class_getInstanceMethod(UIViewController.class, @selector(UIKitNavigation_didMoveToParentViewController:))
+      );
+      method_exchangeImplementations(
         class_getInstanceMethod(UIViewController.class, @selector(viewDidAppear:)),
         class_getInstanceMethod(UIViewController.class, @selector(UIKitNavigation_viewDidAppear:))
       );
@@ -34,6 +38,21 @@
 
     @implementation UIViewController (UIKitNavigation)
 
+    - (void)onDismiss {
+      self._UIKitNavigation_onDismiss();
+      dispatch_async(dispatch_get_main_queue(), ^{
+        self._UIKitNavigation_onDismiss = nil;
+      });
+    }
+
+    - (void)UIKitNavigation_didMoveToParentViewController:(UIViewController *)parent {
+      [self UIKitNavigation_didMoveToParentViewController:parent];
+      
+      if (parent == nil && self._UIKitNavigation_onDismiss != NULL) {
+        [self onDismiss];
+      }
+    }
+
     - (void)UIKitNavigation_viewDidAppear:(BOOL)animated {
       [self UIKitNavigation_viewDidAppear:animated];
 
@@ -50,15 +69,25 @@
     - (void)UIKitNavigation_viewDidDisappear:(BOOL)animated {
       [self UIKitNavigation_viewDidDisappear:animated];
 
-      if ((self.isBeingDismissed || self.isMovingFromParentViewController) && self._UIKitNavigation_onDismiss != NULL) {
+      if (self.isBeingDismissed && self._UIKitNavigation_onDismiss != NULL) {
         if ([self isKindOfClass:UIAlertController.class]) {
+          // NB: Currently, onDismiss is called before the UIAlertAction
+          //     is processed, which generally isn't an issue, but if you
+          //     care about the order of operations, this can be a bit thorny.
+          //     In the case of highly generalized navigation patterns in TCA,
+          //     the order is what we use to emit warnings when invalid actions
+          //     are received (like a dismiss action is received for an
+          //     already-dismissed feature), so let's address the problem with
+          //     a quick tick.
+          //
+          //     We could do this thread hop unconditionally if it makes sense
+          //     to, but let's localize to UIAlertController for now.
           dispatch_async(dispatch_get_main_queue(), ^{
             self._UIKitNavigation_onDismiss();
             self._UIKitNavigation_onDismiss = nil;
           });
         } else {
-          self._UIKitNavigation_onDismiss();
-          self._UIKitNavigation_onDismiss = nil;
+          [self onDismiss];
         }
       }
     }
