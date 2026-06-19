@@ -593,6 +593,46 @@ final class PresentationTests: XCTestCase {
     await assertEventuallyEqual(nav.viewControllers.count, 1)
     await assertEventuallyNil(vc.model.pushedChild)
   }
+
+  @MainActor
+  func testRepresentWhileDismissing_StillCallsOnDismiss() async throws {
+    final class DismissCounter { var count = 0 }
+    let counter = DismissCounter()
+
+    final class VC: ViewController {
+      @UIBinding var presentedChild: Model?
+      let counter: DismissCounter
+      init(counter: DismissCounter) {
+        self.counter = counter
+        super.init(nibName: nil, bundle: nil)
+      }
+      required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        present(item: $presentedChild) { [counter] in
+          counter.count += 1
+        } content: { _ in
+          ViewController()
+        }
+      }
+    }
+
+    let vc = VC(counter: counter)
+    try await setUp(controller: vc)
+
+    vc.presentedChild = Model()
+    await assertEventuallyNotNil(vc.presentedViewController)
+    try await Task.sleep(for: .seconds(0.5))
+
+    vc.presentedChild = Model()
+    try await Task.sleep(for: .seconds(0.05))
+    vc.presentedChild = Model()
+
+    try await Task.sleep(for: .seconds(1))
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    XCTAssertEqual(counter.count, 2)
+  }
 }
 
 @Observable
