@@ -125,6 +125,7 @@
             let oldViewControllerOnDismiss = presentedViewController._UIKitNavigation_onDismiss
             presentedViewController._UIKitNavigation_onDismiss = {
               oldViewControllerOnDismiss?()
+              onDismiss?()
               self.present(child, animated: !transaction.uiKit.disablesAnimations)
             }
           } else {
