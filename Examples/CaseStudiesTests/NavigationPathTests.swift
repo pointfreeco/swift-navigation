@@ -484,6 +484,32 @@ final class NavigationPathTests: XCTestCase {
   }
 
   @MainActor
+  func testPushMultipleFeaturesAtOnce_InitRegisteredNavigationDestination() async throws {
+    @UIBinding var path = UINavigationPath()
+    let nav = NavigationStackController(path: $path) {
+      InitRootViewController()
+    }
+    try await setUp(controller: nav)
+
+    let root = nav.viewControllers[0]
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      root.traitCollection.push(value: 2)
+      root.traitCollection.push(value: "Hello")
+      root.traitCollection.push(value: true)
+    }
+
+    await assertEventuallyEqual(nav.viewControllers.count, 4, timeout: 2)
+    await assertEventuallyNoDifference(
+      nav.values,
+      [2, "Hello", true] as [AnyHashable]
+    )
+    await assertEventuallyNoDifference(
+      path.elements,
+      [.eager(2), .eager("Hello"), .eager(true)]
+    )
+  }
+
+  @MainActor
   func testRegisterNavigationDestinationTypeMultipleTimes_LastOneWins() async throws {
     @UIBinding var path = UINavigationPath()
     let nav = NavigationStackController(path: $path) {
@@ -622,6 +648,43 @@ private final class BoolViewController: UIViewController, _ValueViewController {
   }
   override func viewDidLoad() {
     super.viewDidLoad()
+  }
+}
+
+private final class InitRootViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    navigationDestination(for: Int.self) { int in
+      InitIntegerViewController(value: int)
+    }
+  }
+}
+
+private final class InitIntegerViewController: UIViewController, _ValueViewController {
+  let value: Int
+  init(value: Int) {
+    self.value = value
+    super.init(nibName: nil, bundle: nil)
+    navigationDestination(for: String.self) { string in
+      InitStringViewController(value: string)
+    }
+  }
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+}
+
+private final class InitStringViewController: UIViewController, _ValueViewController {
+  let value: String
+  init(value: String) {
+    self.value = value
+    super.init(nibName: nil, bundle: nil)
+    navigationDestination(for: Bool.self) { bool in
+      BoolViewController(value: bool)
+    }
+  }
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 }
 
