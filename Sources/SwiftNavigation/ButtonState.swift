@@ -1,7 +1,8 @@
-public import CustomDump
 public import Foundation
-import IssueReporting
 
+#if CustomDump
+  import CustomDump
+#endif
 #if canImport(SwiftUI)
   public import SwiftUI
 #endif
@@ -86,7 +87,11 @@ public struct ButtonState<Action>: Identifiable {
     #if canImport(SwiftUI)
       case .animatedSend(let action, _):
         var output = ""
-        customDump(self.action, to: &output, indent: 4)
+        #if CustomDump
+          customDump(action, to: &output, indent: 4)
+        #else
+          output.append("    \(action)")
+        #endif
         reportIssue(
           """
           An animated action was performed asynchronously: …
@@ -177,47 +182,6 @@ public enum ButtonStateRole: Sendable {
   ///
   /// See `SwiftUI.ButtonRole.destructive` for more information.
   case destructive
-}
-
-extension ButtonState: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    var children: [(label: String?, value: Any)] = []
-    if let role = self.role {
-      children.append(("role", role))
-    }
-    children.append(("action", self.action))
-    children.append(("label", self.label))
-    return Mirror(
-      self,
-      children: children,
-      displayStyle: .struct
-    )
-  }
-}
-
-extension ButtonStateAction: CustomDumpReflectable {
-  public var customDumpMirror: Mirror {
-    switch self.type {
-    case .send(let action):
-      return Mirror(
-        self,
-        children: [
-          "send": action as Any
-        ],
-        displayStyle: .enum
-      )
-    #if canImport(SwiftUI)
-      case .animatedSend(let action, let animation):
-        return Mirror(
-          self,
-          children: [
-            "send": (action, animation: animation)
-          ],
-          displayStyle: .enum
-        )
-    #endif
-    }
-  }
 }
 
 extension ButtonStateAction: Equatable where Action: Equatable {}
@@ -379,9 +343,12 @@ func debugCaseOutput(_ value: Any) -> String {
       return ""
     }
   }
-
-  return (value as? any CustomDebugStringConvertible)?.debugDescription
-    ?? "\(typeName(type(of: value)))\(debugCaseOutputHelp(value))"
+  #if CustomDump
+    if let description = (value as? any CustomDebugStringConvertible)?.debugDescription {
+      return description
+    }
+  #endif
+  return "\(typeName(type(of: value)))\(debugCaseOutputHelp(value))"
 }
 
 private func isUnlabeledArgument(_ label: String) -> Bool {
