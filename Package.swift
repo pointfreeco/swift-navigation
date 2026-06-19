@@ -168,7 +168,7 @@ let package = Package(
         "UIKitNavigationShim",
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
       ],
-      linkerSettings: [.unsafeFlags(["-ObjC"])]
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-ObjC"])]
     ),
     .target(
       name: "UIKitNavigationShim"
