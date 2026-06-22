@@ -36,7 +36,7 @@
           }
 
           private struct __Key_isSet: SwiftNavigation.UITransactionKey {
-            @SwiftNavigation._EntryDefaultValue
+            @SwiftNavigation._UITransactionEntryDefaultValue
             static var defaultValue: Bool = false
           }
         }
@@ -67,7 +67,7 @@
           }
 
           private struct __Key_name: SwiftNavigation.UITransactionKey {
-            @SwiftNavigation._EntryDefaultValue
+            @SwiftNavigation._UITransactionEntryDefaultValue
             static var defaultValue: String? = nil
           }
         }
@@ -98,7 +98,7 @@
           }
 
           private struct __Key_count: SwiftNavigation.UITransactionKey {
-            @SwiftNavigation._EntryDefaultValue
+            @SwiftNavigation._UITransactionEntryDefaultValue
             static var defaultValue = 0
           }
         }

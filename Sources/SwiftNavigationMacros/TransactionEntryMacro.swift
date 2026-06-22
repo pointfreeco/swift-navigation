@@ -81,7 +81,7 @@ extension UITransactionEntryMacro: PeerMacro {
     return [
       """
       private struct \(raw: key): \(raw: moduleName).UITransactionKey {
-      @\(raw: moduleName)._EntryDefaultValue
+      @\(raw: moduleName)._UITransactionEntryDefaultValue
       \(defaultValueDecl)
       }
       """
