@@ -525,21 +525,6 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   var wrappedValue: Value {
     get { root?[keyPath: keyPath] ?? value }
     set {
-      if root == nil {
-        reportIssue(
-          """
-          Binding failed to write to '@Bindable var \(Root.self)':\(fileID):\(line) because it \
-          is 'nil'.
-
-          This usually happens because the bindable model is not strongly held and so is \
-          deallocated.
-          """,
-          fileID: fileID,
-          filePath: filePath,
-          line: line,
-          column: column
-        )
-      }
       value = newValue
       root?[keyPath: keyPath] = value
     }
