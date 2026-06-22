@@ -360,16 +360,6 @@
           }
           return
         }
-        DispatchQueue.main.async {
-          let oldPath = navigationController.path.filter {
-            guard case .eager = $0 else { return false }
-            return true
-          }
-          let newPath = navigationController.viewControllers.compactMap(\.navigationID)
-          if oldPath.count > newPath.count {
-            navigationController.path = newPath
-          }
-        }
       }
 
       #if !os(tvOS) && !os(watchOS)
