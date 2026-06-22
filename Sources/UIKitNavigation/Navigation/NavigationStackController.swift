@@ -24,7 +24,7 @@
         }
       }
     }
-    private var elementsBeingPopped: Set<UINavigationPath.Element> = []
+    private var elementsBeingPopped: [UINavigationPath.Element] = []
     private let pathDelegate = PathDelegate()
     private var root: UIViewController?
 
@@ -245,7 +245,7 @@
           let last = path.last,
           !viewControllers.compactMap(\.navigationID).contains(last)
         else { return }
-        elementsBeingPopped.insert(last)
+        elementsBeingPopped.append(last)
       }
     #endif
 
@@ -414,7 +414,7 @@
         .first(where: { $0.navigationItem == item })?
         .navigationID
       {
-        elementsBeingPopped.insert(navigationID)
+        elementsBeingPopped.append(navigationID)
       }
       return true
     }
