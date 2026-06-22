@@ -160,9 +160,9 @@ extension UITransaction {
     set { self[IsAlsoSetKey.self] = newValue }
   }
 
-  @TransactionEntry var entryFlag: Bool = false
-  @TransactionEntry var entryName: String?
-  @TransactionEntry var entryItems: [String] = []
+  @UITransactionEntry var entryFlag: Bool = false
+  @UITransactionEntry var entryName: String?
+  @UITransactionEntry var entryItems: [String] = []
 }
 private enum IsSetKey: UITransactionKey {
   static let defaultValue = false
