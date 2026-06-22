@@ -44,6 +44,8 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms.
 
 - ``UIBindable``
 - ``UIBinding``
+- ``CaseBindable()``
+- ``CaseBindable``
 
 ### Attaching data to mutations
 
@@ -51,6 +53,7 @@ SwiftUI, UIKit, AppKit, and even non-Apple platforms.
 - ``withUITransaction(_:_:_:)``
 - ``UITransaction``
 - ``UITransactionKey``
+- ``UITransactionEntry()``
 
 ### Stack-based navigation
 
