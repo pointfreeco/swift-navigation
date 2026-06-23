@@ -3,9 +3,14 @@ import SwiftSyntaxMacros
 
 @main
 struct SwiftNavigationPlugin: CompilerPlugin {
-  let providingMacros: [any Macro.Type] = [
-    CaseBindableMacro.self,
-    UITransactionEntryDefaultValueMacro.self,
-    UITransactionEntryMacro.self,
-  ]
+  var providingMacros: [any Macro.Type] {
+    var macros: [any Macro.Type] = [
+      UITransactionEntryDefaultValueMacro.self,
+      UITransactionEntryMacro.self,
+    ]
+    #if CasePaths
+      macros.append(CaseBindableMacro.self)
+    #endif
+    return macros
+  }
 }
