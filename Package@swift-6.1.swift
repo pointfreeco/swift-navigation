@@ -90,7 +90,6 @@ let package = Package(
             "IssueReporting"
           ])
         ),
-        .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "Perception", package: "swift-perception"),
         .product(name: "PerceptionCore", package: "swift-perception"),
         .product(

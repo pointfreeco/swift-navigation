@@ -49,7 +49,6 @@ let package = Package(
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-        .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "Perception", package: "swift-perception"),
         .product(name: "PerceptionCore", package: "swift-perception"),
       ]
