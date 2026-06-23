@@ -1,7 +1,5 @@
-public import Perception
-
 #if canImport(Observation)
-  import Observation
+  public import Observation
 #endif
 
 /// A property wrapper type that supports creating bindings to the mutable properties of observable
@@ -71,13 +69,16 @@ public struct UIBindable<Value> {
   /// This initializer is equivalent to `init(wrappedValue:)`, but is more succinct when when
   /// creating bindable objects nested within other expressions.
   @_disfavoredOverload
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   public init(
     _ wrappedValue: Value,
     fileID: StaticString = #fileID,
     filePath: StaticString = #filePath,
     line: UInt = #line,
     column: UInt = #column
-  ) where Value: AnyObject & Perceptible {
+  ) where Value: AnyObject & _Observable {
     self.init(
       objectIdentifier: ObjectIdentifier(wrappedValue),
       wrappedValue: wrappedValue,
@@ -93,13 +94,16 @@ public struct UIBindable<Value> {
   /// You should not call this initializer directly. Instead, declare a property with the
   /// `@UIBindable` attribute, and provide an initial value.
   @_disfavoredOverload
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   public init(
     wrappedValue: Value,
     fileID: StaticString = #fileID,
     filePath: StaticString = #filePath,
     line: UInt = #line,
     column: UInt = #column
-  ) where Value: AnyObject & Perceptible {
+  ) where Value: AnyObject & _Observable {
     self.init(
       objectIdentifier: ObjectIdentifier(wrappedValue),
       wrappedValue: wrappedValue,
@@ -137,7 +141,7 @@ public struct UIBindable<Value> {
   }
 }
 
-#if canImport(Observation)
+#if Perception && canImport(Observation)
   @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   extension UIBindable where Value: AnyObject & Observable {
     /// Creates a bindable object from an observable object.

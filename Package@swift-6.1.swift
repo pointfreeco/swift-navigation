@@ -49,12 +49,15 @@ let package = Package(
       description: "Surface logical issues as unobtrusive runtime warnings"
     ),
     .trait(
+      name: "Perception",
+      description: "Back-port Swift Observation to older platforms"
+    ),
+    .trait(
       name: "Sharing",
       description: "Derive bindings from '@Shared' state"
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.8.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
@@ -90,8 +93,20 @@ let package = Package(
             "IssueReporting"
           ])
         ),
-        .product(name: "Perception", package: "swift-perception"),
-        .product(name: "PerceptionCore", package: "swift-perception"),
+        .product(
+          name: "Perception",
+          package: "swift-perception",
+          condition: .when(traits: [
+            "Perception"
+          ])
+        ),
+        .product(
+          name: "PerceptionCore",
+          package: "swift-perception",
+          condition: .when(traits: [
+            "Perception"
+          ])
+        ),
         .product(
           name: "Sharing",
           package: "swift-sharing",
@@ -194,7 +209,12 @@ package.traits.insert(
     enabledTraits: Set(
       enableAllTraits
         ? package.traits.map(\.name)
-        : ["CasePaths", "CustomDump", "IssueReporting"]
+        : [
+          "CasePaths",
+          "CustomDump",
+          "IssueReporting",
+          "Perception",
+        ]
     )
   )
 )

@@ -1,4 +1,8 @@
-import PerceptionCore
+#if Perception
+  import PerceptionCore
+#else
+  import Observation
+#endif
 
 #if swift(>=6)
   /// Tracks access to properties of an observable model.
@@ -55,6 +59,9 @@ import PerceptionCore
   ///   - apply: A closure that contains properties to track.
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   public func observe(
     @_inheritActorContext
     _ apply: @escaping @isolated(any) @Sendable () -> Void
@@ -74,6 +81,9 @@ import PerceptionCore
   ///   - apply: A closure that contains properties to track.
   /// - Returns: A token that keeps the subscription alive. Observation is cancelled when the token
   ///   is deallocated.
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   public func observe(
     @_inheritActorContext
     _ apply: @escaping @isolated(any) @Sendable (_ transaction: UITransaction) -> Void
@@ -85,6 +95,9 @@ import PerceptionCore
   }
 #endif
 
+#if !Perception
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+#endif
 func _observe(
   isolation: (any Actor)?,
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void
@@ -102,6 +115,9 @@ func _observe(
   )
 }
 
+#if !Perception
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+#endif
 func _observe(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task:
@@ -137,6 +153,9 @@ func _observe(
   return token
 }
 
+#if !Perception
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+#endif
 private func onChange(
   _ apply: @escaping @Sendable (_ transaction: UITransaction) -> Void,
   task:
@@ -144,13 +163,23 @@ private func onChange(
       _ transaction: UITransaction, _ operation: @escaping @Sendable () -> Void
     ) -> Void
 ) {
-  withPerceptionTracking {
-    apply(.current)
-  } onChange: {
-    task(.current) {
-      onChange(apply, task: task)
+  #if Perception
+    withPerceptionTracking {
+      apply(.current)
+    } onChange: {
+      task(.current) {
+        onChange(apply, task: task)
+      }
     }
-  }
+  #else
+    withObservationTracking {
+      apply(.current)
+    } onChange: {
+      task(.current) {
+        onChange(apply, task: task)
+      }
+    }
+  #endif
 }
 
 /// A token for cancelling observation.

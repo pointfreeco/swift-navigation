@@ -15,6 +15,9 @@
     ///   - filePath: The source `#filePath` associated with the control.
     ///   - line: The source `#line` associated with the control.
     ///   - column: The source `#column` associated with the control.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public convenience init(
       frame: CGRect = .zero,
       selectedSegment: UIBinding<some RawRepresentable<Int>>,
@@ -43,6 +46,9 @@
     ///   - line: The source `#line` associated with the binding.
     ///   - column: The source `#column` associated with the binding.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(
       selectedSegment: UIBinding<some RawRepresentable<Int>>,

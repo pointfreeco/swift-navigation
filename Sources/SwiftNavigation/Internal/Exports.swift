@@ -2,5 +2,7 @@
   #if CasePaths
     @_exported import CasePaths
   #endif
-  @_exported import Perception
+  #if Perception
+    @_exported import Perception
+  #endif
 #endif
