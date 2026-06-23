@@ -99,6 +99,21 @@ class UITransactionTests: XCTestCase {
       }
     }
 
+    func testEntryMacro() async {
+      XCTAssertEqual(UITransaction.current.entryFlag, false)
+      XCTAssertNil(UITransaction.current.entryName)
+      withUITransaction(\.entryFlag, true) {
+        XCTAssertEqual(UITransaction.current.entryFlag, true)
+      }
+      withUITransaction(\.entryName, "Blob") {
+        XCTAssertEqual(UITransaction.current.entryName, "Blob")
+      }
+      var transaction = UITransaction()
+      transaction.entryItems.append("a")
+      transaction.entryItems.append("b")
+      XCTAssertEqual(transaction.entryItems, ["a", "b"])
+    }
+
     func testBindingTransactionKey() async throws {
       try await Task { @MainActor in
         var tokens: Set<ObserveToken> = []
@@ -144,6 +159,10 @@ extension UITransaction {
     get { self[IsAlsoSetKey.self] }
     set { self[IsAlsoSetKey.self] = newValue }
   }
+
+  @UITransactionEntry var entryFlag: Bool = false
+  @UITransactionEntry var entryName: String?
+  @UITransactionEntry var entryItems: [String] = []
 }
 private enum IsSetKey: UITransactionKey {
   static let defaultValue = false

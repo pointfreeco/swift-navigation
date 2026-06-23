@@ -530,21 +530,6 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   var wrappedValue: Value {
     get { root?[keyPath: keyPath] ?? value }
     set {
-      if root == nil {
-        reportIssue(
-          """
-          Binding failed to write to '@Bindable var \(Root.self)':\(fileID):\(line) because it \
-          is 'nil'.
-
-          This usually happens because the bindable model is not strongly held and so is \
-          deallocated.
-          """,
-          fileID: fileID,
-          filePath: filePath,
-          line: line,
-          column: column
-        )
-      }
       value = newValue
       root?[keyPath: keyPath] = value
     }
@@ -588,6 +573,10 @@ private final class _UIBindingWrapper<Value>: _Observable {
     self._value = value
   }
 }
+
+#if canImport(Observation)
+  extension _UIBindingWrapper: Observable {}
+#endif
 
 private final class _UIBindingConstant<Value>: _UIBinding, @unchecked Sendable {
   let value: Value

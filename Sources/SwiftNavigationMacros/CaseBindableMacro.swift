@@ -1,15 +1,15 @@
 import CasePathsMacrosSupport
 import SwiftDiagnostics
-public import SwiftSyntax
+package import SwiftSyntax
 import SwiftSyntaxBuilder
-public import SwiftSyntaxMacros
+package import SwiftSyntaxMacros
 
-public enum CaseBindableMacro {
+package enum CaseBindableMacro {
   static let moduleName = "SwiftNavigation"
 }
 
 extension CaseBindableMacro: ExtensionMacro {
-  public static func expansion(
+  package static func expansion(
     of node: AttributeSyntax,
     attachedTo declaration: some DeclGroupSyntax,
     providingExtensionsOf type: some TypeSyntaxProtocol,
@@ -45,7 +45,7 @@ extension CaseBindableMacro: ExtensionMacro {
 }
 
 extension CaseBindableMacro: MemberMacro {
-  public static func expansion(
+  package static func expansion(
     of node: AttributeSyntax,
     providingMembersOf declaration: some DeclGroupSyntax,
     conformingTo protocols: [TypeSyntax],
@@ -54,7 +54,7 @@ extension CaseBindableMacro: MemberMacro {
     try expansion(of: node, providingMembersOf: declaration, in: context)
   }
 
-  public static func expansion(
+  package static func expansion(
     of node: AttributeSyntax,
     providingMembersOf declaration: some DeclGroupSyntax,
     in context: some MacroExpansionContext

@@ -131,16 +131,29 @@
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> UIViewController
     ) -> ObserveToken {
-      destination(item: item, id: id) { $item in
+      let presenter = Presenter()
+      return destination(item: item, id: id) { $item in
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
-        if presentedViewController != nil {
-          self.dismiss(
-            animated: !transaction.uiKit.disablesAnimations
-          ) {
-            onDismiss?()
-            self.present(child, animated: !transaction.uiKit.disablesAnimations)
+        child._UIKitNavigation_presenter = presenter
+        if let presentedViewController {
+          let isRepresenting =
+            presentedViewController._UIKitNavigation_presenter === presenter
+          if presentedViewController.isBeingDismissed {
+            let oldViewControllerOnDismiss = presentedViewController._UIKitNavigation_onDismiss
+            presentedViewController._UIKitNavigation_onDismiss = {
+              oldViewControllerOnDismiss?()
+              if isRepresenting { onDismiss?() }
+              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            }
+          } else {
+            self.dismiss(
+              animated: !transaction.uiKit.disablesAnimations
+            ) {
+              if isRepresenting { onDismiss?() }
+              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            }
           }
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
@@ -238,11 +251,6 @@
         guard
           let navigationController = self?.navigationController ?? self as? UINavigationController
         else {
-          reportIssue(
-            """
-            Can't dismiss navigation item: "navigationController" is "nil".
-            """
-          )
           return
         }
         navigationController.popFromViewController(
@@ -458,7 +466,17 @@
       }
     }
 
+    fileprivate var _UIKitNavigation_presenter: AnyObject? {
+      get { objc_getAssociatedObject(self, Self.presenterKey) as AnyObject? }
+      set {
+        objc_setAssociatedObject(
+          self, Self.presenterKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+      }
+    }
+
     private static let presentedKey = malloc(1)!
+    private static let presenterKey = malloc(1)!
   }
 
   extension UINavigationController {
@@ -519,7 +537,7 @@
   }
 
   @MainActor
-  private class Presented {
+  private final class Presented {
     weak var controller: UIViewController?
     let presentationID: AnyHashable?
     deinit {
@@ -536,4 +554,7 @@
       self.presentationID = presentationID
     }
   }
+
+  @MainActor
+  private final class Presenter {}
 #endif
