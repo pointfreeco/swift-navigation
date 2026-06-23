@@ -575,6 +575,7 @@ private final class _UIBindingWrapper<Value>: _Observable {
 }
 
 #if canImport(Observation)
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   extension _UIBindingWrapper: Observable {}
 #endif
 
