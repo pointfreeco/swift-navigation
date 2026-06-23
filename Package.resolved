@@ -1,5 +1,5 @@
 {
-  "originHash" : "fc861a4ba96637201e50ed6c10715392237be2085d038229b95f1281b5a0f283",
+  "originHash" : "05a30ae0a2044ccfe2778328a1f8456bb070e4c7a201f3c21669df89a5746c0f",
   "pins" : [
     {
       "identity" : "swift-case-paths",
@@ -8,15 +8,6 @@
       "state" : {
         "revision" : "1197e80bc7e4b177051b6869ef93d8ac3ad677da",
         "version" : "1.8.0"
-      }
-    },
-    {
-      "identity" : "swift-collections",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-collections",
-      "state" : {
-        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
-        "version" : "1.6.0"
       }
     },
     {
@@ -87,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "cb281f343fd953280336dcbd3822cdf47c182f5b",
-        "version" : "1.10.0"
+        "revision" : "401bf70d95bfe8db2a1dc619f9e175a85c089321",
+        "version" : "1.10.1"
       }
     }
   ],
