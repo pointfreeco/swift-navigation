@@ -155,7 +155,7 @@
     var title: Text
     var actions: Actions?
     var message: Message?
-    @State private var isPresented = false
+    @Binding private var isPresented: Bool
 
     init(
       item: Binding<Item?>,
@@ -169,7 +169,7 @@
       self.title = item.wrappedValue.map(title) ?? Text(verbatim: "")
       self.actions = item.wrappedValue.map(actions)
       self.message = item.wrappedValue.map(message)
-      self.isPresented = _item.wrappedValue != nil
+      self._isPresented = Binding(item)
     }
 
     func body(content: Content) -> some View {
