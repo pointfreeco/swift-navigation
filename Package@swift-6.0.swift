@@ -33,7 +33,6 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.8.0"),
-    .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
@@ -49,7 +48,6 @@ let package = Package(
         "SwiftNavigationMacros",
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
         .product(name: "Perception", package: "swift-perception"),
         .product(name: "PerceptionCore", package: "swift-perception"),
@@ -101,7 +99,6 @@ let package = Package(
       dependencies: [
         "SwiftNavigation",
         "UIKitNavigationShim",
-        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
     ),
