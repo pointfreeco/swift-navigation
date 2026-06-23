@@ -1,4 +1,3 @@
-import ConcurrencyExtras
 import OrderedCollections
 import PerceptionCore
 
@@ -179,7 +178,7 @@ public final class ObserveToken: Sendable, HashableObject {
   public let onCancel: @Sendable () -> Void
 
   public var isCancelled: Bool {
-    _isCancelled.withValue { $0 }
+    _isCancelled.withLock { $0 }
   }
 
   public init(onCancel: @escaping @Sendable () -> Void = {}) {
@@ -196,7 +195,7 @@ public final class ObserveToken: Sendable, HashableObject {
   /// > immediately, but rather next time a change is detected by `observe` it will cease any future
   /// > observation.
   public func cancel() {
-    _isCancelled.withValue { isCancelled in
+    _isCancelled.withLock { isCancelled in
       guard !isCancelled else { return }
       defer { isCancelled = true }
       onCancel()
