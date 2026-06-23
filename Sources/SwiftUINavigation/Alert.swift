@@ -237,6 +237,7 @@
     }
   }
 
+  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   private struct AlertModifier<Item, Actions: View, Message: View>: ViewModifier {
     @Binding var item: Item?
     var title: Text
