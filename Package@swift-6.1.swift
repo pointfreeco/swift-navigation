@@ -60,7 +60,6 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.8.0"),
-    .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
@@ -73,12 +72,7 @@ let package = Package(
     .target(
       name: "SwiftNavigation",
       dependencies: [
-        .target(
-          name: "SwiftNavigationMacros",
-          condition: .when(traits: [
-            "CasePaths"
-          ])
-        ),
+        "SwiftNavigationMacros",
         .product(
           name: "CasePaths",
           package: "swift-case-paths",
@@ -93,7 +87,6 @@ let package = Package(
             "CustomDump"
           ])
         ),
-        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
         .product(
           name: "IssueReporting",
           package: "xctest-dynamic-overlay",
@@ -135,7 +128,11 @@ let package = Package(
     .macro(
       name: "SwiftNavigationMacros",
       dependencies: [
-        .product(name: "CasePathsMacrosSupport", package: "swift-case-paths"),
+        .product(
+          name: "CasePathsMacrosSupport",
+          package: "swift-case-paths",
+          condition: .when(traits: ["CasePaths"])
+        ),
         .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
         .product(name: "SwiftDiagnostics", package: "swift-syntax"),
         .product(name: "SwiftSyntax", package: "swift-syntax"),
@@ -182,7 +179,6 @@ let package = Package(
       dependencies: [
         "SwiftNavigation",
         "UIKitNavigationShim",
-        .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
       ]
     ),
     .target(
