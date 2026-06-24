@@ -1,3 +1,3 @@
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
-@_exported import SwiftNavigation
+#if canImport(AppKit) && !targetEnvironment(macCatalyst) && !EXCLUDE_EXPORTS
+  @_exported import SwiftNavigation
 #endif

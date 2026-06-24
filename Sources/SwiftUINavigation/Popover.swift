@@ -1,5 +1,5 @@
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 
   // NB: Moving `@available(tvOS, unavailable)` to the extension causes tvOS builds to fail
   extension View {
@@ -135,4 +135,4 @@
       }
     }
   }
-#endif  // canImport(SwiftUI)
+#endif

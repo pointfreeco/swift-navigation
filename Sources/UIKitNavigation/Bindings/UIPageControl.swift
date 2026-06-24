@@ -1,5 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
-  import UIKit
+  public import SwiftNavigation
+  public import UIKit
 
   @available(iOS 14, tvOS 14, *)
   extension UIPageControl {
@@ -10,6 +11,9 @@
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - currentPage: The binding to read from for the current page, and write to when the
     ///     current page changes.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public convenience init(frame: CGRect = .zero, currentPage: UIBinding<Int>) {
       self.init(frame: frame)
       bind(currentPage: currentPage)
@@ -20,6 +24,9 @@
     /// - Parameter currentPage: The binding to read from for the current page, and write to when
     ///   the current page changes.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(currentPage: UIBinding<Int>) -> ObserveToken {
       bind(currentPage, to: \.currentPage, for: .valueChanged)

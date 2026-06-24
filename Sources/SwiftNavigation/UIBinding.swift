@@ -1,6 +1,3 @@
-import ConcurrencyExtras
-import IssueReporting
-
 #if canImport(Observation)
   import Observation
 #endif
@@ -135,7 +132,7 @@ import IssueReporting
 @dynamicMemberLookup
 @propertyWrapper
 public struct UIBinding<Value>: Sendable {
-  fileprivate let location: any _UIBinding<Value>
+  let location: any _UIBinding<Value>
 
   /// The binding's transaction.
   ///
@@ -192,6 +189,9 @@ public struct UIBinding<Value>: Sendable {
   /// > properties directly.
   ///
   /// - Parameter value: An initial value to store in the state property.
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   public init(wrappedValue value: Value) {
     self.init(
       location: _UIBindingAppendKeyPath(
@@ -202,6 +202,9 @@ public struct UIBinding<Value>: Sendable {
     )
   }
 
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   @available(
     *,
     deprecated,
@@ -407,24 +410,6 @@ public struct UIBinding<Value>: Sendable {
     return open(location)
   }
 
-  /// Returns a binding to the associated value of a given case key path.
-  ///
-  /// - Parameter keyPath: A case key path to a specific associated value.
-  /// - Returns: A new binding.
-  @_disfavoredOverload
-  public subscript<Member>(
-    dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
-  ) -> UIBinding<Member>?
-  where Value: CasePathable {
-    func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
-      UIBinding<Member?>(
-        location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath.unsafeSendable()),
-        transaction: transaction
-      )
-    }
-    return UIBinding<Member>(open(location))
-  }
-
   /// Returns an optional binding to the associated value of a given key path.
   ///
   /// - Parameter keyPath: A key path to a specific value.
@@ -440,34 +425,6 @@ public struct UIBinding<Value>: Sendable {
       )
     }
     return open(location)
-  }
-
-  /// Returns an optional binding to the associated value of a given case key path.
-  ///
-  /// - Parameter keyPath: A case key path to a specific associated value.
-  /// - Returns: A new binding.
-  public subscript<V: CasePathable, Member>(
-    dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Member>>
-  ) -> UIBinding<Member?>
-  where Value == V? {
-    func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
-      UIBinding<Member?>(
-        location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath.unsafeSendable()),
-        transaction: transaction
-      )
-    }
-    return open(location)
-  }
-
-  /// Returns a Boolean binding to a case of a given case key path with no associated value.
-  ///
-  /// - Parameter keyPath: A case key path to a case with no associated value.
-  /// - Returns: A new binding.
-  public subscript<V: CasePathable>(
-    dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Void>>
-  ) -> UIBinding<Bool>
-  where Value == V? {
-    UIBinding<Bool>(self[dynamicMember: keyPath])
   }
 
   /// Specifies a transaction for the binding.
@@ -557,7 +514,7 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
     self.objectIdentifier = ObjectIdentifier(root)
     self.root = root
     #if DEBUG
-      self.value = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+      self.value = skippingPerceptionChecking {
         root[keyPath: keyPath]
       }
     #else
@@ -571,21 +528,6 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   var wrappedValue: Value {
     get { root?[keyPath: keyPath] ?? value }
     set {
-      if root == nil {
-        reportIssue(
-          """
-          Binding failed to write to '@Bindable var \(Root.self)':\(fileID):\(line) because it \
-          is 'nil'.
-
-          This usually happens because the bindable model is not strongly held and so is \
-          deallocated.
-          """,
-          fileID: fileID,
-          filePath: filePath,
-          line: line,
-          column: column
-        )
-      }
       value = newValue
       root?[keyPath: keyPath] = value
     }
@@ -599,31 +541,39 @@ private final class _UIBindingWeakRoot<Root: AnyObject, Value>: _UIBinding, @unc
   }
 }
 
-private final class _UIBindingWrapper<Value>: Perceptible {
+#if !Perception
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+#endif
+private final class _UIBindingWrapper<Value>: _Observable {
   var _value: Value
   var value: Value {
     get {
-      _$perceptionRegistrar.access(self, keyPath: \.value)
+      _$registrar.access(self, keyPath: \.value)
       return _value
     }
     set {
-      _$perceptionRegistrar.withMutation(of: self, keyPath: \.value) {
+      _$registrar.withMutation(of: self, keyPath: \.value) {
         _value = newValue
       }
     }
     _modify {
-      _$perceptionRegistrar.willSet(self, keyPath: \.value)
-      defer { _$perceptionRegistrar.didSet(self, keyPath: \.value) }
+      _$registrar.willSet(self, keyPath: \.value)
+      defer { _$registrar.didSet(self, keyPath: \.value) }
       yield &_value
     }
   }
-  let _$perceptionRegistrar = PerceptionRegistrar()
+  #if Perception
+    let _$registrar = PerceptionRegistrar()
+  #else
+    let _$registrar = ObservationRegistrar()
+  #endif
   init(_ value: Value) {
     self._value = value
   }
 }
 
 #if canImport(Observation)
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   extension _UIBindingWrapper: Observable {}
 #endif
 
@@ -735,37 +685,6 @@ where Base.Value: Hashable {
   }
 }
 
-private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding
-where Base.Value: CasePathable {
-  let base: Base
-  let keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
-  let casePath: AnyCasePath<Base.Value, Case>
-  init(
-    base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
-  ) {
-    self.base = base
-    self.keyPath = keyPath
-    self.casePath = Base.Value.allCasePaths[keyPath: keyPath]
-  }
-  var wrappedValue: Case? {
-    get {
-      casePath.extract(from: base.wrappedValue)
-    }
-    set {
-      guard let newValue, casePath.extract(from: base.wrappedValue) != nil
-      else { return }
-      base.wrappedValue = casePath.embed(newValue)
-    }
-  }
-  static func == (lhs: _UIBindingEnumToOptionalCase, rhs: _UIBindingEnumToOptionalCase) -> Bool {
-    lhs.base == rhs.base && lhs.keyPath == rhs.keyPath
-  }
-  func hash(into hasher: inout Hasher) {
-    hasher.combine(base)
-    hasher.combine(keyPath)
-  }
-}
-
 private final class _UIBindingOptionalToBool<
   Base: _UIBinding<Wrapped?>, Wrapped
 >: _UIBinding {
@@ -839,36 +758,6 @@ private final class _UIBindingOptionalToMember<
     }
   }
   static func == (lhs: _UIBindingOptionalToMember, rhs: _UIBindingOptionalToMember) -> Bool {
-    lhs.base == rhs.base && lhs.keyPath == rhs.keyPath
-  }
-  func hash(into hasher: inout Hasher) {
-    hasher.combine(base)
-    hasher.combine(keyPath)
-  }
-}
-
-private final class _UIBindingOptionalEnumToCase<
-  Base: _UIBinding<Enum?>, Enum: CasePathable, Case
->: _UIBinding {
-  let base: Base
-  let keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
-  let casePath: AnyCasePath<Enum, Case>
-  init(base: Base, keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
-    self.base = base
-    self.keyPath = keyPath
-    self.casePath = Enum.allCasePaths[keyPath: keyPath]
-  }
-  var wrappedValue: Case? {
-    get {
-      base.wrappedValue.flatMap(casePath.extract(from:))
-    }
-    set {
-      guard base.wrappedValue.flatMap(casePath.extract(from:)) != nil
-      else { return }
-      base.wrappedValue = newValue.map(casePath.embed)
-    }
-  }
-  static func == (lhs: _UIBindingOptionalEnumToCase, rhs: _UIBindingOptionalEnumToCase) -> Bool {
     lhs.base == rhs.base && lhs.keyPath == rhs.keyPath
   }
   func hash(into hasher: inout Hasher) {

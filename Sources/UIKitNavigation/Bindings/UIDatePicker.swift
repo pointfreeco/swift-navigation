@@ -1,5 +1,6 @@
 #if canImport(UIKit) && !os(tvOS) && !os(watchOS)
-  import UIKit
+  public import SwiftNavigation
+  public import UIKit
 
   @available(iOS 14, *)
   @available(tvOS, unavailable)
@@ -12,6 +13,9 @@
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - date: The binding to read from for the selected date, and write to when the selected
     ///     date changes.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public convenience init(frame: CGRect = .zero, date: UIBinding<Date>) {
       self.init(frame: frame)
       bind(date: date)
@@ -22,6 +26,9 @@
     /// - Parameter date: The binding to read from for the selected date, and write to when the
     ///   selected date changes.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(date: UIBinding<Date>) -> ObserveToken {
       bind(date, to: \.date, for: .valueChanged)

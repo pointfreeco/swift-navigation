@@ -1,8 +1,15 @@
 #if canImport(UIKit) && !os(watchOS)
-  import IssueReporting
-  @_spi(Internals) import SwiftNavigation
-  import UIKit
+  @_spi(Internals) public import SwiftNavigation
+  import SwiftUI
+  public import UIKit
 
+  #if CustomDump
+    import CustomDump
+  #endif
+
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   open class NavigationStackController: UINavigationController {
     fileprivate var destinations:
       [DestinationType: (UINavigationPath.Element) -> (UIViewController, AnyHashable)?] =
@@ -62,11 +69,17 @@
 
       super.delegate = pathDelegate
 
-      if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+      #if Perception
+        if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+          traitOverrides.push = UIPushAction { [weak self] value in
+            self?._push(value: value)
+          }
+        }
+      #else
         traitOverrides.push = UIPushAction { [weak self] value in
           self?._push(value: value)
         }
-      }
+      #endif
 
       observe { [weak self] transaction in
         guard let self else { return }
@@ -101,7 +114,8 @@
           first == newPath.count
         {
           popToViewController(
-            viewControllers[first], animated: !transaction.uiKit.disablesAnimations
+            viewControllers[first],
+            animated: !transaction.uiKit.disablesAnimations
           )
         } else {
           var newPath = newPath
@@ -141,8 +155,8 @@
             {
               reportIssue(
                 """
-                No "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
-                found among the view controllers on the path.
+                No "navigationDestination(for: \(typeName(elementType))) { … }" was found among \
+                the view controllers on the path.
                 """
               )
               invalidIndices.insert(index)
@@ -207,7 +221,9 @@
         animated: Bool
       ) {
         base?.navigationController?(
-          navigationController, willShow: viewController, animated: animated
+          navigationController,
+          willShow: viewController,
+          animated: animated
         )
       }
 
@@ -218,7 +234,9 @@
       ) {
         defer {
           base?.navigationController?(
-            navigationController, didShow: viewController, animated: animated
+            navigationController,
+            didShow: viewController,
+            animated: animated
           )
         }
         let navigationController = navigationController as! NavigationStackController
@@ -243,8 +261,8 @@
               reportIssue(
                 """
                 Missing navigation destination while decoding a "UINavigationPath". No \
-                "navigationDestination(for: \(String(customDumping: elementType))) { … }" was \
-                found among the view controllers on the path.
+                "navigationDestination(for: \(typeName(elementType))) { … }" was found among the \
+                view controllers on the path.
                 """
               )
             }
@@ -298,7 +316,8 @@
         interactionControllerFor animationController: any UIViewControllerAnimatedTransitioning
       ) -> (any UIViewControllerInteractiveTransitioning)? {
         base?.navigationController?(
-          navigationController, interactionControllerFor: animationController
+          navigationController,
+          interactionControllerFor: animationController
         )
       }
 
@@ -309,21 +328,31 @@
         to toVC: UIViewController
       ) -> (any UIViewControllerAnimatedTransitioning)? {
         base?.navigationController?(
-          navigationController, animationControllerFor: operation, from: fromVC, to: toVC
+          navigationController,
+          animationControllerFor: operation,
+          from: fromVC,
+          to: toVC
         )
       }
     }
   }
 
   extension UIViewController {
-    @available(iOS, deprecated: 17, renamed: "traitCollection.push")
-    @available(macOS, deprecated: 14, renamed: "traitCollection.push")
-    @available(tvOS, deprecated: 17, renamed: "traitCollection.push")
-    @available(watchOS, deprecated: 10, renamed: "traitCollection.push")
+    #if Perception
+      @available(iOS, deprecated: 17, renamed: "traitCollection.push")
+      @available(macOS, deprecated: 14, renamed: "traitCollection.push")
+      @available(tvOS, deprecated: 17, renamed: "traitCollection.push")
+      @available(watchOS, deprecated: 10, renamed: "traitCollection.push")
+    #else
+      @available(*, unavailable, message: "Enable the 'Perception' trait to use 'push(value:)'")
+    #endif
     public func push<Element: Hashable>(value: Element) {
       _push(value: value)
     }
 
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     fileprivate func _push<Element: Hashable>(value: Element) {
       guard let navigationController = navigationController ?? self as? UINavigationController
       else {
@@ -346,6 +375,18 @@
       stackController.path.append(.lazy(.element(value)))
     }
 
+    #if Perception
+      @available(iOS, deprecated: 17, renamed: "traitCollection.push")
+      @available(macOS, deprecated: 14, renamed: "traitCollection.push")
+      @available(tvOS, deprecated: 17, renamed: "traitCollection.push")
+      @available(watchOS, deprecated: 10, renamed: "traitCollection.push")
+    #else
+      @available(
+        *,
+        unavailable,
+        message: "Enable the 'Perception' trait to use 'navigationDestination'"
+      )
+    #endif
     public func navigationDestination<D: Hashable>(
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
@@ -402,7 +443,7 @@
         }
       }
       #if DEBUG
-        _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+        skippingPerceptionChecking {
           resolvePath()
         }
       #else
@@ -416,7 +457,10 @@
       }
       set {
         objc_setAssociatedObject(
-          self, Self.navigationIDKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self,
+          Self.navigationIDKey,
+          newValue,
+          .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }
@@ -457,5 +501,13 @@
         )
       }
     }
+  }
+
+  private func typeName(_ type: Any.Type) -> String {
+    #if CustomDump
+      return String(customDumping: type)
+    #else
+      return "\(String(reflecting: type)).self"
+    #endif
   }
 #endif

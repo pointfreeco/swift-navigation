@@ -1,7 +1,5 @@
 #if Sharing
-  @_spi(References) import Sharing
-  import PerceptionCore
-  import SwiftUI
+  @_spi(References) public import Sharing
 
   extension UIBinding {
     /// Creates a binding from a shared reference.

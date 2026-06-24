@@ -1,7 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
-  import IssueReporting
-  @_spi(Internals) import SwiftNavigation
-  import UIKit
+  @_spi(Internals) public import SwiftNavigation
+  public import UIKit
   @_implementationOnly import UIKitNavigationShim
 
   extension UIViewController {
@@ -15,6 +14,9 @@
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func present(
       isPresented: UIBinding<Bool>,
@@ -37,6 +39,9 @@
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func present<Item: Identifiable>(
       item: UIBinding<Item?>,
@@ -60,6 +65,9 @@
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
     @_disfavoredOverload
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func present<Item: Identifiable>(
       item: UIBinding<Item?>,
@@ -83,6 +91,9 @@
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func present<Item, ID: Hashable>(
       item: UIBinding<Item?>,
@@ -110,6 +121,9 @@
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
     @_disfavoredOverload
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func present<Item, ID: Hashable>(
       item: UIBinding<Item?>,
@@ -117,16 +131,29 @@
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> UIViewController
     ) -> ObserveToken {
-      destination(item: item, id: id) { $item in
+      let presenter = Presenter()
+      return destination(item: item, id: id) { $item in
         content($item)
       } present: { [weak self] child, transaction in
         guard let self else { return }
-        if presentedViewController != nil {
-          self.dismiss(
-            animated: !transaction.uiKit.disablesAnimations
-          ) {
-            onDismiss?()
-            self.present(child, animated: !transaction.uiKit.disablesAnimations)
+        child._UIKitNavigation_presenter = presenter
+        if let presentedViewController {
+          let isRepresenting =
+            presentedViewController._UIKitNavigation_presenter === presenter
+          if presentedViewController.isBeingDismissed {
+            let oldViewControllerOnDismiss = presentedViewController._UIKitNavigation_onDismiss
+            presentedViewController._UIKitNavigation_onDismiss = {
+              oldViewControllerOnDismiss?()
+              if isRepresenting { onDismiss?() }
+              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            }
+          } else {
+            self.dismiss(
+              animated: !transaction.uiKit.disablesAnimations
+            ) {
+              if isRepresenting { onDismiss?() }
+              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+            }
           }
         } else {
           self.present(child, animated: !transaction.uiKit.disablesAnimations)
@@ -148,6 +175,9 @@
     ///     controller.
     ///   - content: A closure that returns the view controller to display onto the receiver's
     ///     stack.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func navigationDestination(
       isPresented: UIBinding<Bool>,
@@ -167,6 +197,9 @@
     ///     content in a view controller that you create that is displayed to the user.
     ///   - content: A closure that returns the view controller to display onto the receiver's
     ///     stack.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func navigationDestination<Item>(
       item: UIBinding<Item?>,
@@ -189,6 +222,9 @@
     ///   - content: A closure that returns the view controller to display onto the receiver's
     ///     stack.
     @_disfavoredOverload
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func navigationDestination<Item>(
       item: UIBinding<Item?>,
@@ -208,21 +244,18 @@
           return
         }
         navigationController.pushViewController(
-          child, animated: !transaction.uiKit.disablesAnimations
+          child,
+          animated: !transaction.uiKit.disablesAnimations
         )
       } dismiss: { [weak self] child, transaction in
         guard
           let navigationController = self?.navigationController ?? self as? UINavigationController
         else {
-          reportIssue(
-            """
-            Can't dismiss navigation item: "navigationController" is "nil".
-            """
-          )
           return
         }
         navigationController.popFromViewController(
-          child, animated: !transaction.uiKit.disablesAnimations
+          child,
+          animated: !transaction.uiKit.disablesAnimations
         )
       }
     }
@@ -239,6 +272,9 @@
     ///   - content: A closure that returns the view controller to display.
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func destination(
       isPresented: UIBinding<Bool>,
@@ -270,6 +306,9 @@
     ///   - content: A closure that returns the view controller to display.
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func destination<Item>(
       item: UIBinding<Item?>,
@@ -305,6 +344,9 @@
     ///   - content: A closure that returns the view controller to display.
     ///   - present: The closure to execute when presenting the view controller.
     ///   - dismiss: The closure to execute when dismissing the view controller.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func destination<Item, ID: Hashable>(
       item: UIBinding<Item?>,
@@ -330,6 +372,9 @@
       )
     }
 
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     private func destination<Item>(
       item: UIBinding<Item?>,
       id: @escaping (Item) -> AnyHashable?,
@@ -413,17 +458,34 @@
       }
       set {
         objc_setAssociatedObject(
-          self, Self.presentedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self,
+          Self.presentedKey,
+          newValue,
+          .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+      }
+    }
+
+    fileprivate var _UIKitNavigation_presenter: AnyObject? {
+      get { objc_getAssociatedObject(self, Self.presenterKey) as AnyObject? }
+      set {
+        objc_setAssociatedObject(
+          self, Self.presenterKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }
 
     private static let presentedKey = malloc(1)!
+    private static let presenterKey = malloc(1)!
   }
 
   extension UINavigationController {
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @available(
-      *, deprecated,
+      *,
+      deprecated,
       message: """
         Use 'self.navigationDestination(isPresented:)' instead of 'self.navigationController?.pushViewController(isPresented:)'.
         """
@@ -436,8 +498,12 @@
       navigationDestination(isPresented: isPresented, content: content)
     }
 
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @available(
-      *, deprecated,
+      *,
+      deprecated,
       message: """
         Use 'self.navigationDestination(item:)' instead of 'self.navigationController?.pushViewController(item:)'.
         """
@@ -450,13 +516,17 @@
       navigationDestination(item: item, content: content)
     }
 
+    @_disfavoredOverload
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @available(
-      *, deprecated,
+      *,
+      deprecated,
       message: """
         Use 'self.navigationDestination(item:)' instead of 'self.navigationController?.pushViewController(item:)'.
         """
     )
-    @_disfavoredOverload
     @discardableResult
     public func pushViewController<Item>(
       item: UIBinding<Item?>,
@@ -467,7 +537,7 @@
   }
 
   @MainActor
-  private class Presented {
+  private final class Presented {
     weak var controller: UIViewController?
     let presentationID: AnyHashable?
     deinit {
@@ -484,4 +554,7 @@
       self.presentationID = presentationID
     }
   }
+
+  @MainActor
+  private final class Presenter {}
 #endif
