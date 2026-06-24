@@ -96,6 +96,7 @@
     /// optional binding. When this binding is non-`nil`, the dialog will be presented. Further, the
     /// title can be customized from the dialog data.
     ///
+    /// ```swift
     /// struct DialogDemo: View {
     ///   @State var randomMovie: Movie?
     ///
