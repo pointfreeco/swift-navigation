@@ -11,6 +11,8 @@
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the view
     ///     controller.
+    ///   - onPresentation: The closure to execute when presentation completes. Equivalent to
+    ///     UIKit's standard presentation `completion` handler.
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
@@ -20,10 +22,11 @@
     @discardableResult
     public func present(
       isPresented: UIBinding<Bool>,
+      onPresentation: (() -> Void)? = nil,
       onDismiss: (() -> Void)? = nil,
       content: @escaping () -> UIViewController
     ) -> ObserveToken {
-      present(item: isPresented.toOptionalUnit, onDismiss: onDismiss) { _ in content() }
+      present(item: isPresented.toOptionalUnit, onPresentation: onPresentation, onDismiss: onDismiss) { _ in content() }
     }
 
     /// Presents a view controller modally using the given item as a data source for its content.
@@ -36,6 +39,8 @@
     ///     content in a view controller that you create that is displayed to the user. If `item`'s
     ///     identity changes, the view controller is dismissed and replaced with a new one using the
     ///     same process.
+    ///   - onPresentation: The closure to execute when presentation completes. Equivalent to
+    ///     UIKit's standard presentation `completion` handler.
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
@@ -45,10 +50,11 @@
     @discardableResult
     public func present<Item: Identifiable>(
       item: UIBinding<Item?>,
+      onPresentation: (() -> Void)? = nil,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (Item) -> UIViewController
     ) -> ObserveToken {
-      present(item: item, id: \.id, onDismiss: onDismiss, content: content)
+      present(item: item, id: \.id, onPresentation: onPresentation, onDismiss: onDismiss, content: content)
     }
 
     /// Presents a view controller modally using the given item as a data source for its content.
@@ -61,6 +67,8 @@
     ///     content in a view controller that you create that is displayed to the user. If `item`'s
     ///     identity changes, the view controller is dismissed and replaced with a new one using the
     ///     same process.
+    ///   - onPresentation: The closure to execute when presentation completes. Equivalent to
+    ///     UIKit's standard presentation `completion` handler.
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
@@ -71,10 +79,11 @@
     @discardableResult
     public func present<Item: Identifiable>(
       item: UIBinding<Item?>,
+      onPresentation: (() -> Void)? = nil,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> UIViewController
     ) -> ObserveToken {
-      present(item: item, id: \.id, onDismiss: onDismiss, content: content)
+      present(item: item, id: \.id, onPresentation: onPresentation, onDismiss: onDismiss, content: content)
     }
 
     /// Presents a view controller modally using the given item as a data source for its content.
@@ -88,6 +97,8 @@
     ///     identity changes, the view controller is dismissed and replaced with a new one using the
     ///     same process.
     ///   - id: The key path to the provided item's identifier.
+    ///   - onPresentation: The closure to execute when presentation completes. Equivalent to
+    ///     UIKit's standard presentation `completion` handler.
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
@@ -98,10 +109,11 @@
     public func present<Item, ID: Hashable>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
+      onPresentation: (() -> Void)? = nil,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (Item) -> UIViewController
     ) -> ObserveToken {
-      present(item: item, id: id, onDismiss: onDismiss) {
+      present(item: item, id: id, onPresentation: onPresentation, onDismiss: onDismiss) {
         content($0.wrappedValue)
       }
     }
@@ -117,6 +129,8 @@
     ///     identity changes, the view controller is dismissed and replaced with a new one using the
     ///     same process.
     ///   - id: The key path to the provided item's identifier.
+    ///   - onPresentation: The closure to execute when presentation completes. Equivalent to
+    ///     UIKit's standard presentation `completion` handler.
     ///   - onDismiss: The closure to execute when dismissing the view controller.
     ///   - content: A closure that returns the view controller to display over the current view
     ///     controller's content.
@@ -128,6 +142,7 @@
     public func present<Item, ID: Hashable>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, ID>,
+      onPresentation: (() -> Void)? = nil,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> UIViewController
     ) -> ObserveToken {
@@ -145,18 +160,30 @@
             presentedViewController._UIKitNavigation_onDismiss = {
               oldViewControllerOnDismiss?()
               if isRepresenting { onDismiss?() }
-              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+              self.present(
+                child,
+                animated: !transaction.uiKit.disablesAnimations,
+                completion: onPresentation
+              )
             }
           } else {
             self.dismiss(
               animated: !transaction.uiKit.disablesAnimations
             ) {
               if isRepresenting { onDismiss?() }
-              self.present(child, animated: !transaction.uiKit.disablesAnimations)
+              self.present(
+                child,
+                animated: !transaction.uiKit.disablesAnimations,
+                completion: onPresentation
+              )
             }
           }
         } else {
-          self.present(child, animated: !transaction.uiKit.disablesAnimations)
+          self.present(
+            child,
+            animated: !transaction.uiKit.disablesAnimations,
+            completion: onPresentation
+          )
         }
       } dismiss: { child, transaction in
         child.dismiss(animated: !transaction.uiKit.disablesAnimations) {
