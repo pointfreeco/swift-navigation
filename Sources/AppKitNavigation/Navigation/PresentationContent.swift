@@ -1,6 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
-import AppKit
+public import AppKit
 
 @MainActor
 protocol PresentationContent: NavigationContent {
@@ -21,7 +21,7 @@ extension NSViewController: PresentationContent {
     case sheet
     case modalWindow
     case popover(rect: NSRect, view: NSView, preferredEdge: NSRectEdge, behavior: NSPopover.Behavior)
-    case custom(NSViewControllerPresentationAnimator)
+    case custom(any NSViewControllerPresentationAnimator)
   }
 
   func present(_ viewControllerToPresent: NSViewController, for style: TransitionStyle) {

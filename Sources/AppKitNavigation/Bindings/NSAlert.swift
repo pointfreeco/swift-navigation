@@ -1,5 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import AppKit
+public import AppKit
 
 extension NSAlert {
     /// Creates and returns a alert for displaying an alert using a data description.
@@ -23,8 +23,14 @@ extension NSAlert {
 
 extension NSAlert {
     public func addButton<Action>(
+        _ buttonState: ButtonState<Action>
+    ) {
+        addButton(buttonState) { _ in }
+    }
+
+    public func addButton<Action>(
         _ buttonState: ButtonState<Action>,
-        action handler: @escaping (_ action: Action?) -> Void = { (_: Never?) in }
+        action handler: @escaping (_ action: Action?) -> Void
     ) {
         let button = addButton(withTitle: String(state: buttonState.label))
 

@@ -1,5 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import AppKit
+public import AppKit
 
 extension NSSlider {
     /// Creates a new slider with the specified frame and registers the binding against the value.

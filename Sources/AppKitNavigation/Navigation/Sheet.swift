@@ -1,6 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
-import AppKit
+public import AppKit
 
 private typealias SheetObserver<FromContent: SheetContent, ToContent: SheetContent> = NavigationObserver<FromContent, ToContent>
 

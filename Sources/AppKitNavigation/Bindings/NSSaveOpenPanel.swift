@@ -1,6 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
-import AppKit
+public import AppKit
 import AppKitNavigationShim
 
 extension NSSavePanel {

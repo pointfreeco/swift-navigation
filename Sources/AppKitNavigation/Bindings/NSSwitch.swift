@@ -1,5 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import AppKit
+public import AppKit
 
 extension NSSwitch {
     /// Creates a new switch with the specified frame and registers the binding against whether or

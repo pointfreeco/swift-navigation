@@ -1,6 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import AppKit
-import SwiftNavigation
+public import AppKit
+public import SwiftNavigation
 
 extension NSProgressIndicator {
   

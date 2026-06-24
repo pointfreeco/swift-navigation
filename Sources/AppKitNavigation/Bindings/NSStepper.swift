@@ -1,5 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import AppKit
+public import AppKit
 
 extension NSStepper {
     /// Creates a new stepper with the specified frame and registers the binding against the value.

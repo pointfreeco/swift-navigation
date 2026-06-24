@@ -1,5 +1,5 @@
 {
-  "originHash" : "fd561772dbb7da88879cfbd7ad587c7c0f94bd076b6d0e00f7d2d67ac20cb3a8",
+  "originHash" : "5459de6c7e9e8daaaec6ad4ddafe2158d2f46f43942a81d83636d6cdffc599af",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "19b7263bacb9751f151ec0c93ec816fe1ef67c7b",
-        "version" : "1.6.1"
+        "revision" : "1197e80bc7e4b177051b6869ef93d8ac3ad677da",
+        "version" : "1.8.0"
       }
     },
     {
@@ -92,12 +92,30 @@
       }
     },
     {
+      "identity" : "swift-macro-testing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-macro-testing",
+      "state" : {
+        "revision" : "2e494c632d510715c96a694ff25e2a8d4ac3f64b",
+        "version" : "0.6.5"
+      }
+    },
+    {
       "identity" : "swift-perception",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception",
       "state" : {
         "revision" : "21811d6230a625fa0f2e6ffa85be857075cc02c4",
         "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "swift-snapshot-testing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
+      "state" : {
+        "revision" : "ad5e3190cc63dc288f28546f9c6827efc1e9d495",
+        "version" : "1.19.2"
       }
     },
     {

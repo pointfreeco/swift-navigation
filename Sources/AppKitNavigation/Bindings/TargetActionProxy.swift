@@ -27,9 +27,9 @@ class TargetActionProxy: NSObject {
 
   private var originAction: Selector?
 
-  weak var owner: TargetActionProtocol?
+  weak var owner: (any TargetActionProtocol)?
 
-  required init(owner: TargetActionProtocol) {
+  required init(owner: any TargetActionProtocol) {
     self.owner = owner
     super.init()
     self.originTarget = owner.target

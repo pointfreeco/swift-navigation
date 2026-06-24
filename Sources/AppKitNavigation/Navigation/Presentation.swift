@@ -1,6 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import SwiftNavigation
-import AppKit
+public import SwiftNavigation
+public import AppKit
 import AppKitNavigationShim
 
 class PresentationObserver: NavigationObserver<NSViewController, NSViewController> {

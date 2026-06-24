@@ -5,9 +5,9 @@ import AppKit
 @MainActor
 protocol SheetContent: NavigationContent {
   var currentWindow: NSWindow? { get }
-  var attachedContent: SheetContent? { get }
-  func beginSheet(for content: SheetContent) async
-  func endSheet(for content: SheetContent)
+  var attachedContent: (any SheetContent)? { get }
+  func beginSheet(for content: any SheetContent) async
+  func endSheet(for content: any SheetContent)
 }
 
 extension SheetContent {

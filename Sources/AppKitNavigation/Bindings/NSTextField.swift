@@ -1,7 +1,7 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import AppKit
+public import AppKit
 import Combine
-import SwiftNavigation
+public import SwiftNavigation
 
 @MainActor
 extension NSTextField: @retroactive NSTextDelegate {}

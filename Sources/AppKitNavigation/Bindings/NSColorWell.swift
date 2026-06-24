@@ -1,5 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import AppKit
+public import AppKit
 
 extension NSColorWell {
     /// Creates a new color well with the specified frame and registers the binding against the

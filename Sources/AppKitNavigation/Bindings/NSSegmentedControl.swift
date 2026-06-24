@@ -1,6 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import IssueReporting
-import AppKit
+public import AppKit
 
 extension NSSegmentedControl {
     /// Creates a new color well with the specified frame and registers the binding against the
