@@ -558,3 +558,12 @@
   @MainActor
   private final class Presenter {}
 #endif
+
+
+extension UIViewController {
+  func foo() {
+    navigationDestination(item: .constant(Int?.none)) { int in
+      UIViewController()
+    }
+  }
+}
