@@ -44,6 +44,8 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
       primaryAction: UIAction { [weak self] _ in
         self?.model.destination = .drillDown(.random(in: 1...1_000))
       })
+    let presentedLabel = UILabel(frame: .zero)
+    presentedLabel.textAlignment = .center
     let dismissLabel = UILabel(frame: .zero)
     dismissLabel.textAlignment = .center
 
@@ -52,6 +54,7 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
       showSheetButton,
       drillDownButton,
       showSheetFromBooleanButton,
+      presentedLabel,
       dismissLabel,
     ])
     stack.axis = .vertical
@@ -89,7 +92,12 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
     present(
       item: $model.destination.alert,
       id: \.self,
+      onPresentation: {
+        presentedLabel.text = "Alert presented"
+        dismissLabel.text = ""
+      },
       onDismiss: {
+        presentedLabel.text = ""
         dismissLabel.text = "Alert dismissed"
       }
     ) { message in
@@ -104,7 +112,12 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
     present(
       item: $model.destination.sheet,
       id: \.self,
+      onPresentation: {
+        presentedLabel.text = "Sheet presented"
+        dismissLabel.text = ""
+      },
       onDismiss: {
+        presentedLabel.text = ""
         dismissLabel.text = "Sheet dismissed"
       }
     ) { count in
@@ -116,7 +129,12 @@ class ConciseEnumNavigationViewController: UIViewController, UIKitCaseStudy {
     }
     present(
       isPresented: UIBinding($model.destination.sheetWithoutPayload),
+      onPresentation: {
+        presentedLabel.text = "Sheet from boolean presented"
+        dismissLabel.text = ""
+      },
       onDismiss: {
+        presentedLabel.text = ""
         dismissLabel.text = "Sheet from boolean dismissed"
       }
     ) {
