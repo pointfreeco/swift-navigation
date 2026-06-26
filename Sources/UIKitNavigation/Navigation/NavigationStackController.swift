@@ -269,13 +269,21 @@
         return nil
       }
       viewController.navigationID = .eager(element)
-      if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+      #if Perception
+        if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
+          viewController.traitOverrides
+            .dismiss = UIDismissAction { [weak self, weak viewController] transaction in
+              guard let self, let viewController else { return }
+              popFromViewController(viewController, animated: !transaction.uiKit.disablesAnimations)
+            }
+        }
+      #else
         viewController.traitOverrides
           .dismiss = UIDismissAction { [weak self, weak viewController] transaction in
             guard let self, let viewController else { return }
             popFromViewController(viewController, animated: !transaction.uiKit.disablesAnimations)
           }
-      }
+      #endif
 
       return viewController
     }
@@ -418,6 +426,9 @@
     }
   }
 
+  #if !Perception
+    @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
   extension NavigationStackController: UINavigationBarDelegate {
     public func navigationBar(
       _ navigationBar: UINavigationBar,
@@ -482,6 +493,9 @@
       stackController.path.append(.lazy(.element(value)))
     }
 
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public func navigationDestination<D: Hashable>(
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
