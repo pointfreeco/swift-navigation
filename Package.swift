@@ -223,6 +223,7 @@ package.traits.insert(
 for target in package.targets {
   target.swiftSettings = target.swiftSettings ?? []
   target.swiftSettings?.append(contentsOf: [
+    .enableExperimentalFeature("CheckImplementationOnly"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("ImmutableWeakCaptures"),
     .enableUpcomingFeature("InferIsolatedConformances"),
