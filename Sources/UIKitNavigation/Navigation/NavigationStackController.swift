@@ -176,7 +176,9 @@
       guard
         let destinationType = navigationID.elementType,
         let destination = destinations[DestinationType(destinationType)],
-        let (viewController, element) = destination(navigationID)
+        let (viewController, element) = withUITransaction(\.stackController, self, {
+          destination(navigationID)
+        })
       else {
         return nil
       }
@@ -379,7 +381,10 @@
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
     ) {
-      guard let navigationController = navigationController ?? self as? UINavigationController
+      guard
+        let navigationController = UITransaction.current.stackController
+          ?? navigationController
+          ?? self as? UINavigationController
       else {
         reportIssue(
           """
@@ -489,6 +494,17 @@
         )
       }
     }
+  }
+
+  private extension UITransaction {
+    var stackController: NavigationStackController? {
+      get { self[NavigationStackControllerKey.self] }
+      set { self[NavigationStackControllerKey.self] = newValue }
+    }
+  }
+
+  private enum NavigationStackControllerKey: UITransactionKey {
+    static let defaultValue: NavigationStackController? = nil
   }
 
   private func typeName(_ type: Any.Type) -> String {
