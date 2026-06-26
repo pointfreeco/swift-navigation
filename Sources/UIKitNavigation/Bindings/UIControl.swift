@@ -1,5 +1,4 @@
 #if canImport(UIKit) && !os(watchOS)
-  import ConcurrencyExtras
   @_spi(Internals) public import SwiftNavigation
   public import UIKit
 
@@ -18,6 +17,9 @@
     ///   - keyPath: A key path to the control's value.
     ///   - event: The control-specific events for which the binding is updated.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind<Value>(
       _ binding: UIBinding<Value>,
@@ -39,6 +41,9 @@
     ///     control, a new value that can be used to configure the control, and a transaction, which
     ///     can be used to determine how and if the change should be animated.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind<Value>(
       _ binding: UIBinding<Value>,
@@ -55,8 +60,8 @@
       let isSetting = LockIsolated(false)
       let token = observe { [weak self] transaction in
         guard let self else { return }
-        isSetting.withValue { $0 = true }
-        defer { isSetting.withValue { $0 = false } }
+        isSetting.withLock { $0 = true }
+        defer { isSetting.withLock { $0 = false } }
         set(
           self,
           binding.wrappedValue,
@@ -66,11 +71,11 @@
         )
       }
       // NB: This key path must only be accessed on the main actor
-      @UncheckedSendable var uncheckedKeyPath = keyPath
-      let observation = observe(keyPath) { [$uncheckedKeyPath] control, _ in
-        guard isSetting.withValue({ !$0 }) else { return }
+      nonisolated(unsafe) let uncheckedKeyPath = keyPath
+      let observation = observe(keyPath) { control, _ in
+        guard isSetting.withLock({ !$0 }) else { return }
         MainActor._assumeIsolated {
-          binding.wrappedValue = control[keyPath: $uncheckedKeyPath.wrappedValue]
+          binding.wrappedValue = control[keyPath: uncheckedKeyPath]
         }
       }
       let observeToken = ObserveToken { [weak self] in

@@ -1,6 +1,5 @@
 #if Sharing
   @_spi(References) public import Sharing
-  import PerceptionCore
 
   extension UIBinding {
     /// Creates a binding from a shared reference.

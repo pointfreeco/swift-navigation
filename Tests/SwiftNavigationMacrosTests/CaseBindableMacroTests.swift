@@ -1,4 +1,4 @@
-#if canImport(MacroTesting)
+#if CasePaths && canImport(MacroTesting)
   import CasePathsMacrosSupport
   import MacroTesting
   import SnapshotTesting

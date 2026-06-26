@@ -13,6 +13,9 @@
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - selectedColor: The binding to read from for the selected color, and write to when the
     ///     selected color changes.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public convenience init(frame: CGRect = .zero, selectedColor: UIBinding<UIColor?>) {
       self.init(frame: frame)
       bind(selectedColor: selectedColor)
@@ -23,6 +26,9 @@
     /// - Parameter selectedColor: The binding to read from for the selected color, and write to
     ///   when the selected color changes.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(selectedColor: UIBinding<UIColor?>) -> ObserveToken {
       bind(selectedColor, to: \.selectedColor, for: .valueChanged)

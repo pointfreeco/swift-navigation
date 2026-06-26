@@ -13,6 +13,9 @@
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - isOn: The binding to read from for the current state, and write to when the state
     ///     changes.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public convenience init(frame: CGRect = .zero, isOn: UIBinding<Bool>) {
       self.init(frame: frame)
       bind(isOn: isOn)
@@ -23,6 +26,9 @@
     /// - Parameter isOn: The binding to read from for the current state, and write to when the
     ///   state changes.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(isOn: UIBinding<Bool>) -> ObserveToken {
       bind(isOn, to: \.isOn, for: .valueChanged) { control, isOn, transaction in

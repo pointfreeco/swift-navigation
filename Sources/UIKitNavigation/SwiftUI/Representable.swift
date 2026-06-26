@@ -1,5 +1,4 @@
 #if canImport(SwiftUI) && canImport(UIKit) && !os(watchOS)
-  import PerceptionCore
   public import SwiftUI
   public import UIKit
 
@@ -15,7 +14,7 @@
   >: UIViewControllerRepresentable {
     private let base: UIViewControllerType
     public init(_ base: () -> UIViewControllerType) {
-      self.base = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+      self.base = skippingPerceptionChecking {
         base()
       }
     }
@@ -30,7 +29,7 @@
   public struct UIViewRepresenting<UIViewType: UIView>: UIViewRepresentable {
     private let base: UIViewType
     public init(_ base: () -> UIViewType) {
-      self.base = _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
+      self.base = skippingPerceptionChecking {
         base()
       }
     }
