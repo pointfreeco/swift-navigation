@@ -70,7 +70,8 @@
 
       #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
         interactivePopGestureRecognizer?.addTarget(
-          self, action: #selector(interactivePopGestureRecognizerAction)
+          self,
+          action: #selector(interactivePopGestureRecognizerAction)
         )
       #endif
 
@@ -165,7 +166,8 @@
             path.remove(atOffsets: invalidIndices)
           }
           _setViewControllers(
-            newViewControllers, animated: !transaction.uiKit.disablesAnimations
+            newViewControllers,
+            animated: !transaction.uiKit.disablesAnimations
           )
         }
       }
@@ -184,7 +186,8 @@
 
     @discardableResult
     open override func popToViewController(
-      _ viewController: UIViewController, animated: Bool
+      _ viewController: UIViewController,
+      animated: Bool
     ) -> [UIViewController]? {
       if let index = viewControllers.firstIndex(of: viewController) {
         let poppedNavigationIDs = viewControllers[index...].dropFirst().compactMap(\.navigationID)
@@ -195,7 +198,8 @@
 
     @discardableResult
     private func _popToViewController(
-      _ viewController: UIViewController, animated: Bool
+      _ viewController: UIViewController,
+      animated: Bool
     ) -> [UIViewController]? {
       super.popToViewController(viewController, animated: animated)
     }
@@ -342,7 +346,10 @@
                 """
               )
             }
-            navigationController.path.removeSubrange(nextIndex...)
+            DispatchQueue.main.async {
+              guard nextIndex < navigationController.path.count else { return }
+              navigationController.path.removeSubrange(nextIndex...)
+            }
             return
           }
 
@@ -405,9 +412,11 @@
 
   extension NavigationStackController: UINavigationBarDelegate {
     public func navigationBar(
-      _ navigationBar: UINavigationBar, shouldPop item: UINavigationItem
+      _ navigationBar: UINavigationBar,
+      shouldPop item: UINavigationItem
     ) -> Bool {
-      if let navigationID = viewControllers
+      if let navigationID =
+        viewControllers
         .first(where: { $0.navigationItem == item })?
         .navigationID
       {
