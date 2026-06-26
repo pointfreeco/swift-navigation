@@ -186,15 +186,11 @@
     open override func popToViewController(
       _ viewController: UIViewController, animated: Bool
     ) -> [UIViewController]? {
-      let viewControllers = super.popToViewController(viewController, animated: animated)
-      if let viewControllers {
-        for viewController in viewControllers {
-          if let navigationID = viewController.navigationID {
-            path.removeAll(where: { $0 == navigationID })
-          }
-        }
+      if let index = viewControllers.firstIndex(of: viewController) {
+        let poppedNavigationIDs = viewControllers[index...].dropFirst().compactMap(\.navigationID)
+        path.removeAll(where: { poppedNavigationIDs.contains($0) })
       }
-      return viewControllers
+      return super.popToViewController(viewController, animated: animated)
     }
 
     @discardableResult
@@ -206,19 +202,20 @@
 
     @discardableResult
     open override func popViewController(animated: Bool) -> UIViewController? {
+      let poppedNavigationID = viewControllers.last?.navigationID
       let viewController = super.popViewController(animated: animated)
-      if let viewController, let navigationID = viewController.navigationID {
+      if let poppedNavigationID {
         #if os(iOS) || targetEnvironment(macCatalyst) || os(visionOS)
           switch interactivePopGestureRecognizer?.state {
           case .possible?, nil:
-            path.removeAll(where: { $0 == navigationID })
+            path.removeAll(where: { $0 == poppedNavigationID })
           case .began, .changed, .ended, .cancelled, .failed:
             fallthrough
           @unknown default:
             break
           }
         #else
-          path.removeAll(where: { $0 == navigationID })
+          path.removeAll(where: { $0 == poppedNavigationID })
         #endif
       }
       return viewController
