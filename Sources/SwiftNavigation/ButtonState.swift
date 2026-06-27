@@ -10,6 +10,9 @@ public import Foundation
 public struct ButtonState<Action>: Identifiable {
   public let id: UUID
   public let action: ButtonStateAction<Action>
+  /// A Boolean value that indicates whether supporting UI components should make this button the
+  /// preferred action.
+  public let isPreferred: Bool
   public let label: TextState
   public let role: ButtonStateRole?
 
@@ -17,10 +20,12 @@ public struct ButtonState<Action>: Identifiable {
     id: UUID,
     action: ButtonStateAction<Action>,
     label: TextState,
-    role: ButtonStateRole?
+    role: ButtonStateRole?,
+    isPreferred: Bool = false
   ) {
     self.id = id
     self.action = action
+    self.isPreferred = isPreferred
     self.label = label
     self.role = role
   }
@@ -120,7 +125,21 @@ public struct ButtonState<Action>: Identifiable {
       id: self.id,
       action: self.action.map(transform),
       label: self.label,
-      role: self.role
+      role: self.role,
+      isPreferred: self.isPreferred
+    )
+  }
+
+  /// Returns a copy of the button state that is or is not preferred.
+  ///
+  /// Supporting UI components can use a preferred button as their default action.
+  public func preferred(_ isPreferred: Bool = true) -> Self {
+    ButtonState(
+      id: self.id,
+      action: self.action,
+      label: self.label,
+      role: self.role,
+      isPreferred: isPreferred
     )
   }
 }
@@ -192,6 +211,7 @@ extension ButtonStateRole: Equatable {}
 extension ButtonState: Equatable where Action: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.action == rhs.action
+      && lhs.isPreferred == rhs.isPreferred
       && lhs.label == rhs.label
       && lhs.role == rhs.role
   }
@@ -214,6 +234,7 @@ extension ButtonStateRole: Hashable {}
 extension ButtonState: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(self.action)
+    hasher.combine(self.isPreferred)
     hasher.combine(self.label)
     hasher.combine(self.role)
   }
