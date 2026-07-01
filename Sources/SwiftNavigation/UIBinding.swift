@@ -1,5 +1,5 @@
 #if canImport(Observation)
-  import Observation
+  public import Observation
 #endif
 
 /// A property wrapper type that can read and write an observable value.
