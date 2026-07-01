@@ -148,6 +148,7 @@ let package = Package(
     .target(
       name: "SwiftUINavigation",
       dependencies: [
+        "SwiftNavigation",
         .product(
           name: "CasePaths",
           package: "swift-case-paths",
