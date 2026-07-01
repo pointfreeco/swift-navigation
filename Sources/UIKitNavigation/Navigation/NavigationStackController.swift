@@ -1,5 +1,5 @@
 #if canImport(UIKit) && !os(watchOS)
-  @_spi(Internals) public import SwiftNavigation
+  public import SwiftNavigation
   import SwiftUI
   public import UIKit
 

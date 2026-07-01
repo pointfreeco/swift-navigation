@@ -1,4 +1,4 @@
-import SwiftCompilerPlugin
+public import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 
 @main

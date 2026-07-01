@@ -3,7 +3,7 @@
   import SwiftDiagnostics
   package import SwiftSyntax
   import SwiftSyntaxBuilder
-  package import SwiftSyntaxMacros
+  public import SwiftSyntaxMacros
 
   package enum CaseBindableMacro {
     static let moduleName = "SwiftNavigation"
