@@ -375,6 +375,9 @@
       stackController.path.append(.lazy(.element(value)))
     }
 
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public func navigationDestination<D: Hashable>(
       for data: D.Type,
       destination: @escaping (D) -> UIViewController
