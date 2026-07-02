@@ -1,4 +1,4 @@
-@_spi(Internals) import SwiftNavigation
+@testable import SwiftNavigation
 import UIKitNavigation
 import XCTest
 

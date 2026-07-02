@@ -74,6 +74,14 @@ final class RuntimeWarningTests: XCTestCase {
     try await setUp(controller: vc)
   }
 
+  #if Perception
+    @available(iOS, deprecated: 17, renamed: "traitCollection.push")
+    @available(macOS, deprecated: 14, renamed: "traitCollection.push")
+    @available(tvOS, deprecated: 17, renamed: "traitCollection.push")
+    @available(watchOS, deprecated: 10, renamed: "traitCollection.push")
+  #else
+    @available(*, unavailable, message: "Enable the 'Perception' trait to use 'push(value:)'")
+  #endif
   @MainActor
   func testPush_WithoutNavigationController() async throws {
     XCTExpectFailure {
@@ -90,6 +98,14 @@ final class RuntimeWarningTests: XCTestCase {
     try await setUp(controller: vc)
   }
 
+  #if Perception
+    @available(iOS, deprecated: 17, renamed: "traitCollection.push")
+    @available(macOS, deprecated: 14, renamed: "traitCollection.push")
+    @available(tvOS, deprecated: 17, renamed: "traitCollection.push")
+    @available(watchOS, deprecated: 10, renamed: "traitCollection.push")
+  #else
+    @available(*, unavailable, message: "Enable the 'Perception' trait to use 'push(value:)'")
+  #endif
   @MainActor
   func testPush_WithoutNavigationStack() async throws {
     XCTExpectFailure {
