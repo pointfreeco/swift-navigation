@@ -1,6 +1,7 @@
-@testable import SwiftNavigation
 import UIKitNavigation
 import XCTest
+
+@testable import SwiftNavigation
 
 final class NavigationPathTests: XCTestCase {
   @MainActor
