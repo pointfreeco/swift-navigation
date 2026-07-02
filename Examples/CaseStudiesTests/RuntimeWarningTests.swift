@@ -83,7 +83,7 @@ final class RuntimeWarningTests: XCTestCase {
     }
     class VC: UIViewController {
       override func viewDidLoad() {
-        push(value: 1)
+        traitCollection.push(value: 1)
       }
     }
     let vc = VC()
@@ -99,7 +99,7 @@ final class RuntimeWarningTests: XCTestCase {
     }
     class VC: UIViewController {
       override func viewDidLoad() {
-        push(value: 1)
+        traitCollection.push(value: 1)
       }
     }
     let vc = UINavigationController(rootViewController: VC())
