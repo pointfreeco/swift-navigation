@@ -26,7 +26,9 @@
       onDismiss: (() -> Void)? = nil,
       content: @escaping () -> UIViewController
     ) -> ObserveToken {
-      present(item: isPresented.toOptionalUnit, onPresentation: onPresentation, onDismiss: onDismiss) { _ in content() }
+      present(
+        item: isPresented.toOptionalUnit, onPresentation: onPresentation, onDismiss: onDismiss
+      ) { _ in content() }
     }
 
     /// Presents a view controller modally using the given item as a data source for its content.
@@ -54,7 +56,9 @@
       onDismiss: (() -> Void)? = nil,
       content: @escaping (Item) -> UIViewController
     ) -> ObserveToken {
-      present(item: item, id: \.id, onPresentation: onPresentation, onDismiss: onDismiss, content: content)
+      present(
+        item: item, id: \.id, onPresentation: onPresentation, onDismiss: onDismiss, content: content
+      )
     }
 
     /// Presents a view controller modally using the given item as a data source for its content.
@@ -83,7 +87,9 @@
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> UIViewController
     ) -> ObserveToken {
-      present(item: item, id: \.id, onPresentation: onPresentation, onDismiss: onDismiss, content: content)
+      present(
+        item: item, id: \.id, onPresentation: onPresentation, onDismiss: onDismiss, content: content
+      )
     }
 
     /// Presents a view controller modally using the given item as a data source for its content.
