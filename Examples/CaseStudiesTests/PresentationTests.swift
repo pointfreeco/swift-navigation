@@ -540,6 +540,47 @@ final class PresentationTests: XCTestCase {
     var destination: Destination?
   }
 
+  @MainActor func testOnPresentationNotCalledForUnrelatedPresentation() async throws {
+    class A: ViewController {}
+    class B: ViewController {}
+    class VC: ViewController {
+      @UIBindable var model = Destinations()
+      var onPresentationA: (() -> Void)?
+      var onPresentationB: (() -> Void)?
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        present(isPresented: UIBinding($model.destination.presentedA)) { [weak self] in
+          self?.onPresentationA?()
+        } onDismiss: {
+        } content: {
+          A()
+        }
+        present(isPresented: UIBinding($model.destination.presentedB)) { [weak self] in
+          self?.onPresentationB?()
+        } onDismiss: {
+        } content: {
+          B()
+        }
+      }
+    }
+    let vc = VC()
+    vc.onPresentationB = { XCTFail() }
+    try await setUp(controller: vc)
+
+    await assertEventuallyNil(vc.presentedViewController)
+
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.destination = .presentedA
+    }
+    await assertEventually(vc.presentedViewController is A)
+
+    vc.onPresentationB = nil
+    withUITransaction(\.uiKit.disablesAnimations, true) {
+      vc.model.destination = .presentedB
+    }
+    await assertEventually(vc.presentedViewController is B)
+  }
+
   @MainActor func testOnDismissNotCalledForUnrelatedDismissal() async throws {
     class A: ViewController {}
     class B: ViewController {}
@@ -595,6 +636,52 @@ final class PresentationTests: XCTestCase {
   }
 
   @MainActor
+  func testRepresentWhileDismissing_StillCallsOnDismissAndOnPresentation() async throws {
+    final class Counter { var count = 0 }
+    let dismissCounter = Counter()
+    let presentationCounter = Counter()
+
+    final class VC: ViewController {
+      @UIBinding var presentedChild: Model?
+      let presentationCount: Counter
+      let dismissCount: Counter
+      init(presentationCounter: Counter, dismissCounter: Counter) {
+        self.presentationCount = presentationCounter
+        self.dismissCount = dismissCounter
+        super.init(nibName: nil, bundle: nil)
+      }
+      required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        present(item: $presentedChild) { [presentationCount] in
+          presentationCount.count += 1
+        } onDismiss: { [dismissCount] in
+          dismissCount.count += 1
+        } content: { _ in
+          ViewController()
+        }
+      }
+    }
+
+    let vc = VC(presentationCounter: presentationCounter, dismissCounter: dismissCounter)
+    try await setUp(controller: vc)
+
+    vc.presentedChild = Model()
+    await assertEventuallyNotNil(vc.presentedViewController)
+    try await Task.sleep(for: .seconds(0.5))
+
+    vc.presentedChild = Model()
+    try await Task.sleep(for: .seconds(0.05))
+    vc.presentedChild = Model()
+
+    try await Task.sleep(for: .seconds(1))
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    XCTAssertEqual(dismissCounter.count, 2)
+    XCTAssertEqual(presentationCounter.count, 2)
+  }
+
+  @MainActor
   func testRepresentWhileDismissing_StillCallsOnDismiss() async throws {
     final class DismissCounter { var count = 0 }
     let counter = DismissCounter()
@@ -632,6 +719,48 @@ final class PresentationTests: XCTestCase {
     await assertEventuallyNotNil(vc.presentedViewController)
 
     XCTAssertEqual(counter.count, 2)
+  }
+
+  @MainActor
+  func testPresentCallsMultiplePresentationClosuresInOrder() async throws {
+    enum Event: String { case content, onPresentation, onDismiss }
+    final class Events { var events: [Event] = [] }
+    let events = Events()
+
+    final class VC: ViewController {
+      @UIBinding var presentedChild: Model?
+      let events: Events
+      init(events: Events) {
+        self.events = events
+        super.init(nibName: nil, bundle: nil)
+      }
+      required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        present(item: $presentedChild) { [events] in
+          events.events.append(.onPresentation)
+        } onDismiss: { [events] in
+          events.events.append(.onDismiss)
+        } content: { [events] _ in
+          events.events.append(.content)
+          return ViewController()
+        }
+      }
+    }
+
+    let vc = VC(events: events)
+    try await setUp(controller: vc)
+
+    vc.presentedChild = Model()
+    await assertEventuallyNotNil(vc.presentedViewController)
+    try await Task.sleep(for: .seconds(0.75))
+
+    vc.presentedChild = Model()
+    try await Task.sleep(for: .seconds(0.75))
+    await assertEventuallyNotNil(vc.presentedViewController)
+
+    XCTAssertEqual(
+      events.events, [.content, .onPresentation, .content, .onDismiss, .onPresentation])
   }
 }
 
