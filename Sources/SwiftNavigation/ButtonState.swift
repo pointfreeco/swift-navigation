@@ -86,23 +86,25 @@ public struct ButtonState<Action>: Identifiable {
       await perform(action)
     #if canImport(SwiftUI)
       case .animatedSend(let action, _):
-        var output = ""
-        #if CustomDump
-          customDump(action, to: &output, indent: 4)
-        #else
-          output.append("    \(action)")
-        #endif
-        reportIssue(
-          """
-          An animated action was performed asynchronously: …
+        if let action {
+          var output = ""
+          #if CustomDump
+            customDump(action, to: &output, indent: 4)
+          #else
+            output.append("    \(String(describing: action))")
+          #endif
+          reportIssue(
+            """
+            An animated action was performed asynchronously: …
 
-            Action:
-          \((output))
+              Action:
+            \((output))
 
-          Asynchronous actions cannot be animated. Evaluate this action in a synchronous closure, \
-          or use 'SwiftUI.withAnimation' explicitly.
-          """
-        )
+            Asynchronous actions cannot be animated. Evaluate this action in a synchronous \
+            closure, or use 'SwiftUI.withAnimation' explicitly.
+            """
+          )
+        }
         await perform(action)
     #endif
     }

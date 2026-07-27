@@ -243,7 +243,6 @@
     var title: Text
     var actions: Actions?
     var message: Message?
-    @Binding private var isPresented: Bool
 
     init(
       item: Binding<Item?>,
@@ -255,7 +254,6 @@
       self.title = item.wrappedValue.map(title) ?? Text(verbatim: "")
       self.actions = Binding(unwrapping: item).map(actions)
       self.message = item.wrappedValue.map(message)
-      self._isPresented = Binding(item)
     }
 
     func body(content: Content) -> some View {
@@ -263,7 +261,7 @@
       content
         .alert(
           title,
-          isPresented: $isPresented,
+          isPresented: Binding($item),
           presenting: item,
           actions: { _ in actions },
           message: { _ in message }
@@ -271,10 +269,11 @@
         .onChange(of: id) { [oldValue = id] newValue in
           switch (oldValue, newValue) {
           case (_?, _?):
-            isPresented = false
-            Task { isPresented = item != nil }
+            let newItem = item
+            item = nil
+            Task { item = newItem }
           case (_?, nil), (nil, _?), (nil, nil):
-            isPresented = item != nil
+            break
           }
         }
     }

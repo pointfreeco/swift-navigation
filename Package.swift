@@ -149,7 +149,7 @@ let package = Package(
     .target(
       name: "SwiftUINavigation",
       dependencies: [
-        "UIKitNavigation",
+        "SwiftNavigation",
         .product(
           name: "CasePaths",
           package: "swift-case-paths",
@@ -229,6 +229,7 @@ package.traits.insert(
 for target in package.targets {
   target.swiftSettings = target.swiftSettings ?? []
   target.swiftSettings?.append(contentsOf: [
+    .enableExperimentalFeature("CheckImplementationOnly"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("ImmutableWeakCaptures"),
     .enableUpcomingFeature("InferIsolatedConformances"),

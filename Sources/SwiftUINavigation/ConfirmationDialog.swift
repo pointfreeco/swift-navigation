@@ -96,6 +96,7 @@
     /// optional binding. When this binding is non-`nil`, the dialog will be presented. Further, the
     /// title can be customized from the dialog data.
     ///
+    /// ```swift
     /// struct DialogDemo: View {
     ///   @State var randomMovie: Movie?
     ///
@@ -155,7 +156,6 @@
     var title: Text
     var actions: Actions?
     var message: Message?
-    @Binding private var isPresented: Bool
 
     init(
       item: Binding<Item?>,
@@ -169,7 +169,6 @@
       self.title = item.wrappedValue.map(title) ?? Text(verbatim: "")
       self.actions = item.wrappedValue.map(actions)
       self.message = item.wrappedValue.map(message)
-      self._isPresented = Binding(item)
     }
 
     func body(content: Content) -> some View {
@@ -177,7 +176,7 @@
       content
         .confirmationDialog(
           title,
-          isPresented: $isPresented,
+          isPresented: Binding($item),
           titleVisibility: titleVisibility,
           presenting: item,
           actions: { _ in actions },
@@ -186,10 +185,11 @@
         .onChange(of: id) { [oldValue = id] newValue in
           switch (oldValue, newValue) {
           case (_?, _?):
-            isPresented = false
-            Task { isPresented = item != nil }
+            let newItem = item
+            item = nil
+            Task { item = newItem }
           case (_?, nil), (nil, _?), (nil, nil):
-            isPresented = item != nil
+            break
           }
         }
     }

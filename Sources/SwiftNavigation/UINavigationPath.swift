@@ -4,11 +4,9 @@ import Foundation
 ///
 /// Like SwiftUI's `NavigationPath`, but for UIKit and other paradigms.
 public struct UINavigationPath: Equatable {
-  @_spi(Internals)
-  public var elements: [Element] = []
+  package var elements: [Element] = []
 
-  @_spi(Internals)
-  public enum Element: Equatable {
+  package enum Element: Equatable {
     case eager(AnyHashable)
     case lazy(Lazy)
 
@@ -111,12 +109,11 @@ public struct UINavigationPath: Equatable {
   /// the path's `CodableRepresentation` to convert the path to an external representation and to
   /// convert an external representation back into a navigation path.
   public struct CodableRepresentation: Codable, Equatable {
-    @_spi(Internals)
-    public struct Element: Hashable {
+    package struct Element: Hashable {
       let tag: String
       let item: String
 
-      public init(tag: String, item: String) {
+      package init(tag: String, item: String) {
         self.tag = tag
         self.item = item
       }

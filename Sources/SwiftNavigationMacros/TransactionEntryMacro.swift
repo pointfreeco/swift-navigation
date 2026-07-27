@@ -1,7 +1,7 @@
 import SwiftDiagnostics
 package import SwiftSyntax
 import SwiftSyntaxBuilder
-package import SwiftSyntaxMacros
+public import SwiftSyntaxMacros
 
 package enum UITransactionEntryMacro {
   static let moduleName = "SwiftNavigation"

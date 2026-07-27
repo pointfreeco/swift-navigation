@@ -1,7 +1,7 @@
-#if canImport(UIKit) && !os(watchOS)
-@_spi(Internals) import SwiftNavigation
 import UIKitNavigation
 import XCTest
+
+@testable import SwiftNavigation
 
 final class NavigationPathTests: XCTestCase {
   @MainActor

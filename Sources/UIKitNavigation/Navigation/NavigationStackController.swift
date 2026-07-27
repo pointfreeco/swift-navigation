@@ -1,5 +1,5 @@
 #if canImport(UIKit) && !os(watchOS)
-  @_spi(Internals) public import SwiftNavigation
+  public import SwiftNavigation
   import SwiftUI
   public import UIKit
 
@@ -375,17 +375,8 @@
       stackController.path.append(.lazy(.element(value)))
     }
 
-    #if Perception
-      @available(iOS, deprecated: 17, renamed: "traitCollection.push")
-      @available(macOS, deprecated: 14, renamed: "traitCollection.push")
-      @available(tvOS, deprecated: 17, renamed: "traitCollection.push")
-      @available(watchOS, deprecated: 10, renamed: "traitCollection.push")
-    #else
-      @available(
-        *,
-        unavailable,
-        message: "Enable the 'Perception' trait to use 'navigationDestination'"
-      )
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
     #endif
     public func navigationDestination<D: Hashable>(
       for data: D.Type,
