@@ -2,7 +2,7 @@
 
 @_spi(Internals) public import SwiftNavigation
 public import AppKit
-import IdentifiedCollections
+public import IdentifiedCollections
 
 @MainActor
 extension NSFontManager: @unchecked @retroactive Sendable {

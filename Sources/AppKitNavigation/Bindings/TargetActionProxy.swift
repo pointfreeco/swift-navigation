@@ -1,7 +1,7 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
-import AppKit
-import IdentifiedCollections
+public import AppKit
+public import IdentifiedCollections
 
 @MainActor
 class TargetActionProxy: NSObject {
