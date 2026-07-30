@@ -7,6 +7,10 @@
     import SwiftUI
   #endif
 
+  #if Perception
+    import Perception
+  #endif
+
   final class CaseBindableTests: XCTestCase {
     func testCasePathableConformance() {
       let status = Status.inStock(quantity: 100)
@@ -102,6 +106,74 @@
       }
     #endif
   }
+
+  #if canImport(SwiftUI) && Perception
+  @available(iOS, introduced: 16, deprecated: 17, obsoleted: 17)
+  @available(macOS, introduced: 13, deprecated: 14, obsoleted: 14)
+  @available(tvOS, introduced: 16, deprecated: 17, obsoleted: 17)
+  @available(watchOS, introduced: 9, deprecated: 10, obsoleted: 10)
+  final class PerceptionBindableCaseBindableTests: XCTestCase {
+    override func setUp() async throws {
+      guard !deploymentTargetIncludesObservation() else {
+        throw XCTSkip(
+          """
+          PerceptionTests were built against a deployment target too recent for perception checking.
+          
+          To force these tests to run on macOS, you can override the target OS version explicitly as:
+          
+            swift test -Xswiftc -target -Xswiftc arm64-apple-macosx13.0
+          """
+        )
+      }
+    }
+    
+    @MainActor
+    func testPerceptionBindableEnumerationDerivesBinding() {
+      @Perception.Bindable var ref = PerceptionRef(item: Item(name: "name", status: .inStock(quantity: 100)))
+      switch $ref.status.cases {
+      case .inStock(let quantity):
+        XCTAssertEqual(quantity.wrappedValue, 100)
+        quantity.wrappedValue = 7
+      case .outOfStock, .discontinued, .onSale:
+        XCTFail("Expected 'inStock'")
+      }
+      XCTAssertEqual(ref.status, .inStock(quantity: 7))
+    }
+    
+    @MainActor
+    func testPerceptionBindableChainsIntoCaseBindableMember() {
+      @Perception.Bindable var ref = PerceptionRef(item: Item(name: "name", status: .inStock(quantity: 100)))
+      switch $ref.item.status.cases {
+      case .inStock(let quantity):
+        quantity.wrappedValue = 3
+      case .outOfStock, .onSale, .discontinued:
+        XCTFail("Expected 'inStock'")
+      }
+      XCTAssertEqual(ref.item.status, .inStock(quantity: 3))
+    }
+  }
+  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  private func deploymentTargetIncludesObservation() -> Bool { true }
+  
+  @_disfavoredOverload
+  private func deploymentTargetIncludesObservation(_: Void = ()) -> Bool { false }
+
+  @Perceptible
+  private final class PerceptionRef {
+    var status: Status {
+      get {
+        item.status
+      }
+      set {
+        item.status = newValue
+      }
+    }
+    var item: Item
+    init(item: Item) {
+      self.item = item
+    }
+  }
+  #endif
 
   private struct Item {
     var name: String
