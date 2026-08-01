@@ -701,21 +701,27 @@ extension String {
       comment: StaticString? = nil
     ) -> String {
       let children = Array(Mirror(reflecting: self).children)
-      let key = children[0].value as! String
+      guard children.count > 2, let key = children[0].value as? String else {
+        return ""
+      }
       let arguments: [any CVarArg] = Array(Mirror(reflecting: children[2].value).children)
         .compactMap {
           let children = Array(Mirror(reflecting: $0.value).children)
+          guard !children.isEmpty else { return nil }
           let value: Any
           let formatter: Formatter?
           // `LocalizedStringKey.FormatArgument` differs depending on OS/platform.
           if children[0].label == "storage" {
-            (value, formatter) =
-              Array(Mirror(reflecting: children[0].value).children)[0].value as! (Any, Formatter?)
+            guard let storage = Array(Mirror(reflecting: children[0].value).children).first?.value
+              as? (Any, Formatter?)
+            else { return nil }
+            (value, formatter) = storage
           } else {
+            guard children.count > 1 else { return nil }
             value = children[0].value
             formatter = children[1].value as? Formatter
           }
-          return formatter?.string(for: value) ?? value as! any CVarArg
+          return formatter?.string(for: value) ?? value as? any CVarArg
         }
 
       let format = NSLocalizedString(
