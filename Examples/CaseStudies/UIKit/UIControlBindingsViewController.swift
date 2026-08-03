@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 import UIKitNavigation
 
@@ -127,3 +128,4 @@ extension String {
     rootViewController: UIControlBindingsViewController()
   )
 }
+#endif
