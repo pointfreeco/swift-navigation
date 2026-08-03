@@ -63,7 +63,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.8.0"),
-    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
+    .package(url: "https://github.com/pointfreeco/swift-issue-reporting", from: "2.0.0"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
     .package(url: "https://github.com/swiftlang/swift-syntax", "509.0.0"..<"605.0.0"),
   ],
@@ -88,7 +88,7 @@ let package = Package(
         ),
         .product(
           name: "IssueReporting",
-          package: "xctest-dynamic-overlay",
+          package: "swift-issue-reporting",
           condition: .when(traits: [
             "IssueReporting"
           ])
@@ -120,7 +120,7 @@ let package = Package(
       name: "SwiftNavigationTests",
       dependencies: [
         "SwiftNavigation",
-        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
+        .product(name: "IssueReportingTestSupport", package: "swift-issue-reporting"),
       ]
     ),
     .macro(
@@ -158,7 +158,7 @@ let package = Package(
         ),
         .product(
           name: "IssueReporting",
-          package: "xctest-dynamic-overlay",
+          package: "swift-issue-reporting",
           condition: .when(traits: [
             "IssueReporting"
           ])
@@ -169,7 +169,7 @@ let package = Package(
       name: "SwiftUINavigationTests",
       dependencies: [
         "SwiftUINavigation",
-        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
+        .product(name: "IssueReportingTestSupport", package: "swift-issue-reporting"),
       ]
     ),
     .target(
@@ -187,7 +187,7 @@ let package = Package(
       name: "UIKitNavigationTests",
       dependencies: [
         "UIKitNavigation",
-        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
+        .product(name: "IssueReportingTestSupport", package: "swift-issue-reporting"),
       ]
     ),
     .target(
