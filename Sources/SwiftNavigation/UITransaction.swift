@@ -1,5 +1,3 @@
-import OrderedCollections
-
 /// Executes a closure with the specified transaction and returns the result.
 ///
 /// - Parameters:
@@ -41,7 +39,7 @@ public func withUITransaction<R, V>(
 public struct UITransaction: Sendable {
   @TaskLocal package static var current = Self()
 
-  var storage: OrderedDictionary<Key, any Sendable> = [:]
+  var storage: [Key: any Sendable] = [:]
 
   /// Creates a transaction.
   public init() {}
@@ -77,7 +75,7 @@ public struct UITransaction: Sendable {
     Self(storage: storage.merging(other.storage, uniquingKeysWith: { $1 }))
   }
 
-  private init(storage: OrderedDictionary<Key, any Sendable>) {
+  private init(storage: [Key: any Sendable]) {
     self.storage = storage
   }
 

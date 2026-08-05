@@ -7,7 +7,7 @@ struct Item: Equatable, Identifiable {
   var name: String
   var status: Status
 
-  @CasePathable
+  @CaseBindable
   enum Status: Equatable {
     case inStock(quantity: Int)
     case outOfStock(isOnBackOrder: Bool)
@@ -36,7 +36,7 @@ struct Item: Equatable, Identifiable {
     static let white = Self(name: "White", red: 1, green: 1, blue: 1)
 
     var swiftUIColor: SwiftUI.Color {
-      SwiftUI.Color(red: self.red, green: self.green, blue: self.blue)
+      SwiftUI.Color(red: red, green: green, blue: blue)
     }
   }
 }
@@ -46,9 +46,9 @@ struct ItemView: View {
 
   var body: some View {
     Form {
-      TextField("Name", text: self.$item.name)
+      TextField("Name", text: $item.name)
 
-      Picker(selection: self.$item.color, label: Text("Color")) {
+      Picker(selection: $item.color, label: Text("Color")) {
         Text("None")
           .tag(Item.Color?.none)
 
@@ -58,42 +58,37 @@ struct ItemView: View {
         }
       }
 
-      switch self.item.status {
-      case .inStock:
-        self.$item.status.inStock.map { $quantity in
-          Section {
-            Stepper("Quantity: \(quantity)", value: $quantity)
-            Button("Mark as sold out") {
-              withAnimation {
-                self.item.status = .outOfStock(isOnBackOrder: false)
-              }
+      switch $item.status {
+      case .inStock(let $quantity):
+        Section {
+          Stepper("Quantity: \($quantity.wrappedValue)", value: $quantity)
+          Button("Mark as sold out") {
+            withAnimation {
+              item.status = .outOfStock(isOnBackOrder: false)
             }
-          } header: {
-            Text("In stock")
           }
-          .transition(.opacity)
+        } header: {
+          Text("In stock")
         }
-      case .outOfStock:
-        self.$item.status.outOfStock.map { $isOnBackOrder in
-          Section {
-            Toggle("Is on back order?", isOn: $isOnBackOrder)
-            Button("Back in stock!") {
-              withAnimation {
-                self.item.status = .inStock(quantity: 1)
-              }
+        .transition(.opacity)
+      case .outOfStock(let $isOnBackOrder):
+        Section {
+          Toggle("Is on back order?", isOn: $isOnBackOrder)
+          Button("Back in stock!") {
+            withAnimation {
+              item.status = .inStock(quantity: 1)
             }
-          } header: {
-            Text("Out of stock")
           }
-          .transition(.opacity)
+        } header: {
+          Text("Out of stock")
         }
+        .transition(.opacity)
       }
     }
   }
 }
 
 #Preview {
-  WithState(initialValue: Item(color: nil, name: "", status: .inStock(quantity: 1))) { $item in
-    ItemView(item: $item)
-  }
+  @Previewable @State var item = Item(color: nil, name: "", status: .inStock(quantity: 1))
+  ItemView(item: $item)
 }

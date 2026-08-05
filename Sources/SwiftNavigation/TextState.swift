@@ -1,8 +1,7 @@
-import CustomDump
 import Foundation
 
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 #endif
 
 /// An equatable description of SwiftUI `Text`. Useful for storing rich text in feature models
@@ -49,12 +48,12 @@ import Foundation
 ///   (interpolated `SwiftUI.Image`s, for example). ``TextState`` also uses reflection to determine
 ///   `LocalizedStringKey` equatability, so be mindful of edge cases.
 public struct TextState: Equatable, Hashable, Sendable {
-  fileprivate let storage: Storage
+  let storage: Storage
 
   #if canImport(SwiftUI)
-    fileprivate var modifiers: [Modifier] = []
+    var modifiers: [Modifier] = []
 
-    fileprivate enum Modifier: Equatable, Hashable, Sendable {
+    enum Modifier: Equatable, Hashable, Sendable {
       case accessibilityHeading(AccessibilityHeadingLevel)
       case accessibilityLabel(TextState)
       case accessibilityTextContentType(AccessibilityTextContentType)
@@ -116,7 +115,7 @@ public struct TextState: Equatable, Hashable, Sendable {
 
   // NB: LocalizedStringKey is documented as being Sendable, but its conformance appears to be
   //     unavailable.
-  fileprivate enum Storage: Equatable, Hashable, @unchecked Sendable {
+  enum Storage: Equatable, Hashable, @unchecked Sendable {
     indirect case concatenated(TextState, TextState)
     #if canImport(SwiftUI)
       case localizedStringKey(
@@ -205,7 +204,7 @@ public struct TextState: Equatable, Hashable, Sendable {
 
 // MARK: - LocalizedStringResourceBox
 
-private struct LocalizedStringResourceBox: @unchecked Sendable {
+struct LocalizedStringResourceBox: @unchecked Sendable {
   // REVISIT: Make 'Any' into 'any Sendable' when minimum deployment target is iOS 18
   let value: Any
 
@@ -227,14 +226,18 @@ private struct LocalizedStringResourceBox: @unchecked Sendable {
     return Text(resource)
   }
 
-  func asString() -> String {
+  func asString(locale: Locale? = nil) -> String {
     guard
       #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *),
-      let resource = value as? LocalizedStringResource
+      var resource = value as? LocalizedStringResource
     else {
       preconditionFailure(
         "LocalizedStringResourceBox should only be exposed where LocalizedStringResource is available."
       )
+    }
+
+    if let locale {
+      resource.locale = locale
     }
 
     return String(localized: resource)
@@ -679,7 +682,7 @@ extension String {
     #endif
 
     case .localizedStringResource(let resourceBox):
-      self = resourceBox.asString()
+      self = resourceBox.asString(locale: locale)
 
     case .verbatim(let string):
       self = string
@@ -691,7 +694,7 @@ extension String {
   extension LocalizedStringKey {
     // NB: `LocalizedStringKey` conforms to `Equatable` but returns false for equivalent format
     //     strings. To account for this we reflect on it to extract and string-format its storage.
-    fileprivate func formatted(
+    func formatted(
       locale: Locale? = nil,
       tableName: String? = nil,
       bundle: Bundle? = nil,
@@ -699,7 +702,7 @@ extension String {
     ) -> String {
       let children = Array(Mirror(reflecting: self).children)
       let key = children[0].value as! String
-      let arguments: [CVarArg] = Array(Mirror(reflecting: children[2].value).children)
+      let arguments: [any CVarArg] = Array(Mirror(reflecting: children[2].value).children)
         .compactMap {
           let children = Array(Mirror(reflecting: $0.value).children)
           let value: Any
@@ -712,7 +715,7 @@ extension String {
             value = children[0].value
             formatter = children[1].value as? Formatter
           }
-          return formatter?.string(for: value) ?? value as! CVarArg
+          return formatter?.string(for: value) ?? value as! any CVarArg
         }
 
       let format = NSLocalizedString(
@@ -726,120 +729,3 @@ extension String {
     }
   }
 #endif
-
-// MARK: - CustomDumpRepresentable
-
-extension TextState: CustomDumpRepresentable {
-  public var customDumpValue: Any {
-    func dumpHelp(_ textState: Self) -> String {
-      var output: String
-      switch textState.storage {
-      case .concatenated(let lhs, let rhs):
-        output = dumpHelp(lhs) + dumpHelp(rhs)
-      #if canImport(SwiftUI)
-        case .localizedStringKey(let key, let tableName, let bundle, let comment):
-          output = key.formatted(tableName: tableName, bundle: bundle, comment: comment)
-      #endif
-      case .localizedStringResource(let resourceBox):
-        output = resourceBox.asString()
-
-      case .verbatim(let string):
-        output = string
-      }
-      func tag(_ name: String, attribute: String? = nil, _ value: String? = nil) {
-        output = """
-          <\(name)\(attribute.map { " \($0)" } ?? "")\(value.map { "=\($0)" } ?? "")>\
-          \(output)\
-          </\(name)>
-          """
-      }
-      #if canImport(SwiftUI)
-        for modifier in textState.modifiers {
-          switch modifier {
-          case .accessibilityHeading(let headingLevel):
-            tag("accessibility-heading-level", headingLevel.rawValue)
-          case .accessibilityLabel(let value):
-            tag("accessibility-label", dumpHelp(value))
-          case .accessibilityTextContentType(let type):
-            tag("accessibility-text-content-type", type.rawValue)
-          case .baselineOffset(let baselineOffset):
-            tag("baseline-offset", "\(baselineOffset)")
-          case .bold(isActive: true), .fontWeight(.some(.bold)):
-            output = "**\(output)**"
-          case .font(.some):
-            break  // TODO: capture Font description using DSL similar to TextState and print here
-          case .fontDesign(.some(let design)):
-            func describe(design: Font.Design) -> String {
-              switch design {
-              case .default: return "default"
-              case .serif: return "serif"
-              case .rounded: return "rounded"
-              case .monospaced: return "monospaced"
-              @unknown default: return "\(design)"
-              }
-            }
-            tag("font-design", describe(design: design))
-          case .fontWeight(.some(let weight)):
-            func describe(weight: Font.Weight) -> String {
-              switch weight {
-              case .black: return "black"
-              case .bold: return "bold"
-              case .heavy: return "heavy"
-              case .light: return "light"
-              case .medium: return "medium"
-              case .regular: return "regular"
-              case .semibold: return "semibold"
-              case .thin: return "thin"
-              default: return "\(weight)"
-              }
-            }
-            tag("font-weight", describe(weight: weight))
-          case .fontWidth(.some(let width)):
-            tag("font-width", width.rawValue)
-          case .foregroundColor(.some(let color)):
-            tag("foreground-color", "\(color)")
-          case .italic(isActive: true):
-            output = "_\(output)_"
-          case .kerning(let kerning):
-            tag("kerning", "\(kerning)")
-          case .speechAdjustedPitch(let value):
-            tag("speech-adjusted-pitch", "\(value)")
-          case .speechAlwaysIncludesPunctuation(true):
-            tag("speech-always-includes-punctuation")
-          case .speechAnnouncementsQueued(true):
-            tag("speech-announcements-queued")
-          case .speechSpellsOutCharacters(true):
-            tag("speech-spells-out-characters")
-          case .strikethrough(isActive: true, pattern: _, color: .some(let color)):
-            tag("s", attribute: "color", "\(color)")
-          case .strikethrough(isActive: true, pattern: _, color: .none):
-            output = "~~\(output)~~"
-          case .tracking(let tracking):
-            tag("tracking", "\(tracking)")
-          case .underline(isActive: true, pattern: _, .some(let color)):
-            tag("u", attribute: "color", "\(color)")
-          case .underline(isActive: true, pattern: _, color: .none):
-            tag("u")
-          case .bold(isActive: false),
-            .font(.none),
-            .fontDesign(.none),
-            .fontWeight(.none),
-            .fontWidth(.none),
-            .foregroundColor(.none),
-            .italic(isActive: false),
-            .monospacedDigit,
-            .speechAlwaysIncludesPunctuation(false),
-            .speechAnnouncementsQueued(false),
-            .speechSpellsOutCharacters(false),
-            .strikethrough(isActive: false, pattern: _, color: _),
-            .underline(isActive: false, pattern: _, color: _):
-            break
-          }
-        }
-      #endif
-      return output
-    }
-
-    return dumpHelp(self)
-  }
-}

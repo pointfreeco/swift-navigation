@@ -1,6 +1,5 @@
 #if canImport(SwiftUI)
-  import IssueReporting
-  import SwiftUI
+  public import SwiftUI
 
   extension Binding {
     /// Creates a binding by projecting the base optional value to a Boolean value.

@@ -1,4 +1,6 @@
-#if canImport(SwiftUI)
-  @_exported import CasePaths
+#if canImport(SwiftUI) && !EXCLUDE_EXPORTS
+  #if CasePaths
+    @_exported import CasePaths
+  #endif
   @_exported import SwiftNavigation
-#endif  // canImport(SwiftUI)
+#endif

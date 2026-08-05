@@ -1,6 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
   import AppKit
-  import SwiftNavigation
+  public import SwiftNavigation
 
   extension UITransaction {
     /// Creates a transaction and assigns its animation property.

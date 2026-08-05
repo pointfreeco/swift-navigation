@@ -1,5 +1,6 @@
 #if canImport(UIKit) && !os(watchOS)
-  import UIKit
+  public import SwiftNavigation
+  public import UIKit
 
   @available(iOS 14, tvOS 14, *)
   extension UITextField {
@@ -10,6 +11,9 @@
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - text: The binding to read from for the current text, and write to when the text
     ///     changes.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public convenience init(frame: CGRect = .zero, text: UIBinding<String>) {
       self.init(frame: frame)
       bind(text: text)
@@ -22,6 +26,9 @@
     ///   - frame: The frame rectangle for the view, measured in points.
     ///   - attributedText: The binding to read from for the current text, and write to when the
     ///     attributed text changes.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     public convenience init(frame: CGRect = .zero, attributedText: UIBinding<NSAttributedString>) {
       self.init(frame: frame)
       bind(attributedText: attributedText)
@@ -32,6 +39,9 @@
     /// - Parameter text: The binding to read from for the current text, and write to when the text
     ///   changes.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(text: UIBinding<String>) -> ObserveToken {
       bind(UIBinding(text), to: \.text, for: .editingChanged)
@@ -42,6 +52,9 @@
     /// - Parameter attributedText: The binding to read from for the current text, and write to when
     ///   the attributed text changes.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(attributedText: UIBinding<NSAttributedString>) -> ObserveToken {
       bind(UIBinding(attributedText), to: \.attributedText, for: .editingChanged)
@@ -52,6 +65,9 @@
     /// - Parameter selection: The binding to read from for the current selection, and write to when
     ///   the selected text range changes.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(selection: UIBinding<UITextSelection?>) -> ObserveToken {
       let editingChangedAction = UIAction { [weak self] _ in
@@ -114,13 +130,15 @@
           let from = position(
             from: beginningOfDocument,
             offset: text.distance(
-              from: text.startIndex, to: min(selection.lowerBound, text.endIndex)
+              from: text.startIndex,
+              to: min(selection.lowerBound, text.endIndex)
             )
           ),
           let to = position(
             from: beginningOfDocument,
             offset: text.distance(
-              from: text.startIndex, to: min(selection.upperBound, text.endIndex)
+              from: text.startIndex,
+              to: min(selection.upperBound, text.endIndex)
             )
           )
         else { return }
@@ -191,9 +209,13 @@
     ///     value to `nil`, UIKit automatically dismisses focus.
     ///   - value: The value to match against when determining whether the binding should change.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind<Value: Hashable>(
-      focus: UIBinding<Value?>, equals value: Value
+      focus: UIBinding<Value?>,
+      equals value: Value
     ) -> ObserveToken {
       self.focusToken?.cancel()
       let editingDidBeginAction = UIAction { _ in focus.wrappedValue = value }
@@ -275,6 +297,9 @@
     ///   the binding sets the value to `false`. If a caller sets the value to `false`, UIKit
     ///   automatically dismisses focus.
     /// - Returns: A cancel token.
+    #if !Perception
+      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+    #endif
     @discardableResult
     public func bind(focus condition: UIBinding<Bool>) -> ObserveToken {
       bind(focus: condition.toOptionalUnit, equals: Bool.Unit())
@@ -284,7 +309,10 @@
       get { objc_getAssociatedObject(self, Self.focusTokenKey) as? ObserveToken }
       set {
         objc_setAssociatedObject(
-          self, Self.focusTokenKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+          self,
+          Self.focusTokenKey,
+          newValue,
+          .OBJC_ASSOCIATION_RETAIN_NONATOMIC
         )
       }
     }

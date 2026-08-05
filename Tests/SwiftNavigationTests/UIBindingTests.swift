@@ -1,6 +1,10 @@
 import SwiftNavigation
 import XCTest
 
+#if Sharing
+  import Sharing
+#endif
+
 final class UIBindingTests: XCTestCase {
   func testInitProjectedValue() {
     @UIBinding var text = ""
@@ -120,75 +124,93 @@ final class UIBindingTests: XCTestCase {
     XCTAssertEqual(nameBinding.wrappedValue, "Blob, Jr.")
   }
 
-  func testDynamicMemberLookupCase() throws {
-    struct Failure: Error, Equatable {}
+  #if CasePaths
+    func testDynamicMemberLookupCase() throws {
+      struct Failure: Error, Equatable {}
 
-    @UIBinding var result: Result<Int, Failure> = .success(0)
+      @UIBinding var result: Result<Int, Failure> = .success(0)
 
-    XCTAssertNil($result.failure)
+      XCTAssertNil($result.failure)
 
-    let countBinding = try XCTUnwrap($result.success)
-    XCTAssertEqual(result, .success(0))
-    XCTAssertEqual(countBinding.wrappedValue, 0)
+      let countBinding = try XCTUnwrap($result.success)
+      XCTAssertEqual(result, .success(0))
+      XCTAssertEqual(countBinding.wrappedValue, 0)
 
-    result = .success(42)
-    XCTAssertEqual(result, .success(42))
-    XCTAssertEqual(countBinding.wrappedValue, 42)
+      result = .success(42)
+      XCTAssertEqual(result, .success(42))
+      XCTAssertEqual(countBinding.wrappedValue, 42)
 
-    countBinding.wrappedValue += 1
-    XCTAssertEqual(result, .success(43))
-    XCTAssertEqual(countBinding.wrappedValue, 43)
+      countBinding.wrappedValue += 1
+      XCTAssertEqual(result, .success(43))
+      XCTAssertEqual(countBinding.wrappedValue, 43)
 
-    result = .failure(Failure())
-    XCTAssertEqual(result, .failure(Failure()))
-    XCTAssertEqual(countBinding.wrappedValue, 43)
+      result = .failure(Failure())
+      XCTAssertEqual(result, .failure(Failure()))
+      XCTAssertEqual(countBinding.wrappedValue, 43)
 
-    countBinding.wrappedValue += 1
-    XCTAssertEqual(result, .failure(Failure()))
-    XCTAssertEqual(countBinding.wrappedValue, 44)
+      countBinding.wrappedValue += 1
+      XCTAssertEqual(result, .failure(Failure()))
+      XCTAssertEqual(countBinding.wrappedValue, 44)
 
-    result = .success(1729)
-    XCTAssertEqual(result, .success(1729))
-    XCTAssertEqual(countBinding.wrappedValue, 1729)
-  }
+      result = .success(1729)
+      XCTAssertEqual(result, .success(1729))
+      XCTAssertEqual(countBinding.wrappedValue, 1729)
+    }
 
-  func testDynamicMemberLookupOptionalEnumCase() throws {
-    struct Failure: Error, Equatable {}
+    func testDynamicMemberLookupOptionalEnumCase() throws {
+      struct Failure: Error, Equatable {}
 
-    @UIBinding var result: Result<Int, Failure>? = .success(0)
+      @UIBinding var result: Result<Int, Failure>? = .success(0)
 
-    XCTAssertNil($result.failure.wrappedValue)
+      XCTAssertNil($result.failure.wrappedValue)
 
-    let countBinding = try XCTUnwrap($result.success)
-    XCTAssertEqual(result, .success(0))
-    XCTAssertEqual(countBinding.wrappedValue, 0)
+      let countBinding = try XCTUnwrap($result.success)
+      XCTAssertEqual(result, .success(0))
+      XCTAssertEqual(countBinding.wrappedValue, 0)
 
-    result = .success(42)
-    XCTAssertEqual(result, .success(42))
-    XCTAssertEqual(countBinding.wrappedValue, 42)
+      result = .success(42)
+      XCTAssertEqual(result, .success(42))
+      XCTAssertEqual(countBinding.wrappedValue, 42)
 
-    countBinding.wrappedValue? += 1
-    XCTAssertEqual(result, .success(43))
-    XCTAssertEqual(countBinding.wrappedValue, 43)
+      countBinding.wrappedValue? += 1
+      XCTAssertEqual(result, .success(43))
+      XCTAssertEqual(countBinding.wrappedValue, 43)
 
-    countBinding.wrappedValue = nil
-    XCTAssertNil(result)
-    XCTAssertNil(countBinding.wrappedValue)
+      countBinding.wrappedValue = nil
+      XCTAssertNil(result)
+      XCTAssertNil(countBinding.wrappedValue)
 
-    result = .failure(Failure())
-    XCTAssertEqual(result, .failure(Failure()))
-    XCTAssertNil(countBinding.wrappedValue)
+      result = .failure(Failure())
+      XCTAssertEqual(result, .failure(Failure()))
+      XCTAssertNil(countBinding.wrappedValue)
 
-    countBinding.wrappedValue? += 1
-    XCTAssertEqual(result, .failure(Failure()))
-    XCTAssertNil(countBinding.wrappedValue)
+      countBinding.wrappedValue? += 1
+      XCTAssertEqual(result, .failure(Failure()))
+      XCTAssertNil(countBinding.wrappedValue)
 
-    countBinding.wrappedValue = nil
-    XCTAssertEqual(result, .failure(Failure()))
-    XCTAssertNil(countBinding.wrappedValue)
+      countBinding.wrappedValue = nil
+      XCTAssertEqual(result, .failure(Failure()))
+      XCTAssertNil(countBinding.wrappedValue)
 
-    result = .success(1729)
-    XCTAssertEqual(result, .success(1729))
-    XCTAssertEqual(countBinding.wrappedValue, 1729)
-  }
+      result = .success(1729)
+      XCTAssertEqual(result, .success(1729))
+      XCTAssertEqual(countBinding.wrappedValue, 1729)
+    }
+  #endif
+
+  #if Sharing
+    @MainActor
+    func testSharedBinding() {
+      let count = Shared(value: 0)
+      let binding = UIBinding(count)
+
+      binding.wrappedValue += 1
+      XCTAssertEqual(binding.wrappedValue, 1)
+      XCTAssertEqual(count.wrappedValue, 1)
+
+      count.withLock { $0 += 1 }
+      XCTAssertEqual(binding.wrappedValue, 2)
+      XCTAssertEqual(binding.wrappedValue, 2)
+    }
+  #endif
 }

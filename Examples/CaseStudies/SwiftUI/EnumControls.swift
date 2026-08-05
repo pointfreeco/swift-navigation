@@ -12,11 +12,11 @@ struct EnumControls: SwiftUICaseStudy, View {
     • A Boolean for whether an item is on back order when it is _not_ in stock, which can drive a \
     toggle.
 
-    This library provides tools to chain deeper into a binding's case by applying the \
-    `@CasePathable` macro.
+    By applying the `@CaseBindable` macro to the enum you can switch over a binding's cases \
+    directly, and each case is handed a binding to its associated value.
     """
 
-  @CasePathable
+  @CaseBindable
   enum Status {
     case inStock(quantity: Int)
     case outOfStock(isOnBackOrder: Bool)
@@ -25,28 +25,24 @@ struct EnumControls: SwiftUICaseStudy, View {
   @State var status: Status = .inStock(quantity: 100)
 
   var body: some View {
-    switch status {
-    case .inStock:
-      $status.inStock.map { $quantity in
-        Section {
-          Stepper("Quantity: \(quantity)", value: $quantity)
-          Button("Out of stock") {
-            status = .outOfStock(isOnBackOrder: false)
-          }
-        } header: {
-          Text("In stock")
+    switch $status.cases {
+    case .inStock(let $quantity):
+      Section {
+        Stepper("Quantity: \($quantity.wrappedValue)", value: $quantity)
+        Button("Out of stock") {
+          status = .outOfStock(isOnBackOrder: false)
         }
+      } header: {
+        Text("In stock")
       }
-    case .outOfStock:
-      $status.outOfStock.map { $isOnBackOrder in
-        Section {
-          Toggle("Is on back order?", isOn: $isOnBackOrder)
-          Button("Back in stock!") {
-            status = .inStock(quantity: 100)
-          }
-        } header: {
-          Text("Out of stock")
+    case .outOfStock(let $isOnBackOrder):
+      Section {
+        Toggle("Is on back order?", isOn: $isOnBackOrder)
+        Button("Back in stock!") {
+          status = .inStock(quantity: 100)
         }
+      } header: {
+        Text("Out of stock")
       }
     }
   }

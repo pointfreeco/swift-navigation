@@ -1,5 +1,5 @@
 #if canImport(SwiftUI)
-  import SwiftUI
+  public import SwiftUI
 
   /// A container view that provides a binding to another view.
   ///
@@ -50,4 +50,4 @@
       self.content(self.$value)
     }
   }
-#endif  // canImport(SwiftUI)
+#endif
