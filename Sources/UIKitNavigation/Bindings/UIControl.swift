@@ -71,11 +71,12 @@
         )
       }
       // NB: This key path must only be accessed on the main actor
-      nonisolated(unsafe) let uncheckedKeyPath = keyPath
+      nonisolated(unsafe) let keyPath = keyPath
+      nonisolated(unsafe) let binding = binding
       let observation = observe(keyPath) { control, _ in
         guard isSetting.withLock({ !$0 }) else { return }
         MainActor._assumeIsolated {
-          binding.wrappedValue = control[keyPath: uncheckedKeyPath]
+          binding.wrappedValue = control[keyPath: keyPath]
         }
       }
       let observeToken = ObserveToken { [weak self] in

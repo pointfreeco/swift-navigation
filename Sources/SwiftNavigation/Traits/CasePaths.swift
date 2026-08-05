@@ -13,7 +13,7 @@
     where Value: CasePathable {
       func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
         UIBinding<Member?>(
-          location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath.unsafeSendable()),
+          location: _UIBindingEnumToOptionalCase(base: location, keyPath: keyPath),
           transaction: transaction
         )
       }
@@ -30,7 +30,7 @@
     where Value == V? {
       func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
         UIBinding<Member?>(
-          location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath.unsafeSendable()),
+          location: _UIBindingOptionalEnumToCase(base: location, keyPath: keyPath),
           transaction: transaction
         )
       }
@@ -52,10 +52,10 @@
   private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding
   where Base.Value: CasePathable {
     let base: Base
-    let keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
+    let keyPath: KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
     let casePath: AnyCasePath<Base.Value, Case>
     init(
-      base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
+      base: Base, keyPath: KeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
     ) {
       self.base = base
       self.keyPath = keyPath
@@ -84,9 +84,9 @@
     Base: _UIBinding<Enum?>, Enum: CasePathable, Case
   >: _UIBinding {
     let base: Base
-    let keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
+    let keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
     let casePath: AnyCasePath<Enum, Case>
-    init(base: Base, keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
+    init(base: Base, keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
       self.base = base
       self.keyPath = keyPath
       self.casePath = Enum.allCasePaths[keyPath: keyPath]

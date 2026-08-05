@@ -30,6 +30,7 @@
     member,
     names: named(AllCasePaths),
     named(allCasePaths),
+    named(caseName),
     named(_$Element),
     named(UIBindingEnumeration),
     named(BindingEnumeration),

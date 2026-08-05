@@ -34,7 +34,7 @@
           case onSale(price: Int, discount: Int)
           case discontinued
 
-          public struct AllCasePaths: CasePaths.CasePathReflectable, Swift.Sendable, Swift.Sequence {
+          public nonisolated struct AllCasePaths: CasePaths.CasePathReflectable, Swift.Sendable, Swift.Sequence {
             public subscript(root: Status) -> CasePaths.PartialCaseKeyPath<Status> {
               if root.is(\.inStock) {
                 return \.inStock
@@ -51,7 +51,7 @@
               return \.never
             }
             public var inStock: CasePaths.AnyCasePath<Status, Int> {
-              ._$embed(Status.inStock) {
+              CasePaths.AnyCasePath(embed: Status.inStock) {
                 guard case let .inStock(v0) = $0 else {
                   return nil
                 }
@@ -59,7 +59,7 @@
               }
             }
             public var outOfStock: CasePaths.AnyCasePath<Status, Bool> {
-              ._$embed(Status.outOfStock) {
+              CasePaths.AnyCasePath(embed: Status.outOfStock) {
                 guard case let .outOfStock(v0) = $0 else {
                   return nil
                 }
@@ -67,7 +67,7 @@
               }
             }
             public var onSale: CasePaths.AnyCasePath<Status, (price: Int, discount: Int)> {
-              ._$embed(Status.onSale) {
+              CasePaths.AnyCasePath(embed: Status.onSale) {
                 guard case let .onSale(v0, v1) = $0 else {
                   return nil
                 }
@@ -75,7 +75,7 @@
               }
             }
             public var discontinued: CasePaths.AnyCasePath<Status, Void> {
-              ._$embed({
+              CasePaths.AnyCasePath(embed: {
                   Status.discontinued
                 }) {
                 guard case .discontinued = $0 else {
@@ -94,8 +94,26 @@
             }
           }
 
-          public static var allCasePaths: AllCasePaths {
+          public nonisolated static var allCasePaths: AllCasePaths {
             AllCasePaths()
+          }
+
+          public nonisolated static func caseName(
+            for keyPath: CasePaths.PartialCaseKeyPath<Status>
+          ) -> Swift.String? {
+            if keyPath == \.inStock {
+              return "inStock"
+            }
+            if keyPath == \.outOfStock {
+              return "outOfStock"
+            }
+            if keyPath == \.onSale {
+              return "onSale"
+            }
+            if keyPath == \.discontinued {
+              return "discontinued"
+            }
+            return nil
           }
 
           public enum UIBindingEnumeration {
@@ -143,12 +161,6 @@
           }
           #endif
         }
-
-        extension Status: CasePaths.CasePathable, CasePaths.CasePathIterable {
-        }
-
-        extension Status: SwiftNavigation.CaseBindable {
-        }
         """#
       }
     }
@@ -169,7 +181,7 @@
           case inStock(quantity: Int)
           case discontinued
 
-          public struct AllCasePaths: CasePaths.CasePathReflectable, Swift.Sendable, Swift.Sequence {
+          public nonisolated struct AllCasePaths: CasePaths.CasePathReflectable, Swift.Sendable, Swift.Sequence {
             public subscript(root: Status) -> CasePaths.PartialCaseKeyPath<Status> {
               if root.is(\.inStock) {
                 return \.inStock
@@ -180,7 +192,7 @@
               return \.never
             }
             public var inStock: CasePaths.AnyCasePath<Status, Int> {
-              ._$embed(Status.inStock) {
+              CasePaths.AnyCasePath(embed: Status.inStock) {
                 guard case let .inStock(v0) = $0 else {
                   return nil
                 }
@@ -188,7 +200,7 @@
               }
             }
             public var discontinued: CasePaths.AnyCasePath<Status, Void> {
-              ._$embed({
+              CasePaths.AnyCasePath(embed: {
                   Status.discontinued
                 }) {
                 guard case .discontinued = $0 else {
@@ -205,8 +217,20 @@
             }
           }
 
-          public static var allCasePaths: AllCasePaths {
+          public nonisolated static var allCasePaths: AllCasePaths {
             AllCasePaths()
+          }
+
+          public nonisolated static func caseName(
+            for keyPath: CasePaths.PartialCaseKeyPath<Status>
+          ) -> Swift.String? {
+            if keyPath == \.inStock {
+              return "inStock"
+            }
+            if keyPath == \.discontinued {
+              return "discontinued"
+            }
+            return nil
           }
 
           public enum UIBindingEnumeration {
@@ -241,12 +265,6 @@
             }
           }
           #endif
-        }
-
-        extension Status: CasePaths.CasePathable, CasePaths.CasePathIterable {
-        }
-
-        extension Status: SwiftNavigation.CaseBindable {
         }
         """#
       }

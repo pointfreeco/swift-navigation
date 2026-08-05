@@ -17,31 +17,13 @@
       conformingTo protocols: [TypeSyntax],
       in context: some MacroExpansionContext
     ) throws -> [ExtensionDeclSyntax] {
-      guard let enumDecl = declaration.as(EnumDeclSyntax.self) else {
-        return []
-      }
-
-      var extensions = try CasePathableMacro.expansion(
+      try CasePathableMacro.expansion(
         of: node,
         attachedTo: declaration,
         providingExtensionsOf: type,
         conformingTo: protocols,
         in: context
       )
-
-      let conformsToCaseBindable =
-        enumDecl.inheritanceClause?.inheritedTypes.contains {
-          ["CaseBindable", "\(moduleName).CaseBindable"].contains($0.type.trimmedDescription)
-        } ?? false
-      if !conformsToCaseBindable {
-        let caseBindableExtension: DeclSyntax = """
-          \(declaration.attributes.availability)extension \(type.trimmed): \
-          \(raw: moduleName).CaseBindable {}
-          """
-        extensions.append(caseBindableExtension.cast(ExtensionDeclSyntax.self))
-      }
-
-      return extensions
     }
   }
 
