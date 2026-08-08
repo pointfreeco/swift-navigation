@@ -66,7 +66,7 @@ public struct UIBindable<Value> {
 
   /// Creates a bindable object from a perceptible object.
   ///
-  /// This initializer is equivalent to `init(wrappedValue:)`, but is more succinct when when
+  /// This initializer is equivalent to `init(wrappedValue:)`, but is more succinct when
   /// creating bindable objects nested within other expressions.
   @_disfavoredOverload
   #if !Perception
@@ -146,7 +146,7 @@ public struct UIBindable<Value> {
   extension UIBindable where Value: AnyObject & Observable {
     /// Creates a bindable object from an observable object.
     ///
-    /// This initializer is equivalent to `init(wrappedValue:)`, but is more succinct when when
+    /// This initializer is equivalent to `init(wrappedValue:)`, but is more succinct when
     /// creating bindable objects nested within other expressions.
     public init(
       _ wrappedValue: Value,
