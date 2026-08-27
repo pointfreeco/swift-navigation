@@ -25,11 +25,16 @@
   ///   Toggle("Is on back order?", isOn: $isOnBackOrder)
   /// }
   /// ```
-  @attached(extension, conformances: CasePathable, CasePathIterable, CaseBindable)
+  #if canImport(CasePaths2)
+    @attached(extension, conformances: CasePathable, CaseBindable)
+  #else
+    @attached(extension, conformances: CasePathable, CasePathIterable, CaseBindable)
+  #endif
   @attached(
     member,
     names: named(AllCasePaths),
     named(allCasePaths),
+    named(caseName),
     named(_$Element),
     named(UIBindingEnumeration),
     named(BindingEnumeration),
@@ -123,7 +128,7 @@
 
   extension UIBinding where Value: CasePathable {
     public func _$case<Member>(
-      _ keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+      _ keyPath: KeyPath<Value.AllCasePaths, some CasePath<Value, Member>>
     ) -> UIBinding<Member> {
       self[dynamicMember: keyPath]!
     }
@@ -209,7 +214,7 @@
 
     extension SwiftUI.Binding where Value: CasePathable {
       public func _$case<Member>(
-        _ keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+        _ keyPath: KeyPath<Value.AllCasePaths, some CasePath<Value, Member>>
       ) -> SwiftUI.Binding<Member> {
         SwiftUI.Binding<Member>(_unwrapping: self[_case: keyPath])!
       }
@@ -224,7 +229,7 @@
 
     extension CasePathable {
       fileprivate subscript<Member>(
-        _case keyPath: KeyPath<AllCasePaths, AnyCasePath<Self, Member>>
+        _case keyPath: KeyPath<AllCasePaths, some CasePath<Self, Member>>
       ) -> Member? {
         get { Self.allCasePaths[keyPath: keyPath].extract(from: self) }
         set {

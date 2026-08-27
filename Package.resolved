@@ -1,13 +1,13 @@
 {
-  "originHash" : "fdc10853c1416eddaab5f368180b2890aa34ef46ff72e4ae1e58d0d63371abe5",
+  "originHash" : "d2c9346bbc5720afbd7008e6a106d3e0e262716111a3feba70f28f415770a39a",
   "pins" : [
     {
       "identity" : "swift-case-paths",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "1197e80bc7e4b177051b6869ef93d8ac3ad677da",
-        "version" : "1.8.0"
+        "branch" : "protocol-case-paths",
+        "revision" : "7de09e716e60436f88c37a173e59e7d640d7bc6f"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-macro-testing",
       "state" : {
-        "revision" : "2e494c632d510715c96a694ff25e2a8d4ac3f64b",
-        "version" : "0.6.5"
+        "revision" : "0b6bd11ea72e07eec539f2f000efad0b363a90cc",
+        "version" : "0.7.0"
       }
     },
     {

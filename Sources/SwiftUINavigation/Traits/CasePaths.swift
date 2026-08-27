@@ -11,7 +11,7 @@
     /// - Parameter keyPath: A case key path to a specific associated value.
     /// - Returns: A new binding.
     public subscript<Member>(
-      dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+      dynamicMember keyPath: KeyPath<Value.AllCasePaths, some CasePath<Value, Member>>
     ) -> Binding<Member>?
     where Value: CasePathable {
       Binding<Member>(unwrapping: self[keyPath])
@@ -24,7 +24,7 @@
     /// - Parameter keyPath: A case key path to a specific associated value.
     /// - Returns: A new binding.
     public subscript<Enum: CasePathable, Member>(
-      dynamicMember keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Member>>
+      dynamicMember keyPath: KeyPath<Enum.AllCasePaths, some CasePath<Enum, Member>>
     ) -> Binding<Member?>
     where Value == Enum? {
       self[keyPath]
@@ -39,7 +39,7 @@
     /// - Parameter keyPath: A case key path to a specific associated value.
     /// - Returns: A new binding.
     public subscript<Enum: CasePathable>(
-      dynamicMember keyPath: KeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Void>>
+      dynamicMember keyPath: KeyPath<Enum.AllCasePaths, some CasePath<Enum, Void>>
     ) -> Binding<Bool>
     where Value == Enum? {
       Binding<Bool>(self[keyPath])
@@ -48,7 +48,7 @@
 
   extension CasePathable {
     fileprivate subscript<Member>(
-      keyPath: KeyPath<Self.AllCasePaths, AnyCasePath<Self, Member>>
+      keyPath: KeyPath<AllCasePaths, some CasePath<Self, Member>>
     ) -> Member? {
       get {
         Self.allCasePaths[keyPath: keyPath].extract(from: self)
@@ -62,7 +62,7 @@
 
   extension Optional where Wrapped: CasePathable {
     fileprivate subscript<Member>(
-      keyPath: KeyPath<Wrapped.AllCasePaths, AnyCasePath<Wrapped, Member>>
+      keyPath: KeyPath<Wrapped.AllCasePaths, some CasePath<Wrapped, Member>>
     ) -> Member? {
       get {
         self.flatMap(Wrapped.allCasePaths[keyPath: keyPath].extract(from:))

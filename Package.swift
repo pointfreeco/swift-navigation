@@ -58,9 +58,19 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.8.0"),
+    // .package(
+    //   url: "https://github.com/pointfreeco/swift-case-paths",
+    //   "1.10.0"..<(ProcessInfo.processInfo.environment["SWIFT_NAVIGATION_CASE_PATHS_1"] == nil
+    //     ? "3.0.0" : "2.0.0")
+    // ),
+    .package(
+      url: "https://github.com/pointfreeco/swift-case-paths",
+      branch: ProcessInfo.processInfo.environment["SWIFT_NAVIGATION_CASE_PATHS_1"] == nil
+        ? "protocol-case-paths"
+        : "case-path-protocol-2"
+    ),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
-    .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
+    .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.7.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.8.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
@@ -142,6 +152,11 @@ let package = Package(
       name: "SwiftNavigationMacrosTests",
       dependencies: [
         "SwiftNavigationMacros",
+        .product(
+          name: "CasePaths",
+          package: "swift-case-paths",
+          condition: .when(traits: ["CasePaths"])
+        ),
         .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]
     ),

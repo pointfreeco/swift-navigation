@@ -8,7 +8,7 @@
     /// - Returns: A new binding.
     @_disfavoredOverload
     public subscript<Member>(
-      dynamicMember keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+      dynamicMember keyPath: KeyPath<Value.AllCasePaths, some CasePath<Value, Member>>
     ) -> UIBinding<Member>?
     where Value: CasePathable {
       func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
@@ -25,7 +25,7 @@
     /// - Parameter keyPath: A case key path to a specific associated value.
     /// - Returns: A new binding.
     public subscript<V: CasePathable, Member>(
-      dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Member>>
+      dynamicMember keyPath: KeyPath<V.AllCasePaths, some CasePath<V, Member>>
     ) -> UIBinding<Member?>
     where Value == V? {
       func open(_ location: some _UIBinding<Value>) -> UIBinding<Member?> {
@@ -42,26 +42,24 @@
     /// - Parameter keyPath: A case key path to a case with no associated value.
     /// - Returns: A new binding.
     public subscript<V: CasePathable>(
-      dynamicMember keyPath: KeyPath<V.AllCasePaths, AnyCasePath<V, Void>>
+      dynamicMember keyPath: KeyPath<V.AllCasePaths, some CasePath<V, Void>>
     ) -> UIBinding<Bool>
     where Value == V? {
       UIBinding<Bool>(self[dynamicMember: keyPath])
     }
   }
 
-  private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Case>: _UIBinding
-  where Base.Value: CasePathable {
+  private final class _UIBindingEnumToOptionalCase<Base: _UIBinding, Path: CasePath>: _UIBinding
+  where Base.Value: CasePathable, Path.Root == Base.Value {
     let base: Base
-    let keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
-    let casePath: AnyCasePath<Base.Value, Case>
-    init(
-      base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, AnyCasePath<Base.Value, Case>>
-    ) {
+    let keyPath: _SendableKeyPath<Base.Value.AllCasePaths, Path>
+    nonisolated(unsafe) let casePath: Path
+    init(base: Base, keyPath: _SendableKeyPath<Base.Value.AllCasePaths, Path>) {
       self.base = base
       self.keyPath = keyPath
       self.casePath = Base.Value.allCasePaths[keyPath: keyPath]
     }
-    var wrappedValue: Case? {
+    var wrappedValue: Path.Value? {
       get {
         casePath.extract(from: base.wrappedValue)
       }
@@ -81,17 +79,17 @@
   }
 
   private final class _UIBindingOptionalEnumToCase<
-    Base: _UIBinding<Enum?>, Enum: CasePathable, Case
-  >: _UIBinding {
+    Base: _UIBinding<Path.Root?>, Path: CasePath
+  >: _UIBinding where Path.Root: CasePathable {
     let base: Base
-    let keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>
-    let casePath: AnyCasePath<Enum, Case>
-    init(base: Base, keyPath: _SendableKeyPath<Enum.AllCasePaths, AnyCasePath<Enum, Case>>) {
+    let keyPath: _SendableKeyPath<Path.Root.AllCasePaths, Path>
+    nonisolated(unsafe) let casePath: Path
+    init(base: Base, keyPath: _SendableKeyPath<Path.Root.AllCasePaths, Path>) {
       self.base = base
       self.keyPath = keyPath
-      self.casePath = Enum.allCasePaths[keyPath: keyPath]
+      self.casePath = Path.Root.allCasePaths[keyPath: keyPath]
     }
-    var wrappedValue: Case? {
+    var wrappedValue: Path.Value? {
       get {
         base.wrappedValue.flatMap(casePath.extract(from:))
       }
