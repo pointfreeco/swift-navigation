@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 
 import CompilerPluginSupport
 import PackageDescription
@@ -177,7 +177,8 @@ let package = Package(
       dependencies: [
         "SwiftNavigation",
         "UIKitNavigationShim",
-      ]
+      ],
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-ObjC"])]
     ),
     .target(
       name: "UIKitNavigationShim"
@@ -222,6 +223,7 @@ package.traits.insert(
 for target in package.targets {
   target.swiftSettings = target.swiftSettings ?? []
   target.swiftSettings?.append(contentsOf: [
+    .enableExperimentalFeature("CheckImplementationOnly"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("ImmutableWeakCaptures"),
     .enableUpcomingFeature("InferIsolatedConformances"),
