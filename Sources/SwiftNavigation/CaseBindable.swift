@@ -25,11 +25,7 @@
   ///   Toggle("Is on back order?", isOn: $isOnBackOrder)
   /// }
   /// ```
-  #if canImport(CasePaths2)
-    @attached(extension, conformances: CasePathable, CaseBindable)
-  #else
-    @attached(extension, conformances: CasePathable, CasePathIterable, CaseBindable)
-  #endif
+  @attached(extension, conformances: CasePathable, CasePathIterable, CaseBindable)
   @attached(
     member,
     names: named(AllCasePaths),
