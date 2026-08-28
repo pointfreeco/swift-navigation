@@ -25,19 +25,35 @@
   ///   Toggle("Is on back order?", isOn: $isOnBackOrder)
   /// }
   /// ```
-  @attached(extension, conformances: CasePathable, CasePathIterable, CaseBindable)
-  @attached(
-    member,
-    names: named(AllCasePaths),
-    named(allCasePaths),
-    named(caseName),
-    named(_$Element),
-    named(UIBindingEnumeration),
-    named(BindingEnumeration),
-    named(_$caseBinding)
-  )
-  public macro CaseBindable() =
-    #externalMacro(module: "SwiftNavigationMacros", type: "CaseBindableMacro")
+  #if canImport(CasePaths2)
+    @attached(extension, conformances: CasePathable, CaseBindable)
+    @attached(
+      member,
+      names: named(AllCasePaths),
+      named(allCasePaths),
+      named(caseName),
+      named(_$Element),
+      named(UIBindingEnumeration),
+      named(BindingEnumeration),
+      named(_$caseBinding)
+    )
+    public macro CaseBindable() =
+      #externalMacro(module: "SwiftNavigationMacros", type: "CaseBindableMacro")
+  #else
+    @attached(extension, conformances: CasePathable, CasePathIterable, CaseBindable)
+    @attached(
+      member,
+      names: named(AllCasePaths),
+      named(allCasePaths),
+      named(caseName),
+      named(_$Element),
+      named(UIBindingEnumeration),
+      named(BindingEnumeration),
+      named(_$caseBinding)
+    )
+    public macro CaseBindable() =
+      #externalMacro(module: "SwiftNavigationMacros", type: "CaseBindableMacro")
+  #endif
 
   /// A type whose binding can be switched over exhaustively.
   ///

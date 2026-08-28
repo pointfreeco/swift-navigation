@@ -58,8 +58,7 @@ let package = Package(
     ),
   ],
   dependencies: [
-    // .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.10.0"),
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", branch: "macro-spec"),
+    .package(url: "https://github.com/pointfreeco/swift-case-paths", branch: "protocol-case-paths"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-issue-reporting", from: "2.1.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
@@ -144,6 +143,11 @@ let package = Package(
       name: "SwiftNavigationMacrosTests",
       dependencies: [
         "SwiftNavigationMacros",
+        .product(
+          name: "CasePaths",
+          package: "swift-case-paths",
+          condition: .when(traits: ["CasePaths"])
+        ),
         .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]
     ),

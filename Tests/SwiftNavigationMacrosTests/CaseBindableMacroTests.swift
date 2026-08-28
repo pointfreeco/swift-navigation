@@ -1,4 +1,5 @@
-#if CasePaths && canImport(MacroTesting)
+// NB: These snapshots pin the CasePaths 1.x expansion.
+#if CasePaths && canImport(MacroTesting) && !canImport(CasePaths2)
   import CasePathsMacrosSupport
   import MacroTesting
   import SnapshotTesting
