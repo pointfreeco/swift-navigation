@@ -33,6 +33,11 @@
         enumDecl.inheritanceClause?.inheritedTypes.contains {
           ["CaseBindable", "\(moduleName).CaseBindable"].contains($0.type.trimmedDescription)
         } ?? false
+        || extensions.contains {
+          $0.inheritanceClause?.inheritedTypes.contains {
+            $0.type.trimmedDescription.hasSuffix("CaseBindable")
+          } ?? false
+        }
       if !conformsToCaseBindable {
         let caseBindableExtension: DeclSyntax = """
           \(declaration.attributes.availability)extension \(type.trimmed): \

@@ -3,13 +3,21 @@
   import MacroTesting
   import SnapshotTesting
   import SwiftNavigationMacros
+  import SwiftSyntaxBuilder
+  import SwiftSyntaxMacroExpansion
   import Testing
 
   @Suite(
     .macros(
       [
-        CaseBindableMacro.self,
-        CasePathableMacro.self,
+        "CaseBindable": MacroSpec(
+          type: CaseBindableMacro.self,
+          conformances: ["CasePathable", "CasePathIterable", "CaseBindable"]
+        ),
+        "CasePathable": MacroSpec(
+          type: CasePathableMacro.self,
+          conformances: ["CasePathable", "CasePathIterable"]
+        ),
       ],
       record: .failed
     )
@@ -144,10 +152,7 @@
           #endif
         }
 
-        extension Status: CasePaths.CasePathable, CasePaths.CasePathIterable {
-        }
-
-        extension Status: SwiftNavigation.CaseBindable {
+        extension Status: CasePathable, CasePathIterable, CaseBindable {
         }
         """#
       }
@@ -243,7 +248,7 @@
           #endif
         }
 
-        extension Status: CasePaths.CasePathable, CasePaths.CasePathIterable {
+        extension Status: CasePathable, CasePathIterable {
         }
 
         extension Status: SwiftNavigation.CaseBindable {
