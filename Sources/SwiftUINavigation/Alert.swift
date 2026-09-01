@@ -60,9 +60,9 @@
     ///     state.
     public func alert<Item, A: View, M: View>(
       item: Binding<Item?>,
-      title: (Item) -> Text,
-      @ViewBuilder actions: (Item) -> A,
-      @ViewBuilder message: (Item) -> M
+      title: @escaping (Item) -> Text,
+      @ViewBuilder actions: @escaping (Item) -> A,
+      @ViewBuilder message: @escaping (Item) -> M
     ) -> some View {
       modifier(
         AlertModifier(
@@ -90,9 +90,9 @@
     @_disfavoredOverload
     public func alert<Item, A: View, M: View>(
       item: Binding<Item?>,
-      title: (Item) -> Text,
-      @ViewBuilder actions: (Binding<Item>) -> A,
-      @ViewBuilder message: (Item) -> M
+      title: @escaping (Item) -> Text,
+      @ViewBuilder actions: @escaping (Binding<Item>) -> A,
+      @ViewBuilder message: @escaping (Item) -> M
     ) -> some View {
       modifier(
         AlertModifier(
@@ -156,8 +156,8 @@
     ///   - actions: A view builder returning the alert's actions given the current alert state.
     public func alert<Item, A: View>(
       item: Binding<Item?>,
-      title: (Item) -> Text,
-      @ViewBuilder actions: (Item) -> A
+      title: @escaping (Item) -> Text,
+      @ViewBuilder actions: @escaping (Item) -> A
     ) -> some View {
       modifier(
         AlertModifier(
@@ -223,8 +223,8 @@
     @_disfavoredOverload
     public func alert<Item, A: View>(
       item: Binding<Item?>,
-      title: (Item) -> Text,
-      @ViewBuilder actions: (Binding<Item>) -> A
+      title: @escaping (Item) -> Text,
+      @ViewBuilder actions: @escaping (Binding<Item>) -> A
     ) -> some View {
       modifier(
         AlertModifier(
@@ -240,31 +240,35 @@
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   private struct AlertModifier<Item, Actions: View, Message: View>: ViewModifier {
     @Binding var item: Item?
-    var title: Text
-    var actions: Actions?
-    var message: Message?
+    let title: (Item) -> Text
+    let actions: (Binding<Item>) -> Actions
+    let message: (Item) -> Message
 
     init(
       item: Binding<Item?>,
-      title: (Item) -> Text,
-      @ViewBuilder actions: (Binding<Item>) -> Actions,
-      @ViewBuilder message: (Item) -> Message
+      title: @escaping (Item) -> Text,
+      @ViewBuilder actions: @escaping (Binding<Item>) -> Actions,
+      @ViewBuilder message: @escaping (Item) -> Message
     ) {
       self._item = item
-      self.title = item.wrappedValue.map(title) ?? Text(verbatim: "")
-      self.actions = Binding(unwrapping: item).map(actions)
-      self.message = item.wrappedValue.map(message)
+      self.title = title
+      self.actions = actions
+      self.message = message
     }
 
     func body(content: Content) -> some View {
       let id = (item as? any Identifiable)?.id as? AnyHashable
       content
         .alert(
-          title,
+          item.map(title) ?? Text(""),
           isPresented: Binding($item),
           presenting: item,
-          actions: { _ in actions },
-          message: { _ in message }
+          actions: { _ in
+            if let binding = Binding($item) {
+              actions(binding)
+            }
+          },
+          message: { message($0) }
         )
         .onChange(of: id) { [oldValue = id] newValue in
           switch (oldValue, newValue) {
