@@ -30,6 +30,7 @@
     member,
     names: named(AllCasePaths),
     named(allCasePaths),
+    named(caseName),
     named(_$Element),
     named(UIBindingEnumeration),
     named(BindingEnumeration),
@@ -123,7 +124,7 @@
 
   extension UIBinding where Value: CasePathable {
     public func _$case<Member>(
-      _ keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+      _ keyPath: KeyPath<Value.AllCasePaths, some CasePath<Value, Member>>
     ) -> UIBinding<Member> {
       self[dynamicMember: keyPath]!
     }
@@ -203,13 +204,45 @@
       }
     }
 
+    #if Perception
+      @available(iOS, introduced: 13, obsoleted: 17)
+      @available(macOS, introduced: 10.15, obsoleted: 14)
+      @available(tvOS, introduced: 13, obsoleted: 17)
+      @available(watchOS, introduced: 6, obsoleted: 10)
+      @available(visionOS, unavailable)
+      extension Perception.Bindable {
+        /// Derives an enumeration of bindings that can be switched over exhaustively _via_ dynamic
+        /// member lookup.
+        ///
+        /// You don't call this subscript directly. Instead, Swift calls it for you when you access a
+        /// property from the underlying `Value` directly on this bindable object:
+        ///
+        /// ```swift
+        /// @Perception.Bindable var item: Item
+        /// // ...
+        /// switch $item.status {
+        /// case .inStock(let $quantity):
+        ///   Stepper("Quantity: \($quantity.wrappedValue)", value: $quantity)
+        /// case .outOfStock(let $isOnBackOrder):
+        ///   Toggle("Is on back order?", isOn: $isOnBackOrder)
+        /// }
+        /// ```
+        public subscript<Member: CaseBindable>(
+          dynamicMember keyPath: ReferenceWritableKeyPath<Value, Member>
+        ) -> Member.BindingEnumeration where Value: AnyObject {
+          let binding: SwiftUI.Binding<Member> = self[dynamicMember: keyPath]
+          return binding.cases
+        }
+      }
+    #endif
+
     extension SwiftUI.Binding {
       public var _$wrappedValue: Value { wrappedValue }
     }
 
     extension SwiftUI.Binding where Value: CasePathable {
       public func _$case<Member>(
-        _ keyPath: KeyPath<Value.AllCasePaths, AnyCasePath<Value, Member>>
+        _ keyPath: KeyPath<Value.AllCasePaths, some CasePath<Value, Member>>
       ) -> SwiftUI.Binding<Member> {
         SwiftUI.Binding<Member>(_unwrapping: self[_case: keyPath])!
       }
@@ -224,7 +257,7 @@
 
     extension CasePathable {
       fileprivate subscript<Member>(
-        _case keyPath: KeyPath<AllCasePaths, AnyCasePath<Self, Member>>
+        _case keyPath: KeyPath<AllCasePaths, some CasePath<Self, Member>>
       ) -> Member? {
         get { Self.allCasePaths[keyPath: keyPath].extract(from: self) }
         set {

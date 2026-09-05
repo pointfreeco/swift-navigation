@@ -58,13 +58,13 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.8.0"),
+    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.10.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
     .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
-    .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.8.0"),
-    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
+    .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.10.1"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.13.0"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
     .package(url: "https://github.com/swiftlang/swift-syntax", "509.0.0"..<"605.0.0"),
   ],
@@ -200,6 +200,13 @@ let package = Package(
     ),
     .target(
       name: "AppKitNavigationShim"
+    ),
+    .testTarget(
+      name: "AppKitNavigationTests",
+      dependencies: [
+        "AppKitNavigation",
+        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
+      ]
     ),
   ],
   swiftLanguageModes: [.v6]

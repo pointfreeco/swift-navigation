@@ -1,8 +1,13 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import CompilerPluginSupport
-import Foundation
 import PackageDescription
+
+#if canImport(FoundationEssentials)
+  import FoundationEssentials
+#else
+  import Foundation
+#endif
 
 let package = Package(
   name: "swift-navigation",
@@ -30,6 +35,28 @@ let package = Package(
       targets: ["AppKitNavigation"]
     ),
   ],
+  traits: [
+    .trait(
+      name: "CasePaths",
+      description: "Drive enum navigation and form data with CasePaths"
+    ),
+    .trait(
+      name: "CustomDump",
+      description: "Pretty-print and diff SwiftNavigation's data types using CustomDump"
+    ),
+    .trait(
+      name: "IssueReporting",
+      description: "Surface logical issues as unobtrusive runtime warnings"
+    ),
+    .trait(
+      name: "Perception",
+      description: "Back-port Swift Observation to older platforms"
+    ),
+    .trait(
+      name: "Sharing",
+      description: "Derive bindings from '@Shared' state"
+    ),
+  ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.10.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
@@ -46,11 +73,48 @@ let package = Package(
       name: "SwiftNavigation",
       dependencies: [
         "SwiftNavigationMacros",
-        .product(name: "CasePaths", package: "swift-case-paths"),
-        .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-        .product(name: "Perception", package: "swift-perception"),
-        .product(name: "PerceptionCore", package: "swift-perception"),
+        .product(
+          name: "CasePaths",
+          package: "swift-case-paths",
+          condition: .when(traits: [
+            "CasePaths"
+          ])
+        ),
+        .product(
+          name: "CustomDump",
+          package: "swift-custom-dump",
+          condition: .when(traits: [
+            "CustomDump"
+          ])
+        ),
+        .product(
+          name: "IssueReporting",
+          package: "xctest-dynamic-overlay",
+          condition: .when(traits: [
+            "IssueReporting"
+          ])
+        ),
+        .product(
+          name: "Perception",
+          package: "swift-perception",
+          condition: .when(traits: [
+            "Perception"
+          ])
+        ),
+        .product(
+          name: "PerceptionCore",
+          package: "swift-perception",
+          condition: .when(traits: [
+            "Perception"
+          ])
+        ),
+        .product(
+          name: "Sharing",
+          package: "swift-sharing",
+          condition: .when(traits: [
+            "Sharing"
+          ])
+        ),
       ]
     ),
     .testTarget(
@@ -63,7 +127,11 @@ let package = Package(
     .macro(
       name: "SwiftNavigationMacros",
       dependencies: [
-        .product(name: "CasePathsMacrosSupport", package: "swift-case-paths"),
+        .product(
+          name: "CasePathsMacrosSupport",
+          package: "swift-case-paths",
+          condition: .when(traits: ["CasePaths"])
+        ),
         .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
         .product(name: "SwiftDiagnostics", package: "swift-syntax"),
         .product(name: "SwiftSyntax", package: "swift-syntax"),
@@ -75,7 +143,6 @@ let package = Package(
       name: "SwiftNavigationMacrosTests",
       dependencies: [
         "SwiftNavigationMacros",
-        .product(name: "CasePathsMacrosSupport", package: "swift-case-paths"),
         .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]
     ),
@@ -83,8 +150,20 @@ let package = Package(
       name: "SwiftUINavigation",
       dependencies: [
         "SwiftNavigation",
-        .product(name: "CasePaths", package: "swift-case-paths"),
-        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
+        .product(
+          name: "CasePaths",
+          package: "swift-case-paths",
+          condition: .when(traits: [
+            "CasePaths"
+          ])
+        ),
+        .product(
+          name: "IssueReporting",
+          package: "xctest-dynamic-overlay",
+          condition: .when(traits: [
+            "IssueReporting"
+          ])
+        ),
       ]
     ),
     .testTarget(
@@ -99,8 +178,8 @@ let package = Package(
       dependencies: [
         "SwiftNavigation",
         "UIKitNavigationShim",
-        .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-      ]
+      ],
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-ObjC"])]
     ),
     .target(
       name: "UIKitNavigationShim"
@@ -134,13 +213,30 @@ let package = Package(
   swiftLanguageModes: [.v6]
 )
 
+let enableAllTraits =
+  ProcessInfo.processInfo.environment["ENABLE_ALL_TRAITS"] != nil
+  // NB: https://github.com/SwiftPackageIndex/SwiftPackageIndex-Server/issues/2336
+  || ProcessInfo.processInfo.environment["SPI_GENERATE_DOCS"] != nil
+
+package.traits.insert(
+  .default(
+    enabledTraits: Set(
+      enableAllTraits
+        ? package.traits.map(\.name)
+        : [
+          "CasePaths",
+          "CustomDump",
+          "IssueReporting",
+          "Perception",
+        ]
+    )
+  )
+)
+
 for target in package.targets {
   target.swiftSettings = target.swiftSettings ?? []
   target.swiftSettings?.append(contentsOf: [
-    .define("CasePaths"),
-    .define("CustomDump"),
-    .define("IssueReporting"),
-    .define("Perception"),
+    .enableExperimentalFeature("CheckImplementationOnly"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("ImmutableWeakCaptures"),
     .enableUpcomingFeature("InferIsolatedConformances"),
