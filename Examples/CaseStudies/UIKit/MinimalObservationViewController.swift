@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import ConcurrencyExtras
 import UIKit
 import UIKitNavigation
@@ -76,3 +77,4 @@ class MinimalObservationViewController: UIViewController, UIKitCaseStudy {
     rootViewController: MinimalObservationViewController()
   )
 }
+#endif

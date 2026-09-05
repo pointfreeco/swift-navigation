@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import UIKit
 import UIKitNavigation
@@ -258,3 +259,4 @@ private class BoolFeatureViewController: UIViewController {
 #Preview {
   ErasedNavigationStackController(model: ErasedNavigationStackController.Model())
 }
+#endif

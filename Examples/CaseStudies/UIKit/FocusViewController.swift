@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import UIKit
 import UIKitNavigation
@@ -130,3 +131,4 @@ class FocusViewController: UIViewController, UIKitCaseStudy {
 #Preview {
   FocusViewController()
 }
+#endif

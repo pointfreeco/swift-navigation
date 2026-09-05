@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import SwiftUINavigation
 
@@ -38,3 +39,4 @@ struct UIKitCaseStudiesView: View {
     UIKitCaseStudiesView()
   }
 }
+#endif

@@ -1,3 +1,4 @@
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import UIKit
 import UIKitNavigation
@@ -89,3 +90,4 @@ class AnimationsViewController: UIViewController, UIKitCaseStudy {
 #Preview {
   AnimationsViewController()
 }
+#endif

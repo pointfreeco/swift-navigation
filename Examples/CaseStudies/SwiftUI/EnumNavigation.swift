@@ -70,7 +70,7 @@ struct EnumNavigation: SwiftUICaseStudy {
         .navigationTitle("Sheet with payload")
         .presentationDetents([.medium])
       }
-
+#if canImport(UIKit) && !os(watchOS)
       Button("Cover is presented: \(destination.is(\.fullScreenCover) ? "✅" : "❌")") {
         destination = .fullScreenCover(.random(in: 1...1_000))
       }
@@ -92,7 +92,7 @@ struct EnumNavigation: SwiftUICaseStudy {
           }
         }
       }
-
+        #endif
       Button("Popover is presented: \(destination.is(\.popover) ? "✅" : "❌")") {
         destination = .popover(.random(in: 1...1_000))
       }
