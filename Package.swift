@@ -202,6 +202,13 @@ let package = Package(
         .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
       ]
     ),
+    .testTarget(
+      name: "AppKitNavigationTests",
+      dependencies: [
+        "AppKitNavigation",
+        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
+      ]
+    ),
   ],
   swiftLanguageModes: [.v6]
 )
