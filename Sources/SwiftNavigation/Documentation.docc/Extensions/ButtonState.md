@@ -6,6 +6,7 @@
 
 - ``init(role:action:label:)-65t48``
 - ``init(role:action:label:)-8tmop``
+- ``preferred(_:)``
 - ``ButtonStateRole``
 - ``ButtonStateAction``
 
@@ -17,6 +18,7 @@
 
 - ``id``
 - ``role-swift.property``
+- ``isPreferred``
 - ``action``
 - ``label``
 
