@@ -7,6 +7,19 @@
 
   struct ButtonStateTests {
     @Test
+    func testAccessibilityIdentifier() {
+      let button = ButtonState(action: 1) {
+        TextState("OK")
+      }
+      let identified = button.accessibilityIdentifier("ok")
+
+      #expect(button.accessibilityIdentifier == nil)
+      #expect(identified.accessibilityIdentifier == "ok")
+      #expect(identified.map { $0.map(String.init) }.accessibilityIdentifier == "ok")
+      #expect(button != identified)
+    }
+
+    @Test
     func testAsyncAnimationWarning() async {
       let button = ButtonState(action: .send((), animation: .easeInOut)) {
         TextState("Animate!")

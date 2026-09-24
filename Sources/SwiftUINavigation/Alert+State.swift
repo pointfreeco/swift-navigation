@@ -44,6 +44,7 @@
       } actions: {
         ForEach($0.buttons) {
           Button($0, action: handler)
+            .accessibilityIdentifier(ifPresent: $0.accessibilityIdentifier)
         }
       } message: {
         $0.message.map(Text.init)
@@ -74,6 +75,7 @@
       } actions: {
         ForEach($0.buttons) {
           Button($0, action: handler)
+            .accessibilityIdentifier(ifPresent: $0.accessibilityIdentifier)
         }
       } message: {
         $0.message.map(Text.init)
