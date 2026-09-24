@@ -8,6 +8,7 @@
 - ``init(role:action:label:)-8tmop``
 - ``ButtonStateRole``
 - ``ButtonStateAction``
+- ``accessibilityIdentifier(_:)``
 
 ### Composing buttons
 
@@ -19,6 +20,7 @@
 - ``role-swift.property``
 - ``action``
 - ``label``
+- ``accessibilityIdentifier-swift.property``
 
 ### Performing actions
 

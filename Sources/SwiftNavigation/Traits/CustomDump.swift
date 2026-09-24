@@ -32,6 +32,9 @@
       }
       children.append(("action", self.action))
       children.append(("label", self.label))
+      if let accessibilityIdentifier = self.accessibilityIdentifier {
+        children.append(("accessibilityIdentifier", accessibilityIdentifier))
+      }
       return Mirror(
         self,
         children: children,

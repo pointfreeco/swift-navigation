@@ -12,17 +12,20 @@ public struct ButtonState<Action>: Identifiable {
   public let action: ButtonStateAction<Action>
   public let label: TextState
   public let role: ButtonStateRole?
+  public let accessibilityIdentifier: String?
 
   init(
     id: UUID,
     action: ButtonStateAction<Action>,
     label: TextState,
-    role: ButtonStateRole?
+    role: ButtonStateRole?,
+    accessibilityIdentifier: String? = nil
   ) {
     self.id = id
     self.action = action
     self.label = label
     self.role = role
+    self.accessibilityIdentifier = accessibilityIdentifier
   }
 
   /// Creates button state.
@@ -53,6 +56,23 @@ public struct ButtonState<Action>: Identifiable {
     label: () -> TextState
   ) {
     self.init(id: UUID(), action: .send(action), label: label(), role: role)
+  }
+
+  /// Sets the identifier UI tests use to find this button.
+  ///
+  /// Applied when the button is rendered in a SwiftUI alert or confirmation dialog. `UIAlertAction`
+  /// has no accessibility identifier, so it is not applied by `UIAlertController`.
+  ///
+  /// - Parameter identifier: The accessibility identifier to apply.
+  /// - Returns: Button state with the given accessibility identifier.
+  public func accessibilityIdentifier(_ identifier: String) -> Self {
+    Self(
+      id: self.id,
+      action: self.action,
+      label: self.label,
+      role: self.role,
+      accessibilityIdentifier: identifier
+    )
   }
 
   /// Handle the button's action in a closure.
@@ -120,7 +140,8 @@ public struct ButtonState<Action>: Identifiable {
       id: self.id,
       action: self.action.map(transform),
       label: self.label,
-      role: self.role
+      role: self.role,
+      accessibilityIdentifier: self.accessibilityIdentifier
     )
   }
 }
@@ -194,6 +215,7 @@ extension ButtonState: Equatable where Action: Equatable {
     lhs.action == rhs.action
       && lhs.label == rhs.label
       && lhs.role == rhs.role
+      && lhs.accessibilityIdentifier == rhs.accessibilityIdentifier
   }
 }
 
@@ -216,6 +238,7 @@ extension ButtonState: Hashable where Action: Hashable {
     hasher.combine(self.action)
     hasher.combine(self.label)
     hasher.combine(self.role)
+    hasher.combine(self.accessibilityIdentifier)
   }
 }
 
