@@ -148,7 +148,7 @@
 
     /// Modifies this text field by binding its focus state to the given state value.
     ///
-    /// Use this modifier to cause the text field to receive focus whenever the the `binding` equals
+    /// Use this modifier to cause the text field to receive focus whenever the `binding` equals
     /// the `value`. Typically, you create an enumeration of fields that may receive focus, bind an
     /// instance of this enumeration, and assign its cases to focusable text fields.
     ///
@@ -249,7 +249,7 @@
 
     /// Binds this text field's focus state to the given Boolean state value.
     ///
-    /// Use this method to cause the text field to receive focus whenever the the `condition` value
+    /// Use this method to cause the text field to receive focus whenever the `condition` value
     /// is `true`. You can use this method to observe the focus state of a text field, or
     /// programmatically set and remove focus from the text field.
     ///
