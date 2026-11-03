@@ -89,7 +89,11 @@ class TargetActionProxy: NSObject {
   @objc func invokeAction(_ sender: Any?) {
     // NB: When registered as an additional target the original pair is still installed on the
     //     control, so AppKit delivers to it directly and forwarding here would double up.
-    if !registersAsAdditionalTarget, let originTarget, let originAction {
+    //
+    //     A 'nil' original target is forwarded as 'nil': it means "up the responder chain", which
+    //     is where 'sendAction(_:to:from:)' routes it. Menu items, and controls wired to the
+    //     first responder, rely on that.
+    if !registersAsAdditionalTarget, let originAction {
       NSApplication.shared.sendAction(originAction, to: originTarget, from: sender)
     }
     bindingActions.forEach { $0.invoke(sender) }

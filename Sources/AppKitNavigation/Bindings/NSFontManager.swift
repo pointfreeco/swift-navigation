@@ -211,7 +211,10 @@ private class FontManagerProxy: NSObject {
   }
 
   @objc func invokeAction(_ sender: Any?) {
-    if let originTarget, let originAction {
+    // NB: The font manager's target is 'nil' unless an app changes it: 'changeFont:' travels up
+    //     the responder chain to whichever text view is first responder. Forward a 'nil' target
+    //     as 'nil', which 'sendAction(_:to:from:)' routes there.
+    if let originAction {
       NSApplication.shared.sendAction(originAction, to: originTarget, from: sender)
     }
     bindingActions.forEach { $0.invoke(sender) }
