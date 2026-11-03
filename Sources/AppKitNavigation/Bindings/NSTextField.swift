@@ -210,10 +210,29 @@ extension NSTextField {
         focus: UIBinding<Value?>, equals value: Value
     ) -> ObserveToken {
         focusToken?.cancel()
-        let editingDidBeginAction = NotificationCenter.default.publisher(for: NSTextField.textDidBeginEditingNotification, object: self).sink { _ in
-            focus.wrappedValue = value
-        }
+        // NB: Gaining focus has no notification of its own. The begin-editing notification only
+        //     arrives with the first change to the text, not when the field is clicked into or
+        //     tabbed to. What does arrive at that moment is a selection change from the field
+        //     editor, once it has been set up for this field: the field editor being first
+        //     responder, with this field as its delegate, is what it means for the field to have
+        //     focus. One field editor serves every field in a window, hence both checks.
+        let focusGainedAction = NotificationCenter.default
+            .publisher(for: NSTextView.didChangeSelectionNotification)
+            .sink { [weak self] notification in
+                MainActor._assumeIsolated {
+                    guard
+                        let self,
+                        let fieldEditor = notification.object as? NSTextView,
+                        fieldEditor.delegate === self,
+                        fieldEditor.window?.firstResponder === fieldEditor,
+                        focus.wrappedValue != value
+                    else { return }
+                    focus.wrappedValue = value
+                }
+            }
 
+        // NB: Unlike its begin counterpart, this is posted whenever focus leaves the field, edited
+        //     or not.
         let editingDidEndAction = NotificationCenter.default.publisher(for: NSTextField.textDidEndEditingNotification, object: self).sink { _ in
             guard focus.wrappedValue == value else { return }
             focus.wrappedValue = nil
@@ -223,7 +242,9 @@ extension NSTextField {
             guard let self else { return }
             switch (focus.wrappedValue, currentEditor() != nil) {
             case (value, false):
-                becomeFirstResponder()
+                // NB: The window hands out first-responder status; 'becomeFirstResponder()' only
+                //     asks whether the field accepts it and is not meant to be called directly.
+                window?.makeFirstResponder(self)
             case (nil, true):
                 window?.makeFirstResponder(nil)
             default:
@@ -231,7 +252,7 @@ extension NSTextField {
             }
         }
         let outerToken = ObserveToken {
-            editingDidBeginAction.cancel()
+            focusGainedAction.cancel()
             editingDidEndAction.cancel()
             innerToken.cancel()
         }
