@@ -150,7 +150,7 @@ extension NSFontManager {
     }
     let observationToken = ObserveToken { [weak self] in
       MainActor._assumeIsolated {
-        self?.actionProxy?.removeAction(for: actionID)
+        self?.actionProxy?.removeBindingAction(for: actionID)
       }
       token.cancel()
       observation.invalidate()
