@@ -32,14 +32,26 @@ class NavigationObserver<Owner: AnyObject, Content: NavigationContent>: NSObject
       guard let self else { return }
       if let unwrappedItem = UIBinding(item) {
         if let navigated = navigatedByID[key] {
-          guard let navigationID = navigated.id,
-                navigationID != id(unwrappedItem.wrappedValue)
-          else {
-            return
+          if navigated.hasEnded {
+            // NB: The content was closed from its own UI, and the binding was set again before
+            //     this re-ran, so the 'nil' in between was never observed. Finish the old
+            //     navigation before starting the new one instead of mistaking it for live.
+            if let content = navigated.content {
+              end(content, transaction)
+            }
+            navigatedByID[key] = nil
+          } else {
+            guard let navigationID = navigated.id,
+                  navigationID != id(unwrappedItem.wrappedValue)
+            else {
+              return
+            }
           }
         }
         let content = content(unwrappedItem)
-        let onEndNavigation = { [navigationID = id(unwrappedItem.wrappedValue)] in
+        let navigated = Navigated(content, id: id(unwrappedItem.wrappedValue))
+        let onEndNavigation = { [weak navigated, navigationID = id(unwrappedItem.wrappedValue)] in
+          navigated?.hasEnded = true
           if let wrappedValue = item.wrappedValue,
              navigationID == id(wrappedValue) {
             item.wrappedValue = nil
@@ -47,7 +59,7 @@ class NavigationObserver<Owner: AnyObject, Content: NavigationContent>: NSObject
         }
         content.onEndNavigation = onEndNavigation
 
-        self.navigatedByID[key] = Navigated(content, id: id(unwrappedItem.wrappedValue))
+        self.navigatedByID[key] = navigated
         let work = {
           withUITransaction(transaction) {
             begin(content, transaction)
@@ -72,6 +84,9 @@ class NavigationObserver<Owner: AnyObject, Content: NavigationContent>: NSObject
 class Navigated<Content: NavigationContent> {
   weak var content: Content?
   let id: AnyHashable?
+  /// Whether the content has already ended on its own, closed from its own UI rather than through
+  /// the binding.
+  var hasEnded = false
   func clearup() {}
   deinit {
     MainActor._assumeIsolated {

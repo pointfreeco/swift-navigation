@@ -80,7 +80,11 @@ extension NSViewController {
       }
     } dismiss: { [weak self] child, transaction in
       guard let self else { return }
-      self.dismiss(child)
+      // NB: When the user closed the child, AppKit has already dismissed it by the time the
+      //     binding is reset and this runs.
+      if self.presentedViewControllers?.contains(child) == true {
+        self.dismiss(child)
+      }
       onDismiss?()
     }
   }
@@ -113,13 +117,12 @@ extension NSViewController {
       _ transaction: UITransaction
     ) -> Void
   ) -> ObserveToken {
-    let presentationObserver: PresentationObserver = presentationObserver()
-    return presentationObserver.observe(
+    observePresentation(
       item: item,
       id: { _ in nil },
       content: content,
-      begin: present,
-      end: dismiss
+      present: present,
+      dismiss: dismiss
     )
   }
 
@@ -137,8 +140,35 @@ extension NSViewController {
       _ transaction: UITransaction
     ) -> Void
   ) -> ObserveToken {
-    let presentationObserver: PresentationObserver = presentationObserver()
-    return presentationObserver.observe(item: item, id: { $0[keyPath: id] }, content: content, begin: present, end: dismiss)
+    observePresentation(
+      item: item,
+      id: { $0[keyPath: id] },
+      content: content,
+      present: present,
+      dismiss: dismiss
+    )
+  }
+
+  private func observePresentation<Item>(
+    item: UIBinding<Item?>,
+    id: @escaping (Item) -> AnyHashable?,
+    content: @escaping (UIBinding<Item>) -> NSViewController,
+    present: @escaping (_ child: NSViewController, _ transaction: UITransaction) -> Void,
+    dismiss: @escaping (_ child: NSViewController, _ transaction: UITransaction) -> Void
+  ) -> ObserveToken {
+    presentationObserver().observe(
+      item: item,
+      id: id,
+      content: content,
+      begin: { child, transaction in
+        // NB: The user closes a presented controller without going through the binding — a
+        //     Cancel button wired to 'dismissController:', a transient popover closing — so the
+        //     shim reports the dismissal, and this resets the binding from there.
+        child._AppKitNavigation_onDismiss = child.onEndNavigation
+        present(child, transaction)
+      },
+      end: dismiss
+    )
   }
 
   private static var presentationObserverKey = malloc(1)!
@@ -150,17 +180,6 @@ extension NSViewController {
       let observer = PresentationObserver(owner: self)
       objc_setAssociatedObject(self, Self.presentationObserverKey, observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
       return observer
-    }
-  }
-}
-
-extension NavigationContent where Self: NSViewController {
-  var _onEndNavigation: (() -> Void)? {
-    set {
-      _AppKitNavigation_onDismiss = newValue
-    }
-    get {
-      _AppKitNavigation_onDismiss
     }
   }
 }

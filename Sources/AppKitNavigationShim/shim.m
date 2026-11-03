@@ -41,8 +41,32 @@
 @end
 
 static void *hasViewAppearedKey = &hasViewAppearedKey;
+static void *isBeingDismissedKey = &isBeingDismissedKey;
 static void *onDismissKey = &onDismissKey;
 static void *onViewAppearKey = &onViewAppearKey;
+
+@interface NSViewController (AppKitNavigationDismissal)
+
+// NB: Set from 'dismissViewController:' on the controller being dismissed and consumed by its
+//     next 'viewDidDisappear'. Prefixed like everything else this file adds to AppKit's classes, so
+//     it cannot collide with a method AppKit adds later.
+@property (setter=set_AppKitNavigation_isBeingDismissed:) BOOL _AppKitNavigation_isBeingDismissed;
+
+@end
+
+@implementation NSViewController (AppKitNavigationDismissal)
+
+- (BOOL)_AppKitNavigation_isBeingDismissed {
+    return [objc_getAssociatedObject(self, isBeingDismissedKey) boolValue];
+}
+
+- (void)set_AppKitNavigation_isBeingDismissed:(BOOL)isBeingDismissed {
+    objc_setAssociatedObject(
+        self, isBeingDismissedKey, @(isBeingDismissed), OBJC_ASSOCIATION_COPY_NONATOMIC
+        );
+}
+
+@end
 
 @implementation NSViewController (AppKitNavigation)
 
@@ -62,27 +86,32 @@ static void *onViewAppearKey = &onViewAppearKey;
     self._AppKitNavigation_onViewAppear = @[];
 }
 
-- (void)setBeingDismissed:(BOOL)beingDismissed {
-    objc_setAssociatedObject(self, @selector(isBeingDismissed), @(beingDismissed), OBJC_ASSOCIATION_COPY);
-}
-
-- (BOOL)isBeingDismissed {
-    return [objc_getAssociatedObject(self, @selector(isBeingDismissed)) boolValue];
-}
-
 - (void)AppKitNavigation_viewDidDisappear {
     [self AppKitNavigation_viewDidDisappear];
 
-    if ((self.isBeingDismissed) && self._AppKitNavigation_onDismiss != NULL) {
-        self._AppKitNavigation_onDismiss();
-        self._AppKitNavigation_onDismiss = nil;
-        [self setBeingDismissed:NO];
+    if (!self._AppKitNavigation_isBeingDismissed) {
+        return;
+    }
+    self._AppKitNavigation_isBeingDismissed = NO;
+
+    void (^onDismiss)(void) = self._AppKitNavigation_onDismiss;
+    self._AppKitNavigation_onDismiss = nil;
+    if (onDismiss != NULL) {
+        onDismiss();
     }
 }
 
-- (void)AppKitNavigation_dismissViewController:(NSViewController *)sender {
-    [self AppKitNavigation_dismissViewController:sender];
-    [self setBeingDismissed:YES];
+- (void)AppKitNavigation_dismissViewController:(NSViewController *)viewController {
+    // NB: The argument is the controller being dismissed; the receiver is its presenter (or the
+    //     controller itself, when it dismisses itself). The flag belongs on the argument, and it
+    //     has to be set before handing over, because a dismissal without animation reaches
+    //     'viewDidDisappear' before the original implementation returns. Only a controller that is
+    //     actually presented is marked, so a stray call cannot leave a flag behind for some later,
+    //     unrelated disappearance to act on.
+    if (viewController.presentingViewController != nil) {
+        viewController._AppKitNavigation_isBeingDismissed = YES;
+    }
+    [self AppKitNavigation_dismissViewController:viewController];
 }
 
 - (BOOL)_AppKitNavigation_hasViewAppeared {
