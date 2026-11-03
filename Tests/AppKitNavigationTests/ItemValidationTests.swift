@@ -10,22 +10,25 @@
   /// Going through `NSMenu.update()` instead is not deterministic in a test process: within one
   /// turn of the event loop AppKit reuses earlier validation results for the same action, so
   /// the outcome depended on which test ran first.
-  @MainActor
-  @Suite struct ItemValidationTests {
-    private final class Validator: NSObject, NSMenuItemValidation, NSToolbarItemValidation {
-      let isValid: Bool
+  /// Implements the validation methods without declaring `NSMenuItemValidation` or
+  /// `NSToolbarItemValidation`, as AppKit has long allowed, so the tests also cover a receiver
+  /// that only implements them informally.
+  private final class Validator: NSObject {
+    let isValid: Bool
 
-      init(isValid: Bool) {
-        self.isValid = isValid
-      }
-
-      @objc func performItemAction(_ sender: Any?) {}
-
-      func validateMenuItem(_ menuItem: NSMenuItem) -> Bool { isValid }
-
-      func validateToolbarItem(_ item: NSToolbarItem) -> Bool { isValid }
+    init(isValid: Bool) {
+      self.isValid = isValid
     }
 
+    @objc func performItemAction(_ sender: Any?) {}
+
+    @objc func validateMenuItem(_ menuItem: NSMenuItem) -> Bool { isValid }
+
+    @objc func validateToolbarItem(_ item: NSToolbarItem) -> Bool { isValid }
+  }
+
+  @MainActor
+  @Suite struct ItemValidationTests {
     @Test("a menu item's target still answers as its original target would", arguments: [false, true])
     func menuItemFollowsItsOriginalTarget(isValid: Bool) throws {
       let validator = Validator(isValid: isValid)

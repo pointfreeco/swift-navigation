@@ -1,17 +1,19 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-  import AppKit
+  // NB: Imported publicly because Swift 6.2 rejects the 'NSApplicationDelegate' conformance below
+  //     as public otherwise, even on a private class. Later compilers accept either import.
+  public import AppKit
   import AppKitNavigation
   import Testing
 
+  /// Stands in for the text view the font panel normally edits. The font manager only sends its
+  /// action while some responder implements `changeFont:`, and the responder chain ends at the
+  /// application's delegate, so installing one there works without any window.
+  private final class ChangeFontResponder: NSObject, NSApplicationDelegate {
+    @objc func changeFont(_ sender: NSFontManager?) {}
+  }
+
   @MainActor
   @Suite struct FontManagerBindingTests {
-    /// Stands in for the text view the font panel normally edits. The font manager only sends its
-    /// action while some responder implements `changeFont:`, and the responder chain ends at the
-    /// application's delegate, so installing one there works without any window.
-    private final class ChangeFontResponder: NSObject, NSApplicationDelegate {
-      @objc func changeFont(_ sender: NSFontManager?) {}
-    }
-
     /// The font panel's trait buttons and menu items go through `addFontTrait(_:)`, which records
     /// the change and sends the font manager's action; `convert(_:)` then applies it to a font.
     @Test("a change from the font panel is applied to the bound font")

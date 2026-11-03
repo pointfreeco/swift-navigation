@@ -5,7 +5,7 @@
 
   @MainActor
   @Suite struct ControlActionDeliveryTests {
-    enum ControlKind: String, CaseIterable, Sendable, CustomTestStringConvertible {
+    enum ControlKind: String, CaseIterable, Sendable {
       case pushButton
       case checkbox
       case radioButton
@@ -13,8 +13,6 @@
       case stepper
       case segmentedControl
       case slider
-
-      var testDescription: String { rawValue }
 
       func makeControl() -> NSControl {
         switch self {

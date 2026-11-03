@@ -1,5 +1,7 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-  import AppKit
+  // NB: Imported publicly because Swift 6.2 rejects the 'NSApplicationDelegate' conformance below
+  //     as public otherwise, even on a private class. Later compilers accept either import.
+  public import AppKit
   import AppKitNavigation
   import Testing
 
@@ -8,21 +10,21 @@
   ///
   /// The chain ends at the application's delegate, so a recipient installed there receives the
   /// action without any window on screen.
-  @MainActor
-  @Suite struct ResponderChainForwardingTests {
-    private final class ApplicationDelegateRecipient: NSObject, NSApplicationDelegate {
-      var recordedActionCount = 0
-      var changeFontCount = 0
+  private final class ApplicationDelegateRecipient: NSObject, NSApplicationDelegate {
+    var recordedActionCount = 0
+    var changeFontCount = 0
 
-      @objc func recordAction(_ sender: Any?) {
-        recordedActionCount += 1
-      }
-
-      @objc func changeFont(_ sender: NSFontManager?) {
-        changeFontCount += 1
-      }
+    @objc func recordAction(_ sender: Any?) {
+      recordedActionCount += 1
     }
 
+    @objc func changeFont(_ sender: NSFontManager?) {
+      changeFontCount += 1
+    }
+  }
+
+  @MainActor
+  @Suite struct ResponderChainForwardingTests {
     private func withApplicationDelegate(
       _ recipient: ApplicationDelegateRecipient, _ body: () -> Void
     ) {
