@@ -31,11 +31,10 @@ class TargetActionProxy: NSObject {
   /// Whether this proxy registered itself as an *additional* target rather than taking over the
   /// control's single `target` / `action` pair.
   ///
-  /// AppKit has stored several target-action pairs per control since macOS 11, but the events that
-  /// stand for "the control's action fired" — `valueChanged` and `primaryActionTriggered` — are
-  /// only delivered from macOS 27 on. Below that, only tracking events are sent, which is not the
-  /// same thing (a keyboard-driven button never tracks), so the proxy still has to take the pair
-  /// over.
+  /// AppKit has stored several target-action pairs per control since macOS 11, but the event that
+  /// stands for "the control's action fired" — `primaryActionTriggered` — is only delivered from
+  /// macOS 27 on. Below that, only tracking events are sent, which is not the same thing (a
+  /// keyboard-driven button never tracks), so the proxy still has to take the pair over.
   private let registersAsAdditionalTarget: Bool
 
   weak var owner: (any TargetActionProtocol)?
@@ -50,20 +49,21 @@ class TargetActionProxy: NSObject {
     super.init()
 
     if #available(macOS 27, *), registersAsAdditionalTarget, let control = owner as? NSControl {
-      // NB: A text field's per-keystroke changes arrive through the notification below on every
-      //     OS version, so 'valueChanged' is deliberately left out for text fields — registering
-      //     both would deliver each edit twice.
+      // NB: Only 'primaryActionTriggered' stands for "the control sent its action". Measured on
+      //     macOS 27.2, every 'sendAction(_:to:)' delivers it exactly once, for every control type
+      //     — buttons, switches, steppers, segmented controls, sliders, text fields, date pickers,
+      //     color wells and path controls alike — which is what target-action delivered before.
+      //     'valueChanged' is no substitute and must not be added alongside it: a click delivers
+      //     it on top of 'primaryActionTriggered' (registering both ran every closure twice), a
+      //     stepper click delivers it twice, and 'sendAction(_:to:)' does not deliver it at all.
+      //
+      //     A text field's per-keystroke changes arrive through the notification below on every
+      //     OS version, so text fields need nothing more.
       //
       //     The event set is spelled as a literal on purpose: the option set is named
       //     'NSControlEvents' when it comes from the shim and 'NSControl.Events' when it comes
       //     from the macOS 27 SDK, and inference makes both spellings compile.
-      if control is NSTextField {
-        control.addTarget(self, action: #selector(invokeAction(_:)), for: [.primaryActionTriggered])
-      } else {
-        control.addTarget(
-          self, action: #selector(invokeAction(_:)), for: [.primaryActionTriggered, .valueChanged]
-        )
-      }
+      control.addTarget(self, action: #selector(invokeAction(_:)), for: [.primaryActionTriggered])
     } else {
       self.originTarget = owner.target
       self.originAction = owner.action
