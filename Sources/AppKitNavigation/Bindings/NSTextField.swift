@@ -3,9 +3,7 @@ public import AppKit
 import Combine
 public import SwiftNavigation
 
-@MainActor
-extension NSTextField: @retroactive NSTextDelegate {}
-extension NSTextField: @retroactive NSTextViewDelegate {
+extension NSTextField {
     /// Creates a new text field with the specified frame and registers the binding against its
     /// text.
     ///
@@ -57,29 +55,51 @@ extension NSTextField: @retroactive NSTextViewDelegate {
     /// - Returns: A cancel token.
     @discardableResult
     public func bind(selection: UIBinding<AppKitTextSelection?>) -> ObserveToken {
-        let editingChangedAction = NotificationCenter.default.publisher(for: NSTextField.textDidChangeNotification, object: self)
+        // NB: Cancel the previous binding first, so its observers are gone before the new ones
+        //     report anything.
+        observationTokens[\NSTextField.selectedRange]?.cancel()
+
+        let reportSelection: @MainActor (NSTextField) -> Void = { textField in
+            // NB: Applying the binding below moves the selection, which is reported here again;
+            //     writing back only what actually changed keeps that from going round forever.
+            let textSelection = textField.textSelection
+            if selection.wrappedValue != textSelection {
+                selection.wrappedValue = textSelection
+            }
+        }
+        let editingChangedAction = NotificationCenter.default
+            .publisher(for: NSTextField.textDidChangeNotification, object: self)
             .sink { [weak self] _ in
                 guard let self else { return }
-                selection.wrappedValue = self.textSelection
+                MainActor._assumeIsolated { reportSelection(self) }
             }
-        let editingDidEndAction = NotificationCenter.default.publisher(for: NSTextField.textDidEndEditingNotification, object: self).sink { _ in selection.wrappedValue = nil }
+        // NB: The field editor reports selection changes to its delegate, which is the text field
+        //     being edited. AppKit implements that delegate method on text fields itself, so it
+        //     must not be replaced; the notification the field editor posts alongside carries the
+        //     same news. One field editor serves every field in a window, hence the delegate check.
+        let selectionChangedAction = NotificationCenter.default
+            .publisher(for: NSTextView.didChangeSelectionNotification)
+            .sink { [weak self] notification in
+                guard
+                    let self,
+                    let fieldEditor = notification.object as? NSTextView,
+                    fieldEditor.delegate === self
+                else { return }
+                MainActor._assumeIsolated { reportSelection(self) }
+            }
+        let editingDidEndAction = NotificationCenter.default
+            .publisher(for: NSTextField.textDidEndEditingNotification, object: self)
+            .sink { _ in selection.wrappedValue = nil }
         let token = observe { [weak self] in
             guard let self else { return }
             textSelection = selection.wrappedValue
         }
-        textSelectionObserver = TextSelectionObserver { control in
-            MainActor._assumeIsolated {
-                selection.wrappedValue = control.textSelection
-            }
-        }
 
-        let observationToken = ObserveToken { [weak self] in
-            MainActor._assumeIsolated {
-                editingChangedAction.cancel()
-                editingDidEndAction.cancel()
-                token.cancel()
-                self?.textSelectionObserver = nil
-            }
+        let observationToken = ObserveToken {
+            editingChangedAction.cancel()
+            selectionChangedAction.cancel()
+            editingDidEndAction.cancel()
+            token.cancel()
         }
         observationTokens[\NSTextField.selectedRange] = observationToken
         return observationToken
@@ -95,48 +115,16 @@ extension NSTextField: @retroactive NSTextViewDelegate {
         }
     }
 
-    fileprivate class TextSelectionObserver: NSObject {
-        let observer: (NSTextField) -> Void
-
-        init(observer: @escaping (NSTextField) -> Void) {
-            self.observer = observer
-        }
-    }
-
-    private static let textSelectionObserverKey = malloc(1)!
-    private var textSelectionObserver: TextSelectionObserver? {
-        set {
-            objc_setAssociatedObject(self, Self.textSelectionObserverKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-        get {
-            objc_getAssociatedObject(self, Self.textSelectionObserverKey) as? TextSelectionObserver
-        }
-    }
-
-    public func textViewDidChangeSelection(_ notification: Notification) {
-        textSelectionObserver?.observer(self)
-    }
-
+    // NB: The field editor counts in UTF-16 code units, which differ from 'Character' offsets as
+    //     soon as the text holds an emoji or a combining mark, so every conversion goes through
+    //     the string's UTF-16 view.
     fileprivate var textSelection: AppKitTextSelection? {
         get {
-            guard
-                let textRange = selectedRange
-            else {
-                return nil
-            }
+            guard let textRange = selectedRange else { return nil }
             let text = stringValue
-            let lowerBound =
-                text.index(
-                    text.startIndex,
-                    offsetBy: textRange.location,
-                    limitedBy: text.endIndex
-                ) ?? text.endIndex
-            let upperBound =
-                text.index(
-                    text.startIndex,
-                    offsetBy: NSMaxRange(textRange),
-                    limitedBy: text.endIndex
-                ) ?? text.endIndex
+            let utf16Count = text.utf16.count
+            let lowerBound = String.Index(utf16Offset: min(textRange.location, utf16Count), in: text)
+            let upperBound = String.Index(utf16Offset: min(NSMaxRange(textRange), utf16Count), in: text)
             return AppKitTextSelection(range: lowerBound ..< upperBound)
         }
         set {
@@ -145,13 +133,12 @@ extension NSTextField: @retroactive NSTextViewDelegate {
                 return
             }
             let text = stringValue
-            let from = text.distance(
-                from: text.startIndex, to: min(selection.lowerBound, text.endIndex)
+            let lowerBound = min(selection.lowerBound, text.endIndex)
+            let upperBound = min(selection.upperBound, text.endIndex)
+            selectedRange = NSRange(
+                location: text.utf16.distance(from: text.startIndex, to: lowerBound),
+                length: text.utf16.distance(from: lowerBound, to: upperBound)
             )
-            let to = text.distance(
-                from: text.startIndex, to: min(selection.upperBound, text.endIndex)
-            )
-            selectedRange = .init(location: from, length: to - from)
         }
     }
 
