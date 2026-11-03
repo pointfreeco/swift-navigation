@@ -65,9 +65,9 @@
       XCTAssertEqual(closureCallCount, 0)
     }
 
-    /// From macOS 27 on, AppKit delivers `primaryActionTriggered` / `valueChanged` to additional
-    /// targets, so the proxy no longer has to seize the control's own pair. Below that it does,
-    /// because only tracking events are sent and those do not stand for "the action fired".
+    /// From macOS 27 on, AppKit delivers `primaryActionTriggered` to additional targets, so the
+    /// proxy no longer has to seize the control's own pair. Below that it does, because only
+    /// tracking events are sent and those do not stand for "the action fired".
     @MainActor
     func testProxyOnlySeizesTargetActionBelowMacOS27() {
       let recipient = ActionRecipient()
@@ -85,8 +85,8 @@
       }
     }
 
-    /// A text field reports every keystroke through the notification on every OS version, which is
-    /// why `valueChanged` is deliberately not registered for text fields.
+    /// A text field reports every keystroke through the notification on every OS version; the
+    /// control events only cover the action it sends on Return.
     @MainActor
     func testTextFieldWritesBackOnEveryEdit() {
       @UIBinding var text = ""

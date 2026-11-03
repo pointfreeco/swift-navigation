@@ -11,6 +11,10 @@ extension NSSavePanel {
 
     @discardableResult
     public func bind(url binding: UIBinding<URL?>) -> ObserveToken {
+        // NB: The previous binding's token has to be cancelled before the new hook is installed.
+        //     Left to be released when its entry is replaced below, it would clear the hook it no
+        //     longer owns.
+        unbindURL()
         appKitNavigation_onFinalURL = { url in
             binding.wrappedValue = url
         }
@@ -39,6 +43,8 @@ extension NSOpenPanel {
 
     @discardableResult
     public func bind(urls binding: UIBinding<[URL]>) -> ObserveToken {
+        // NB: See 'NSSavePanel.bind(url:)'.
+        unbindURLs()
         appKitNavigation_onFinalURLs = { urls in
             binding.wrappedValue = urls
         }

@@ -11,7 +11,18 @@ class ModalWindowsObserver: NSObject {
 
   var modalSessionByWindow: [NSWindow: NSApplication.ModalSession] = [:]
 
-  func observeWindow(_ window: NSWindow, modalSession: NSApplication.ModalSession? = nil) {
+  /// Ends the window's modal session, or stops its modal loop, when the window closes.
+  ///
+  /// - Parameters:
+  ///   - window: The window shown modally.
+  ///   - modalSession: The session the window was shown in, if it was shown through
+  ///     `beginModalSession(for:)` rather than a modal loop.
+  ///   - onClose: Runs once the session has ended, after the window started closing.
+  func observeWindow(
+    _ window: NSWindow,
+    modalSession: NSApplication.ModalSession? = nil,
+    onClose: (() -> Void)? = nil
+  ) {
     if let modalSession {
       modalSessionByWindow[window] = modalSession
     }
@@ -26,6 +37,7 @@ class ModalWindowsObserver: NSObject {
         modalSessionByWindow.removeValue(forKey: window)
         windowsCancellable[window]?.cancel()
         windowsCancellable.removeValue(forKey: window)
+        onClose?()
       }
   }
 }

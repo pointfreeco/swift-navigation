@@ -276,17 +276,23 @@ extension NSObject {
       if NSApplication.shared.modalWindow != nil {
         NSApplication.shared.stopModal()
         onDismiss?()
-        DispatchQueue.main.async {
+      }
+      // NB: The modal loop must not be started from a main-queue block. The main queue is serial,
+      //     so nothing else enqueued on it would run until the loop ended — not the 'observe'
+      //     re-run that stops the loop when the binding is set to 'nil', nor any main-actor task.
+      //     A run-loop block is not a main-queue block. Running it in the default mode only also
+      //     keeps it from starting inside a modal loop that was just asked to stop but has not
+      //     returned yet.
+      nonisolated(unsafe) let modalContent = modalContent
+      RunLoop.main.perform(inModes: [.default]) {
+        MainActor._assumeIsolated {
           ModalWindowsObserver.shared.observeWindow(modalContent.window)
           modalContent.appKitNavigationRunModal()
-          modalContent.onEndNavigation?()
-          modalContent.onEndNavigation = nil
-        }
-
-      } else {
-        DispatchQueue.main.async {
-          ModalWindowsObserver.shared.observeWindow(modalContent.window)
-          modalContent.appKitNavigationRunModal()
+          // NB: Ending a modal loop does not take its window off screen. Alerts and panels order
+          //     themselves out; a plain window stays up unless it is ordered out here.
+          if modalContent.window.isVisible {
+            modalContent.window.orderOut(nil)
+          }
           modalContent.onEndNavigation?()
           modalContent.onEndNavigation = nil
         }
@@ -349,27 +355,31 @@ extension NSObject {
     _modal(item: item, id: id) { $item in
       content($item)
     } beginModal: { modalContent, _ in
-      if let modaledWindow = NSApplication.shared.modalWindow, let modalSession = ModalWindowsObserver.shared.modalSessionByWindow[modaledWindow] {
-        NSApplication.shared.endModalSession(modalSession)
-        modaledWindow.window.close()
+      // NB: Closing a session's window is what ends the session: 'ModalWindowsObserver' ends it
+      //     when the window closes, whether the window was closed from its own UI or from here.
+      if let modaledWindow = NSApplication.shared.modalWindow,
+        ModalWindowsObserver.shared.modalSessionByWindow[modaledWindow] != nil
+      {
+        modaledWindow.close()
         onDismiss?()
-        DispatchQueue.main.async {
-          let modalSession = modalContent.appKitNavigationBeginModalSession()
-          ModalWindowsObserver.shared.observeWindow(modalContent.window, modalSession: modalSession)
-        }
-
-      } else {
-        DispatchQueue.main.async {
-          let modalSession = modalContent.appKitNavigationBeginModalSession()
-          ModalWindowsObserver.shared.observeWindow(modalContent.window, modalSession: modalSession)
+      }
+      DispatchQueue.main.async {
+        let modalSession = modalContent.appKitNavigationBeginModalSession()
+        ModalWindowsObserver.shared.observeWindow(
+          modalContent.window,
+          modalSession: modalSession
+        ) {
+          // NB: Resets the binding when the window was closed from its own UI. When the binding
+          //     is what closed it, this finds the binding already reset and does nothing.
+          modalContent.onEndNavigation?()
+          modalContent.onEndNavigation = nil
         }
       }
     } endModal: { modalContent, _ in
-      if let modalSession = ModalWindowsObserver.shared.modalSessionByWindow[modalContent.window] {
-        NSApplication.shared.endModalSession(modalSession)
+      if ModalWindowsObserver.shared.modalSessionByWindow[modalContent.window] != nil {
         modalContent.window.close()
-        onDismiss?()
       }
+      onDismiss?()
     }
   }
 
