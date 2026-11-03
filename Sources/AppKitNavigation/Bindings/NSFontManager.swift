@@ -4,56 +4,34 @@
 public import AppKit
 public import IdentifiedCollections
 
-@MainActor
-extension NSFontManager: @unchecked @retroactive Sendable {
-  private static let appkitNavigationDelegateKey = malloc(1)!
-
-  private var appkitNavigationDelegate: Delegate {
-    set {
-      objc_setAssociatedObject(self, Self.appkitNavigationDelegateKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    get {
-      if let delegate = objc_getAssociatedObject(self, Self.appkitNavigationDelegateKey) as? Delegate {
-        return delegate
-      } else {
-        let delegate = Delegate()
-        target = delegate
-        self.appkitNavigationDelegate = delegate
-        return delegate
-      }
-    }
-  }
-
-  private class Delegate: NSObject, NSFontChanging {
-    var target: AnyObject?
-    var action: Selector?
-
-    func changeFont(_ sender: NSFontManager?) {
-      if let action {
-        NSApplication.shared.sendAction(action, to: target, from: sender)
-      }
-    }
-  }
-}
+extension NSFontManager: @unchecked @retroactive Sendable {}
 
 @MainActor
 extension NSFontManager {
-  /// Creates a new date picker with the specified frame and registers the binding against the
-  /// selected date.
+  /// Returns the shared font manager, with the binding registered against its selected font.
   ///
-  /// - Parameters:
-  ///   - frame: The frame rectangle for the view, measured in points.
-  ///   - date: The binding to read from for the selected date, and write to when the selected
-  ///     date changes.
+  /// `NSFontManager()` returns the shared font manager, so this binds the same instance as
+  /// `NSFontManager.shared.bind(font:)`.
+  ///
+  /// - Parameter font: The binding to read from for the selected font, and write to when a
+  ///   change from the font panel or the font menu is applied.
   public convenience init(font: UIBinding<NSFont>) {
     self.init()
     bind(font: font)
   }
 
-  /// Establishes a two-way connection between a binding and the date picker's selected date.
+  /// Establishes a two-way connection between a binding and the font manager's selected font.
   ///
-  /// - Parameter date: The binding to read from for the selected date, and write to when the
-  ///   selected date changes.
+  /// The binding's font becomes the selected font that the font panel shows. When the user changes
+  /// it from the font panel or the font menu, the change is applied to the binding's font, the way
+  /// a text view applies it to its own.
+  ///
+  /// > Important: The font manager only sends font changes while some responder in the chain
+  /// > implements `changeFont(_:)` — usually the text view being edited. While none does, changes
+  /// > from the font panel do not reach the binding either.
+  ///
+  /// - Parameter font: The binding to read from for the selected font, and write to when a
+  ///   change from the font panel or the font menu is applied.
   /// - Returns: A cancel token.
   @discardableResult
   public func bind(font: UIBinding<NSFont>) -> ObserveToken {
@@ -62,7 +40,10 @@ extension NSFontManager {
 
   @objc private var _selectedFont: NSFont {
     set { setSelectedFont(newValue, isMultiple: false) }
-    get { convert(.systemFont(ofSize: 0)) }
+    // NB: 'convert(_:)' applies the font panel's latest change to the font it is given. That has
+    //     to be the bound font, which the setter above recorded as the selected font; converting
+    //     anything else keeps only the change and loses the bound font's family and size.
+    get { convert(selectedFont ?? .systemFont(ofSize: 0)) }
   }
 }
 
@@ -203,11 +184,6 @@ private class FontManagerProxy: NSObject {
     self.originAction = owner.action
     owner.target = self
     owner.action = #selector(invokeAction(_:))
-  }
-
-  @objc func controlTextDidChange(_ obj: Notification) {
-    bindingActions.forEach { $0.invoke(obj.object) }
-    actions.forEach { $0.invoke(obj.object) }
   }
 
   @objc func invokeAction(_ sender: Any?) {

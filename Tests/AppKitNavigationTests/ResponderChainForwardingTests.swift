@@ -58,14 +58,20 @@
     func bindingAFontKeepsTheResponderChainActionFiring() {
       let recipient = ApplicationDelegateRecipient()
       withApplicationDelegate(recipient) {
-        @UIBinding var font = NSFont.systemFont(ofSize: 12)
+        @UIBinding var textStyle = TextStyle(font: NSFont.systemFont(ofSize: 12))
         let fontManager = NSFontManager.shared
-        fontManager.bind(font: $font)
+        fontManager.bind(font: $textStyle.font)
 
         fontManager.sendAction()
       }
 
       #expect(recipient.changeFontCount == 1)
+    }
+
+    /// Holds the font in a value, the way a model would, rather than binding a class instance
+    /// directly.
+    private struct TextStyle {
+      var font: NSFont
     }
   }
 #endif
