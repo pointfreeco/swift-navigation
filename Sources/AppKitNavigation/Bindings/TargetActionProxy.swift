@@ -131,4 +131,41 @@ class TargetActionProxy: NSObject {
   }
 }
 
+/// AppKit enables a menu item or a toolbar item by asking its target. Once the proxy has taken the
+/// item's target-action pair over, it is the one asked, so it answers the way the original pair
+/// would have been answered.
+extension TargetActionProxy: NSMenuItemValidation, NSToolbarItemValidation {
+  func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+    validateOriginalAction(for: menuItem) { receiver in
+      receiver.validateMenuItem?(menuItem)
+    }
+  }
+
+  func validateToolbarItem(_ item: NSToolbarItem) -> Bool {
+    validateOriginalAction(for: item) { receiver in
+      receiver.validateToolbarItem?(item)
+    }
+  }
+
+  private func validateOriginalAction(
+    for item: any NSValidatedUserInterfaceItem,
+    asking askReceiver: (AnyObject) -> Bool?
+  ) -> Bool {
+    // NB: An item that only runs closure actions has no one else to ask.
+    guard let originAction else { return true }
+    // NB: With no receiver for the original action, AppKit would have disabled the item.
+    guard
+      let receiver = NSApplication.shared.target(
+        forAction: originAction, to: originTarget, from: item
+      ) as AnyObject?
+    else { return false }
+    // NB: Looked up dynamically rather than through a protocol cast, since a receiver may
+    //     implement these methods without declaring the protocols, as AppKit long allowed.
+    if let answer = askReceiver(receiver) {
+      return answer
+    }
+    return receiver.validateUserInterfaceItem?(item) ?? true
+  }
+}
+
 #endif
