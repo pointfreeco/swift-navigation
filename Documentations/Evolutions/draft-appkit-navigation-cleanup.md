@@ -20,7 +20,7 @@
    - 上一批加的 `ControlActionDeliveryTests` 有 7 条并发警告：`makeControl()` 改为 `@MainActor`。
 3. **合并字体管理器的代理**（已完成）：删掉 `FontManagerProxy` 和 `NSFontManager` 扩展里复制的 `bind(_:to:set:)`，改走 `TargetActionProxy` 和同一份绑定实现。`NSFontManager.action` 是非可选的 `Selector`，遵循不了 `TargetActionProtocol`，所以只共享内部实现，公开签名不变。实际做法：`TargetActionProxy` 加一个接管字体管理器的构造器；绑定的主体提成内部函数 `establishBinding(_:to:of:through:set:)`，两边的 `bind(_:to:set:)` 都转给它。
 4. **去掉 `IdentifiedCollections`**（已完成）：动作列表改用普通数组。四份 `Package*.swift` 删掉这个依赖，`Package.resolved` 随之少掉 `swift-identified-collections` 和 `swift-collections`，依赖条目与上游一致（只剩 `originHash` 不同）；两条 `public import IdentifiedCollections` 的警告一并消失。
-5. **加库前缀**：`NSSwitch.boolValue`、`NSFontManager._selectedFont` 改成带 `appKitNavigation` 前缀的名字。macOS 27.2 的 AppKit 里还没有同名方法，可一旦重名，Swift 扩展会悄悄替换掉系统实现——上一批修的 `textViewDidChangeSelection:` 就是这样坏的。两者都不是公开成员。
+5. **加库前缀**（已完成）：`NSSwitch.boolValue`、`NSFontManager._selectedFont` 改成带 `appKitNavigation` 前缀的名字（`appKitNavigationIsOn`、`appKitNavigationSelectedFont`）。macOS 27.2 的 AppKit 里还没有同名方法，可一旦重名，Swift 扩展会悄悄替换掉系统实现——上一批修的 `textViewDidChangeSelection:` 就是这样坏的。两者都不是公开成员。另加一条测试守住这一类：扫描本库加在系统类上的 Objective-C 方法，名字里都要带库名，shim 有意替换的五个方法除外。
 6. **收回 `AnyCancellable` 的公开 `Sendable` 遵循**：它只是为了在 `ObserveToken` 的闭包里捕获订阅，改用局部的 `nonisolated(unsafe) let`，库里已有同样的写法。
 7. **文档**：删掉 `AppKitNavigation.docc` 里从 UIKit 抄来的 12 个页面（上游的 AppKitNavigation 没有它们），首页加「绑定」「导航」两组目录；生成一次文档，确认没有新的 DocC 警告。
 
@@ -48,3 +48,5 @@
 | 2026-11-04 | 字体管理器补一条重新绑定的测试 | 第 3 步改动的正是解绑时移除回写动作的那段代码，现有测试没覆盖它 |
 | 2026-11-04 | 现有的两条面板测试在调用私有方法前先确认它存在 | 方法不在时直接调用会让整个测试进程崩溃，金丝雀测试的结果也就看不到了 |
 | 2026-11-04 | `AppKitAnimation.swift` 里的一条 `Sendable` 警告不改，记进 [ReviewDecisions.md](../Internal/ReviewDecisions.md) | 起草时的 14 条是增量构建统计的，漏了这个没重新编译的文件；用全新的构建目录重编一遍才看到它。它是与上游共用的代码，按上面的假设不碰 |
+| 2026-11-04 | 第 5 步加一条命名测试，扫描本库加在系统类上的方法 | 只改两个名字，管不住以后再加的成员；测试先红（正好报出这两个成员的四个方法），改名后变绿 |
+| 2026-11-04 | 命名测试放在主线程上跑 | 第一版没标 `@MainActor`：在后台线程写出 `NSView.self` 会在那条线程上执行 `+initialize`，让 AppKit 认错了线程。并行跑的其他测试随后在主线程处理事件时陷入断言陷阱，或者在打开面板时抛出 `already on an AppKit thread`，10 次里崩了 4 次；放到主线程后连跑 20 次没有再崩 |

@@ -34,10 +34,12 @@ extension NSFontManager {
   /// - Returns: A cancel token.
   @discardableResult
   public func bind(font: UIBinding<NSFont>) -> ObserveToken {
-    bind(font, to: \._selectedFont)
+    bind(font, to: \.appKitNavigationSelectedFont)
   }
 
-  @objc private var _selectedFont: NSFont {
+  // NB: Exposed to Objective-C so the binding can observe it, and named after the library so that
+  //     it can never replace a method AppKit has, or adds later, under the same selector.
+  @objc private var appKitNavigationSelectedFont: NSFont {
     set { setSelectedFont(newValue, isMultiple: false) }
     // NB: 'convert(_:)' applies the font panel's latest change to the font it is given. That has
     //     to be the bound font, which the setter above recorded as the selected font; converting
