@@ -2,6 +2,11 @@
 
 这个 fork 自己的文档。库的公开 API 文档在各 target 的 `Documentation.docc` 里，与上游共用。
 
+## Evolutions
+
+- [Evolutions/README.md](Evolutions/README.md)：提案索引与状态。
+- [draft-appkit-navigation-cleanup.md](Evolutions/draft-appkit-navigation-cleanup.md)：AppKitNavigation 清理——警告、重复代理和多余依赖。
+
 ## Internal
 
 - [ReviewDecisions.md](Internal/ReviewDecisions.md)：审查中判为误报、不修或暂缓的发现及理由，以及没能在运行时验证的部分；每次审查前先对照。
