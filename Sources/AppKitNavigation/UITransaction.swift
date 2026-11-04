@@ -34,16 +34,21 @@
               completion(true)
             }
           } else if let animation = value.animation {
-            return animation.perform(
-              { operation() },
-              completion: value.animationCompletions.isEmpty
-                ? nil
-                : {
-                  for completion in value.animationCompletions {
-                    completion($0)
-                  }
+            // NB: Spelled out with 'if' rather than a ternary: Swift 6.4 fails to type-check a
+            //     ternary whose branch is a closure of optional '@Sendable' function type ("failed
+            //     to produce diagnostic for expression").
+            let completions = value.animationCompletions
+            let completion: (@Sendable (Bool?) -> Void)?
+            if completions.isEmpty {
+              completion = nil
+            } else {
+              completion = { isFinished in
+                for completion in completions {
+                  completion(isFinished)
                 }
-            )
+              }
+            }
+            return animation.perform({ operation() }, completion: completion)
           } else {
             operation()
             for completion in value.animationCompletions {

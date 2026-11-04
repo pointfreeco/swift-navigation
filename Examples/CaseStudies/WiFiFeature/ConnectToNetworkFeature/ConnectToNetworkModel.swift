@@ -1,16 +1,16 @@
 import Foundation
-import XCTestDynamicOverlay
+import IssueReporting
 
 @Observable
 @MainActor
 class ConnectToNetworkModel: Identifiable {
     var incorrectPasswordAlertIsPresented = false
     var isConnecting = false
-    var onCancel: () -> Void = { 
-        XCTFail("ConnectToNetworkModel.onCancel unimplemented.")
+    var onCancel: () -> Void = {
+        reportIssue("ConnectToNetworkModel.onCancel unimplemented.")
     }
     var onConnect: (Network) -> Void = { _ in
-        XCTFail("ConnectToNetworkModel.onConnect unimplemented.")
+        reportIssue("ConnectToNetworkModel.onConnect unimplemented.")
     }
 
     let network: Network

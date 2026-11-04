@@ -7,7 +7,7 @@
 
 ## 摘要
 
-不改用法，把 AppKitNavigation 收拾干净：清掉 fork 自己代码里的 14 条编译警告（其中 3 条在以后的 Swift 语言模式里会变成错误），把 `NSFontManager` 复制出来的那一整套动作代理并回通用实现，去掉只为两个私有数组引入的 `IdentifiedCollections` 依赖，给加在 AppKit 类上的 `@objc` 成员加库前缀，收回一个没必要公开的遵循，删掉文档目录里从 UIKit 抄来的页面。起因是上一批修 bug 时，同样的两个问题要在两份代理里各修一遍；fork 的依赖和 lockfile 也比上游多出两个包。实现中发现 `NSColorPanel.bind(color:)` 一调用就崩溃，用户决定在这一批一起修掉。
+不改用法，把 AppKitNavigation 收拾干净：清掉 fork 自己代码里的 14 条编译警告（其中 3 条在以后的 Swift 语言模式里会变成错误），把 `NSFontManager` 复制出来的那一整套动作代理并回通用实现，去掉只为两个私有数组引入的 `IdentifiedCollections` 依赖，给加在 AppKit 类上的 `@objc` 成员加库前缀，收回一个没必要公开的遵循，删掉文档目录里从 UIKit 抄来的页面。起因是上一批修 bug 时，同样的两个问题要在两份代理里各修一遍；fork 的依赖和 lockfile 也比上游多出两个包。实现中发现 `NSColorPanel.bind(color:)` 一调用就崩溃，用户决定在这一批一起修掉；用户看过后，又要求修掉与上游共用代码里的警告和 Examples 的编译错误（第 9 步）。
 
 ## 方案
 
@@ -24,6 +24,11 @@
 6. **收回 `AnyCancellable` 的公开 `Sendable` 遵循**（已完成）：它只是为了在 `ObserveToken` 的闭包里捕获订阅，改用局部的 `nonisolated(unsafe) let`，库里已有同样的写法。
 7. **文档**（已完成）：删掉 `AppKitNavigation.docc` 里从 UIKit 抄来的 12 个页面（上游的 AppKitNavigation 没有它们），首页加一段概述和「绑定」「导航」两组目录；生成一次文档，确认没有新的 DocC 警告。实际还顺带修了 fork 自己的文档注释：文本框焦点绑定的示例和说明是从 UIKit 抄的，改成 AppKit 的写法；删掉不存在的参数说明，补上分段控件缺的参数说明。AppKitNavigation 的 DocC 警告从 23 条降到 3 条，剩下的都来自与上游共用的内容。
 8. **修颜色面板绑定的崩溃**（已完成，实现中加入）：`NSColorPanel` 遵循 `TargetActionProtocol` 时，`action` 的 getter 经 KVC 读面板的 action，而 KVC 返回不了 selector，抛出 `NSUnknownKeyException`；绑定在接管面板的 target/action 前要先读它，所以每次调用 `bind(color:)` 都崩溃。改为直接调用 AppKit 未公开但一直实现着的 `-action`，并用 `responds(to:)` 兜底。先补两条测试（面板能报出设置给它的 action；颜色面板的双向绑定），修之前崩溃，修之后通过。
+9. **用户看过后追加的修复**（已完成）：
+   - `AppKitAnimation.perform(_:completion:)` 的 `completion` 改为 `@Sendable`，消掉它被捕获进 `NSAnimationContext` 完成回调时的警告；唯一的调用方原本就只捕获 `Sendable` 的值。调用方原来的三目写法在 Swift 6.4 下会让类型检查器报「failed to produce diagnostic」，改成 `if` 赋值。
+   - `observe(_:)` 的两个重载在 Swift 6.4 上加 `@diagnose(ConversionFromIsolatedAnyToSynchronous, as: ignored, …)`（SE-0522），屏蔽「`@isolated(any)` 函数转成同步函数」的警告。这次同步转换是有意的：观察追踪要求同步执行；签名保留 `@isolated(any)`，因为上游靠它支持 `observe { @MainActor in … }` 这类显式指定隔离的写法。旧编译器不认这个属性，用 `#if hasAttribute(diagnose)` 包起来。
+   - Examples 里三处 `import XCTestDynamicOverlay` 改成 `import IssueReporting`，`XCTFail` 改成 `reportIssue`。上游把依赖升到 `swift-issue-reporting` 2.0 后，依赖图里不再有 `XCTestDynamicOverlay` 这个模块，CaseStudies 因此编不过。
+   - 工作区锁定文件 `SwiftNavigation.xcworkspace/xcshareddata/swiftpm/Package.resolved` 重新解析。原来那份和上游一样过时：钉着 `swift-case-paths` 的一个分支，还拉进旧地址的 `xctest-dynamic-overlay`，和 `swift-issue-reporting` 产品名冲突，命令行从零解析时直接失败。新的 pin 与 Xcode 实际解析出的版本一致。
 
 没有询问就采用的假设：
 
@@ -57,3 +62,7 @@
 | 2026-11-04 | 修法：直接调用 AppKit 未公开的 `-action`，用 `responds(to:)` 兜底 | 让 getter 直接返回 `nil` 也不会崩，但绑定接管面板的 target/action 之后，就转发不了用户原先设的 action；改成监听颜色变化的通知、不再接管，又得改公开的 `TargetActionProtocol` 遵循。本机导出的 AppKit 头文件里，macOS 12.0.1、26.4–26.6、27.0、27.2 都有这个 getter。出问题的写法是 2024-10-11 加入颜色面板绑定时写下的，之后没改过，也没人修过；本机依赖这个 fork 的项目都没用到这个绑定 |
 | 2026-11-04 | 测试进程中途以 0 退出的问题查明原因，不在这批修（见后续项） | 加入颜色面板测试后截断变得频繁，于是追查：问题出在 AppKit 嵌套 run loop 与测试进程主执行器的交互上，`main` 上本来就有；试着去掉分段控件的点击用例，并不能根治，已恢复原样。根治要改测试基础设施，超出这一批的范围 |
 | 2026-11-04 | 第 8 步完成，重新验证 | Xcode 27.2 上 AppKit 测试完整跑通（Swift Testing 33 条、XCTest 16 条，有汇总行为证）；Xcode 26.6 编得过 AppKit 的库和测试，只剩上游那一条警告 |
+| 2026-11-04 | 按用户要求修与上游共用代码里的警告和 Examples 的编译错误（第 9 步） | 用户在 Xcode 里看到了这几条警告和 CaseStudies 的报错，要求一并修掉。这推翻了「只动 fork 独有的文件」那条假设，代价是以后合并上游时 `Observe.swift`、`AppKitAnimation.swift`、`UITransaction.swift` 和 Examples 可能冲突；原先记进裁决清单的「`AppKitAnimation.swift` 警告不修」随之删除 |
+| 2026-11-04 | `observe(_:)` 用 `@diagnose` 屏蔽警告，不改签名 | 编译器对这类转换没有豁免写法，官方建议只有改成 async 或去掉 `@isolated(any)`：前者做不到（观察追踪必须同步），后者会让显式指定隔离的写法退化。代价是 Xcode 26.6（Swift 6.2）不认识这个属性，那两条警告在旧编译器上仍在，记进裁决清单 |
+| 2026-11-04 | 工作区锁定文件一并更新 | 不更新的话，命令行和全新 clone 解析 Examples 的依赖时会因产品名冲突失败；新 pin 与 Xcode 里实际用的版本逐个核对过 |
+| 2026-11-04 | 第 9 步完成，重新验证 | 全新构建目录下，Xcode 27.2 编 SwiftNavigation、AppKitNavigation 和 AppKit 测试零警告；整个包的测试只剩基线上的 `ButtonStateTests.testAsyncAnimationWarning`；CaseStudies 与 Inventory 用 xcodebuild 编 macOS 版成功（Inventory 关掉签名）；Xcode 26.6 编得过 |

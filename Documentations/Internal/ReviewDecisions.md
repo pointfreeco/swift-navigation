@@ -44,13 +44,13 @@
 - **理由**：AppKit 那份已按 UTF-16 换算修好。UIKit 那份是上游拥有的代码，fork 保持与上游一致，在 fork 里改会让以后的合并持续冲突。
 - **复查条件**：上游自己修了，或者 fork 的 UIKit 用户撞上这个问题时。
 
-### `AppKitAnimation.swift` 的一条 `Sendable` 捕获警告
-
-- **裁决**：上游的代码，fork 不修。（2026-11-04）
-- **理由**：`AppKitAnimation.perform(_:completion:)` 把不是 `Sendable` 的 `completion` 捕获进 `NSAnimationContext` 的 `@Sendable` 完成回调，编译器因此报警告。这个文件属于上游的 AppKitNavigation，fork 与上游只差一行注释；在 fork 里改，以后合并上游时就多一处冲突。
-- **复查条件**：上游修了它时。
-
 ## 系统限制
+
+### Xcode 26.6 上 `observe(_:)` 的两条 `@isolated(any)` 转换警告
+
+- **裁决**：旧编译器的限制，不修。（2026-11-04）
+- **理由**：`observe(_:)` 必须同步执行传入的 `@isolated(any)` 闭包，编译器为此报「converting @isolated(any) function … to synchronous function type」。Swift 6.4 上用 `@diagnose(ConversionFromIsolatedAnyToSynchronous, as: ignored)` 屏蔽了；Swift 6.2（Xcode 26.6）不认识这个属性，只能去掉签名里的 `@isolated(any)`，而那会让 `observe { @MainActor in … }` 这类显式指定隔离的写法退化。
+- **复查条件**：不再支持 Xcode 26.6 时，这一条直接删掉。
 
 ### 字体绑定只在响应链上有对象实现 `changeFont(_:)` 时生效
 

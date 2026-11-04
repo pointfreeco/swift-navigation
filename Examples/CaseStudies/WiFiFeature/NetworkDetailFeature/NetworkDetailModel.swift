@@ -1,12 +1,12 @@
 import Foundation
-import XCTestDynamicOverlay
+import IssueReporting
 
 @MainActor
 @Observable
 class NetworkDetailModel: Identifiable {
     var forgetAlertIsPresented = false
     var onConfirmForget: () -> Void = {
-        XCTFail("NetworkDetailModel.onConfirmForget unimplemented.")
+        reportIssue("NetworkDetailModel.onConfirmForget unimplemented.")
     }
 
     let network: Network

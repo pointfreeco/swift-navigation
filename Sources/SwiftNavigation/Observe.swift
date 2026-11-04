@@ -62,6 +62,18 @@
   #if !Perception
     @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
   #endif
+  // NB: Observation tracking needs 'apply' to run synchronously, which takes converting it to a
+  //     synchronous function type and so drops its '@isolated(any)'. That is deliberate: every
+  //     later run hops to 'apply.isolation', and the first one runs right here, in the caller's
+  //     context, which '@_inheritActorContext' makes the closure's own. The one case it does not
+  //     cover is a closure that names a different isolation, such as 'observe { @MainActor in }'
+  //     from another actor: its first run still happens in the caller's context.
+  #if hasAttribute(diagnose)
+    @diagnose(
+      ConversionFromIsolatedAnyToSynchronous, as: ignored,
+      reason: "The first run must be synchronous for tracking; later runs hop to its isolation."
+    )
+  #endif
   public func observe(
     @_inheritActorContext
     _ apply: @escaping @isolated(any) @Sendable () -> Void
@@ -83,6 +95,13 @@
   ///   is deallocated.
   #if !Perception
     @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+  #endif
+  // NB: See the overload above.
+  #if hasAttribute(diagnose)
+    @diagnose(
+      ConversionFromIsolatedAnyToSynchronous, as: ignored,
+      reason: "The first run must be synchronous for tracking; later runs hop to its isolation."
+    )
   #endif
   public func observe(
     @_inheritActorContext
