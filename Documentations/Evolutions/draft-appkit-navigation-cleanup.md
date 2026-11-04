@@ -50,3 +50,5 @@
 | 2026-11-04 | `AppKitAnimation.swift` 里的一条 `Sendable` 警告不改，记进 [ReviewDecisions.md](../Internal/ReviewDecisions.md) | 起草时的 14 条是增量构建统计的，漏了这个没重新编译的文件；用全新的构建目录重编一遍才看到它。它是与上游共用的代码，按上面的假设不碰 |
 | 2026-11-04 | 第 5 步加一条命名测试，扫描本库加在系统类上的方法 | 只改两个名字，管不住以后再加的成员；测试先红（正好报出这两个成员的四个方法），改名后变绿 |
 | 2026-11-04 | 命名测试放在主线程上跑 | 第一版没标 `@MainActor`：在后台线程写出 `NSView.self` 会在那条线程上执行 `+initialize`，让 AppKit 认错了线程。并行跑的其他测试随后在主线程处理事件时陷入断言陷阱，或者在打开面板时抛出 `already on an AppKit thread`，10 次里崩了 4 次；放到主线程后连跑 20 次没有再崩 |
+| 2026-11-04 | 文档一步顺带修了 fork 自己的文档注释 | 生成文档时这些注释贡献了大部分 DocC 警告，而且文本框焦点绑定的示例是 UIKit 代码，照着写编不过 |
+| 2026-11-04 | 实现完成，待用户看过后收尾 | 七步都已提交。Xcode 27.2 上 AppKit 测试全过（XCTest 16 条、Swift Testing 31 条），整个包只剩基线上本来就失败的 `ButtonStateTests.testAsyncAnimationWarning`；Xcode 26.6 编得过 AppKit 的库和测试；全新构建目录下 AppKit 只剩上游那一条警告。文档判断：README 不用改（用法没变）；不需要使用指南或实现说明（没有新的调用契约）；没有新术语；`swift-navigation-bindings` skill 不用改（公开用法没变） |
