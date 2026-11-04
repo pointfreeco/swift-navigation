@@ -14,7 +14,7 @@
       case segmentedControl
       case slider
 
-      func makeControl() -> NSControl {
+      @MainActor func makeControl() -> NSControl {
         switch self {
         case .pushButton:
           NSButton(title: "Push", target: nil, action: nil)

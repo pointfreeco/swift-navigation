@@ -2,7 +2,7 @@
 
 import AppKit
 
-extension NSToolbarItem: @retroactive Sendable {}
+extension NSToolbarItem: @unchecked @retroactive Sendable {}
 extension NSToolbarItem: TargetActionProtocol {}
 
 #endif

@@ -14,7 +14,7 @@
 先补测试，再动代码：
 
 1. **补测试作安全网**（已完成）：每个类型化的 `bind`（开关、滑块、步进器、日期、颜色、路径、分段）各补一条双向测试，颜色面板除外（见决策日志）；字体管理器补一条重新绑定的测试。`NSSavePanel.bind(url:)` 与 `NSOpenPanel.bind(urls:)` 靠交换私有方法 `setFinalURL:` / `setFinalURLs:` 工作，系统去掉它们时现在只会静默失效；补一条测试，让那种情况立即变红。
-2. **清警告**：
+2. **清警告**（已完成）：
    - `NSControl`、`NSToolbarItem`、`NSColorPanel` 的 `@retroactive Sendable` 改成 `@unchecked @retroactive Sendable`，与 `NSMenuItem`、`NSFontManager` 一致。
    - 两处没用在公开声明里的 `public import Combine` 改成内部导入。
    - 上一批加的 `ControlActionDeliveryTests` 有 7 条并发警告：`makeControl()` 改为 `@MainActor`。

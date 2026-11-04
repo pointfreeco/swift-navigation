@@ -2,7 +2,7 @@
 
 import AppKit
 
-extension NSControl: @retroactive Sendable {}
+extension NSControl: @unchecked @retroactive Sendable {}
 extension NSControl: TargetActionProtocol {}
 
 extension NSControl {}
