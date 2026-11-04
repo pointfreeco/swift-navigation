@@ -37,10 +37,7 @@ class TargetActionProxy: NSObject {
   /// keyboard-driven button never tracks), so the proxy still has to take the pair over.
   private let registersAsAdditionalTarget: Bool
 
-  weak var owner: (any TargetActionProtocol)?
-
-  required init(owner: any TargetActionProtocol) {
-    self.owner = owner
+  init(owner: any TargetActionProtocol) {
     if #available(macOS 27, *) {
       registersAsAdditionalTarget = owner is NSControl
     } else {
@@ -81,6 +78,20 @@ class TargetActionProxy: NSObject {
     }
   }
 
+  /// Takes the font manager's target-action pair over.
+  ///
+  /// The font manager cannot conform to ``TargetActionProtocol``, since its `action` is not
+  /// optional, and it is no control, so it has no additional targets to register with on any OS
+  /// version.
+  init(fontManager: NSFontManager) {
+    registersAsAdditionalTarget = false
+    super.init()
+    originTarget = fontManager.target
+    originAction = fontManager.action
+    fontManager.target = self
+    fontManager.action = #selector(invokeAction(_:))
+  }
+
   @objc func controlTextDidChange(_ obj: Notification) {
     bindingActions.forEach { $0.invoke(obj.object) }
     actions.forEach { $0.invoke(obj.object) }
@@ -91,8 +102,10 @@ class TargetActionProxy: NSObject {
     //     control, so AppKit delivers to it directly and forwarding here would double up.
     //
     //     A 'nil' original target is forwarded as 'nil': it means "up the responder chain", which
-    //     is where 'sendAction(_:to:from:)' routes it. Menu items, and controls wired to the
-    //     first responder, rely on that.
+    //     is where 'sendAction(_:to:from:)' routes it. Menu items, controls wired to the first
+    //     responder, and the font manager rely on that: unless an app changes it, the font
+    //     manager's target is 'nil', and its 'changeFont:' travels up the chain to whichever text
+    //     view is first responder.
     if !registersAsAdditionalTarget, let originAction {
       NSApplication.shared.sendAction(originAction, to: originTarget, from: sender)
     }
