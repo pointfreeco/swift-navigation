@@ -6,4 +6,4 @@
 
 | # | 标题 | 状态 |
 |---|------|------|
-| draft | [AppKitNavigation 清理：警告、重复代理和多余依赖](draft-appkit-navigation-cleanup.md) | In Progress |
+| 0001 | [AppKitNavigation 清理：警告、重复代理和多余依赖](0001-appkit-navigation-cleanup.md) | Implemented |

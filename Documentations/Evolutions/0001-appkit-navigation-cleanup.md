@@ -1,6 +1,6 @@
-# Draft - AppKitNavigation 清理：警告、重复代理和多余依赖
+# 0001 - AppKitNavigation 清理：警告、重复代理和多余依赖
 
-- **状态**: In Progress
+- **状态**: Implemented
 - **创建日期**: 2026-11-04
 - **最后更新**: 2026-11-04
 - **实现分支**: `appkit-navigation-cleanup`
@@ -66,3 +66,4 @@
 | 2026-11-04 | `observe(_:)` 用 `@diagnose` 屏蔽警告，不改签名 | 编译器对这类转换没有豁免写法，官方建议只有改成 async 或去掉 `@isolated(any)`：前者做不到（观察追踪必须同步），后者会让显式指定隔离的写法退化。代价是 Xcode 26.6（Swift 6.2）不认识这个属性，那两条警告在旧编译器上仍在，记进裁决清单 |
 | 2026-11-04 | 工作区锁定文件一并更新 | 不更新的话，命令行和全新 clone 解析 Examples 的依赖时会因产品名冲突失败；新 pin 与 Xcode 里实际用的版本逐个核对过 |
 | 2026-11-04 | 第 9 步完成，重新验证 | 全新构建目录下，Xcode 27.2 编 SwiftNavigation、AppKitNavigation 和 AppKit 测试零警告；整个包的测试只剩基线上的 `ButtonStateTests.testAsyncAnimationWarning`；CaseStudies 与 Inventory 用 xcodebuild 编 macOS 版成功（Inventory 关掉签名）；Xcode 26.6 编得过 |
+| 2026-11-04 | Implemented，编号 0001，落地到 `main` | 用户看过效果后要求收尾。九步全部完成；没做的两项留在后续项（测试进程中途以 0 退出、`NSPathControl` 构造器标签）。文档判断：不需要使用指南或实现说明，没有新的调用契约，难懂的决定都写在代码注释和本提案里；没有新术语；README 和 `swift-navigation-bindings` skill 不用改，公开用法没变 |

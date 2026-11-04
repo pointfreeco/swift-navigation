@@ -5,7 +5,7 @@
 ## Evolutions
 
 - [Evolutions/README.md](Evolutions/README.md)：提案索引与状态。
-- [draft-appkit-navigation-cleanup.md](Evolutions/draft-appkit-navigation-cleanup.md)：AppKitNavigation 清理——警告、重复代理和多余依赖。
+- [0001-appkit-navigation-cleanup.md](Evolutions/0001-appkit-navigation-cleanup.md)：AppKitNavigation 清理——警告、重复代理和多余依赖。
 
 ## Internal
 
