@@ -1,7 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
 public import AppKit
-public import IdentifiedCollections
 import AppKitNavigationShim
 
 @MainActor
@@ -20,9 +19,9 @@ class TargetActionProxy: NSObject {
     }
   }
 
-  private var bindingActions: IdentifiedArrayOf<Action> = []
+  private var bindingActions: [Action] = []
 
-  private var actions: IdentifiedArrayOf<Action> = []
+  private var actions: [Action] = []
 
   private var originTarget: AnyObject?
 
@@ -121,7 +120,7 @@ class TargetActionProxy: NSObject {
   }
 
   func removeAction(for id: ActionIdentifier) {
-    actions.remove(id: id)
+    actions.removeAll { $0.id == id }
   }
 
   func removeAllActions() {
@@ -136,7 +135,7 @@ class TargetActionProxy: NSObject {
   }
 
   func removeBindingAction(for id: ActionIdentifier) {
-    bindingActions.remove(id: id)
+    bindingActions.removeAll { $0.id == id }
   }
 
   func removeAllBindingActions() {
