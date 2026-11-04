@@ -21,12 +21,14 @@ extension NSSwitch {
     /// - Returns: A cancel token.
     @discardableResult
     public func bind(isOn: UIBinding<Bool>) -> ObserveToken {
-        bind(isOn, to: \.boolValue) { control, isOn, transaction in
-            control.boolValue = isOn
+        bind(isOn, to: \.appKitNavigationIsOn) { control, isOn, transaction in
+            control.appKitNavigationIsOn = isOn
         }
     }
 
-    @objc var boolValue: Bool {
+    // NB: Exposed to Objective-C so the binding can observe it, and named after the library so
+    //     that it can never replace a method AppKit has, or adds later, under the same selector.
+    @objc var appKitNavigationIsOn: Bool {
         set { state = newValue ? .on : .off }
         get { state == .on }
     }

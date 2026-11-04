@@ -15,7 +15,6 @@ extension TargetActionProtocol {
   /// - Parameters:
   ///   - binding: A source of truth for the control's value.
   ///   - keyPath: A key path to the control's value.
-  ///   - event: The control-specific events for which the binding is updated.
   /// - Returns: A cancel token.
   @discardableResult
   public func bind<Value>(
@@ -24,15 +23,6 @@ extension TargetActionProtocol {
   ) -> ObserveToken {
     bind(binding, to: keyPath) { control, newValue, _ in
       control[keyPath: keyPath] = newValue
-    }
-  }
-
-  var actionProxy: TargetActionProxy? {
-    set {
-      objc_setAssociatedObject(self, actionProxyKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    get {
-      objc_getAssociatedObject(self, actionProxyKey) as? TargetActionProxy
     }
   }
 
@@ -51,7 +41,6 @@ extension TargetActionProtocol {
   /// - Parameters:
   ///   - binding: A source of truth for the control's value.
   ///   - keyPath: A key path to the control's value.
-  ///   - event: The control-specific events for which the binding is updated.
   ///   - set: A closure that is called when the binding's value changes with a weakly-captured
   ///     control, a new value that can be used to configure the control, and a transaction, which
   ///     can be used to determine how and if the change should be animated.
@@ -62,48 +51,11 @@ extension TargetActionProtocol {
     to keyPath: KeyPath<Self, Value>,
     set: @escaping (_ control: Self, _ newValue: Value, _ transaction: UITransaction) -> Void
   ) -> ObserveToken {
-    unbind(keyPath)
-    let actionProxy = createActionProxyIfNeeded()
-    let actionID = actionProxy.addBindingAction { [weak self] _ in
-      guard let self else { return }
-      binding.wrappedValue = self[keyPath: keyPath]
-    }
-
-    let isSetting = LockIsolated(false)
-    let token = observe { [weak self] transaction in
-      guard let self else { return }
-      isSetting.withLock { $0 = true }
-      defer { isSetting.withLock { $0 = false } }
-      set(
-        self,
-        binding.wrappedValue,
-        transaction.appKit.animation == nil && !transaction.appKit.disablesAnimations
-          ? binding.transaction
-          : transaction
-      )
-    }
-    // NB: This key path must only be accessed on the main actor
-    nonisolated(unsafe) let uncheckedKeyPath = keyPath
-    let observation = observe(keyPath) { control, _ in
-      guard isSetting.withLock({ !$0 }) else { return }
-      MainActor._assumeIsolated {
-        binding.wrappedValue = control[keyPath: uncheckedKeyPath]
-      }
-    }
-    let observationToken = ObserveToken { [weak self] in
-      MainActor._assumeIsolated {
-        self?.actionProxy?.removeBindingAction(for: actionID)
-      }
-      token.cancel()
-      observation.invalidate()
-    }
-    observationTokens[keyPath] = observationToken
-    return observationToken
+    establishBinding(binding, to: keyPath, of: self, through: createActionProxyIfNeeded(), set: set)
   }
 
   public func unbind<Value>(_ keyPath: KeyPath<Self, Value>) {
-    observationTokens[keyPath]?.cancel()
-    observationTokens[keyPath] = nil
+    removeBinding(to: keyPath)
   }
 
   @discardableResult
@@ -123,6 +75,58 @@ extension TargetActionProtocol {
   }
 }
 
+/// Establishes a two-way connection between a binding and a property of an object whose
+/// target-action pair `actionProxy` runs: the object's action writes the property back to the
+/// binding, and changes to the binding are applied with `set`.
+///
+/// ``TargetActionProtocol`` and `NSFontManager` both bind through this. The font manager cannot
+/// conform to the protocol, since its `action` is not optional.
+@MainActor
+func establishBinding<Owner: NSObject & Sendable, Value>(
+  _ binding: UIBinding<Value>,
+  to keyPath: KeyPath<Owner, Value>,
+  of owner: Owner,
+  through actionProxy: TargetActionProxy,
+  set: @escaping (_ owner: Owner, _ newValue: Value, _ transaction: UITransaction) -> Void
+) -> ObserveToken {
+  owner.removeBinding(to: keyPath)
+  let actionID = actionProxy.addBindingAction { [weak owner] _ in
+    guard let owner else { return }
+    binding.wrappedValue = owner[keyPath: keyPath]
+  }
+
+  let isSetting = LockIsolated(false)
+  let token = owner.observe { [weak owner] transaction in
+    guard let owner else { return }
+    isSetting.withLock { $0 = true }
+    defer { isSetting.withLock { $0 = false } }
+    set(
+      owner,
+      binding.wrappedValue,
+      transaction.appKit.animation == nil && !transaction.appKit.disablesAnimations
+        ? binding.transaction
+        : transaction
+    )
+  }
+  // NB: This key path must only be accessed on the main actor
+  nonisolated(unsafe) let uncheckedKeyPath = keyPath
+  let observation = owner.observe(keyPath) { owner, _ in
+    guard isSetting.withLock({ !$0 }) else { return }
+    MainActor._assumeIsolated {
+      binding.wrappedValue = owner[keyPath: uncheckedKeyPath]
+    }
+  }
+  let observationToken = ObserveToken { [weak actionProxy] in
+    MainActor._assumeIsolated {
+      actionProxy?.removeBindingAction(for: actionID)
+    }
+    token.cancel()
+    observation.invalidate()
+  }
+  owner.observationTokens[keyPath] = observationToken
+  return observationToken
+}
+
 @MainActor
 extension NSObject {
   var observationTokens: [AnyKeyPath: ObserveToken] {
@@ -135,6 +139,22 @@ extension NSObject {
         self, observationTokensKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
       )
     }
+  }
+
+  /// The proxy that runs this object's binding and closure actions, once one has been installed.
+  var actionProxy: TargetActionProxy? {
+    set {
+      objc_setAssociatedObject(self, actionProxyKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    get {
+      objc_getAssociatedObject(self, actionProxyKey) as? TargetActionProxy
+    }
+  }
+
+  /// Cancels the binding established to `keyPath`, if there is one.
+  func removeBinding(to keyPath: AnyKeyPath) {
+    observationTokens[keyPath]?.cancel()
+    observationTokens[keyPath] = nil
   }
 }
 

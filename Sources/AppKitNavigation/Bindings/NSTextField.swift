@@ -67,7 +67,10 @@ extension NSTextField {
                 selection.wrappedValue = textSelection
             }
         }
-        let editingChangedAction = NotificationCenter.default
+        // NB: The subscriptions are only cancelled from the token below, on the main actor, but
+        //     'AnyCancellable' is not 'Sendable', so the token's closure has to capture them
+        //     unchecked.
+        nonisolated(unsafe) let editingChangedAction = NotificationCenter.default
             .publisher(for: NSTextField.textDidChangeNotification, object: self)
             .sink { [weak self] _ in
                 guard let self else { return }
@@ -77,7 +80,7 @@ extension NSTextField {
         //     being edited. AppKit implements that delegate method on text fields itself, so it
         //     must not be replaced; the notification the field editor posts alongside carries the
         //     same news. One field editor serves every field in a window, hence the delegate check.
-        let selectionChangedAction = NotificationCenter.default
+        nonisolated(unsafe) let selectionChangedAction = NotificationCenter.default
             .publisher(for: NSTextView.didChangeSelectionNotification)
             .sink { [weak self] notification in
                 guard
@@ -87,7 +90,7 @@ extension NSTextField {
                 else { return }
                 MainActor._assumeIsolated { reportSelection(self) }
             }
-        let editingDidEndAction = NotificationCenter.default
+        nonisolated(unsafe) let editingDidEndAction = NotificationCenter.default
             .publisher(for: NSTextField.textDidEndEditingNotification, object: self)
             .sink { _ in selection.wrappedValue = nil }
         let token = observe { [weak self] in
@@ -148,12 +151,12 @@ extension NSTextField {
     /// the `value`. Typically, you create an enumeration of fields that may receive focus, bind an
     /// instance of this enumeration, and assign its cases to focusable text fields.
     ///
-    /// The following example uses the cases of a `LoginForm` enumeration to bind the focus state of
-    /// two `UITextField` views. A sign-in button validates the fields and sets the bound
-    /// `focusedField` value to any field that requires the user to correct a problem.
+    /// The following example uses the cases of a `Field` enumeration to bind the focus state of two
+    /// text fields. A sign-in button validates the fields and sets the bound `focusedField` value to
+    /// any field that requires the user to correct a problem.
     ///
     /// ```swift
-    /// final class LoginViewController: UIViewController {
+    /// final class LoginViewController: NSViewController {
     ///   enum Field {
     ///     case usernameField
     ///     case passwordField
@@ -168,41 +171,37 @@ extension NSTextField {
     ///   override func viewDidLoad() {
     ///     super.viewDidLoad()
     ///
-    ///     let usernameTextField = UITextField(text: $username)
-    ///     usernameTextField.focus($focusedField, equals: .usernameField)
+    ///     let usernameTextField = NSTextField(text: $username)
+    ///     usernameTextField.bind(focus: $focusedField, equals: .usernameField)
     ///
-    ///     let passwordTextField = UITextField(text: $password)
-    ///     passwordTextField.focus($focusedField, equals: .passwordField)
-    ///     passwordTextField.isSecureTextEntry = true
+    ///     let passwordTextField = NSSecureTextField(text: $password)
+    ///     passwordTextField.bind(focus: $focusedField, equals: .passwordField)
     ///
-    ///     let signInButton = UIButton(
-    ///       style: .system,
-    ///       primaryAction: UIAction { [weak self] _ in
-    ///         guard let self else { return }
-    ///         if username.isEmpty {
-    ///           focusedField = .usernameField
-    ///         } else if password.isEmpty {
-    ///           focusedField = .passwordField
-    ///         } else {
-    ///           handleLogin(username, password)
-    ///         }
+    ///     let signInButton = NSButton(title: "Sign In", target: nil, action: nil)
+    ///     signInButton.addAction { [weak self] _ in
+    ///       guard let self else { return }
+    ///       if username.isEmpty {
+    ///         focusedField = .usernameField
+    ///       } else if password.isEmpty {
+    ///         focusedField = .passwordField
+    ///       } else {
+    ///         handleLogin(username, password)
     ///       }
-    ///     )
-    ///     signInButton.setTitle("Sign In", for: .normal)
+    ///     }
     ///
     ///     // ...
     ///   }
     /// }
     /// ```
     ///
-    /// To control focus using a Boolean, use the ``UIKit/UITextField/bind(focus:)`` method instead.
+    /// To control focus using a Boolean, use the ``AppKit/NSTextField/bind(focus:)`` method instead.
     ///
     /// - Parameters:
     ///   - focus: The state binding to register. When focus moves to the text field, the binding
     ///     sets the bound value to the corresponding match value. If a caller sets the state value
     ///     programmatically to the matching value, then focus moves to the text field. When focus
     ///     leaves the text field, the binding sets the bound value to `nil`. If a caller sets the
-    ///     value to `nil`, UIKit automatically dismisses focus.
+    ///     value to `nil`, the text field loses focus.
     ///   - value: The value to match against when determining whether the binding should change.
     /// - Returns: A cancel token.
     @discardableResult
@@ -216,7 +215,10 @@ extension NSTextField {
         //     editor, once it has been set up for this field: the field editor being first
         //     responder, with this field as its delegate, is what it means for the field to have
         //     focus. One field editor serves every field in a window, hence both checks.
-        let focusGainedAction = NotificationCenter.default
+        //
+        //     Both subscriptions are captured unchecked by the token below; see
+        //     'bind(selection:)'.
+        nonisolated(unsafe) let focusGainedAction = NotificationCenter.default
             .publisher(for: NSTextView.didChangeSelectionNotification)
             .sink { [weak self] notification in
                 MainActor._assumeIsolated {
@@ -233,7 +235,7 @@ extension NSTextField {
 
         // NB: Unlike its begin counterpart, this is posted whenever focus leaves the field, edited
         //     or not.
-        let editingDidEndAction = NotificationCenter.default.publisher(for: NSTextField.textDidEndEditingNotification, object: self).sink { _ in
+        nonisolated(unsafe) let editingDidEndAction = NotificationCenter.default.publisher(for: NSTextField.textDidEndEditingNotification, object: self).sink { _ in
             guard focus.wrappedValue == value else { return }
             focus.wrappedValue = nil
         }
@@ -266,49 +268,46 @@ extension NSTextField {
     /// is `true`. You can use this method to observe the focus state of a text field, or
     /// programmatically set and remove focus from the text field.
     ///
-    /// In the following example, a single `UITextField` accepts a user's desired `username`. The
-    /// text field binds its focus state to the Boolean value `usernameFieldIsFocused`. A "Submit"
+    /// In the following example, a single text field accepts a user's desired `username`. The text
+    /// field binds its focus state to the Boolean value `usernameFieldIsFocused`. A "Submit"
     /// button's action verifies whether the name is available. If the name is unavailable, the
     /// button sets `usernameFieldIsFocused` to `true`, which causes focus to return to the text
     /// field, so the user can enter a different name.
     ///
     /// ```swift
-    /// final class LoginViewController: UIViewController {
-    ///   @UIBindable private var username = ""
-    ///   @UIBindable private var usernameFieldIsFocused = false
+    /// final class SignUpViewController: NSViewController {
+    ///   @UIBinding private var username = ""
+    ///   @UIBinding private var usernameFieldIsFocused = false
     ///
     ///   // ...
     ///
     ///   override func viewDidLoad() {
     ///     super.viewDidLoad()
     ///
-    ///     let textField = UITextField(text: $username)
-    ///     textField.focus($usernameFieldIsFocused)
+    ///     let textField = NSTextField(text: $username)
+    ///     textField.bind(focus: $usernameFieldIsFocused)
     ///
-    ///     let submitButton = UIButton(
-    ///       style: .system,
-    ///       primaryAction: UIAction { [weak self] _ in
-    ///         guard let self else { return }
-    ///         if !isUserNameAvailable(username: username) {
-    ///           usernameFieldIsFocused = true
-    ///         }
+    ///     let submitButton = NSButton(title: "Submit", target: nil, action: nil)
+    ///     submitButton.addAction { [weak self] _ in
+    ///       guard let self else { return }
+    ///       if !isUserNameAvailable(username: username) {
+    ///         usernameFieldIsFocused = true
     ///       }
-    ///     )
-    ///     submitButton.setTitle("Sign In", for: .normal)
+    ///     }
     ///
     ///     // ...
     ///   }
     /// }
     /// ```
     ///
-    /// To control focus by matching a value, use the ``UIKit/UITextField/bind(focus:equals:)``
+    /// To control focus by matching a value, use the ``AppKit/NSTextField/bind(focus:equals:)``
     /// method instead.
     ///
     /// - Parameter condition: The focus state to bind. When focus moves to the text field, the
-    ///   binding sets the bound value to `true`. If a caller sets the value to  `true`
+    ///   binding sets the bound value to `true`. If a caller sets the value to `true`
     ///   programmatically, then focus moves to the text field. When focus leaves the text field,
-    ///   the binding sets the value to `false`. If a caller sets the value to `false`, UIKit
-    ///   automatically dismisses focus.
+    ///   the binding sets the value to `false`. If a caller sets the value to `false`, the text
+    ///   field loses focus.
     /// - Returns: A cancel token.
     @discardableResult
     public func bind(focus condition: UIBinding<Bool>) -> ObserveToken {
@@ -329,7 +328,7 @@ extension NSTextField {
 
 /// Represents a selection of text.
 ///
-/// Like SwiftUI's `TextSelection`, but for UIKit.
+/// Like SwiftUI's `TextSelection`, but for AppKit.
 public struct AppKitTextSelection: Hashable, Sendable {
     public var range: Range<String.Index>
 
@@ -345,7 +344,5 @@ public struct AppKitTextSelection: Hashable, Sendable {
         range.isEmpty
     }
 }
-
-extension AnyCancellable: @unchecked @retroactive Sendable {}
 
 #endif

@@ -2,7 +2,7 @@
 
 public import AppKit
 
-extension NSColorPanel: @retroactive Sendable {}
+extension NSColorPanel: @unchecked @retroactive Sendable {}
 extension NSColorPanel: TargetActionProtocol {
     public var target: AnyObject? {
         set { setTarget(newValue) }
@@ -19,10 +19,8 @@ extension NSColorPanel {
     /// Creates a new color panel and registers the binding against the
     /// selected color.
     ///
-    /// - Parameters:
-    ///   - frame: The frame rectangle for the view, measured in points.
-    ///   - color: The binding to read from for the selected color, and write to when the
-    ///     selected color is changes.
+    /// - Parameter color: The binding to read from for the selected color, and write to when the
+    ///   selected color changes.
     public convenience init(color: UIBinding<NSColor>) {
         self.init()
         bind(color: color)

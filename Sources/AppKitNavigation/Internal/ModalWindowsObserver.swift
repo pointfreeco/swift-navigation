@@ -1,7 +1,7 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
 public import AppKit
-public import Combine
+import Combine
 
 @MainActor
 class ModalWindowsObserver: NSObject {

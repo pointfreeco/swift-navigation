@@ -2,13 +2,17 @@
 public import AppKit
 
 extension NSSegmentedControl {
-    /// Creates a new color well with the specified frame and registers the binding against the
-    /// selected color.
+    /// Creates a new segmented control with the specified frame and registers the binding against
+    /// the selected segment.
     ///
     /// - Parameters:
     ///   - frame: The frame rectangle for the view, measured in points.
-    ///   - selectedSegment: The binding to read from for the selected color, and write to when the
-    ///     selected color is changes.
+    ///   - selectedSegment: The binding to read from for the selected segment, and write to when the
+    ///     selected segment changes.
+    ///   - fileID: The source `#fileID` associated with the control.
+    ///   - filePath: The source `#filePath` associated with the control.
+    ///   - line: The source `#line` associated with the control.
+    ///   - column: The source `#column` associated with the control.
     public convenience init(
         frame: CGRect = .zero, selectedSegment: UIBinding<some RawRepresentable<Int>>,
         fileID: StaticString = #fileID,
@@ -26,10 +30,16 @@ extension NSSegmentedControl {
         )
     }
 
-    /// Establishes a two-way connection between a binding and the color well's selected color.
+    /// Establishes a two-way connection between a binding and the segmented control's selected
+    /// segment.
     ///
-    /// - Parameter selectedSegment: The binding to read from for the selected color, and write to
-    ///   when the selected color changes.
+    /// - Parameters:
+    ///   - selectedSegment: The binding to read from for the selected segment, and write to when the
+    ///     selected segment changes.
+    ///   - fileID: The source `#fileID` associated with the binding.
+    ///   - filePath: The source `#filePath` associated with the binding.
+    ///   - line: The source `#line` associated with the binding.
+    ///   - column: The source `#column` associated with the binding.
     /// - Returns: A cancel token.
     @discardableResult
     public func bind(

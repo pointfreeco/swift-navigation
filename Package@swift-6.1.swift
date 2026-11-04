@@ -62,7 +62,6 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
     .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.10.1"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.13.0"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
@@ -195,7 +194,6 @@ let package = Package(
       dependencies: [
         "SwiftNavigation",
         "AppKitNavigationShim",
-        .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
       ]
     ),
     .target(
