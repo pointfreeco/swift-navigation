@@ -67,7 +67,10 @@ extension NSTextField {
                 selection.wrappedValue = textSelection
             }
         }
-        let editingChangedAction = NotificationCenter.default
+        // NB: The subscriptions are only cancelled from the token below, on the main actor, but
+        //     'AnyCancellable' is not 'Sendable', so the token's closure has to capture them
+        //     unchecked.
+        nonisolated(unsafe) let editingChangedAction = NotificationCenter.default
             .publisher(for: NSTextField.textDidChangeNotification, object: self)
             .sink { [weak self] _ in
                 guard let self else { return }
@@ -77,7 +80,7 @@ extension NSTextField {
         //     being edited. AppKit implements that delegate method on text fields itself, so it
         //     must not be replaced; the notification the field editor posts alongside carries the
         //     same news. One field editor serves every field in a window, hence the delegate check.
-        let selectionChangedAction = NotificationCenter.default
+        nonisolated(unsafe) let selectionChangedAction = NotificationCenter.default
             .publisher(for: NSTextView.didChangeSelectionNotification)
             .sink { [weak self] notification in
                 guard
@@ -87,7 +90,7 @@ extension NSTextField {
                 else { return }
                 MainActor._assumeIsolated { reportSelection(self) }
             }
-        let editingDidEndAction = NotificationCenter.default
+        nonisolated(unsafe) let editingDidEndAction = NotificationCenter.default
             .publisher(for: NSTextField.textDidEndEditingNotification, object: self)
             .sink { _ in selection.wrappedValue = nil }
         let token = observe { [weak self] in
@@ -216,7 +219,10 @@ extension NSTextField {
         //     editor, once it has been set up for this field: the field editor being first
         //     responder, with this field as its delegate, is what it means for the field to have
         //     focus. One field editor serves every field in a window, hence both checks.
-        let focusGainedAction = NotificationCenter.default
+        //
+        //     Both subscriptions are captured unchecked by the token below; see
+        //     'bind(selection:)'.
+        nonisolated(unsafe) let focusGainedAction = NotificationCenter.default
             .publisher(for: NSTextView.didChangeSelectionNotification)
             .sink { [weak self] notification in
                 MainActor._assumeIsolated {
@@ -233,7 +239,7 @@ extension NSTextField {
 
         // NB: Unlike its begin counterpart, this is posted whenever focus leaves the field, edited
         //     or not.
-        let editingDidEndAction = NotificationCenter.default.publisher(for: NSTextField.textDidEndEditingNotification, object: self).sink { _ in
+        nonisolated(unsafe) let editingDidEndAction = NotificationCenter.default.publisher(for: NSTextField.textDidEndEditingNotification, object: self).sink { _ in
             guard focus.wrappedValue == value else { return }
             focus.wrappedValue = nil
         }
@@ -345,7 +351,5 @@ public struct AppKitTextSelection: Hashable, Sendable {
         range.isEmpty
     }
 }
-
-extension AnyCancellable: @unchecked @retroactive Sendable {}
 
 #endif

@@ -21,7 +21,7 @@
 3. **合并字体管理器的代理**（已完成）：删掉 `FontManagerProxy` 和 `NSFontManager` 扩展里复制的 `bind(_:to:set:)`，改走 `TargetActionProxy` 和同一份绑定实现。`NSFontManager.action` 是非可选的 `Selector`，遵循不了 `TargetActionProtocol`，所以只共享内部实现，公开签名不变。实际做法：`TargetActionProxy` 加一个接管字体管理器的构造器；绑定的主体提成内部函数 `establishBinding(_:to:of:through:set:)`，两边的 `bind(_:to:set:)` 都转给它。
 4. **去掉 `IdentifiedCollections`**（已完成）：动作列表改用普通数组。四份 `Package*.swift` 删掉这个依赖，`Package.resolved` 随之少掉 `swift-identified-collections` 和 `swift-collections`，依赖条目与上游一致（只剩 `originHash` 不同）；两条 `public import IdentifiedCollections` 的警告一并消失。
 5. **加库前缀**（已完成）：`NSSwitch.boolValue`、`NSFontManager._selectedFont` 改成带 `appKitNavigation` 前缀的名字（`appKitNavigationIsOn`、`appKitNavigationSelectedFont`）。macOS 27.2 的 AppKit 里还没有同名方法，可一旦重名，Swift 扩展会悄悄替换掉系统实现——上一批修的 `textViewDidChangeSelection:` 就是这样坏的。两者都不是公开成员。另加一条测试守住这一类：扫描本库加在系统类上的 Objective-C 方法，名字里都要带库名，shim 有意替换的五个方法除外。
-6. **收回 `AnyCancellable` 的公开 `Sendable` 遵循**：它只是为了在 `ObserveToken` 的闭包里捕获订阅，改用局部的 `nonisolated(unsafe) let`，库里已有同样的写法。
+6. **收回 `AnyCancellable` 的公开 `Sendable` 遵循**（已完成）：它只是为了在 `ObserveToken` 的闭包里捕获订阅，改用局部的 `nonisolated(unsafe) let`，库里已有同样的写法。
 7. **文档**：删掉 `AppKitNavigation.docc` 里从 UIKit 抄来的 12 个页面（上游的 AppKitNavigation 没有它们），首页加「绑定」「导航」两组目录；生成一次文档，确认没有新的 DocC 警告。
 
 没有询问就采用的假设：
