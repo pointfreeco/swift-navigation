@@ -1,6 +1,6 @@
 # Draft - AppKitNavigation 清理：警告、重复代理和多余依赖
 
-- **状态**: Accepted
+- **状态**: In Progress
 - **创建日期**: 2026-11-04
 - **最后更新**: 2026-11-04
 - **实现分支**: `appkit-navigation-cleanup`
@@ -13,7 +13,7 @@
 
 先补测试，再动代码：
 
-1. **补测试作安全网**：每个类型化的 `bind`（开关、滑块、步进器、日期、颜色、路径、分段、颜色面板）各补一条双向测试。`NSSavePanel.bind(url:)` 与 `NSOpenPanel.bind(urls:)` 靠交换私有方法 `setFinalURL:` / `setFinalURLs:` 工作，系统去掉它们时现在只会静默失效；补一条测试，让那种情况立即变红。
+1. **补测试作安全网**（已完成）：每个类型化的 `bind`（开关、滑块、步进器、日期、颜色、路径、分段）各补一条双向测试，颜色面板除外（见决策日志）；字体管理器补一条重新绑定的测试。`NSSavePanel.bind(url:)` 与 `NSOpenPanel.bind(urls:)` 靠交换私有方法 `setFinalURL:` / `setFinalURLs:` 工作，系统去掉它们时现在只会静默失效；补一条测试，让那种情况立即变红。
 2. **清警告**：
    - `NSControl`、`NSToolbarItem`、`NSColorPanel` 的 `@retroactive Sendable` 改成 `@unchecked @retroactive Sendable`，与 `NSMenuItem`、`NSFontManager` 一致。
    - 两处没用在公开声明里的 `public import Combine` 改成内部导入。
@@ -33,9 +33,17 @@
 - 验证：Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译 AppKit 的库和测试。
 - 不在这一批：弹出相关三个文件（约 1,300 行）的重载收敛，连同 `Navigated.clearup()` 死代码（见 [ReviewDecisions.md](../Internal/ReviewDecisions.md)），属于大型重构，另起完整档提案；新功能各自另起提案。
 
+## 后续项
+
+- `NSColorPanel.bind(color:)` 一调用就崩溃：它经 KVC 读面板的 `action`，而 KVC 返回不了 `SEL`，抛出 `NSUnknownKeyException`。原本就有，由第 1 步的测试发现，不在这一批修。
+- `NSPathControl` 的便捷构造器把 URL 绑定的参数标签写成了 `date:`，应为 `url:`；改它要动公开 API，不在这一批。
+
 ## 决策日志
 
 | 日期 | 决定 | 理由 |
 |------|------|------|
 | 2026-11-04 | Created as Draft | 修 bug 的那一批已落地，按审查清单的顺序接着处理优化项；这一批只收不改用法的清理 |
 | 2026-11-04 | Accepted | 用户批准，开始实现 |
+| 2026-11-04 | 第 1 步不含颜色面板的双向测试 | 写测试时发现 `NSColorPanel.bind(color:)` 一调用就崩溃（见后续项），崩溃的测试会中断整个测试进程；修它属于修 bug，不在这一批的范围里 |
+| 2026-11-04 | 字体管理器补一条重新绑定的测试 | 第 3 步改动的正是解绑时移除回写动作的那段代码，现有测试没覆盖它 |
+| 2026-11-04 | 现有的两条面板测试在调用私有方法前先确认它存在 | 方法不在时直接调用会让整个测试进程崩溃，金丝雀测试的结果也就看不到了 |
