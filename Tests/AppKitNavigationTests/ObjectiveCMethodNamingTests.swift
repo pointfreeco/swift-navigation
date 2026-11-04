@@ -52,7 +52,7 @@
     private static func methodsImplementedInThisBinary(
       inClassesFromImagesOf representativeClasses: [AnyClass]
     ) throws -> [String] {
-      let codeRange = try codeRangeOfThisBinary()
+      let codeRange = codeRangeOfThisBinary()
       var methodDescriptions: [String] = []
       for representativeClass in representativeClasses {
         let imageName = try #require(class_getImageName(representativeClass))
@@ -96,10 +96,13 @@
 
     /// Where this binary's code is loaded. Comparing addresses against it is much faster than
     /// asking 'dladdr' about each of the system's tens of thousands of methods.
-    private static func codeRangeOfThisBinary() throws -> Range<UInt> {
+    ///
+    /// Should it ever come back empty, the scan finds none of the library's own methods, and the
+    /// test fails on that instead.
+    private static func codeRangeOfThisBinary() -> Range<UInt> {
       let header = #dsohandle.assumingMemoryBound(to: mach_header_64.self)
       var codeSize: UInt = 0
-      let codeStart = UInt(bitPattern: try #require(getsegmentdata(header, "__TEXT", &codeSize)))
+      let codeStart = UInt(bitPattern: getsegmentdata(header, "__TEXT", &codeSize))
       return codeStart..<(codeStart + codeSize)
     }
   }
