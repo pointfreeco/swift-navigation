@@ -11,7 +11,17 @@ extension NSColorPanel: TargetActionProtocol {
 
     public var action: Selector? {
         set { setAction(newValue) }
-        get { value(forKeyPath: "action") as? Selector }
+        get {
+            // NB: The SDK declares no getter for the panel's action, and key-value coding cannot
+            //     return a selector: asking it for "action" raises an exception. AppKit implements
+            //     the getter all the same (every release checked, macOS 12 through 27, has it), so
+            //     it is called directly, and a panel without one reports no action rather than
+            //     crashing. The target is an object, which key-value coding returns just fine.
+            let getter = NSSelectorFromString("action")
+            guard responds(to: getter) else { return nil }
+            typealias ActionGetter = @convention(c) (NSColorPanel, Selector) -> Selector?
+            return unsafeBitCast(method(for: getter), to: ActionGetter.self)(self, getter)
+        }
     }
 }
 
