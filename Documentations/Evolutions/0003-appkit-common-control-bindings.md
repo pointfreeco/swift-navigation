@@ -1,6 +1,6 @@
-# Draft - AppKit 常用控件的类型化绑定
+# 0003 - AppKit 常用控件的类型化绑定
 
-- **状态**: In Progress
+- **状态**: Implemented
 - **创建日期**: 2026-11-05
 - **最后更新**: 2026-11-05
 - **实现分支**: `appkit-common-control-bindings`
@@ -64,3 +64,4 @@ NSMenuItem(title: "Show Hidden Files", isOn: $model.showsHiddenFiles)
 | 2026-11-05 | 菜单项的新扩展同样标 `@MainActor` | `NSMenuItem` 也没有隔离到主 actor，新加的构造器和绑定要调用主 actor 上的绑定机制 |
 | 2026-11-05 | 分栏折叠带动画时，在绑定里自己用事务的动画包一层 | `observe` 已经会把更新放进环境事务的动画组里，但绑定自带的事务（`$model.x.animation(…)`）不走那一层；自己包一层，两种情况都经 `animator()` 带上同一个动画 |
 | 2026-11-05 | 实现完成，待用户看过后收尾 | 八步全部完成。文档判断：不需要使用指南或实现说明，用法写在各绑定的文档注释和 `swift-navigation-bindings` skill 里，取舍写在本提案里；README 不用改（上游的 README 不列 AppKit 的绑定）；没有新术语 |
+| 2026-11-05 | Implemented，编号 0003，落地到 `main` | 用户看过后要求收尾。八步全部完成；没做的三项留在后续项（打 fork 新版本供各项目使用、随模型变化的菜单内容、勾选框的混合状态）。文档判断同上一行，没有新术语 |
