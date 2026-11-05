@@ -133,6 +133,31 @@
       #expect(weight == .regular)
     }
 
+    // MARK: - Segments selected on their own
+
+    @Test("each segment of a segmented control can stay in step with a binding of its own")
+    func segmentSelectionStaysInStep() async {
+      @UIBinding var showsSidebar = true
+      @UIBinding var showsInspector = false
+      let segmentedControl = NSSegmentedControl(
+        labels: ["Sidebar", "Inspector"], trackingMode: .selectAny, target: nil, action: nil
+      )
+      segmentedControl.bind(isSelected: $showsSidebar, forSegment: 0)
+      segmentedControl.bind(isSelected: $showsInspector, forSegment: 1)
+      #expect(segmentedControl.isSelected(forSegment: 0))
+      #expect(!segmentedControl.isSelected(forSegment: 1))
+
+      showsInspector = true
+      await Task.yield()
+      #expect(segmentedControl.isSelected(forSegment: 1))
+
+      // NB: Binding the second segment must not have replaced the first one's binding.
+      segmentedControl.setSelected(false, forSegment: 0)
+      sendAction(of: segmentedControl)
+      #expect(!showsSidebar)
+      #expect(showsInspector)
+    }
+
     // MARK: - Helpers
 
     private enum Weight: CaseIterable {

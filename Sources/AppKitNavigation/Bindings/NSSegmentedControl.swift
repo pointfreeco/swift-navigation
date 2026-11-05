@@ -149,6 +149,40 @@ extension NSSegmentedControl {
             segmentedControl.selectedSegment = index
         }
     }
+
+    /// Establishes a two-way connection between a binding and whether a segment is selected.
+    ///
+    /// Use this when the tracking mode lets the user select several segments at once, such as
+    /// `selectAny`, binding each segment to a value of its own:
+    ///
+    /// ```swift
+    /// paneToggleControl.bind(isSelected: $model.isSidebarVisible, forSegment: 0)
+    /// paneToggleControl.bind(isSelected: $model.isInspectorVisible, forSegment: 1)
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - isSelected: The binding to read from for whether the segment is selected, and write to
+    ///     when the user selects or deselects it.
+    ///   - segment: The index of the segment.
+    /// - Returns: A cancel token.
+    @discardableResult
+    public func bind(isSelected: UIBinding<Bool>, forSegment segment: Int) -> ObserveToken {
+        // NB: The selection of one segment is not a property that key-value observation can
+        //     watch, so the action alone carries the user's changes back.
+        establishBinding(
+            isSelected,
+            to: \NSSegmentedControl.[isSelectedForSegment: segment],
+            of: self,
+            through: createActionProxyIfNeeded(),
+            observesKeyPath: false
+        ) { segmentedControl, isSelected, _ in
+            segmentedControl.setSelected(isSelected, forSegment: segment)
+        }
+    }
+
+    fileprivate subscript(isSelectedForSegment segment: Int) -> Bool {
+        isSelected(forSegment: segment)
+    }
 }
 
 extension RawRepresentable<Int> {
