@@ -28,7 +28,7 @@ NSMenuItem(title: "Show Hidden Files", isOn: $model.showsHiddenFiles)
 2. **勾选框**（已完成）：`NSButton.bind(isOn:)` 把 `state` 与 `Bool` 双向同步；`bind(isOn:contains:)` 把勾选状态与一个 `SetAlgebra`（`Set`、`OptionSet`）里是否含有某个成员同步，勾上插入、取消移除。各配一个 `NSButton(checkboxWithTitle:isOn:)` 形式的便捷构造器。
 3. **从一组选项里选一个**（已完成）：`NSPopUpButton` 与 `NSSegmentedControl` 加 `bind(selection:options:)`，第 i 项对应 `options[i]`，值只要求 `Equatable`。便捷构造器多一个 `title:`，按选项生成菜单项或分段标签，保证顺序一致。
 4. **多选分段控件的单段**（已完成）：`NSSegmentedControl.bind(isSelected:forSegment:)`，每段各绑一个 `Bool`，名字照 AppKit 的 `isSelected(forSegment:)`。
-5. **分栏折叠**：`NSSplitViewItem.bind(isCollapsed:)`，用户拖动分隔条或点侧栏按钮折叠时经 KVO 写回；在 `withAppKitAnimation` 里改模型时经 `animator()` 带动画。配 `unbindIsCollapsed()`。
+5. **分栏折叠**（已完成）：`NSSplitViewItem.bind(isCollapsed:)`，用户拖动分隔条或点侧栏按钮折叠时经 KVO 写回；在 `withAppKitAnimation` 里改模型时经 `animator()` 带动画。配 `unbindIsCollapsed()`。
 6. **标签页**：`NSTabViewController.bind(selection:options:)`，对应 `selectedTabViewItemIndex`，用户切换标签时经 KVO 写回。配 `unbindSelection()`。
 7. **菜单项勾号**：`NSMenuItem.bind(isOn:)`，勾号跟随 `Bool`，用户选中菜单项时取反写回。配 `NSMenuItem(title:isOn:keyEquivalent:)`。
 8. **文档与验证**：DocC 首页「绑定」一组登记新符号；`swift-navigation-bindings` skill 的类型化绑定清单补上新绑定。每种绑定先写双向测试再实现；Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译 AppKit 的库和测试。
@@ -51,3 +51,5 @@ NSMenuItem(title: "Show Hidden Files", isOn: $model.showsHiddenFiles)
 | 2026-11-05 | 选中值按选项数组的顺序对应界面上的项，不按菜单项里存的值 | 用户选定。与各项目现有按 `allCases` 下标的写法一致，任意 `Equatable` 值都能用；代价是菜单里不能夹别的项，便捷构造器按选项生成菜单项来保证顺序 |
 | 2026-11-05 | 集合成员勾选框、多选分段控件的单段、菜单项勾号三种附加绑定一起做 | 用户选定 |
 | 2026-11-05 | 用户批准，开始实现 | |
+| 2026-11-05 | 内部的 `establishBinding` 不再要求被绑定的对象是 `Sendable`；分栏的扩展标 `@MainActor` | SDK 明确声明 `NSSplitViewItem` 不能是 `Sendable`，也没有把它隔离到主 actor，所以既不能像 `NSControl` 那样补一个 `@unchecked Sendable`，它的扩展也默认不在主 actor 上。KVO 回调里改用 `nonisolated(unsafe)` 把对象交给主 actor：这些对象只在主线程上变化、发通知 |
+| 2026-11-05 | 分栏折叠带动画时，在绑定里自己用事务的动画包一层 | `observe` 已经会把更新放进环境事务的动画组里，但绑定自带的事务（`$model.x.animation(…)`）不走那一层；自己包一层，两种情况都经 `animator()` 带上同一个动画 |

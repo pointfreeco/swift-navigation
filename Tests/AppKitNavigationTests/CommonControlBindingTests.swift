@@ -158,7 +158,63 @@
       #expect(showsInspector)
     }
 
+    // MARK: - Split view items
+
+    @Test("a split view item stays in step with whether it is collapsed")
+    func splitViewItemStaysInStep() async {
+      @UIBinding var isCollapsed = false
+      let splitViewItem = NSSplitViewItem(viewController: PlaceholderViewController())
+      splitViewItem.bind(isCollapsed: $isCollapsed)
+      #expect(!splitViewItem.isCollapsed)
+
+      isCollapsed = true
+      await Task.yield()
+      #expect(splitViewItem.isCollapsed)
+
+      // NB: What AppKit does when the user drags the divider or clicks the sidebar button.
+      splitViewItem.isCollapsed = false
+      #expect(!isCollapsed)
+    }
+
+    @Test("collapsing a split view item with an animation leaves it and its binding collapsed")
+    func animatedCollapseStaysCollapsed() async throws {
+      @UIBinding var isCollapsed = false
+      let splitViewController = NSSplitViewController()
+      let splitViewItem = NSSplitViewItem(sidebarWithViewController: PlaceholderViewController())
+      splitViewController.addSplitViewItem(splitViewItem)
+      splitViewController.addSplitViewItem(
+        NSSplitViewItem(viewController: PlaceholderViewController())
+      )
+      splitViewItem.bind(isCollapsed: $isCollapsed)
+
+      withAppKitAnimation(.linear(duration: 0.05)) {
+        isCollapsed = true
+      }
+      try await Task.sleep(for: .milliseconds(300))
+
+      #expect(splitViewItem.isCollapsed)
+      #expect(isCollapsed)
+    }
+
+    @Test("unbinding a split view item stops writing to the binding")
+    func unbindingASplitViewItemStopsWriting() {
+      @UIBinding var isCollapsed = false
+      let splitViewItem = NSSplitViewItem(viewController: PlaceholderViewController())
+      splitViewItem.bind(isCollapsed: $isCollapsed)
+
+      splitViewItem.unbindIsCollapsed()
+      splitViewItem.isCollapsed = true
+
+      #expect(!isCollapsed)
+    }
+
     // MARK: - Helpers
+
+    private final class PlaceholderViewController: NSViewController {
+      override func loadView() {
+        view = NSView()
+      }
+    }
 
     private enum Weight: CaseIterable {
       case light

@@ -98,7 +98,7 @@ extension TargetActionProtocol {
 ///     the property's value.
 ///   - set: Applies a new value of the binding to the object.
 @MainActor
-func establishBinding<Owner: NSObject & Sendable, Value>(
+func establishBinding<Owner: NSObject, Value>(
   _ binding: UIBinding<Value>,
   to keyPath: KeyPath<Owner, Value>,
   of owner: Owner,
@@ -132,6 +132,9 @@ func establishBinding<Owner: NSObject & Sendable, Value>(
   if observesKeyPath {
     observation = owner.observe(keyPath) { owner, _ in
       guard isSetting.withLock({ !$0 }) else { return }
+      // NB: The owner need not be sendable — a split view item is explicitly not — but these
+      //     objects only change, and so only report changes, on the main thread.
+      nonisolated(unsafe) let owner = owner
       MainActor._assumeIsolated {
         binding.wrappedValue = owner[keyPath: uncheckedKeyPath]
       }
