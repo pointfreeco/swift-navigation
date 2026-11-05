@@ -6,6 +6,7 @@
 
 - [Evolutions/README.md](Evolutions/README.md)：提案索引与状态。
 - [0001-appkit-navigation-cleanup.md](Evolutions/0001-appkit-navigation-cleanup.md)：AppKitNavigation 清理——警告、重复代理和多余依赖。
+- [draft-appkit-test-run-loop-exit.md](Evolutions/draft-appkit-test-run-loop-exit.md)：AppKit 测试在 `swift test` 下不再中途以 0 退出。
 
 ## Internal
 
