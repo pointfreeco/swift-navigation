@@ -41,8 +41,8 @@
 
 ## 后续项
 
-- AppKit 的 Swift Testing 测试偶尔会中途结束，退出码却是 0，没跑完的测试结果就此丢失；`main` 上同样存在。用 lldb 查到：分段控件的 `performClick`、保存和打开面板的创建（`-[NSSavePanel _initBridgeAndStuff]` 等待远程面板的信号量）都会跑嵌套 run loop，偶尔把一个 `CFRunLoopStop` 漏给外层；而测试进程的主执行器在主 run loop 一返回就 `exit(0)`。去掉分段控件的点击用例不能根治，来源不止一处。修法要改测试基础设施，例如把这类测试移到 XCTest，或在主 run loop 退出时接着运行，留给另一批。
-- `NSPathControl` 的便捷构造器把 URL 绑定的参数标签写成了 `date:`，应为 `url:`；改它要动公开 API，不在这一批。
+- AppKit 的 Swift Testing 测试偶尔会中途结束，退出码却是 0，没跑完的测试结果就此丢失；`main` 上同样存在。用 lldb 查到：分段控件的 `performClick`、保存和打开面板的创建（`-[NSSavePanel _initBridgeAndStuff]` 等待远程面板的信号量）都会跑嵌套 run loop，偶尔把一个 `CFRunLoopStop` 漏给外层；而测试进程的主执行器在主 run loop 一返回就 `exit(0)`。去掉分段控件的点击用例不能根治，来源不止一处。修法要改测试基础设施，例如把这类测试移到 XCTest，或在主 run loop 退出时接着运行，留给另一批。（已修：在主 run loop 被误停时接着运行，见 [draft-appkit-test-run-loop-exit.md](draft-appkit-test-run-loop-exit.md)。）
+- `NSPathControl` 的便捷构造器把 URL 绑定的参数标签写成了 `date:`，应为 `url:`；改它要动公开 API，不在这一批。（已修：直接改名为 `url:`，与上一项在同一分支上提交。）
 
 ## 决策日志
 

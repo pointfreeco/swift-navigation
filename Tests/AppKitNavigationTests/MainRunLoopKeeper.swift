@@ -1,6 +1,12 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
   import Foundation
-  import Testing
+  #if compiler(<6.4)
+    // NB: Swift 6.2 treats the trait's conformance to 'SuiteTrait' below as public, and a public
+    //     conformance needs a public import.
+    public import Testing
+  #else
+    import Testing
+  #endif
 
   /// A trait that keeps the main run loop running when an AppKit event loop leaves a stray stop
   /// behind.
