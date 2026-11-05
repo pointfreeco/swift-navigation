@@ -4,7 +4,7 @@
   import Testing
 
   @MainActor
-  @Suite struct ControlBindingLifetimeTests {
+  @Suite(.keepsMainRunLoopRunning) struct ControlBindingLifetimeTests {
     /// What a reused table cell does: the same text field is bound to the next row's model.
     @Test("rebinding a text field stops writing edits to the previous binding")
     func rebindingStopsWritingToThePreviousBinding() {

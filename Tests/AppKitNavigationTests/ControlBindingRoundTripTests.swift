@@ -6,7 +6,7 @@
   /// Each typed binding keeps its control and its source of truth in step: the control shows the
   /// bound value, follows later changes to it, and writes the user's changes back.
   @MainActor
-  @Suite struct ControlBindingRoundTripTests {
+  @Suite(.keepsMainRunLoopRunning) struct ControlBindingRoundTripTests {
     init() {
       // NB: A control sends its action through 'NSApplication.sendAction(_:to:from:)', which
       //     silently does nothing when no application object exists yet.
@@ -92,8 +92,7 @@
     @Test("a path control stays in step with its binding")
     func pathControlStaysInStep() async {
       @UIBinding var url: URL? = URL(filePath: "/System")
-      let pathControl = NSPathControl()
-      pathControl.bind(url: $url)
+      let pathControl = NSPathControl(url: $url)
       #expect(pathControl.url?.lastPathComponent == "System")
 
       url = URL(filePath: "/Library")

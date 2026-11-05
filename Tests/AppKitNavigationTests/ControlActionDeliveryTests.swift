@@ -4,7 +4,7 @@
   import Testing
 
   @MainActor
-  @Suite struct ControlActionDeliveryTests {
+  @Suite(.keepsMainRunLoopRunning) struct ControlActionDeliveryTests {
     enum ControlKind: String, CaseIterable, Sendable {
       case pushButton
       case checkbox
