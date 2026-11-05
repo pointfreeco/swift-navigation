@@ -8,6 +8,7 @@
 - [0001-appkit-navigation-cleanup.md](Evolutions/0001-appkit-navigation-cleanup.md)：AppKitNavigation 清理——警告、重复代理和多余依赖。
 - [0002-appkit-test-run-loop-exit.md](Evolutions/0002-appkit-test-run-loop-exit.md)：AppKit 测试在 `swift test` 下不再中途以 0 退出。
 - [0003-appkit-common-control-bindings.md](Evolutions/0003-appkit-common-control-bindings.md)：AppKit 常用控件的类型化绑定。
+- [draft-appkit-table-selection-bindings.md](Evolutions/draft-appkit-table-selection-bindings.md)：表格与大纲的选中绑定、大纲的展开状态绑定。
 
 ## Internal
 
