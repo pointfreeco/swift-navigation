@@ -75,24 +75,42 @@ extension TargetActionProtocol {
   }
 }
 
-/// Establishes a two-way connection between a binding and a property of an object whose
-/// target-action pair `actionProxy` runs: the object's action writes the property back to the
-/// binding, and changes to the binding are applied with `set`.
+/// Establishes a two-way connection between a binding and a property of an object: changes to
+/// the binding are applied with `set`, and the user's changes are written back to the binding.
 ///
-/// ``TargetActionProtocol`` and `NSFontManager` both bind through this. The font manager cannot
-/// conform to the protocol, since its `action` is not optional.
+/// The user's changes arrive through the object's target-action pair, which `actionProxy` runs,
+/// and through key-value observation of the property; either can be left out.
+/// ``TargetActionProtocol`` and `NSFontManager` use both. The font manager cannot conform to the
+/// protocol, since its `action` is not optional. Objects without a target-action pair, such as a
+/// split view item, pass no proxy, and properties that key-value observation cannot reach, such
+/// as the selection of one segment, opt out of it.
+///
+/// - Parameters:
+///   - binding: The binding to keep in step with the property.
+///   - keyPath: The property. The binding is stored under this key path, so binding the same
+///     property again replaces it. It must be an Objective-C key path unless `observesKeyPath` is
+///     `false`.
+///   - owner: The object that has the property.
+///   - actionProxy: The proxy that runs the object's target-action pair, or `nil` if it has none.
+///   - observesKeyPath: Whether changes that key-value observation of the property reports are
+///     written back too.
+///   - valueAfterAction: The value to write back when the object sends its action. Defaults to
+///     the property's value.
+///   - set: Applies a new value of the binding to the object.
 @MainActor
 func establishBinding<Owner: NSObject & Sendable, Value>(
   _ binding: UIBinding<Value>,
   to keyPath: KeyPath<Owner, Value>,
   of owner: Owner,
-  through actionProxy: TargetActionProxy,
+  through actionProxy: TargetActionProxy?,
+  observesKeyPath: Bool = true,
+  valueAfterAction: ((_ owner: Owner) -> Value)? = nil,
   set: @escaping (_ owner: Owner, _ newValue: Value, _ transaction: UITransaction) -> Void
 ) -> ObserveToken {
   owner.removeBinding(to: keyPath)
-  let actionID = actionProxy.addBindingAction { [weak owner] _ in
+  let actionID = actionProxy?.addBindingAction { [weak owner] _ in
     guard let owner else { return }
-    binding.wrappedValue = owner[keyPath: keyPath]
+    binding.wrappedValue = valueAfterAction?(owner) ?? owner[keyPath: keyPath]
   }
 
   let isSetting = LockIsolated(false)
@@ -110,18 +128,25 @@ func establishBinding<Owner: NSObject & Sendable, Value>(
   }
   // NB: This key path must only be accessed on the main actor
   nonisolated(unsafe) let uncheckedKeyPath = keyPath
-  let observation = owner.observe(keyPath) { owner, _ in
-    guard isSetting.withLock({ !$0 }) else { return }
-    MainActor._assumeIsolated {
-      binding.wrappedValue = owner[keyPath: uncheckedKeyPath]
+  let observation: NSKeyValueObservation?
+  if observesKeyPath {
+    observation = owner.observe(keyPath) { owner, _ in
+      guard isSetting.withLock({ !$0 }) else { return }
+      MainActor._assumeIsolated {
+        binding.wrappedValue = owner[keyPath: uncheckedKeyPath]
+      }
     }
+  } else {
+    observation = nil
   }
   let observationToken = ObserveToken { [weak actionProxy] in
-    MainActor._assumeIsolated {
-      actionProxy?.removeBindingAction(for: actionID)
+    if let actionID {
+      MainActor._assumeIsolated {
+        actionProxy?.removeBindingAction(for: actionID)
+      }
     }
     token.cancel()
-    observation.invalidate()
+    observation?.invalidate()
   }
   owner.observationTokens[keyPath] = observationToken
   return observationToken
