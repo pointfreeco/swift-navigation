@@ -1,5 +1,11 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-  import AppKit
+  #if compiler(<6.4)
+    // NB: Swift 6.2 treats the data sources' conformances below as public, and a public
+    //     conformance needs a public import.
+    public import AppKit
+  #else
+    import AppKit
+  #endif
   import AppKitNavigation
   import Testing
 

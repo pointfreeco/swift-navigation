@@ -90,6 +90,9 @@ extension NSTableView {
     ///     selection changes.
     ///   - dataSource: The table's diffable data source.
     /// - Returns: A cancel token.
+    // NB: The manifests for Swift 6.2 and earlier support macOS releases before diffable data
+    //     sources.
+    @available(macOS 11, *)
     @discardableResult
     public func bind<SectionIdentifier, ItemIdentifier>(
         selection: UIBinding<ItemIdentifier?>,
