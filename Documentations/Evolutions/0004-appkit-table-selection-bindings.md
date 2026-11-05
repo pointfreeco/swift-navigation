@@ -1,6 +1,6 @@
-# Draft - 表格与大纲的选中绑定、大纲的展开状态绑定
+# 0004 - 表格与大纲的选中绑定、大纲的展开状态绑定
 
-- **状态**: In Progress
+- **状态**: Implemented
 - **创建日期**: 2026-11-05
 - **最后更新**: 2026-11-06
 - **实现分支**: `appkit-table-selection-bindings`
@@ -65,3 +65,4 @@ outlineView.bind(expandedItems: $model.expandedItems, itemIdentifier: dataSource
 | 2026-11-06 | `bind(selection:dataSource:)` 标 `@available(macOS 11, *)` | Swift 6.2 及更早用的包清单最低支持 macOS 10.15，早于 diffable 数据源；Xcode 26.6 编译时报错 |
 | 2026-11-06 | 测试文件在编译器低于 6.4 时公开导入 `AppKit` | 与 0002 的 trait 同一个 Swift 6.2 毛病：测试里私有数据源类对 AppKit 协议的遵循被当成公开的 |
 | 2026-11-06 | 实现完成，待用户看过后收尾 | 四步全部完成。文档判断：不需要使用指南或实现说明，用法写在各绑定的文档注释和 `swift-navigation-bindings` skill 里，取舍写在本提案里；README 不用改；没有新术语 |
+| 2026-11-06 | Implemented，编号 0004，落地到 `main` | 用户看过后要求收尾。四步全部完成；多选、`NSCollectionView` 的选中和给 fork 打新版本留在后续项。文档判断同上一行，没有新术语 |

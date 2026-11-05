@@ -9,4 +9,4 @@
 | 0001 | [AppKitNavigation 清理：警告、重复代理和多余依赖](0001-appkit-navigation-cleanup.md) | Implemented |
 | 0002 | [AppKit 测试在 `swift test` 下不再中途以 0 退出](0002-appkit-test-run-loop-exit.md) | Implemented |
 | 0003 | [AppKit 常用控件的类型化绑定](0003-appkit-common-control-bindings.md) | Implemented |
-| draft | [表格与大纲的选中绑定、大纲的展开状态绑定](draft-appkit-table-selection-bindings.md) | In Progress |
+| 0004 | [表格与大纲的选中绑定、大纲的展开状态绑定](0004-appkit-table-selection-bindings.md) | Implemented |
