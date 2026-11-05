@@ -25,7 +25,7 @@ NSMenuItem(title: "Show Hidden Files", isOn: $model.showsHiddenFiles)
 ```
 
 1. **整理内部的绑定机制**（已完成）：现有的 `establishBinding` 同时要求 target/action 和 KVO。改成三部分都可选——target/action、KVO、用户操作后读回的值——让分栏、标签页这类没有 target/action 的对象，以及每段各绑一个值的分段控件也能用。现有绑定的行为不变，现有测试全部通过。
-2. **勾选框**：`NSButton.bind(isOn:)` 把 `state` 与 `Bool` 双向同步；`bind(isOn:contains:)` 把勾选状态与一个 `SetAlgebra`（`Set`、`OptionSet`）里是否含有某个成员同步，勾上插入、取消移除。各配一个 `NSButton(checkboxWithTitle:isOn:)` 形式的便捷构造器。
+2. **勾选框**（已完成）：`NSButton.bind(isOn:)` 把 `state` 与 `Bool` 双向同步；`bind(isOn:contains:)` 把勾选状态与一个 `SetAlgebra`（`Set`、`OptionSet`）里是否含有某个成员同步，勾上插入、取消移除。各配一个 `NSButton(checkboxWithTitle:isOn:)` 形式的便捷构造器。
 3. **从一组选项里选一个**：`NSPopUpButton` 与 `NSSegmentedControl` 加 `bind(selection:options:)`，第 i 项对应 `options[i]`，值只要求 `Equatable`。便捷构造器多一个 `title:`，按选项生成菜单项或分段标签，保证顺序一致。
 4. **多选分段控件的单段**：`NSSegmentedControl.bind(isSelected:forSegment:)`，每段各绑一个 `Bool`，名字照 AppKit 的 `isSelected(forSegment:)`。
 5. **分栏折叠**：`NSSplitViewItem.bind(isCollapsed:)`，用户拖动分隔条或点侧栏按钮折叠时经 KVO 写回；在 `withAppKitAnimation` 里改模型时经 `animator()` 带动画。配 `unbindIsCollapsed()`。
