@@ -1,0 +1,53 @@
+# Draft - AppKit 常用控件的类型化绑定
+
+- **状态**: Accepted
+- **创建日期**: 2026-11-05
+- **最后更新**: 2026-11-05
+- **实现分支**: `appkit-common-control-bindings`
+
+## 摘要
+
+调查了本机依赖这个 fork 的 7 个 macOS 项目，约 50 处代码在手写同一类连接：弹出按钮和分段控件按 `allCases` 的下标对应枚举，勾选框的 `state` 与 `Bool` 或集合成员互相同步，分栏的折叠状态和标签页的选中项只从模型往界面单向同步。库现有的类型化绑定覆盖不到这些控件：`bind(selectedSegment:)` 只接受以 `Int` 为原始值的枚举，勾选框、弹出按钮、分栏、标签页和菜单项勾号都没有对应的绑定。这次补上八种双向绑定，写法与现有的 `bind(isOn:)`、`bind(selectedSegment:)` 一致。
+
+## 方案
+
+调用点：
+
+```swift
+NSButton(checkboxWithTitle: "Dump Objective-C", isOn: $model.dumpsObjectiveC)
+NSButton(checkboxWithTitle: kind.title, isOn: $model.declarationKinds, contains: kind)
+NSPopUpButton(selection: $model.weight, options: SymbolWeight.allCases, title: \.displayName)
+segmentedControl.bind(selection: $model.segment, options: EntitySegment.allCases)
+paneToggleControl.bind(isSelected: $model.isSidebarVisible, forSegment: 0)
+inspectorItem.bind(isCollapsed: $model.isInspectorCollapsed)
+tabViewController.bind(selection: $model.mode, options: MainSidebarMode.allCases)
+NSMenuItem(title: "Show Hidden Files", isOn: $model.showsHiddenFiles)
+```
+
+1. **整理内部的绑定机制**：现有的 `establishBinding` 同时要求 target/action 和 KVO。拆成可选的三部分——用户操作后读回的值、要不要 KVO、token 存在哪个键下——让分栏、标签页这类没有 target/action 的对象，以及每段各绑一个值的分段控件也能用。现有绑定的行为不变。
+2. **勾选框**：`NSButton.bind(isOn:)` 把 `state` 与 `Bool` 双向同步；`bind(isOn:contains:)` 把勾选状态与一个 `SetAlgebra`（`Set`、`OptionSet`）里是否含有某个成员同步，勾上插入、取消移除。各配一个 `NSButton(checkboxWithTitle:isOn:)` 形式的便捷构造器。
+3. **从一组选项里选一个**：`NSPopUpButton` 与 `NSSegmentedControl` 加 `bind(selection:options:)`，第 i 项对应 `options[i]`，值只要求 `Equatable`。便捷构造器多一个 `title:`，按选项生成菜单项或分段标签，保证顺序一致。
+4. **多选分段控件的单段**：`NSSegmentedControl.bind(isSelected:forSegment:)`，每段各绑一个 `Bool`，名字照 AppKit 的 `isSelected(forSegment:)`。
+5. **分栏折叠**：`NSSplitViewItem.bind(isCollapsed:)`，用户拖动分隔条或点侧栏按钮折叠时经 KVO 写回；在 `withAppKitAnimation` 里改模型时经 `animator()` 带动画。配 `unbindIsCollapsed()`。
+6. **标签页**：`NSTabViewController.bind(selection:options:)`，对应 `selectedTabViewItemIndex`，用户切换标签时经 KVO 写回。配 `unbindSelection()`。
+7. **菜单项勾号**：`NSMenuItem.bind(isOn:)`，勾号跟随 `Bool`，用户选中菜单项时取反写回。配 `NSMenuItem(title:isOn:keyEquivalent:)`。
+8. **文档与验证**：DocC 首页「绑定」一组登记新符号；`swift-navigation-bindings` skill 的类型化绑定清单补上新绑定。每种绑定先写双向测试再实现；Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译 AppKit 的库和测试。
+
+没有询问就采用的假设：
+
+- 参数标签用 `selection:`、`options:`，照 SwiftUI 的 `Picker(selection:)` 和 Cocoa 绑定的 `content` / `selectedObject`；现有的 `bind(selectedSegment:)` 保留不动。
+- 模型里的值不在 `options` 里时，用 `reportIssue` 报出来：弹出按钮和分段控件取消选中，标签页保持原样。用户选中了 `options` 之外的项（例如菜单里另加的项）时，同样报出来，不写回。
+- 勾选框不支持混合状态：`.on` 对应 `true`，其余都是 `false`。
+- 选项列表在绑定时一次给定；菜单内容随模型变化的情况这次不做。
+- 分栏折叠只在 `withAppKitAnimation` 里才带动画，与库里其他绑定的做法一致。
+- 分栏和标签页不加便捷构造器：它们随视图控制器创建，构造器没有可省的步骤。
+- 只改 fork 独有的 AppKitNavigation，不碰与上游共用的 SwiftNavigation 核心。各项目改用新绑定不在这一批。
+
+## 决策日志
+
+| 日期 | 决定 | 理由 |
+|------|------|------|
+| 2026-11-05 | 先做常用控件的类型化绑定，表格选中绑定、状态驱动的独立窗口、简化 `observe` 写法留到以后 | 用户选定。调查中这一块手写代码的处数最多，写法与现有绑定一致，没有设计上的未知数 |
+| 2026-11-05 | 选中值按选项数组的顺序对应界面上的项，不按菜单项里存的值 | 用户选定。与各项目现有按 `allCases` 下标的写法一致，任意 `Equatable` 值都能用；代价是菜单里不能夹别的项，便捷构造器按选项生成菜单项来保证顺序 |
+| 2026-11-05 | 集合成员勾选框、多选分段控件的单段、菜单项勾号三种附加绑定一起做 | 用户选定 |
+| 2026-11-05 | 用户批准，开始实现 | |
