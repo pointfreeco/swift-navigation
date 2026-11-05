@@ -34,7 +34,7 @@ outlineView.bind(expandedItems: $model.expandedItems, itemIdentifier: dataSource
 
 1. **单选绑定**（已完成）：`NSTableView.bind(selection:row:itemIdentifier:)`，绑定一个可选的标识。模型变了就按 `row` 找到行选中；用户改了选中（表格发出选中变化的通知），就按 `itemIdentifier` 查出标识写回。绑定自己选行时发出的通知不写回。表格变成没有选中行时写回 `nil`——用户点空白处、选中的行被删掉或被折叠隐藏都算。模型里的标识对应不到可见的行时，表格取消选中，模型保留原值。配 `unbindSelection()`。
 2. **AppKit 自带 diffable 数据源的简写**（已完成）：`bind(selection:dataSource:)`，用 `NSTableViewDiffableDataSource` 的两个查找方法。
-3. **大纲的展开状态**：`NSOutlineView.bind(expandedItems:itemIdentifier:)`，绑定一个标识的 `Set`。模型变了就从上到下逐行展开或折叠，展开父项后露出的子项接着处理；用户展开或折叠（大纲发出展开、折叠的通知）时把标识加进或移出集合。配 `unbindExpandedItems()`。
+3. **大纲的展开状态**（已完成）：`NSOutlineView.bind(expandedItems:itemIdentifier:)`，绑定一个标识的 `Set`。模型变了就从上到下逐行展开或折叠，展开父项后露出的子项接着处理；用户展开或折叠（大纲发出展开、折叠的通知）时把标识加进或移出集合。配 `unbindExpandedItems()`。
 4. **文档与验证**：DocC 首页「绑定」一组登记 `NSTableView`、`NSOutlineView`；`swift-navigation-bindings` skill 补上新绑定。每种绑定先写双向测试再实现；Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译 AppKit 的库和测试。
 
 没有询问就采用的假设：

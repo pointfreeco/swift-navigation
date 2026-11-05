@@ -135,7 +135,55 @@
       #expect(selection == nil)
     }
 
+    // MARK: - Expansion
+
+    @Test("an outline view's expanded items stay in step with their binding")
+    func expandedItemsStayInStep() async {
+      let tree = Tree.nestedFruitsAndVegetables
+      let outlineView = makeOutlineView(dataSource: tree)
+      @UIBinding var expandedItems: Set<String> = ["Fruits", "Citrus"]
+      bindExpandedItems($expandedItems, of: outlineView)
+      // NB: Citrus only has a row once Fruits is expanded.
+      #expect(outlineView.isItemExpanded(tree.node(named: "Fruits")))
+      #expect(outlineView.isItemExpanded(tree.node(named: "Citrus")))
+      #expect(!outlineView.isItemExpanded(tree.node(named: "Vegetables")))
+
+      expandedItems = ["Citrus", "Vegetables"]
+      await Task.yield()
+      #expect(!outlineView.isItemExpanded(tree.node(named: "Fruits")))
+      #expect(outlineView.isItemExpanded(tree.node(named: "Vegetables")))
+
+      // NB: What the outline does when the user clicks a disclosure triangle.
+      outlineView.expandItem(tree.node(named: "Fruits"))
+      #expect(expandedItems == ["Fruits", "Citrus", "Vegetables"])
+
+      outlineView.collapseItem(tree.node(named: "Vegetables"))
+      #expect(expandedItems == ["Fruits", "Citrus"])
+    }
+
+    @Test("unbinding an outline view's expanded items stops writing to the binding")
+    func unbindingTheExpandedItemsStopsWriting() {
+      let tree = Tree.nestedFruitsAndVegetables
+      let outlineView = makeOutlineView(dataSource: tree)
+      @UIBinding var expandedItems: Set<String> = []
+      bindExpandedItems($expandedItems, of: outlineView)
+
+      outlineView.unbindExpandedItems()
+      outlineView.expandItem(tree.node(named: "Fruits"))
+
+      #expect(expandedItems.isEmpty)
+    }
+
     // MARK: - Helpers
+
+    private func bindExpandedItems(_ expandedItems: UIBinding<Set<String>>, of outlineView: NSOutlineView) {
+      outlineView.bind(
+        expandedItems: expandedItems,
+        itemIdentifier: { [weak outlineView] row in
+          (outlineView?.item(atRow: row) as? Node)?.name
+        }
+      )
+    }
 
     private func bindSelection(
       _ selection: UIBinding<String?>, of outlineView: NSOutlineView, in tree: Tree
@@ -214,6 +262,15 @@
       static var fruitsAndVegetables: Tree {
         Tree([
           Node("Fruits", children: [Node("Apple"), Node("Pear")]),
+          Node("Vegetables", children: [Node("Carrot")]),
+        ])
+      }
+
+      /// Fruits, with Apple and Citrus inside and Lemon inside Citrus, then Vegetables, with Carrot
+      /// inside.
+      static var nestedFruitsAndVegetables: Tree {
+        Tree([
+          Node("Fruits", children: [Node("Apple"), Node("Citrus", children: [Node("Lemon")])]),
           Node("Vegetables", children: [Node("Carrot")]),
         ])
       }
