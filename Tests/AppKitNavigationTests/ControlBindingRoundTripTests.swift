@@ -6,7 +6,7 @@
   /// Each typed binding keeps its control and its source of truth in step: the control shows the
   /// bound value, follows later changes to it, and writes the user's changes back.
   @MainActor
-  @Suite struct ControlBindingRoundTripTests {
+  @Suite(.keepsMainRunLoopRunning) struct ControlBindingRoundTripTests {
     init() {
       // NB: A control sends its action through 'NSApplication.sendAction(_:to:from:)', which
       //     silently does nothing when no application object exists yet.
