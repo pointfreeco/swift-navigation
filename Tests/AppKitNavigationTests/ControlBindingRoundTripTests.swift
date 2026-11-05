@@ -92,8 +92,7 @@
     @Test("a path control stays in step with its binding")
     func pathControlStaysInStep() async {
       @UIBinding var url: URL? = URL(filePath: "/System")
-      let pathControl = NSPathControl()
-      pathControl.bind(url: $url)
+      let pathControl = NSPathControl(url: $url)
       #expect(pathControl.url?.lastPathComponent == "System")
 
       url = URL(filePath: "/Library")

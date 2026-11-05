@@ -8,11 +8,11 @@ extension NSPathControl {
     ///
     /// - Parameters:
     ///   - frame: The frame rectangle for the view, measured in points.
-    ///   - date: The binding to read from for the selected url, and write to when the selected
+    ///   - url: The binding to read from for the selected url, and write to when the selected
     ///     url changes.
-    public convenience init(frame: CGRect = .zero, date: UIBinding<URL?>) {
+    public convenience init(frame: CGRect = .zero, url: UIBinding<URL?>) {
         self.init(frame: frame)
-        bind(url: date)
+        bind(url: url)
     }
 
     /// Establishes a two-way connection between a binding and the path control's selected url.
