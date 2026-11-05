@@ -208,7 +208,48 @@
       #expect(!isCollapsed)
     }
 
+    // MARK: - Tab view controllers
+
+    @Test("a tab view controller stays in step with its selection")
+    func tabViewControllerStaysInStep() async {
+      @UIBinding var layout = Layout.list
+      let tabViewController = makeTabViewController(tabCount: 3)
+      tabViewController.bind(selection: $layout, options: [.icons, .list, .columns])
+      #expect(tabViewController.selectedTabViewItemIndex == 1)
+
+      layout = .columns
+      await Task.yield()
+      #expect(tabViewController.selectedTabViewItemIndex == 2)
+
+      // NB: What happens when the user picks another tab: the tab view selects it, and tells its
+      //     controller.
+      tabViewController.tabView.selectTabViewItem(at: 0)
+      #expect(layout == .icons)
+    }
+
+    @Test("unbinding a tab view controller stops writing to the binding")
+    func unbindingATabViewControllerStopsWriting() {
+      @UIBinding var layout = Layout.list
+      let tabViewController = makeTabViewController(tabCount: 3)
+      tabViewController.bind(selection: $layout, options: [.icons, .list, .columns])
+
+      tabViewController.unbindSelection()
+      tabViewController.tabView.selectTabViewItem(at: 0)
+
+      #expect(layout == .list)
+    }
+
     // MARK: - Helpers
+
+    private func makeTabViewController(tabCount: Int) -> NSTabViewController {
+      let tabViewController = NSTabViewController()
+      for _ in 0..<tabCount {
+        tabViewController.addTabViewItem(NSTabViewItem(viewController: PlaceholderViewController()))
+      }
+      // NB: The tab view only gets its items once the controller's view has loaded.
+      _ = tabViewController.view
+      return tabViewController
+    }
 
     private final class PlaceholderViewController: NSViewController {
       override func loadView() {

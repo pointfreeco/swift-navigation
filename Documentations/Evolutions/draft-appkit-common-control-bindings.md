@@ -29,7 +29,7 @@ NSMenuItem(title: "Show Hidden Files", isOn: $model.showsHiddenFiles)
 3. **从一组选项里选一个**（已完成）：`NSPopUpButton` 与 `NSSegmentedControl` 加 `bind(selection:options:)`，第 i 项对应 `options[i]`，值只要求 `Equatable`。便捷构造器多一个 `title:`，按选项生成菜单项或分段标签，保证顺序一致。
 4. **多选分段控件的单段**（已完成）：`NSSegmentedControl.bind(isSelected:forSegment:)`，每段各绑一个 `Bool`，名字照 AppKit 的 `isSelected(forSegment:)`。
 5. **分栏折叠**（已完成）：`NSSplitViewItem.bind(isCollapsed:)`，用户拖动分隔条或点侧栏按钮折叠时经 KVO 写回；在 `withAppKitAnimation` 里改模型时经 `animator()` 带动画。配 `unbindIsCollapsed()`。
-6. **标签页**：`NSTabViewController.bind(selection:options:)`，对应 `selectedTabViewItemIndex`，用户切换标签时经 KVO 写回。配 `unbindSelection()`。
+6. **标签页**（已完成）：`NSTabViewController.bind(selection:options:)`，对应 `selectedTabViewItemIndex`，用户切换标签时经 KVO 写回。配 `unbindSelection()`。
 7. **菜单项勾号**：`NSMenuItem.bind(isOn:)`，勾号跟随 `Bool`，用户选中菜单项时取反写回。配 `NSMenuItem(title:isOn:keyEquivalent:)`。
 8. **文档与验证**：DocC 首页「绑定」一组登记新符号；`swift-navigation-bindings` skill 的类型化绑定清单补上新绑定。每种绑定先写双向测试再实现；Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译 AppKit 的库和测试。
 
