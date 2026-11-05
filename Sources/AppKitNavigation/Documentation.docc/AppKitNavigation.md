@@ -45,6 +45,8 @@ popovers follow optional state: they are presented when it gains a value, dismis
 - ``AppKit/NSPopUpButton``
 - ``AppKit/NSSegmentedControl``
 - ``AppKit/NSProgressIndicator``
+- ``AppKit/NSTableView``
+- ``AppKit/NSOutlineView``
 - ``AppKit/NSMenuItem``
 - ``AppKit/NSSplitViewItem``
 - ``AppKit/NSTabViewController``
