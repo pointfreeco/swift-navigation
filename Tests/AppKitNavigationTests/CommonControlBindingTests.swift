@@ -239,7 +239,34 @@
       #expect(layout == .list)
     }
 
+    // MARK: - Menu items
+
+    @Test("a menu item's checkmark stays in step with its binding")
+    func menuItemCheckmarkStaysInStep() async {
+      @UIBinding var showsHiddenFiles = false
+      let menuItem = NSMenuItem(title: "Show Hidden Files", isOn: $showsHiddenFiles)
+      #expect(menuItem.state == .off)
+
+      showsHiddenFiles = true
+      await Task.yield()
+      #expect(menuItem.state == .on)
+
+      choose(menuItem)
+      #expect(!showsHiddenFiles)
+
+      await Task.yield()
+      #expect(menuItem.state == .off)
+    }
+
     // MARK: - Helpers
+
+    /// What a menu does when the user chooses one of its items: it sends the item's action, and
+    /// leaves the item's state alone.
+    private func choose(_ menuItem: NSMenuItem) {
+      let menu = NSMenu()
+      menu.addItem(menuItem)
+      menu.performActionForItem(at: menu.index(of: menuItem))
+    }
 
     private func makeTabViewController(tabCount: Int) -> NSTabViewController {
       let tabViewController = NSTabViewController()

@@ -30,7 +30,7 @@ NSMenuItem(title: "Show Hidden Files", isOn: $model.showsHiddenFiles)
 4. **多选分段控件的单段**（已完成）：`NSSegmentedControl.bind(isSelected:forSegment:)`，每段各绑一个 `Bool`，名字照 AppKit 的 `isSelected(forSegment:)`。
 5. **分栏折叠**（已完成）：`NSSplitViewItem.bind(isCollapsed:)`，用户拖动分隔条或点侧栏按钮折叠时经 KVO 写回；在 `withAppKitAnimation` 里改模型时经 `animator()` 带动画。配 `unbindIsCollapsed()`。
 6. **标签页**（已完成）：`NSTabViewController.bind(selection:options:)`，对应 `selectedTabViewItemIndex`，用户切换标签时经 KVO 写回。配 `unbindSelection()`。
-7. **菜单项勾号**：`NSMenuItem.bind(isOn:)`，勾号跟随 `Bool`，用户选中菜单项时取反写回。配 `NSMenuItem(title:isOn:keyEquivalent:)`。
+7. **菜单项勾号**（已完成）：`NSMenuItem.bind(isOn:)`，勾号跟随 `Bool`，用户选中菜单项时取反写回。配 `NSMenuItem(title:isOn:keyEquivalent:)`。
 8. **文档与验证**：DocC 首页「绑定」一组登记新符号；`swift-navigation-bindings` skill 的类型化绑定清单补上新绑定。每种绑定先写双向测试再实现；Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译 AppKit 的库和测试。
 
 没有询问就采用的假设：
@@ -52,4 +52,5 @@ NSMenuItem(title: "Show Hidden Files", isOn: $model.showsHiddenFiles)
 | 2026-11-05 | 集合成员勾选框、多选分段控件的单段、菜单项勾号三种附加绑定一起做 | 用户选定 |
 | 2026-11-05 | 用户批准，开始实现 | |
 | 2026-11-05 | 内部的 `establishBinding` 不再要求被绑定的对象是 `Sendable`；分栏的扩展标 `@MainActor` | SDK 明确声明 `NSSplitViewItem` 不能是 `Sendable`，也没有把它隔离到主 actor，所以既不能像 `NSControl` 那样补一个 `@unchecked Sendable`，它的扩展也默认不在主 actor 上。KVO 回调里改用 `nonisolated(unsafe)` 把对象交给主 actor：这些对象只在主线程上变化、发通知 |
+| 2026-11-05 | 菜单项的新扩展同样标 `@MainActor` | `NSMenuItem` 也没有隔离到主 actor，新加的构造器和绑定要调用主 actor 上的绑定机制 |
 | 2026-11-05 | 分栏折叠带动画时，在绑定里自己用事务的动画包一层 | `observe` 已经会把更新放进环境事务的动画组里，但绑定自带的事务（`$model.x.animation(…)`）不走那一层；自己包一层，两种情况都经 `animator()` 带上同一个动画 |
