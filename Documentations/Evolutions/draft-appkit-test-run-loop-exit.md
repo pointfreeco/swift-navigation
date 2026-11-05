@@ -40,3 +40,4 @@
 | 2026-11-05 | 编译器低于 6.4 时公开导入 `Testing`（`#if compiler(<6.4)`），6.4 起保持内部导入 | Xcode 26.6 编测试 target 时，Swift 6.2 把 `KeepsMainRunLoopRunningTrait` 对 `SuiteTrait` 的遵循当成公开的，要求公开导入 `Testing`；6.4 没有这个要求。手头只能验证 6.2 和 6.4，没装 6.3，所以条件写成低于 6.4 |
 | 2026-11-05 | 用 `xcodebuild` 验证时，临时用工作区那份锁定文件顶替根目录那份，跑完还原 | CI 的测试计划不含 AppKit 测试，只能用包自己的 scheme；根目录那份锁定文件让 Xcode 27 算不出依赖图（见后续项） |
 | 2026-11-05 | 用 `xcodebuild` 验证时发现的两个旧问题记进后续项，不在这条分支上修 | 都与本次改动无关，`main` 上同样存在 |
+| 2026-11-05 | 实现完成，待用户看过后收尾 | 四步全部完成；Xcode 27.2 上全量 `swift test` 只有已知的 `ButtonStateTests.testAsyncAnimationWarning` 失败，`main` 上同样如此。文档判断：不需要使用指南或实现说明，trait 的用法和原理写在它的文档注释里，取舍写在本提案里；README、DocC 和 `swift-navigation-bindings` skill 都不用改（DocC 只链接到 `NSPathControl` 扩展本身，skill 没提这个构造器的标签） |
