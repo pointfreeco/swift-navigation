@@ -338,7 +338,8 @@
         closeObserver.invalidate()
         NSApplication.shared.endModalSession(session)
         ModalStack.modalDidEnd(window)
-        didEnd()
+        // NB: The window is still on screen while it is about to close.
+        _ = RunLoopWait.until({ !window.isVisible }, then: didEnd)
       }
     }
 

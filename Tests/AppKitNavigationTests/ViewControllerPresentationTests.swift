@@ -3,8 +3,7 @@
   import AppKitNavigation
   import XCTest
 
-  /// Presentations whose content is a view controller, through `present(isPresented:style:)` and
-  /// `sheet(isSheeted:)`.
+  /// Presentations whose content is a view controller, through `present(isPresented:style:)`.
   final class ViewControllerPresentationTests: XCTestCase {
     override func setUp() {
       super.setUp()
@@ -135,35 +134,21 @@
       XCTAssertTrue(waitUntil { host.window.attachedSheet == nil }, "The sheets never went away")
     }
 
+    // NB: 'sheet(isSheeted:)' once dismissed a view controller sheet the moment it appeared, while
+    //     its own implementation of sheets still existed next to this one.
     @MainActor
-    func testViewControllerSheetStaysPresentedUntilItIsDismissed() {
+    func testPresentedSheetStaysPresentedUntilItIsDismissed() {
       let host = makeHost()
-      @UIBinding var isSheeted = false
-      host.viewController.sheet(isSheeted: $isSheeted) {
+      @UIBinding var isPresented = false
+      host.viewController.present(isPresented: $isPresented, style: .sheet) {
         self.makeViewController()
       }
 
-      isSheeted = true
+      isPresented = true
       XCTAssertTrue(waitUntil { host.window.attachedSheet != nil }, "The sheet never appeared")
       spinRunLoop(for: 0.5)
 
-      XCTAssertTrue(isSheeted, "The sheet dismissed itself right after it appeared")
-    }
-
-    @MainActor
-    func testUserDismissingAViewControllerSheetWritesFalseBack() {
-      let host = makeHost()
-      @UIBinding var isSheeted = false
-      let sheetViewController = makeViewController()
-      host.viewController.sheet(isSheeted: $isSheeted) { sheetViewController }
-
-      isSheeted = true
-      XCTAssertTrue(waitUntil { host.window.attachedSheet != nil }, "The sheet never appeared")
-      spinRunLoop(for: 0.5)
-
-      sheetViewController.dismiss(nil)
-
-      XCTAssertTrue(waitUntil { !isSheeted }, "Dismissing the sheet did not write 'false' back")
+      XCTAssertTrue(isPresented, "The sheet dismissed itself right after it appeared")
     }
   }
 #endif

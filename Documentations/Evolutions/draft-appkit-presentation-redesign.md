@@ -264,9 +264,11 @@ final class BindingPresenter<Style: PresentationStyle> {
 | `NSToolbarItem.popover` | 工具栏所在的窗口显示出来 | 同上，用 `show(relativeTo:)` | 同上 | 同上 |
 | `present` / `destination` | `viewDidAppear`（shim 现有的机制） | `present(_:for:)`，或调用方传入的 `present` 闭包 | shim 在 `viewDidDisappear` 里报告的 dismiss | 仍在 `presentedViewControllers` 里才 `dismiss(_:)` |
 
-- **等窗口显示**：`isVisible` 为真就立即开始；否则在 `NSWindowDidChangeOcclusionStateNotification`、成为 key 或 main 窗口时重新检查。
-- **等视图进窗口**：shim 再交换一个 `-[NSView viewDidMoveToWindow]`，在原实现之后执行挂在这个视图上的回调；视图上没有回调时只多一次关联对象查找。这个方法要加进 `ObjectiveCMethodNamingTests` 的「有意替换」名单。
-- **工具栏项**：从 `NSApp.windows` 里找 `toolbar === item.toolbar` 的窗口，再等它显示；item 还没加进工具栏时，先等 `NSToolbar.willAddItemNotification`。实现时先测 AppKit 在工具栏还没显示时 `show(relativeTo:)` 怎么表现，AppKit 自己能处理就不加这层等待。
+- **怎么等**：所有「等」——等窗口显示、等视图进窗口、等工具栏显示、等 sheet 离开屏幕——都用一个挂在主 run loop 上的观察者，在每次等待之前检查条件（`Internal/RunLoopWait.swift`），只在有东西在等时挂着。测试表明通知靠不住：测试进程不是活跃的 App，窗口显示出来时遮挡状态、key、main 三种通知一个都没发；视图进窗口本来就没有通知；sheet 的 completion handler 在 sheet 开始收起、还在屏幕上时就调用了。
+- **等窗口显示**：等 `isVisible` 为真。
+- **等视图进窗口**：等视图有窗口、且窗口显示出来。不用交换 `viewDidMoveToWindow`。
+- **工具栏项**：从 `NSApp.windows` 里找 `toolbar === item.toolbar` 的窗口，等它显示。实现时先测 AppKit 在工具栏还没显示时 `show(relativeTo:)` 怎么表现，AppKit 自己能处理就不加这层等待。
+- **「下屏之后」**：sheet 在 completion handler 之后再等 sheet 窗口不可见；modal session 在窗口 `willClose` 之后同样再等；模态循环返回后由本库把窗口 `orderOut`，随即算作下屏。
 - **嵌套 modal 的顺序**：测试表明，模态循环被请求停止后、真正返回之前，若有新的模态循环在它上面启动，AppKit 会丢掉那次停止请求，旧循环再也不返回。所以本库请某个循环停下后，新的模态循环先排队，等它返回再启动；窗口关闭按钮触发的停止也走同一条路。
 
 ### 存放与清理
@@ -295,7 +297,8 @@ final class BindingPresenter<Style: PresentationStyle> {
 - **每种内容保留一套重载**：公开重载数量不变，被否。**把 `ModalContent` 开放成扩展点**：App 可以让自己的类型也能弹出，但多一个要长期维护的契约，眼下没有需求，被否。
 - **取消 token 时也收起内容，或宿主释放时也不收起**：前者让取消变成破坏性操作，后者留着 `clearup()` 原本要解决的问题。都被否。
 - **继续弱引用内容，像 UIKit 版那样在用户关闭时临时强引用**：AppKit 这边的 popover 包装和 alert 没有别人持有，弱引用正是缺陷 1 的根源，直接在显示期间强持有更简单。
-- **用 KVO 观察 `NSView.window`**：头文件没有标注它支持 KVO，将来可能悄悄失效，所以改用交换 `viewDidMoveToWindow`。
+- **用 KVO 观察 `NSView.window`**：头文件没有标注它支持 KVO，将来可能悄悄失效。
+- **交换 `viewDidMoveToWindow`、监听窗口的遮挡与 key、main 通知**：起草时的方案。前者要替换每个视图的一个系统方法；后者在测试进程里一个都不发（见「怎么等」）。实现时改用 run loop 观察者检查条件，两者都不需要了。
 - **保留全局单例、只修泄漏**：每次弹出各自观察以后，全局状态就没有存在的理由了。
 - **存取面板沿用 `@objc` 方法加子类覆写**：现在的 `__appKitNavigationRunModal` 就是这么做的，但这要在 `NSWindow` 上加 Objective-C 方法；改成实现内部的类型判断更简单。
 
@@ -331,7 +334,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 
 ### 下游影响
 
-- 本仓库：`AppKitNavigation`、`AppKitNavigationShim`（多交换一个 `viewDidMoveToWindow`）、`AppKitNavigationTests`。Examples 里 AppKit 的案例只用 `present(item:id:style:)` 和 `present(isPresented:style:)`，不受影响。
+- 本仓库：`AppKitNavigation`、`AppKitNavigationTests`。Examples 里 Wi-Fi 案例的两处 `modal(isModaled:)` 随这次改成 `modal(isPresented:)`；它的 `modalSession(item:)` 和其余案例的 `present(...)` 写法不变。（起草时只搜了带点号的调用，漏掉了这两处省略 `self` 的写法，第 3 步发现后更正。）
 - 下游仓库：XCOrganizer 的 2 处 `NSWindow.sheet(item:)`、SymbolViewer 的 2 处和 ApplicationScaffold 模板的 1 处 `present(isPresented:style: .sheet)`，写法都不用改。其余 4 个依赖这个 fork 的项目没有用到弹出 API。这些项目在下次重新解析依赖、拿到新版本时，只会碰到上面那些行为变化：XCOrganizer 的 sheet 的 item 初始为 `nil`，等锚点那一条对它没有影响；它们都没有用 `onDismiss`。
 
 ### 文档与示例
@@ -351,8 +354,8 @@ final class BindingPresenter<Style: PresentationStyle> {
 
 1. **补测试作安全网**（已完成）：按「测试」一节补现有行为的测试（改动前就通过）和问题的测试（先标预期失败）。共享的等待、建窗口、记录 popover 的辅助放进 `PresentationTestSupport.swift`，两份原有测试改用它。新增 `SheetPresentationTests`、`PopoverPresentationTests`，`ModalPresentationTests`、`ViewControllerPresentationTests` 各有补充；AppKit 测试共 39 条 XCTest、58 条 Swift Testing，全部通过。
 2. **通用层与 modal**（已完成）：加入 `PresentationStyle`、`BindingPresenter`、`ModalContent`，把 `modal` 和 `modalSession` 迁过去、改标签、补文档注释；删除 `ModalWindowsObserver`。通用层的契约（恰好一次的 `onDismiss`、换 id 的顺序、宿主释放、取消 token）先拿 modal 测。修掉缺陷 2、4，以及 1、5 里属于 modal 的部分。`ModalPresentationTests` 共 17 条，连跑 5 次全部通过。
-3. **sheet**：`NSWindow.sheet` 改成泛型并迁过去，加上等父窗口显示；删除 `NSViewController.sheet`。修掉缺陷 7、8，以及 5 里属于 sheet 的部分。
-4. **popover**：`NSView` 和 `NSToolbarItem` 的 popover 迁过去，加上等锚点显示（shim 交换 `viewDidMoveToWindow`）和 transaction 的关动画；删除 `PopoverPresentationsObserver`。修掉缺陷 1、3。
+3. **sheet**（已完成）：`NSWindow.sheet` 改成泛型并迁过去、补文档注释，加上等父窗口显示；删除 `NSViewController.sheet` 和 `SheetContent.swift`；Examples 跟着改标签。修掉缺陷 7、8，以及 5 里属于 sheet 的部分。`SheetPresentationTests` 共 12 条，AppKit 测试共 50 条 XCTest、58 条 Swift Testing，全部通过。
+4. **popover**：`NSView` 和 `NSToolbarItem` 的 popover 迁过去，加上等锚点显示（用 `RunLoopWait`）和 transaction 的关动画；删除 `PopoverPresentationsObserver`。修掉缺陷 1、3。
 5. **present 与 destination**：迁过去，替换时只动自己弹的。修掉缺陷 5 剩下的部分（裁决清单里的那条暂缓项）。
 6. **清理**：删除旧的 `NavigationObserver`、`NavigationContent`、各 `*Content.swift` 和 `AssociatedKeys`；给全部 `UIBinding` 版重载补 `@_disfavoredOverload`，加入第 6 条和下游写法的编译测试。
 7. **文档**：按「文档与示例」一节更新文档注释、DocC 首页、`swift-navigation-bindings` skill 和裁决清单。
@@ -392,3 +395,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 | 2026-11-06 | 通用层不再把 `begin` 包在 `withUITransaction` 里 | 模态循环会在 `begin` 里一直跑，事务会漏给循环里处理的所有事件；需要事务的 style 自己取用 |
 | 2026-11-06 | 宿主释放、内容被收起后，binding 若还指着那一项就写回 `nil` | 让 binding 与屏幕一致；方案原来只写了「收起并调用 `onDismiss`」 |
 | 2026-11-06 | `BindingPresenter` 继承 `NSObject` | 沿用 `NSObject.observe` 在主队列上重跑、把 token 存在对象上的做法，与原来的 `NavigationObserver` 一致 |
+| 2026-11-06 | 第 3 步：「等」一律改用 run loop 观察者检查条件，不交换 `viewDidMoveToWindow`、不靠窗口通知 | 测试里父窗口显示出来后，遮挡、key、main 三种通知一个都没来，sheet 一直等不到；检查条件只在有东西等时才挂着，成本可以忽略，还省掉了对每个视图生效的方法交换 |
+| 2026-11-06 | sheet 与 modal session 在 AppKit 的结束回调之后，再等窗口离开屏幕才算结束 | 测试表明 sheet 的 completion handler 在 sheet 还在屏幕上时就调用了，`onDismiss` 会比「下屏之后」早；session 的 `willClose` 同理 |
+| 2026-11-06 | 撤掉还在排队的 sheet 时，对父窗口调用 `endSheet(_:)` | 排队中的 sheet 还没有 `sheetParent`；测试表明这样能把它从队列里撤掉，它之后不会再出现 |
+| 2026-11-06 | 更正下游影响：Examples 的 Wi-Fi 案例用了两处 `modal(isModaled:)` | 起草时只搜了带点号的调用；本分支一并改成 `modal(isPresented:)`。本机下游项目用更宽的写法重搜过，仍然没有用到改名的 API |

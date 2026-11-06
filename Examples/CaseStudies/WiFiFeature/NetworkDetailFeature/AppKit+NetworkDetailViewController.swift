@@ -37,7 +37,7 @@ final class NetworkDetailViewController: XiblessViewController<NSView> {
 //            forgetButton.isHidden = model.network.id != model.selectedNetworkID
     }
 
-    modal(isModaled: $model.forgetAlertIsPresented) { [unowned self] in
+    modal(isPresented: $model.forgetAlertIsPresented) { [unowned self] in
       let alert = NSAlert()
       alert.messageText = "Forget Wi-Fi Network “\(model.network.name)”?"
       alert.informativeText = """

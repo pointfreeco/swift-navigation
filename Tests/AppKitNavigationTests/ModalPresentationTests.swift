@@ -52,6 +52,29 @@
     }
 
     @MainActor
+    func testOnDismissRunsOnceTheSessionWindowHasLeftTheScreen() {
+      let host = NSObject()
+      let window = makeWindow()
+      @UIBinding var isPresented = false
+      var windowWasVisibleAtDismiss: Bool?
+      host.modalSession(
+        isPresented: $isPresented,
+        onDismiss: { windowWasVisibleAtDismiss = window.isVisible }
+      ) {
+        window
+      }
+
+      isPresented = true
+      XCTAssertTrue(waitUntil { window.isVisible }, "The window never appeared")
+      window.close()
+      XCTAssertTrue(waitUntil { windowWasVisibleAtDismiss != nil }, "'onDismiss' never ran")
+
+      XCTAssertEqual(
+        windowWasVisibleAtDismiss, false, "'onDismiss' ran while the window was on screen"
+      )
+    }
+
+    @MainActor
     func testStartingAModalSessionLeavesAnotherBindingsSessionInPlace() {
       let host = NSObject()
       let firstWindow = makeWindow()

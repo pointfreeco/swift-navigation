@@ -130,7 +130,7 @@ final class ConnectToNetworkViewController: XiblessViewController<NSView> {
       progressStackView.isHidden = !model.isConnecting
     }
 
-    modal(isModaled: $model.incorrectPasswordAlertIsPresented) { [unowned self] in
+    modal(isPresented: $model.incorrectPasswordAlertIsPresented) { [unowned self] in
       let alert = NSAlert()
       alert.messageText = "Incorrect password for “\(model.network.name)”"
       alert.addButton(withTitle: "OK")
