@@ -5,10 +5,6 @@
 
   /// Presentations whose content is a view controller, through `present(isPresented:style:)` and
   /// `sheet(isSheeted:)`.
-  ///
-  /// These run as synchronous XCTest methods on purpose: they wait by spinning the main run loop,
-  /// which is what drives sheet animations, window ordering and the main-queue re-runs of
-  /// `observe`.
   final class ViewControllerPresentationTests: XCTestCase {
     override func setUp() {
       super.setUp()
@@ -21,7 +17,7 @@
     func testUserDismissingAPresentedSheetWritesFalseBack() {
       let host = makeHost()
       @UIBinding var isPresented = false
-      let sheetViewController = makeContentViewController()
+      let sheetViewController = makeViewController()
       host.viewController.present(isPresented: $isPresented, style: .sheet) {
         sheetViewController
       }
@@ -40,7 +36,7 @@
       let host = makeHost()
       @UIBinding var isPresented = false
       host.viewController.present(isPresented: $isPresented, style: .sheet) {
-        self.makeContentViewController()
+        self.makeViewController()
       }
 
       isPresented = true
@@ -64,7 +60,7 @@
       let host = makeHost()
       @UIBinding var isPresented = false
       host.viewController.present(isPresented: $isPresented, style: .sheet) {
-        self.makeContentViewController()
+        self.makeViewController()
       }
 
       isPresented = true
@@ -76,11 +72,75 @@
     }
 
     @MainActor
+    func testPresentedSheetWaitsUntilTheViewAppears() {
+      let viewController = makeViewController(width: 480, height: 320)
+      // Already 'true' when the presentation is set up, before the view is in any window.
+      @UIBinding var isPresented = true
+      viewController.present(isPresented: $isPresented, style: .sheet) {
+        self.makeViewController()
+      }
+      spinRunLoop(for: 0.2)
+
+      let window = NSWindow(contentViewController: viewController)
+      window.isReleasedWhenClosed = false
+      addTeardownBlock { @MainActor in
+        while let attachedSheet = window.attachedSheet {
+          window.endSheet(attachedSheet)
+        }
+        window.close()
+      }
+      window.orderFront(nil)
+
+      XCTAssertTrue(
+        waitUntil { window.attachedSheet != nil }, "The sheet never appeared once the view did"
+      )
+    }
+
+    @MainActor
+    func testPresentingLeavesAnotherBindingsPresentationInPlace() {
+      let host = makeHost()
+      let firstViewController = makeViewController()
+      @UIBinding var isFirstPresented = false
+      @UIBinding var isSecondPresented = false
+      var secondDismissCount = 0
+      host.viewController.present(isPresented: $isFirstPresented, style: .sheet) {
+        firstViewController
+      }
+      host.viewController.present(
+        isPresented: $isSecondPresented, style: .sheet, onDismiss: { secondDismissCount += 1 }
+      ) {
+        self.makeViewController()
+      }
+
+      isFirstPresented = true
+      XCTAssertTrue(
+        waitUntil { host.window.attachedSheet?.contentViewController === firstViewController },
+        "The first sheet never appeared"
+      )
+      isSecondPresented = true
+      spinRunLoop(for: 0.5)
+
+      XCTExpectFailure(
+        "present(…) dismisses whatever view controller is presented, and calls its own onDismiss for it"
+      ) {
+        XCTAssertTrue(isFirstPresented, "Presenting the second sheet dismissed the first binding's sheet")
+        XCTAssertEqual(
+          secondDismissCount, 0,
+          "The second binding's 'onDismiss' ran for a sheet it never presented"
+        )
+      }
+
+      isFirstPresented = false
+      isSecondPresented = false
+      XCTAssertTrue(waitUntil { host.window.attachedSheet == nil }, "The sheets never went away")
+    }
+
+    @MainActor
     func testViewControllerSheetStaysPresentedUntilItIsDismissed() {
       let host = makeHost()
       @UIBinding var isSheeted = false
       host.viewController.sheet(isSheeted: $isSheeted) {
-        self.makeContentViewController()
+        self.makeViewController()
       }
 
       isSheeted = true
@@ -94,7 +154,7 @@
     func testUserDismissingAViewControllerSheetWritesFalseBack() {
       let host = makeHost()
       @UIBinding var isSheeted = false
-      let sheetViewController = makeContentViewController()
+      let sheetViewController = makeViewController()
       host.viewController.sheet(isSheeted: $isSheeted) { sheetViewController }
 
       isSheeted = true
@@ -104,55 +164,6 @@
       sheetViewController.dismiss(nil)
 
       XCTAssertTrue(waitUntil { !isSheeted }, "Dismissing the sheet did not write 'false' back")
-    }
-
-    // MARK: - Support
-
-    @MainActor
-    private struct Host {
-      let window: NSWindow
-      let viewController: NSViewController
-    }
-
-    @MainActor
-    private func makeHost() -> Host {
-      let viewController = makeContentViewController(width: 480, height: 320)
-      let window = NSWindow(contentViewController: viewController)
-      window.isReleasedWhenClosed = false
-      window.orderFront(nil)
-      addTeardownBlock { @MainActor in
-        if let attachedSheet = window.attachedSheet {
-          window.endSheet(attachedSheet)
-        }
-        window.close()
-      }
-      return Host(window: window, viewController: viewController)
-    }
-
-    @MainActor
-    private func makeContentViewController(
-      width: CGFloat = 200, height: CGFloat = 120
-    ) -> NSViewController {
-      let viewController = NSViewController()
-      viewController.view = NSView(frame: NSRect(x: 0, y: 0, width: width, height: height))
-      return viewController
-    }
-
-    @MainActor
-    private func waitUntil(timeout: TimeInterval = 3, _ condition: () -> Bool) -> Bool {
-      let deadline = Date(timeIntervalSinceNow: timeout)
-      while !condition(), Date() < deadline {
-        RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
-      }
-      return condition()
-    }
-
-    @MainActor
-    private func spinRunLoop(for duration: TimeInterval) {
-      let deadline = Date(timeIntervalSinceNow: duration)
-      while Date() < deadline {
-        RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
-      }
     }
   }
 #endif

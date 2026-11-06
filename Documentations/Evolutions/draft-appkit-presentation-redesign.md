@@ -1,6 +1,6 @@
 # Draft - AppKit 弹出 API 重做：生命周期收进一层，重载合并
 
-- **状态**: Accepted
+- **状态**: In Progress
 - **作者**: JH
 - **创建日期**: 2026-11-06
 - **最后更新**: 2026-11-06
@@ -17,7 +17,7 @@
 
 ### 读出的问题
 
-都在 `main` 上，不是最近的改动引入的。都是读代码确认的，运行时由落地第 1 步的测试坐实；本机依赖这个 fork 的 7 个项目都还没踩到（见「下游影响」）。
+都在 `main` 上，不是最近的改动引入的。起草时是读代码确认的；落地第 1 步的测试在 macOS 27.2 上复现了 1–5 和 8，第 8 条里对 alert 的猜测被测试否定（见该行）。本机依赖这个 fork 的 7 个项目都还没踩到（见「下游影响」）。
 
 | # | 问题 | 怎么触发 | 原因 | 以前修过吗 |
 |---|---|---|---|---|
@@ -28,7 +28,7 @@
 | 5 | 替换时不分来源 | 新 sheet 会关掉窗口上别的 binding 或 App 自己弹的 sheet；`modalSession` 会关掉本库开的任何会话窗口；`present` 会关掉第一个被弹出的视图控制器；三处都调用本 binding 的 `onDismiss` | `Sheet.swift:262-264`、`Modal.swift:360-365`、`Presentation.swift:74-77` 都只看「现在有没有」，不看是谁弹的 | `present` 那处 2026-11-03 记进[裁决清单](../Internal/ReviewDecisions.md)暂缓，复查条件就是这次重构 |
 | 6 | 带 `id:` 的绑定版重载少了 `@_disfavoredOverload` | 闭包写成 `{ _ in … }` 时两个重载都能用，编译报歧义 | `Modal.swift:52、105、158、211`，`Sheet.swift:49、99、149、199`，`Popover.swift:116、384`；UIKit 版（`Sources/UIKitNavigation/Navigation/Presentation.swift:123`）和本库的 `present` 都标了 | 没修过 |
 | 7 | 视图控制器的 sheet 有两套实现 | `sheet(isSheeted:)` 不等视图出现就弹，`present(style: .sheet)` 会等；同一件事两套代码 | `Sheet.swift:160-208` 与 `Presentation.swift` 各走一条路 | 2026-11-03 修「用户关闭不回写」时两边各修了一遍 |
-| 8 | alert 和存取面板作为 sheet 时没走它们自己的 API | `window.sheet { NSAlert() }` 用 `NSWindow.beginSheet(alert.window)` 弹出，没调用 `beginSheetModal(for:)`：alert 可能没排版、按钮可能关不掉 sheet，存取面板同理（具体症状待测试坐实） | 默认实现把父窗口当接收者（`Navigation/SheetContent.swift:18-21`），`NSAlert`、`NSSavePanel` 自己的实现（`SheetContent.swift:33-55`）永远走不到 | 没修过；起草本提案时发现 |
+| 8 | 存取面板作为 sheet 时没走它自己的 API | `window.sheet { NSSavePanel() }` 用 `NSWindow.beginSheet(_:)` 附上面板，没调用 `beginSheetModal(for:)`：点「取消」关不掉 sheet，binding 也不复位。alert 同样没走 `beginSheetModal(for:)`，但测试表明它的文字照常排版、按钮照常结束 sheet，不受影响 | 默认实现把父窗口当接收者（`Navigation/SheetContent.swift:18-21`），`NSAlert`、`NSSavePanel` 自己的实现（`SheetContent.swift:33-55`）永远走不到 | 没修过；起草本提案时发现 |
 
 ### 结构上的问题
 
@@ -349,7 +349,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 
 ## 落地步骤
 
-1. **补测试作安全网**：按「测试」一节补现有行为的测试（改动前就通过）和问题的测试（先标预期失败）。
+1. **补测试作安全网**（已完成）：按「测试」一节补现有行为的测试（改动前就通过）和问题的测试（先标预期失败）。共享的等待、建窗口、记录 popover 的辅助放进 `PresentationTestSupport.swift`，两份原有测试改用它。新增 `SheetPresentationTests`、`PopoverPresentationTests`，`ModalPresentationTests`、`ViewControllerPresentationTests` 各有补充；AppKit 测试共 39 条 XCTest、58 条 Swift Testing，全部通过。
 2. **通用层与 modal**：加入 `PresentationStyle`、`BindingPresenter`、`ModalContent`，把 `modal` 和 `modalSession` 迁过去、改标签；删除 `ModalWindowsObserver`。通用层的契约（恰好一次的 `onDismiss`、换 id 的顺序、宿主释放、取消 token）先拿 modal 测。修掉缺陷 2、4，以及 1、5 里属于 modal 的部分。
 3. **sheet**：`NSWindow.sheet` 改成泛型并迁过去，加上等父窗口显示；删除 `NSViewController.sheet`。修掉缺陷 7、8，以及 5 里属于 sheet 的部分。
 4. **popover**：`NSView` 和 `NSToolbarItem` 的 popover 迁过去，加上等锚点显示（shim 交换 `viewDidMoveToWindow`）和 transaction 的关动画；删除 `PopoverPresentationsObserver`。修掉缺陷 1、3。
@@ -364,6 +364,10 @@ final class BindingPresenter<Style: PresentationStyle> {
 
 - **要不要配套专题文章** —— 有「从 API 签名看不出来的调用方契约」就写使用指南；有「下次维护会踩、代码本身看不出来的决策」就写实现说明。写了就登记到头部的「配套文档」。候选的实现说明内容：模态循环为什么要在两种 run loop 模式里启动、为什么要等上层模态先结束、内容为什么要强持有。
 - **有没有引入新术语** —— 有就同批次登记进术语表（项目级 `Documentations/Glossary.md`，跨项目通用的登记到全局术语表）。
+
+## 后续项
+
+- AppKit 测试的共享辅助（`PresentationTestSupport.swift` 里的等待、建窗口、记录 popover）将来可以移进一个独立的 `TestingSupport` 测试库；这要改四份 `Package*.swift`，不在这一批。
 
 ## 决策日志
 
@@ -380,3 +384,6 @@ final class BindingPresenter<Style: PresentationStyle> {
 | 2026-11-06 | 其余默认做法经用户确认 | 强持有内容、换 id 的顺序、不碰别人的内容、等上层模态结束、取消后仍写回、popover 遵守关动画、补 `@_disfavoredOverload`、测试先行、文档同步、发版另定 |
 | 2026-11-06 | 起草时查出第 8 条问题 | alert 和存取面板作为 sheet 时没走自己的 `beginSheetModal(for:)`；方案里 `ModalContent` 的 sheet 要求本来就按类型各走各的 API，不改变方向 |
 | 2026-11-06 | Accepted | 用户批准，开始实现 |
+| 2026-11-06 | 第 1 步：缺陷 1–5 与 8 在 macOS 27.2 上复现 | 每条都由一条先失败的测试证实，现在用严格模式的 `XCTExpectFailure` 标着。第 8 条原以为 alert 也受影响，测试表明 alert 的文字和按钮都正常，只有存取面板点「取消」关不掉 sheet；alert 那半记进裁决清单的误报一节 |
+| 2026-11-06 | 第 7 条不写先变红的测试 | 它的修法是删掉重复的 `NSViewController.sheet`；留下的 `present(style: .sheet)` 本来就等视图出现，那条测试从一开始就是绿的。没有对要删的 API 写红测试，也免得冒险：视图不在窗口里时调用 `presentAsSheet` 会怎样，还不清楚 |
+| 2026-11-06 | 共享的测试辅助放在测试 target 里的一个文件，不另建 `TestingSupport` 库 | 另建库要改四份 `Package*.swift`，超出本提案范围；记为后续项 |
