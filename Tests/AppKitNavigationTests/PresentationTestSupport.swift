@@ -165,4 +165,10 @@
       self.value = value
     }
   }
+
+  /// An object that work scheduled with `perform(after:_:)` can reach without keeping it alive.
+  @MainActor
+  final class WeakReference<Object: AnyObject> {
+    weak var object: Object?
+  }
 #endif

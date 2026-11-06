@@ -50,7 +50,7 @@ extension NSSavePanel {
   }
 
   func endSheet(for content: any SheetContent) {
-    content.currentWindow?.endSheet(window)
+    content.currentWindow?.endSheet(self)
   }
 }
 
