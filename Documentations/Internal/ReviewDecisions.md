@@ -18,6 +18,12 @@
 - **理由**：Apple 文档写明不要直接调用它，应改用 `NSWindow.makeFirstResponder(_:)`。但实测通过 binding 设置焦点一直能正常生效，`NSTextField` 自己的实现会把字段编辑器设为第一响应者。
 - **现状**：已按文档改用 `makeFirstResponder(_:)`，行为不变。
 
+### alert 作为 sheet 时没走 `beginSheetModal(for:)`，会不排版、按钮关不掉
+
+- **裁决**：误报。（2026-11-06）
+- **理由**：`NSWindow.sheet` 把 alert 的窗口直接交给 `NSWindow.beginSheet(_:)`，确实没调用 `NSAlert.beginSheetModal(for:)`。但在 macOS 27.2 上测试，alert 的标题和说明文字照常排版显示，点按钮也照常结束 sheet、把 binding 写回 `false`。同一处代码对存取面板是真问题：点「取消」关不掉 sheet，见提案 [draft-appkit-presentation-redesign](../Evolutions/draft-appkit-presentation-redesign.md) 第 8 条。
+- **现状**：那份提案让 alert 改走自己的 `beginSheetModal(for:)`，`SheetPresentationTests` 里两条 alert 测试守着上面两点。
+
 ### `NSFontManager(font:)` 会建出一个和字体面板无关的新实例
 
 - **裁决**：误报。（2026-11-03）
@@ -25,18 +31,6 @@
 - **复查条件**：将来某个系统版本上它不再返回共享实例时。
 
 ## 暂缓处理
-
-### `Navigated` 各约束扩展里的 `clearup()` 从不执行
-
-- **裁决**：确认是死代码，暂不修。（2026-11-03）
-- **理由**：`Navigated` 是泛型类，`deinit` 里调用的 `clearup()` 在编译期就静态绑定到类里那份空实现，`where Content: …` 扩展里的同名方法永远不会被调用。导航观察者被释放时，原本打算关掉仍在显示的内容，但目前没有构造出现实中看得见的后果。直接把它激活反而有风险：模态那份会无条件调用 `stopModal()`，可能停掉一个并非本库发起的模态循环。
-- **复查条件**：收敛导航相关重载的重构时，连同下一条一起处理。
-
-### `present(...)` 替换已弹出的视图控制器时，不分来源都调用本 binding 的 `onDismiss`
-
-- **裁决**：读代码确认，影响面小，暂不修。（2026-11-03）
-- **理由**：同一个 presenter 已经有一个弹出的视图控制器时，新的 `present` 会先把它关掉，并调用*本 binding* 的 `onDismiss`，不管它是不是本 binding 弹出来的。UIKit 那边用一个 presenter 标记来区分。只有在同一个 presenter 上挂了两个 binding 时才会触发。另外，被关掉的那个 binding 现在能正确收到回写。
-- **复查条件**：同上。
 
 ### 上游 `UIKitNavigation` 的 `UITextField` 选区绑定同样把 UTF-16 偏移当成字符数
 
