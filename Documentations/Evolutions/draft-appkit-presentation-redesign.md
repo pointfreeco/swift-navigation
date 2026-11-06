@@ -355,7 +355,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 1. **补测试作安全网**（已完成）：按「测试」一节补现有行为的测试（改动前就通过）和问题的测试（先标预期失败）。共享的等待、建窗口、记录 popover 的辅助放进 `PresentationTestSupport.swift`，两份原有测试改用它。新增 `SheetPresentationTests`、`PopoverPresentationTests`，`ModalPresentationTests`、`ViewControllerPresentationTests` 各有补充；AppKit 测试共 39 条 XCTest、58 条 Swift Testing，全部通过。
 2. **通用层与 modal**（已完成）：加入 `PresentationStyle`、`BindingPresenter`、`ModalContent`，把 `modal` 和 `modalSession` 迁过去、改标签、补文档注释；删除 `ModalWindowsObserver`。通用层的契约（恰好一次的 `onDismiss`、换 id 的顺序、宿主释放、取消 token）先拿 modal 测。修掉缺陷 2、4，以及 1、5 里属于 modal 的部分。`ModalPresentationTests` 共 17 条，连跑 5 次全部通过。
 3. **sheet**（已完成）：`NSWindow.sheet` 改成泛型并迁过去、补文档注释，加上等父窗口显示；删除 `NSViewController.sheet` 和 `SheetContent.swift`；Examples 跟着改标签。修掉缺陷 7、8，以及 5 里属于 sheet 的部分。`SheetPresentationTests` 共 12 条，AppKit 测试共 50 条 XCTest、58 条 Swift Testing，全部通过。
-4. **popover**：`NSView` 和 `NSToolbarItem` 的 popover 迁过去，加上等锚点显示（用 `RunLoopWait`）和 transaction 的关动画；删除 `PopoverPresentationsObserver`。修掉缺陷 1、3。
+4. **popover**（已完成）：`NSView` 和 `NSToolbarItem` 的 popover 迁过去、补文档注释，加上等锚点显示（用 `RunLoopWait`）和 transaction 的关动画；删除 `PopoverContent.swift` 与 `PopoverPresentationsObserver`。修掉缺陷 1、3。`PopoverPresentationTests` 共 12 条（含工具栏项的两条），AppKit 测试共 56 条 XCTest、58 条 Swift Testing，全部通过。
 5. **present 与 destination**：迁过去，替换时只动自己弹的。修掉缺陷 5 剩下的部分（裁决清单里的那条暂缓项）。
 6. **清理**：删除旧的 `NavigationObserver`、`NavigationContent`、各 `*Content.swift` 和 `AssociatedKeys`；给全部 `UIBinding` 版重载补 `@_disfavoredOverload`，加入第 6 条和下游写法的编译测试。
 7. **文档**：按「文档与示例」一节更新文档注释、DocC 首页、`swift-navigation-bindings` skill 和裁决清单。
@@ -399,3 +399,5 @@ final class BindingPresenter<Style: PresentationStyle> {
 | 2026-11-06 | sheet 与 modal session 在 AppKit 的结束回调之后，再等窗口离开屏幕才算结束 | 测试表明 sheet 的 completion handler 在 sheet 还在屏幕上时就调用了，`onDismiss` 会比「下屏之后」早；session 的 `willClose` 同理 |
 | 2026-11-06 | 撤掉还在排队的 sheet 时，对父窗口调用 `endSheet(_:)` | 排队中的 sheet 还没有 `sheetParent`；测试表明这样能把它从队列里撤掉，它之后不会再出现 |
 | 2026-11-06 | 更正下游影响：Examples 的 Wi-Fi 案例用了两处 `modal(isModaled:)` | 起草时只搜了带点号的调用；本分支一并改成 `modal(isPresented:)`。本机下游项目用更宽的写法重搜过，仍然没有用到改名的 API |
+| 2026-11-06 | 第 4 步：工具栏项照样等它所在的窗口显示，没有先去试 AppKit 自己怎么处理 | 与其他锚点的等待一致，代价只是一次检查；测试覆盖了「窗口还没显示就设成 `true`」 |
+| 2026-11-06 | popover 被要求关闭时若已不在屏幕上，直接算作结束 | 从没显示出来、或正在被用户关掉的 popover 不会再发关闭通知，不这样做 presenter 会一直停在「结束中」 |
