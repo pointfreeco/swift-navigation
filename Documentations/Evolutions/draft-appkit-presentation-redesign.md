@@ -356,7 +356,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 2. **通用层与 modal**（已完成）：加入 `PresentationStyle`、`BindingPresenter`、`ModalContent`，把 `modal` 和 `modalSession` 迁过去、改标签、补文档注释；删除 `ModalWindowsObserver`。通用层的契约（恰好一次的 `onDismiss`、换 id 的顺序、宿主释放、取消 token）先拿 modal 测。修掉缺陷 2、4，以及 1、5 里属于 modal 的部分。`ModalPresentationTests` 共 17 条，连跑 5 次全部通过。
 3. **sheet**（已完成）：`NSWindow.sheet` 改成泛型并迁过去、补文档注释，加上等父窗口显示；删除 `NSViewController.sheet` 和 `SheetContent.swift`；Examples 跟着改标签。修掉缺陷 7、8，以及 5 里属于 sheet 的部分。`SheetPresentationTests` 共 12 条，AppKit 测试共 50 条 XCTest、58 条 Swift Testing，全部通过。
 4. **popover**（已完成）：`NSView` 和 `NSToolbarItem` 的 popover 迁过去、补文档注释，加上等锚点显示（用 `RunLoopWait`）和 transaction 的关动画；删除 `PopoverContent.swift` 与 `PopoverPresentationsObserver`。修掉缺陷 1、3。`PopoverPresentationTests` 共 12 条（含工具栏项的两条），AppKit 测试共 56 条 XCTest、58 条 Swift Testing，全部通过。
-5. **present 与 destination**：迁过去，替换时只动自己弹的。修掉缺陷 5 剩下的部分（裁决清单里的那条暂缓项）。
+5. **present 与 destination**（已完成）：迁过去、补文档注释，替换时只动自己弹的；`TransitionStyle` 移进 `Presentation.swift`，删除 `PresentationContent.swift`。修掉缺陷 5 剩下的部分（裁决清单里的那条暂缓项）。`ViewControllerPresentationTests` 共 11 条，新增的覆盖了 `.modalWindow` 风格和 `destination` 的自定义闭包；AppKit 测试共 61 条 XCTest、58 条 Swift Testing，全部通过。
 6. **清理**：删除旧的 `NavigationObserver`、`NavigationContent`、各 `*Content.swift` 和 `AssociatedKeys`；给全部 `UIBinding` 版重载补 `@_disfavoredOverload`，加入第 6 条和下游写法的编译测试。
 7. **文档**：按「文档与示例」一节更新文档注释、DocC 首页、`swift-navigation-bindings` skill 和裁决清单。
 8. **完整验证**：Xcode 27.2 跑 AppKit 的全部测试，成败只认原始退出码，弹出相关的测试连跑 10 次；Xcode 26.6 编译库和测试；用 xcodebuild 编译 Examples 里 macOS 版的 CaseStudies。
@@ -401,3 +401,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 | 2026-11-06 | 更正下游影响：Examples 的 Wi-Fi 案例用了两处 `modal(isModaled:)` | 起草时只搜了带点号的调用；本分支一并改成 `modal(isPresented:)`。本机下游项目用更宽的写法重搜过，仍然没有用到改名的 API |
 | 2026-11-06 | 第 4 步：工具栏项照样等它所在的窗口显示，没有先去试 AppKit 自己怎么处理 | 与其他锚点的等待一致，代价只是一次检查；测试覆盖了「窗口还没显示就设成 `true`」 |
 | 2026-11-06 | popover 被要求关闭时若已不在屏幕上，直接算作结束 | 从没显示出来、或正在被用户关掉的 popover 不会再发关闭通知，不这样做 presenter 会一直停在「结束中」 |
+| 2026-11-06 | 第 5 步：视图控制器在 shim 报告 dismiss 后，再等它的窗口不可见才算结束 | 测试表明报告到来时 sheet 窗口已经不可见，但父窗口的 `attachedSheet` 还指着它；判断「下屏」看窗口本身，多等这一下是为了有动画时也成立 |
+| 2026-11-06 | `destination` 的内容若不是经 AppKit 的弹出机制显示的，调用方的 `dismiss` 闭包返回就算结束 | 比如 `addChild(_:)` 加进来的子控制器，没有任何 dismiss 报告可等；写进了文档注释 |
+| 2026-11-06 | 视图控制器的宿主释放时，只经 style 自己的弱引用去 dismiss；引用已空就只报告结束 | `presentingViewController` 是 `assign` 引用，宿主释放过程中读它不安全 |
+| 2026-11-06 | `.modalWindow` 风格补了测试 | 以前没有任何测试；测试表明 `presentAsModalWindow` 不阻塞，binding 能正常关掉它 |
