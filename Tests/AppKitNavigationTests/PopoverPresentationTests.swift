@@ -1,5 +1,11 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-  import AppKit
+  #if compiler(<6.4)
+    // NB: Compilers before Swift 6.4 treat the toolbar delegate's conformance below as public,
+    //     and a public conformance needs a public import.
+    public import AppKit
+  #else
+    import AppKit
+  #endif
   import AppKitNavigation
   import XCTest
 

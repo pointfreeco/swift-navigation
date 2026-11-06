@@ -359,7 +359,11 @@ final class BindingPresenter<Style: PresentationStyle> {
 5. **present 与 destination**（已完成）：迁过去、补文档注释，替换时只动自己弹的；`TransitionStyle` 移进 `Presentation.swift`，删除 `PresentationContent.swift`。修掉缺陷 5 剩下的部分（裁决清单里的那条暂缓项）。`ViewControllerPresentationTests` 共 11 条，新增的覆盖了 `.modalWindow` 风格和 `destination` 的自定义闭包；AppKit 测试共 61 条 XCTest、58 条 Swift Testing，全部通过。
 6. **清理**（已完成）：删除旧的 `NavigationObserver`、`NavigationContent`、各 `*Content.swift` 和 `AssociatedKeys`；`UIBinding` 版重载在第 2–5 步重写时都已标 `@_disfavoredOverload`（`destination` 的两个没有同形的 item 版，不需要）。加入 `PresentationOverloadTests`：第 6 条的歧义写法、`{ $item in … }` 写法和 XCOrganizer 那种多语句闭包。先去掉一处标记确认它编不过（报 `ambiguous use of 'modal(item:id:onDismiss:content:)'`），恢复后通过。AppKit 测试共 64 条 XCTest、58 条 Swift Testing，全部通过。
 7. **文档**（已完成）：文档注释已随第 2–5 步写好；本步更新 DocC 首页、`swift-navigation-bindings` skill（在 iCloud 的全局 skill 目录里，不在本仓库）和裁决清单（删掉已修好的两条暂缓项）。生成一次 AppKitNavigation 的文档：只剩上游共用内容里原有的 3 条链接警告，没有新增；生成时被 DocC 插件改写的 `Package.resolved` 已还原。
-8. **完整验证**：Xcode 27.2 跑 AppKit 的全部测试，成败只认原始退出码，弹出相关的测试连跑 10 次；Xcode 26.6 编译库和测试；用 xcodebuild 编译 Examples 里 macOS 版的 CaseStudies。
+8. **完整验证**（已完成）：Xcode 27.2 跑 AppKit 的全部测试，成败只认原始退出码，弹出相关的测试连跑 10 次；Xcode 26.6 编译库和测试；用 xcodebuild 编译 Examples 里 macOS 版的 CaseStudies。结果：
+   - Xcode 27.2：AppKit 测试 64 条 XCTest、58 条 Swift Testing，退出码 0；弹出相关的 56 条连跑 10 次，全部通过。
+   - Xcode 26.6（Swift 6.3.3）：库和 AppKit 测试 target 编译通过，AppKit 部分没有警告。为此给 `PopoverPresentationTests` 加了 Swift 6.4 以前用的 `public import AppKit`：旧编译器把测试里 `NSToolbarDelegate` 的遵循当成公开的，与 `TableSelectionBindingTests` 的处理相同。
+   - Examples：`CaseStudies` 的 macOS 版用 xcodebuild 编译成功。
+   - 两份锁定文件构建后都已还原，没有改动。
 
 每一步都能单独构建通过、测试全绿：第 2–5 步迁移期间，还没迁的方式继续走旧的 `NavigationObserver`，第 6 步才删除。
 
@@ -371,6 +375,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 ## 后续项
 
 - AppKit 测试的共享辅助（`PresentationTestSupport.swift` 里的等待、建窗口、记录 popover）将来可以移进一个独立的 `TestingSupport` 测试库；这要改四份 `Package*.swift`，不在这一批。
+- 「宿主释放时收起内容」只在 modal 上有测试。sheet、popover 和视图控制器的情形没有测：AppKit 在内容显示期间多半还持有宿主（sheet 的父窗口、popover 的锚点视图、弹出它的控制器），宿主能不能在那时释放，还没有验证。
 
 ## 决策日志
 
@@ -406,3 +411,4 @@ final class BindingPresenter<Style: PresentationStyle> {
 | 2026-11-06 | 视图控制器的宿主释放时，只经 style 自己的弱引用去 dismiss；引用已空就只报告结束 | `presentingViewController` 是 `assign` 引用，宿主释放过程中读它不安全 |
 | 2026-11-06 | `.modalWindow` 风格补了测试 | 以前没有任何测试；测试表明 `presentAsModalWindow` 不阻塞，binding 能正常关掉它 |
 | 2026-11-06 | 第 7 步：DocC 首页保留 `AppKit/NSAlert` | 方案原以为它只剩下划线成员，实际还有 `AlertState` 的构造器和 `addButton`，页面仍有内容 |
+| 2026-11-06 | 实现完成，待用户看过后收尾 | 八步都已提交并推送功能分支，验证结果见第 8 步。文档判断：不需要使用指南，调用方要遵守的契约（`onDismiss` 的时机、等锚点显示、宿主释放与取消 token、`destination` 的 `dismiss` 约定）都写在文档注释和 `swift-navigation-bindings` skill 里；暂不需要实现说明，难懂的决定（模态循环从 run loop 块启动、等被停下的循环返回、用 run loop 检查代替通知、内容强持有）写在代码的 NB 注释和本提案里，收尾时再判断一次；没有要登记的新术语 |
