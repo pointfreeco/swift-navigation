@@ -21,7 +21,7 @@
 ### alert 作为 sheet 时没走 `beginSheetModal(for:)`，会不排版、按钮关不掉
 
 - **裁决**：误报。（2026-11-06）
-- **理由**：`NSWindow.sheet` 把 alert 的窗口直接交给 `NSWindow.beginSheet(_:)`，确实没调用 `NSAlert.beginSheetModal(for:)`。但在 macOS 27.2 上测试，alert 的标题和说明文字照常排版显示，点按钮也照常结束 sheet、把 binding 写回 `false`。同一处代码对存取面板是真问题：点「取消」关不掉 sheet，见提案 [draft-appkit-presentation-redesign](../Evolutions/draft-appkit-presentation-redesign.md) 第 8 条。
+- **理由**：`NSWindow.sheet` 把 alert 的窗口直接交给 `NSWindow.beginSheet(_:)`，确实没调用 `NSAlert.beginSheetModal(for:)`。但在 macOS 27.2 上测试，alert 的标题和说明文字照常排版显示，点按钮也照常结束 sheet、把 binding 写回 `false`。同一处代码对存取面板是真问题：点「取消」关不掉 sheet，见提案 [0005-appkit-presentation-redesign](../Evolutions/0005-appkit-presentation-redesign.md) 第 8 条。
 - **现状**：那份提案让 alert 改走自己的 `beginSheetModal(for:)`，`SheetPresentationTests` 里两条 alert 测试守着上面两点。
 
 ### `NSFontManager(font:)` 会建出一个和字体面板无关的新实例

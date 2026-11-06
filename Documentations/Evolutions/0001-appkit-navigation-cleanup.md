@@ -37,7 +37,7 @@
 - 保留 `TargetActionProtocol` 的 `Sendable` 要求和各控件的 `Sendable` 遵循：去掉它们才是真正的破坏性改动。
 - 只动 fork 独有的文件，不碰与上游共用的 `SwiftNavigation` 和 UIKit 部分；四份清单的改动是向上游靠拢。
 - 验证：Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译 AppKit 的库和测试。
-- 不在这一批：弹出相关三个文件（约 1,300 行）的重载收敛，连同 `Navigated.clearup()` 死代码（见 [ReviewDecisions.md](../Internal/ReviewDecisions.md)），属于大型重构，另起完整档提案；新功能各自另起提案。
+- 不在这一批：弹出相关三个文件（约 1,300 行）的重载收敛，连同 `Navigated.clearup()` 死代码（见 [ReviewDecisions.md](../Internal/ReviewDecisions.md)），属于大型重构，另起完整档提案；新功能各自另起提案。（已由 [0005](0005-appkit-presentation-redesign.md) 完成。）
 
 ## 后续项
 

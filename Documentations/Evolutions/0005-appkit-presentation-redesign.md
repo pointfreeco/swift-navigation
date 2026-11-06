@@ -1,13 +1,13 @@
-# Draft - AppKit 弹出 API 重做：生命周期收进一层，重载合并
+# 0005 - AppKit 弹出 API 重做：生命周期收进一层，重载合并
 
-- **状态**: In Progress
+- **状态**: Implemented
 - **作者**: JH
 - **创建日期**: 2026-11-06
 - **最后更新**: 2026-11-06
 - **所属愿景**: 无
 - **关联提案**: [0001 - AppKitNavigation 清理](0001-appkit-navigation-cleanup.md)（把这次重构留给了单独的完整档提案）
-- **实现分支 / PR**: `appkit-presentation-redesign`
-- **配套文档**: 待定 —— 落地时登记实现说明 / 使用指南的链接
+- **实现分支 / PR**: `appkit-presentation-redesign`，已合进 `main`
+- **配套文档**: 无（调用方契约写在文档注释里，难懂的实现决定写在代码注释和本提案里）
 
 ## 摘要
 
@@ -412,3 +412,4 @@ final class BindingPresenter<Style: PresentationStyle> {
 | 2026-11-06 | `.modalWindow` 风格补了测试 | 以前没有任何测试；测试表明 `presentAsModalWindow` 不阻塞，binding 能正常关掉它 |
 | 2026-11-06 | 第 7 步：DocC 首页保留 `AppKit/NSAlert` | 方案原以为它只剩下划线成员，实际还有 `AlertState` 的构造器和 `addButton`，页面仍有内容 |
 | 2026-11-06 | 实现完成，待用户看过后收尾 | 八步都已提交并推送功能分支，验证结果见第 8 步。文档判断：不需要使用指南，调用方要遵守的契约（`onDismiss` 的时机、等锚点显示、宿主释放与取消 token、`destination` 的 `dismiss` 约定）都写在文档注释和 `swift-navigation-bindings` skill 里；暂不需要实现说明，难懂的决定（模态循环从 run loop 块启动、等被停下的循环返回、用 run loop 检查代替通知、内容强持有）写在代码的 NB 注释和本提案里，收尾时再判断一次；没有要登记的新术语 |
+| 2026-11-06 | Implemented，编号 0005，落地到 `main` | 用户看过效果后要求收尾。八步全部完成，没做的两项留在后续项（独立的 `TestingSupport` 库；sheet、popover、视图控制器的「宿主释放时收起」没有测试）。验证沿用第 8 步那一轮的结果：合进 `main` 时 `main` 没有别的新提交，合并后的代码与测过的功能分支完全相同。文档判断：不需要使用指南，契约都在文档注释和 `swift-navigation-bindings` skill 里；不需要实现说明，难懂的决定都写在代码的 NB 注释和本提案里，下一任维护者读代码就能看到；没有要登记的新术语 |
