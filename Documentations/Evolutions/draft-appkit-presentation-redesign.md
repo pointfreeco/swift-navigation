@@ -340,7 +340,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 ### 文档与示例
 
 - 公开 API 全部补上文档注释，包括 `ModalContent`。
-- DocC 首页（`Sources/AppKitNavigation/Documentation.docc/AppKitNavigation.md`）的「Presenting content from state」一组：加上 `ModalContent`，去掉只剩下划线成员的 `AppKit/NSAlert`。
+- DocC 首页（`Sources/AppKitNavigation/Documentation.docc/AppKitNavigation.md`）的「Presenting content from state」一组加上 `ModalContent`，概述里补一句 `onDismiss` 的保证。`AppKit/NSAlert` 留着：它还有 `AlertState` 的构造器和 `addButton` 这些公开成员。
 - `swift-navigation-bindings` skill 里 AppKit 那张表：标签、泛型内容、删掉的 `NSViewController.sheet`；顺带更正 `modalSession` 的内容只能是 `NSWindow`（现在那张表写成了和 `modal` 一样）。
 - [裁决清单](../Internal/ReviewDecisions.md)：两条暂缓项（`clearup()` 死代码、`present` 替换时不分来源）随这次修掉，从清单里删除；「transient popover 被点外部关闭时的回写」保留。
 - README 没有提到 AppKit 的弹出 API，不用改。
@@ -358,7 +358,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 4. **popover**（已完成）：`NSView` 和 `NSToolbarItem` 的 popover 迁过去、补文档注释，加上等锚点显示（用 `RunLoopWait`）和 transaction 的关动画；删除 `PopoverContent.swift` 与 `PopoverPresentationsObserver`。修掉缺陷 1、3。`PopoverPresentationTests` 共 12 条（含工具栏项的两条），AppKit 测试共 56 条 XCTest、58 条 Swift Testing，全部通过。
 5. **present 与 destination**（已完成）：迁过去、补文档注释，替换时只动自己弹的；`TransitionStyle` 移进 `Presentation.swift`，删除 `PresentationContent.swift`。修掉缺陷 5 剩下的部分（裁决清单里的那条暂缓项）。`ViewControllerPresentationTests` 共 11 条，新增的覆盖了 `.modalWindow` 风格和 `destination` 的自定义闭包；AppKit 测试共 61 条 XCTest、58 条 Swift Testing，全部通过。
 6. **清理**（已完成）：删除旧的 `NavigationObserver`、`NavigationContent`、各 `*Content.swift` 和 `AssociatedKeys`；`UIBinding` 版重载在第 2–5 步重写时都已标 `@_disfavoredOverload`（`destination` 的两个没有同形的 item 版，不需要）。加入 `PresentationOverloadTests`：第 6 条的歧义写法、`{ $item in … }` 写法和 XCOrganizer 那种多语句闭包。先去掉一处标记确认它编不过（报 `ambiguous use of 'modal(item:id:onDismiss:content:)'`），恢复后通过。AppKit 测试共 64 条 XCTest、58 条 Swift Testing，全部通过。
-7. **文档**：按「文档与示例」一节更新文档注释、DocC 首页、`swift-navigation-bindings` skill 和裁决清单。
+7. **文档**（已完成）：文档注释已随第 2–5 步写好；本步更新 DocC 首页、`swift-navigation-bindings` skill（在 iCloud 的全局 skill 目录里，不在本仓库）和裁决清单（删掉已修好的两条暂缓项）。生成一次 AppKitNavigation 的文档：只剩上游共用内容里原有的 3 条链接警告，没有新增；生成时被 DocC 插件改写的 `Package.resolved` 已还原。
 8. **完整验证**：Xcode 27.2 跑 AppKit 的全部测试，成败只认原始退出码，弹出相关的测试连跑 10 次；Xcode 26.6 编译库和测试；用 xcodebuild 编译 Examples 里 macOS 版的 CaseStudies。
 
 每一步都能单独构建通过、测试全绿：第 2–5 步迁移期间，还没迁的方式继续走旧的 `NavigationObserver`，第 6 步才删除。
@@ -405,3 +405,4 @@ final class BindingPresenter<Style: PresentationStyle> {
 | 2026-11-06 | `destination` 的内容若不是经 AppKit 的弹出机制显示的，调用方的 `dismiss` 闭包返回就算结束 | 比如 `addChild(_:)` 加进来的子控制器，没有任何 dismiss 报告可等；写进了文档注释 |
 | 2026-11-06 | 视图控制器的宿主释放时，只经 style 自己的弱引用去 dismiss；引用已空就只报告结束 | `presentingViewController` 是 `assign` 引用，宿主释放过程中读它不安全 |
 | 2026-11-06 | `.modalWindow` 风格补了测试 | 以前没有任何测试；测试表明 `presentAsModalWindow` 不阻塞，binding 能正常关掉它 |
+| 2026-11-06 | 第 7 步：DocC 首页保留 `AppKit/NSAlert` | 方案原以为它只剩下划线成员，实际还有 `AlertState` 的构造器和 `addButton`，页面仍有内容 |

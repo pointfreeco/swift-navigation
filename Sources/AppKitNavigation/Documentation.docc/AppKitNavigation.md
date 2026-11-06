@@ -7,7 +7,8 @@ Tools for making AppKit navigation simpler, more ergonomic and more precise.
 AppKitNavigation drives AppKit from observable models. Controls bind to a model's state in both
 directions: they show its value and write the user's changes back. Sheets, modal windows and
 popovers follow optional state: they are presented when it gains a value, dismissed when it becomes
-`nil`, and write `nil` back when the user dismisses them.
+`nil`, and write `nil` back when the user dismisses them. Their `onDismiss` closures run once for
+each presentation, after it has left the screen, however it ended.
 
 ## Additional Resources
 
@@ -57,6 +58,7 @@ popovers follow optional state: they are presented when it gains a value, dismis
 
 ### Presenting content from state
 
+- ``ModalContent``
 - ``AppKit/NSViewController``
 - ``AppKit/NSWindow``
 - ``AppKit/NSView``
