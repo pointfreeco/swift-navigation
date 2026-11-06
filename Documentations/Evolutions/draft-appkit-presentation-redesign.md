@@ -357,7 +357,7 @@ final class BindingPresenter<Style: PresentationStyle> {
 3. **sheet**（已完成）：`NSWindow.sheet` 改成泛型并迁过去、补文档注释，加上等父窗口显示；删除 `NSViewController.sheet` 和 `SheetContent.swift`；Examples 跟着改标签。修掉缺陷 7、8，以及 5 里属于 sheet 的部分。`SheetPresentationTests` 共 12 条，AppKit 测试共 50 条 XCTest、58 条 Swift Testing，全部通过。
 4. **popover**（已完成）：`NSView` 和 `NSToolbarItem` 的 popover 迁过去、补文档注释，加上等锚点显示（用 `RunLoopWait`）和 transaction 的关动画；删除 `PopoverContent.swift` 与 `PopoverPresentationsObserver`。修掉缺陷 1、3。`PopoverPresentationTests` 共 12 条（含工具栏项的两条），AppKit 测试共 56 条 XCTest、58 条 Swift Testing，全部通过。
 5. **present 与 destination**（已完成）：迁过去、补文档注释，替换时只动自己弹的；`TransitionStyle` 移进 `Presentation.swift`，删除 `PresentationContent.swift`。修掉缺陷 5 剩下的部分（裁决清单里的那条暂缓项）。`ViewControllerPresentationTests` 共 11 条，新增的覆盖了 `.modalWindow` 风格和 `destination` 的自定义闭包；AppKit 测试共 61 条 XCTest、58 条 Swift Testing，全部通过。
-6. **清理**：删除旧的 `NavigationObserver`、`NavigationContent`、各 `*Content.swift` 和 `AssociatedKeys`；给全部 `UIBinding` 版重载补 `@_disfavoredOverload`，加入第 6 条和下游写法的编译测试。
+6. **清理**（已完成）：删除旧的 `NavigationObserver`、`NavigationContent`、各 `*Content.swift` 和 `AssociatedKeys`；`UIBinding` 版重载在第 2–5 步重写时都已标 `@_disfavoredOverload`（`destination` 的两个没有同形的 item 版，不需要）。加入 `PresentationOverloadTests`：第 6 条的歧义写法、`{ $item in … }` 写法和 XCOrganizer 那种多语句闭包。先去掉一处标记确认它编不过（报 `ambiguous use of 'modal(item:id:onDismiss:content:)'`），恢复后通过。AppKit 测试共 64 条 XCTest、58 条 Swift Testing，全部通过。
 7. **文档**：按「文档与示例」一节更新文档注释、DocC 首页、`swift-navigation-bindings` skill 和裁决清单。
 8. **完整验证**：Xcode 27.2 跑 AppKit 的全部测试，成败只认原始退出码，弹出相关的测试连跑 10 次；Xcode 26.6 编译库和测试；用 xcodebuild 编译 Examples 里 macOS 版的 CaseStudies。
 
