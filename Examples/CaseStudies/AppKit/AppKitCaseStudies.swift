@@ -13,11 +13,17 @@ struct AppKitCaseStudiesView: View {
                 NSControlBindingsViewController()
                 EnumControlsViewController()
                 FocusViewController()
+                OptionBindingsViewController()
+                TableSelectionViewController()
             }
             CaseStudyGroupView("Optional navigation") {
                 BasicsNavigationViewController()
-                // TODO: Alert/dialog state
                 ConciseEnumNavigationViewController()
+            }
+            CaseStudyGroupView("Presentation") {
+                PresentationGalleryViewController()
+                NestedModalViewController()
+                DismissalViewController()
             }
 //      CaseStudyGroupView("Stack navigation") {
 //        StaticNavigationStackController()
@@ -26,7 +32,6 @@ struct AppKitCaseStudiesView: View {
 //      }
             CaseStudyGroupView("Advanced") {
                 // TODO: Deep link
-                // TODO: Dismissal (show off from VCs and views)
                 WiFiSettingsViewController(model: WiFiSettingsModel(foundNetworks: .mocks))
             }
         }

@@ -6,8 +6,8 @@ import AppKitNavigation
 class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseStudy {
   let caseStudyTitle = "Basics"
   let readMe = """
-  This case study demonstrates how to perform every major form of navigation in UIKit (alerts, \
-  sheets, drill-downs) by driving navigation off of optional and boolean state.
+  This case study demonstrates how to perform every major form of navigation in AppKit (modal \
+  panels, sheets) by driving navigation off of optional and boolean state.
   """
   @UIBindable var model = Model()
 
