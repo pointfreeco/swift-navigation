@@ -73,6 +73,12 @@
 		E9CD5B7B2C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */; };
 		E9CD5B7C2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */; };
 		E9CD5B7E2C6D14DC00CE7947 /* AppKitCaseStudies.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD5B7D2C6D14DC00CE7947 /* AppKitCaseStudies.swift */; };
+		E9F0050A2EDA000000000011 /* AppKit+CaseStudySupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000001 /* AppKit+CaseStudySupport.swift */; };
+		E9F0050A2EDA000000000012 /* AppKit+PresentationGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000002 /* AppKit+PresentationGalleryViewController.swift */; };
+		E9F0050A2EDA000000000013 /* AppKit+NestedModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000003 /* AppKit+NestedModalViewController.swift */; };
+		E9F0050A2EDA000000000014 /* AppKit+DismissalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000004 /* AppKit+DismissalViewController.swift */; };
+		E9F0050A2EDA000000000015 /* AppKit+OptionBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000005 /* AppKit+OptionBindingsViewController.swift */; };
+		E9F0050A2EDA000000000016 /* AppKit+TableSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000006 /* AppKit+TableSelectionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +154,12 @@
 		E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppKit+BasicsNavigationViewController.swift"; sourceTree = "<group>"; };
 		E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppKit+ConciseEnumNavigationViewController.swift"; sourceTree = "<group>"; };
 		E9CD5B7D2C6D14DC00CE7947 /* AppKitCaseStudies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKitCaseStudies.swift; sourceTree = "<group>"; };
+		E9F0050A2EDA000000000001 /* AppKit+CaseStudySupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+CaseStudySupport.swift"; sourceTree = "<group>"; };
+		E9F0050A2EDA000000000002 /* AppKit+PresentationGalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+PresentationGalleryViewController.swift"; sourceTree = "<group>"; };
+		E9F0050A2EDA000000000003 /* AppKit+NestedModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+NestedModalViewController.swift"; sourceTree = "<group>"; };
+		E9F0050A2EDA000000000004 /* AppKit+DismissalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+DismissalViewController.swift"; sourceTree = "<group>"; };
+		E9F0050A2EDA000000000005 /* AppKit+OptionBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+OptionBindingsViewController.swift"; sourceTree = "<group>"; };
+		E9F0050A2EDA000000000006 /* AppKit+TableSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+TableSelectionViewController.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -347,6 +359,12 @@
 				E9CD5B772C6CDEA500CE7947 /* AppKit+FocusViewController.swift */,
 				E9CD5B792C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift */,
 				E9CD5B7A2C6CE1BE00CE7947 /* AppKit+ConciseEnumNavigationViewController.swift */,
+				E9F0050A2EDA000000000001 /* AppKit+CaseStudySupport.swift */,
+				E9F0050A2EDA000000000002 /* AppKit+PresentationGalleryViewController.swift */,
+				E9F0050A2EDA000000000003 /* AppKit+NestedModalViewController.swift */,
+				E9F0050A2EDA000000000004 /* AppKit+DismissalViewController.swift */,
+				E9F0050A2EDA000000000005 /* AppKit+OptionBindingsViewController.swift */,
+				E9F0050A2EDA000000000006 /* AppKit+TableSelectionViewController.swift */,
 			);
 			path = AppKit;
 			sourceTree = "<group>";
@@ -593,6 +611,12 @@
 				E99B059E2C70CF18003D3AFF /* NetworkDetailModel.swift in Sources */,
 				E99B059C2C70CEFE003D3AFF /* ConnectToNetworkModel.swift in Sources */,
 				E9CD5B7B2C6CE1BE00CE7947 /* AppKit+BasicsNavigationViewController.swift in Sources */,
+				E9F0050A2EDA000000000011 /* AppKit+CaseStudySupport.swift in Sources */,
+				E9F0050A2EDA000000000012 /* AppKit+PresentationGalleryViewController.swift in Sources */,
+				E9F0050A2EDA000000000013 /* AppKit+NestedModalViewController.swift in Sources */,
+				E9F0050A2EDA000000000014 /* AppKit+DismissalViewController.swift in Sources */,
+				E9F0050A2EDA000000000015 /* AppKit+OptionBindingsViewController.swift in Sources */,
+				E9F0050A2EDA000000000016 /* AppKit+TableSelectionViewController.swift in Sources */,
 				DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */,
 				E99B05992C70CE6E003D3AFF /* UIKit+WiFiSettingsViewController.swift in Sources */,
 				E99B05A42C70DC50003D3AFF /* AppKit+ConnectToNetworkViewController.swift in Sources */,
