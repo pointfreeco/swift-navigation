@@ -11,3 +11,4 @@
 | 0003 | [AppKit 常用控件的类型化绑定](0003-appkit-common-control-bindings.md) | Implemented |
 | 0004 | [表格与大纲的选中绑定、大纲的展开状态绑定](0004-appkit-table-selection-bindings.md) | Implemented |
 | 0005 | [AppKit 弹出 API 重做：生命周期收进一层，重载合并](0005-appkit-presentation-redesign.md) | Implemented |
+| draft | [把 `ModalContent` 改名为 `WindowBackedContent`](draft-appkit-window-backed-content.md) | In Progress |

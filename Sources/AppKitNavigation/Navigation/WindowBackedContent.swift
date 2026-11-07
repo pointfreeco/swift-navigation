@@ -13,7 +13,7 @@
   /// The requirements are implementation details of AppKitNavigation. Conforming other types is not
   /// supported.
   @MainActor
-  public protocol ModalContent: AnyObject {
+  public protocol WindowBackedContent: AnyObject {
     /// The window that shows the content.
     @_documentation(visibility: private)
     var _appKitNavigationWindow: NSWindow { get }
@@ -31,7 +31,7 @@
     func _appKitNavigationRunModal()
   }
 
-  extension NSWindow: ModalContent {
+  extension NSWindow: WindowBackedContent {
     @_documentation(visibility: private)
     public var _appKitNavigationWindow: NSWindow { self }
 
@@ -63,7 +63,7 @@
     }
   }
 
-  extension NSAlert: ModalContent {
+  extension NSAlert: WindowBackedContent {
     @_documentation(visibility: private)
     public var _appKitNavigationWindow: NSWindow { window }
 

@@ -21,7 +21,7 @@
     /// - Returns: A token that stops following the binding once cancelled. Content that is
     ///   running then keeps running until the user ends it.
     @discardableResult
-    public func modal<Content: ModalContent>(
+    public func modal<Content: WindowBackedContent>(
       isPresented: UIBinding<Bool>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping () -> Content
@@ -51,7 +51,7 @@
     ///   - content: A closure that returns the window, alert or panel to run for the item.
     /// - Returns: A token that stops following the binding once cancelled.
     @discardableResult
-    public func modal<Item: Identifiable, Content: ModalContent>(
+    public func modal<Item: Identifiable, Content: WindowBackedContent>(
       item: UIBinding<Item?>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (Item) -> Content
@@ -73,7 +73,7 @@
     /// - Returns: A token that stops following the binding once cancelled.
     @_disfavoredOverload
     @discardableResult
-    public func modal<Item: Identifiable, Content: ModalContent>(
+    public func modal<Item: Identifiable, Content: WindowBackedContent>(
       item: UIBinding<Item?>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> Content
@@ -96,7 +96,7 @@
     ///   - content: A closure that returns the window, alert or panel to run for the item.
     /// - Returns: A token that stops following the binding once cancelled.
     @discardableResult
-    public func modal<Item, Identifier: Hashable, Content: ModalContent>(
+    public func modal<Item, Identifier: Hashable, Content: WindowBackedContent>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, Identifier>,
       onDismiss: (() -> Void)? = nil,
@@ -124,7 +124,7 @@
     /// - Returns: A token that stops following the binding once cancelled.
     @_disfavoredOverload
     @discardableResult
-    public func modal<Item, Identifier: Hashable, Content: ModalContent>(
+    public func modal<Item, Identifier: Hashable, Content: WindowBackedContent>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, Identifier>,
       onDismiss: (() -> Void)? = nil,
@@ -277,7 +277,7 @@
 
   /// Runs content in an application-modal loop of its own.
   @MainActor
-  private struct ModalLoopStyle<Content: ModalContent>: PresentationStyle {
+  private struct ModalLoopStyle<Content: WindowBackedContent>: PresentationStyle {
     func begin(
       _ content: Content,
       transaction: UITransaction,
