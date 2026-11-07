@@ -1,9 +1,9 @@
-# Draft - 把 `ModalContent` 改名为 `WindowBackedContent`
+# 0006 - 把 `ModalContent` 改名为 `WindowBackedContent`
 
-- **状态**: In Progress
+- **状态**: Implemented
 - **创建日期**: 2026-11-08
 - **最后更新**: 2026-11-08
-- **实现分支**: `appkit-window-backed-content`
+- **实现分支**: `appkit-window-backed-content`，已合进 `main`
 
 ## 摘要
 
@@ -27,3 +27,4 @@
 | 2026-11-08 | 采用 `WindowBackedContent`，不采用 `NavigationContent` | 后者比实际范围宽：popover 与 `present` 收的 `NSViewController` 不遵循这个协议，叫它会让人以为所有导航 API 都收它；遵循者的共同点是各自带一个窗口，`NSWindow` 本身就是，`NSAlert` 与存取面板也都有自己的窗口 |
 | 2026-11-08 | Accepted | 用户批准；做完在本地合进 `main`，不推送 |
 | 2026-11-08 | 实现完成，待用户看过后收尾 | Xcode 27.2 上 AppKit 测试 64 条 XCTest、58 条 Swift Testing 全部通过；生成文档只有上游共用内容里原有的 3 条链接警告，新名字的符号页正常生成。文档判断：文档注释、DocC 首页、`swift-navigation-bindings` skill 已同步，0005 只加了一行指向本提案；不需要使用指南或实现说明，没有新术语 |
+| 2026-11-08 | Implemented，编号 0006，落地到 `main` | 用户看过后要求收尾。验证沿用实现完成时那一轮：AppKit 测试全部通过，文档生成没有新警告；合并后的代码与测过的功能分支相同。文档判断同上一行：不需要使用指南或实现说明，没有新术语 |
