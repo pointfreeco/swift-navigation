@@ -58,7 +58,7 @@ each presentation, after it has left the screen, however it ended.
 
 ### Presenting content from state
 
-- ``ModalContent``
+- ``WindowBackedContent``
 - ``AppKit/NSViewController``
 - ``AppKit/NSWindow``
 - ``AppKit/NSView``

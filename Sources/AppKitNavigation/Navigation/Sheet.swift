@@ -23,7 +23,7 @@
     /// - Returns: A token that stops following the binding once cancelled. An attached sheet then
     ///   stays until the user ends it.
     @discardableResult
-    public func sheet<Content: ModalContent>(
+    public func sheet<Content: WindowBackedContent>(
       isPresented: UIBinding<Bool>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping () -> Content
@@ -53,7 +53,7 @@
     ///   - content: A closure that returns the window, alert or panel to attach for the item.
     /// - Returns: A token that stops following the binding once cancelled.
     @discardableResult
-    public func sheet<Item: Identifiable, Content: ModalContent>(
+    public func sheet<Item: Identifiable, Content: WindowBackedContent>(
       item: UIBinding<Item?>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (Item) -> Content
@@ -77,7 +77,7 @@
     /// - Returns: A token that stops following the binding once cancelled.
     @_disfavoredOverload
     @discardableResult
-    public func sheet<Item: Identifiable, Content: ModalContent>(
+    public func sheet<Item: Identifiable, Content: WindowBackedContent>(
       item: UIBinding<Item?>,
       onDismiss: (() -> Void)? = nil,
       content: @escaping (UIBinding<Item>) -> Content
@@ -105,7 +105,7 @@
     ///   - content: A closure that returns the window, alert or panel to attach for the item.
     /// - Returns: A token that stops following the binding once cancelled.
     @discardableResult
-    public func sheet<Item, Identifier: Hashable, Content: ModalContent>(
+    public func sheet<Item, Identifier: Hashable, Content: WindowBackedContent>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, Identifier>,
       onDismiss: (() -> Void)? = nil,
@@ -136,7 +136,7 @@
     /// - Returns: A token that stops following the binding once cancelled.
     @_disfavoredOverload
     @discardableResult
-    public func sheet<Item, Identifier: Hashable, Content: ModalContent>(
+    public func sheet<Item, Identifier: Hashable, Content: WindowBackedContent>(
       item: UIBinding<Item?>,
       id: KeyPath<Item, Identifier>,
       onDismiss: (() -> Void)? = nil,
@@ -154,7 +154,7 @@
 
   /// Attaches content to a window as a sheet.
   @MainActor
-  private struct SheetStyle<Content: ModalContent>: PresentationStyle {
+  private struct SheetStyle<Content: WindowBackedContent>: PresentationStyle {
     weak var parentWindow: NSWindow?
 
     func whenReady(_ body: @escaping @MainActor () -> Void) -> @MainActor () -> Void {

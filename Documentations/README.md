@@ -10,6 +10,7 @@
 - [0003-appkit-common-control-bindings.md](Evolutions/0003-appkit-common-control-bindings.md)：AppKit 常用控件的类型化绑定。
 - [0004-appkit-table-selection-bindings.md](Evolutions/0004-appkit-table-selection-bindings.md)：表格与大纲的选中绑定、大纲的展开状态绑定。
 - [0005-appkit-presentation-redesign.md](Evolutions/0005-appkit-presentation-redesign.md)：AppKit 弹出 API 重做——生命周期收进一层，重载合并。
+- [draft-appkit-window-backed-content.md](Evolutions/draft-appkit-window-backed-content.md)：把公开协议 `ModalContent` 改名为 `WindowBackedContent`（In Progress）。
 
 ## Internal
 
