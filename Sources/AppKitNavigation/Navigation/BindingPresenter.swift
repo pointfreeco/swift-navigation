@@ -160,6 +160,9 @@
         }
       )
       phase = .presented(presentation)
+      #if AppKitPlus
+        installDismissAction(for: presentation)
+      #endif
       let onDismiss = onDismiss
       style.begin(presentation.content, transaction: transaction) { [weak self] in
         guard !presentation.hasEnded else { return }
@@ -173,6 +176,26 @@
         }
       }
     }
+
+    #if AppKitPlus
+      /// Lets the content close itself with `traitCollection.dismiss()`, as if the user had.
+      private func installDismissAction(for presentation: Presentation) {
+        guard let host = presentation.content as? any DismissActionHost else { return }
+        host.installDismissAction(
+          AppKitDismissAction { [weak self, weak presentation] transaction in
+            guard
+              let self,
+              let presentation,
+              case let .presented(current) = phase,
+              current === presentation
+            else { return }
+            // NB: The phase stays as it is, so that the end counts as the user's: the binding is
+            //     cleared, and 'onDismiss' runs once the content has left the screen.
+            style.end(presentation.content, transaction: transaction)
+          }
+        )
+      }
+    #endif
 
     private func end(_ presentation: Presentation, transaction: UITransaction) {
       phase = .ending(presentation)
@@ -214,6 +237,7 @@
       case ending(Presentation)
     }
 
+    @MainActor
     private final class Presentation {
       let content: Style.Content
       let identity: AnyHashable?

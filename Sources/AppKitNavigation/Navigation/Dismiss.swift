@@ -77,6 +77,30 @@
     static var identifier: String { "AppKitNavigation.DismissAction" }
   }
 
+  /// Content that can hand a dismiss action down to everything it shows.
+  @MainActor
+  protocol DismissActionHost: AnyObject {
+    func installDismissAction(_ action: AppKitDismissAction)
+  }
+
+  extension NSViewController: DismissActionHost {
+    func installDismissAction(_ action: AppKitDismissAction) {
+      traitOverrides.dismiss = action
+    }
+  }
+
+  extension NSWindow: DismissActionHost {
+    func installDismissAction(_ action: AppKitDismissAction) {
+      traitOverrides.dismiss = action
+    }
+  }
+
+  extension NSAlert: DismissActionHost {
+    func installDismissAction(_ action: AppKitDismissAction) {
+      window.traitOverrides.dismiss = action
+    }
+  }
+
   extension NSMutableTraits {
     var dismiss: AppKitDismissAction {
       get { self[DismissActionTrait.self]?.action ?? AppKitDismissAction(run: nil) }

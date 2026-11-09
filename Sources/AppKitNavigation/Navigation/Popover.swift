@@ -1,6 +1,9 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
   public import AppKit
+  #if AppKitPlus
+    import AppKitPlus
+  #endif
 
   extension NSView {
     /// Shows a view controller in a popover anchored to this view while a binding to a Boolean
@@ -463,6 +466,14 @@
       didEnd?()
     }
   }
+
+  #if AppKitPlus
+    extension PopoverContent: DismissActionHost {
+      func installDismissAction(_ action: AppKitDismissAction) {
+        popover.contentViewController?.traitOverrides.dismiss = action
+      }
+    }
+  #endif
 
   /// Shows content in a popover pointing at an anchor.
   @MainActor
