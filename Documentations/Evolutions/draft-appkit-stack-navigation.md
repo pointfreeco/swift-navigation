@@ -1,6 +1,6 @@
 # Draft - 可选集成 AppKitPlus：把 UIKit 的栈式导航搬到 AppKit
 
-- **状态**: Accepted
+- **状态**: In Progress
 - **作者**: JH
 - **创建日期**: 2026-11-09
 - **最后更新**: 2026-11-09
@@ -255,7 +255,7 @@ extension NSOutlineView {
 
 ## 落地步骤
 
-1. **trait 与依赖**：两份清单加 trait 和依赖，6.2 那份抬到 macOS 12。trait 关闭、打开各编译一次 AppKitNavigation，确认关闭时不解析 AppKitPlus。
+1. **trait 与依赖**（已完成）：两份清单加 trait 和依赖，6.2 那份抬到 macOS 12。trait 关闭、打开各编译一次 AppKitNavigation，确认关闭时不解析 AppKitPlus。
 2. **路径驱动的栈**：`NavigationStackController`、`navigationDestination(for:destination:)`、`push(value:)`、`traitCollection.push`。先写测试：改路径时推入、弹出；用户返回后路径被截短。
 3. **按状态推入**：推入用的 `PresentationStyle` 和五种 `navigationDestination` 重载。先用测试确认 AppKitPlus 弹出控制器时的回调顺序，再写实现。
 4. **`dismiss()`**：`traitCollection.dismiss` 与 `isPresented`，接进推入和现有五种弹出，各配测试。
@@ -281,3 +281,4 @@ extension NSOutlineView {
 | 2026-11-09 | AppKitPlus-Release 从 0.21.0 起 | 用户选定，只承诺测过的版本 |
 | 2026-11-09 | 代码放在 AppKitNavigation 里用 `#if AppKitPlus` 包住；类型照 UIKit 版命名；路径支持集合和 `UINavigationPath`；推入动画跟随事务；选中绑定覆盖大纲与可重排表格两种数据源 | 提问时补上的默认做法，用户确认 |
 | 2026-11-09 | Accepted | 用户批准。排在绑定和动画两份提案之后实现，做完在本地合进 `main`、不推送 |
+| 2026-11-09 | trait 关闭时实测不解析 AppKitPlus；打开时要连默认 trait 一起写 | `swift build` 不带 trait 时，`Package.resolved` 里没有 AppKitPlus。`--traits AppKitPlus` 会关掉默认 trait，`Perception` 一关，`observe` 就要求 macOS 14，AppKitNavigation 编不过；使用方在 `Package.swift` 里要写 `traits: [.defaults, "AppKitPlus"]`，写进文档 |
