@@ -1,6 +1,6 @@
 # Draft - AppKit 动画案例
 
-- **状态**: Accepted
+- **状态**: In Progress
 - **创建日期**: 2026-11-09
 - **最后更新**: 2026-11-09
 - **实现分支**: `appkit-more-control-bindings`

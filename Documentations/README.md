@@ -12,9 +12,9 @@
 - [0005-appkit-presentation-redesign.md](Evolutions/0005-appkit-presentation-redesign.md)：AppKit 弹出 API 重做——生命周期收进一层，重载合并。
 - [0006-appkit-window-backed-content.md](Evolutions/0006-appkit-window-backed-content.md)：把公开协议 `ModalContent` 改名为 `WindowBackedContent`。
 - [0007-appkit-case-studies.md](Evolutions/0007-appkit-case-studies.md)：给 AppKit 案例补上弹出与新控件绑定的演示。
-- [draft-observe-unowned-self.md](Evolutions/draft-observe-unowned-self.md)：简化 `observe` 闭包里对 `self` 的捕获（Accepted）。
-- [draft-appkit-more-control-bindings.md](Evolutions/draft-appkit-more-control-bindings.md)：AppKit 控件绑定第二批——随模型变化的选项、文本视图、集合视图的选中（Accepted）。
-- [draft-appkit-animations-case-study.md](Evolutions/draft-appkit-animations-case-study.md)：AppKit 动画案例（Accepted）。
+- [draft-observe-unowned-self.md](Evolutions/draft-observe-unowned-self.md)：简化 `observe` 闭包里对 `self` 的捕获（In Progress）。
+- [draft-appkit-more-control-bindings.md](Evolutions/draft-appkit-more-control-bindings.md)：AppKit 控件绑定第二批——随模型变化的选项、文本视图、集合视图的选中（In Progress）。
+- [draft-appkit-animations-case-study.md](Evolutions/draft-appkit-animations-case-study.md)：AppKit 动画案例（In Progress）。
 
 ## Internal
 

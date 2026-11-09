@@ -1,6 +1,6 @@
 # Draft - 简化 `observe` 闭包里对 `self` 的捕获
 
-- **状态**: Accepted
+- **状态**: In Progress
 - **创建日期**: 2026-11-09
 - **最后更新**: 2026-11-09
 - **实现分支**: `appkit-more-control-bindings`
@@ -32,10 +32,10 @@ observe { [unowned self] in
 }
 ```
 
-1. **测试**：在 AppKitNavigation 的测试里加两条回归测试。闭包用 `[weak self]` 并计数，这样保证一旦失效，测试会失败而不是崩溃。
+1. **测试**（已完成）：在 AppKitNavigation 的测试里加两条回归测试。闭包用 `[weak self]` 并计数，这样保证一旦失效，测试会失败而不是崩溃。
    - 对象释放后再改模型、转几圈 run loop，闭包一次也没被调用。
    - 令牌被对象以外的东西留住时，对象释放后闭包仍会被调用。这正是推荐写法的前提，文档要写明。
-2. **文档**：AppKitNavigation 的 DocC 首页加一段，说明在 `NSObject.observe` 里推荐写 `[unowned self]` 及其前提；`swift-navigation-bindings` skill 的写法和常见错误同步改。
+2. **文档**（已完成）：AppKitNavigation 的 DocC 首页加一段，说明在 `NSObject.observe` 里推荐写 `[unowned self]` 及其前提；`swift-navigation-bindings` skill 的写法和常见错误同步改。
 3. **示例**：AppKit 案例里的 12 处 `observe { [weak self] in … }` 改成新写法。
 
 没有询问就采用的假设：

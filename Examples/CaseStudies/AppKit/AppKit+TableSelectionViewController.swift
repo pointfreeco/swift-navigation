@@ -98,8 +98,7 @@ class TableSelectionViewController: XiblessViewController<NSView>, AppKitCaseStu
       to: view
     )
 
-    observe { [weak self] in
-      guard let self else { return }
+    observe { [unowned self] in
       statusLabel.stringValue = """
         Table selection: \(model.selectedPlanet ?? "none")
         Outline selection: \(model.selectedPantryItem ?? "none")

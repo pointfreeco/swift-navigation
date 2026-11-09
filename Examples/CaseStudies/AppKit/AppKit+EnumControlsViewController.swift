@@ -81,9 +81,7 @@ class EnumControlsViewController: XiblessViewController<NSView>, AppKitCaseStudy
       stack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
 
-    observe { [weak self] in
-      guard let self else { return }
-
+    observe { [unowned self] in
       inStockStack.isHidden = !status.is(\.inStock)
       outOfStockStack.isHidden = !status.is(\.outOfStock)
 

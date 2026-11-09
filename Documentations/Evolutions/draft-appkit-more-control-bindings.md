@@ -1,6 +1,6 @@
 # Draft - AppKit 控件绑定第二批：随模型变化的选项、文本视图、集合视图的选中
 
-- **状态**: Accepted
+- **状态**: In Progress
 - **创建日期**: 2026-11-09
 - **最后更新**: 2026-11-09
 - **实现分支**: `appkit-more-control-bindings`

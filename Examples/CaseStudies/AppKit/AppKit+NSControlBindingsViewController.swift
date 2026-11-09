@@ -68,9 +68,7 @@ class NSControlBindingsViewController: XiblessViewController<NSBox>, AppKitCaseS
             colorWell.heightAnchor.constraint(equalToConstant: 50),
         ])
 
-        observe { [weak self] in
-            guard let self else { return }
-
+        observe { [unowned self] in
             contentView.fillColor = model.color
 
             let textSelection = model.textSelection.map {

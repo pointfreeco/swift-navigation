@@ -68,8 +68,7 @@ class OptionBindingsViewController: XiblessViewController<NSView>, AppKitCaseStu
       to: view
     )
 
-    observe { [weak self] in
-      guard let self else { return }
+    observe { [unowned self] in
       let styles = [
         model.isBold ? "bold" : nil,
         model.isItalic ? "italic" : nil,

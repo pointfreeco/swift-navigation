@@ -42,8 +42,7 @@ class MinimalObservationViewController: XiblessViewController<NSView>, AppKitCas
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
         let viewRenderCount = LockIsolated(0)
-        observe { [weak self] in
-            guard let self else { return }
+        observe { [unowned self] in
             viewRenderCount.withValue { $0 += 1 }
 
             if !model.isCountHidden {

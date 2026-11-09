@@ -25,8 +25,7 @@ class DismissalViewController: XiblessViewController<NSView>, AppKitCaseStudy {
     logLabel.textColor = .secondaryLabelColor
     addColumn(of: [presentButton, makeSectionLabel("onDismiss log"), logLabel], to: view)
 
-    observe { [weak self] in
-      guard let self else { return }
+    observe { [unowned self] in
       logLabel.stringValue = model.log.isEmpty ? "Nothing dismissed yet." : model.log.joined(separator: "\n")
     }
 

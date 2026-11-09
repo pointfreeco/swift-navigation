@@ -90,9 +90,7 @@ class FocusViewController: XiblessViewController<NSView>, AppKitCaseStudy {
         .constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -24),
     ])
 
-    observe { [weak self] in
-      guard let self else { return }
-
+    observe { [unowned self] in
       currentFocusLabel.stringValue = "Current focus: \(model.focus?.rawValue ?? "none")"
       bioTextField.backgroundColor = nil
       emailTextField.backgroundColor = nil

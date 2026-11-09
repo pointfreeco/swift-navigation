@@ -53,9 +53,7 @@ class ConciseEnumNavigationViewController: XiblessViewController<NSView>, AppKit
       stack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
 
-    observe { [weak self] in
-      guard let self else { return }
-
+    observe { [unowned self] in
       showAlertButton.title = "Alert is presented: \(model.destination?.alert != nil ? "✅" : "❌")"
       showSheetButton.title = "Sheet is presented: \(model.destination?.sheet != nil ? "✅" : "❌")"
       showSheetFromBooleanButton.title = "Sheet is presented from boolean: \(model.destination?.sheetWithoutPayload != nil ? "✅" : "❌")"
