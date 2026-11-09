@@ -39,6 +39,10 @@ to something that can outlive the object, capture the object `weak` instead.
 
 ## Topics
 
+### Essentials
+
+- <doc:StackNavigationWithAppKitPlus>
+
 ### Animations
 
 - ``withAppKitAnimation(_:_:completion:)``

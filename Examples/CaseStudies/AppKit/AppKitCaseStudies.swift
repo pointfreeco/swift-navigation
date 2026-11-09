@@ -25,11 +25,11 @@ struct AppKitCaseStudiesView: View {
                 NestedModalViewController()
                 DismissalViewController()
             }
-//      CaseStudyGroupView("Stack navigation") {
-//        StaticNavigationStackController()
-//        ErasedNavigationStackController(model: ErasedNavigationStackController.Model())
-//        // TODO: state restoration
-//      }
+            CaseStudyGroupView("Stack navigation") {
+                StaticNavigationStackController(model: StaticNavigationStackController.Model())
+                ErasedNavigationStackController(model: ErasedNavigationStackController.Model())
+                // TODO: state restoration
+            }
             CaseStudyGroupView("Advanced") {
                 // TODO: Deep link
                 WiFiSettingsViewController(model: WiFiSettingsModel(foundNetworks: .mocks))

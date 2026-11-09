@@ -2,6 +2,11 @@
 
 public import AppKit
 import AppKitNavigationShim
+#if AppKitPlus
+  // NB: AppKitPlus declares the same AppKit control-event methods as the shim. Before the macOS 27
+  //     SDK, Swift settles on its declarations, which must then be visible here.
+  import AppKitPlus
+#endif
 
 @MainActor
 class TargetActionProxy: NSObject {

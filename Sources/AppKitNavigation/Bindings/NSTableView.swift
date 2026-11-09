@@ -109,7 +109,7 @@ extension NSTableView {
 
     /// Removes the binding established with
     /// ``AppKit/NSTableView/bind(selection:row:itemIdentifier:)`` or
-    /// ``AppKit/NSTableView/bind(selection:dataSource:)``.
+    /// ``AppKit/NSTableView/bind(selection:dataSource:)-(_,NSTableViewDiffableDataSource<SectionIdentifier,ItemIdentifier>)``.
     public func unbindSelection() {
         removeBinding(to: \NSTableView.selectedRowIndexes)
     }
