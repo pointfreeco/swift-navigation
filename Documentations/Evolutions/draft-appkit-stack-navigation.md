@@ -260,7 +260,7 @@ extension NSOutlineView {
 3. **按状态推入**（已完成）：推入用的 `PresentationStyle` 和五种 `navigationDestination` 重载。先用测试确认 AppKitPlus 弹出控制器时的回调顺序，再写实现。
 4. **`dismiss()`**（已完成）：`traitCollection.dismiss` 与 `isPresented`，接进推入和现有五种弹出，各配测试。
 5. **AppKitPlus 数据源的选中绑定**（已完成）：两个 `bind(selection:dataSource:)`，各配双向测试。
-6. **示例**：Examples 工程打开 trait，恢复「Stack navigation」一组，补两个案例；CaseStudies 的 macOS 版只编译，不点界面。
+6. **示例**（已完成）：Examples 工程打开 trait，恢复「Stack navigation」一组，补两个案例；CaseStudies 的 macOS 版只编译，不点界面。
 7. **文档与验证**：DocC 首页与 skill；判断要不要写打开 trait 的使用指南。Xcode 27.2 跑 AppKit 的全部测试，trait 关闭、打开各一次；Xcode 26.6 在 trait 打开时编译库和 AppKit 测试。
 
 **收尾时必须判断两件事**（判断结果写进决策日志，不允许沉默跳过）：
@@ -288,3 +288,4 @@ extension NSOutlineView {
 | 2026-11-09 | 视图加载时第一次按路径摆放控制器不带动画 | 那时没有可以过渡的画面；测试里这次动画也收不了尾，后面的推入弹出都排在它后面 |
 | 2026-11-09 | 按状态推入的内容，以「到过栈上、又离开了导航控制器、视图也离开了窗口」判定已经下屏 | 推入可能落在任意 `NSNavigationController` 里，不能占用它的委托；AppKitPlus 弹出时不发 `didMove(toParent: nil)`。在 run loop 每次等待前检查这三个条件；推入若因过渡进行中而排队，先等它落到栈上，结束时也先等它落到栈上再弹出 |
 | 2026-11-09 | `dismiss` 装在内容的 trait 覆盖里：视图控制器装在自己身上，窗口和存取面板装在窗口上，alert 装在它的窗口上，popover 装在内容视图控制器上 | AppKitPlus 里窗口也是 trait 环境，装在窗口上，窗口里的所有视图都能读到 |
+| 2026-11-09 | Examples 工程加一个指向仓库根目录、带 trait 的本地包引用，fork 的各个产品都改从它取 | Examples 原来经工作区的根包拿到这些产品，而 Xcode 的 trait 设置挂在工程的包引用上。实测 Xcode 27.2 接受这种写法，编译命令里出现 `-DAppKitPlus`；工作区的锁定文件随之多了 AppKitPlus-Release 0.21.0 一条 |

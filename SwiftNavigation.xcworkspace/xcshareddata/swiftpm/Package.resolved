@@ -1,6 +1,15 @@
 {
-  "originHash" : "44d2db2fa3620bdeb8f6f8122273f67ead312b3392d40f1c94c6ce6189f6538e",
+  "originHash" : "c29f1966f5086e34beae597b464b2409b3c6b0a2c352284799e5706fb0561522",
   "pins" : [
+    {
+      "identity" : "appkitplus-release",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AppKitSupportProgram/AppKitPlus-Release",
+      "state" : {
+        "revision" : "954e6bd30bc452bf54d65793b638e82d3a6a586d",
+        "version" : "0.21.0"
+      }
+    },
     {
       "identity" : "combine-schedulers",
       "kind" : "remoteSourceControl",

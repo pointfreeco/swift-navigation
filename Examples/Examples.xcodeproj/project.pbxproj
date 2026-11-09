@@ -80,6 +80,8 @@
 		E9F0050A2EDA000000000015 /* AppKit+OptionBindingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000005 /* AppKit+OptionBindingsViewController.swift */; };
 		E9F0050A2EDA000000000016 /* AppKit+TableSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000006 /* AppKit+TableSelectionViewController.swift */; };
 		E9F0050A2EDA000000000017 /* AppKit+AnimationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000007 /* AppKit+AnimationsViewController.swift */; };
+		E9F0050A2EDA000000000018 /* AppKit+StaticNavigationStackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000008 /* AppKit+StaticNavigationStackController.swift */; };
+		E9F0050A2EDA000000000019 /* AppKit+ErasedNavigationStackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0050A2EDA000000000009 /* AppKit+ErasedNavigationStackController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +164,8 @@
 		E9F0050A2EDA000000000005 /* AppKit+OptionBindingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+OptionBindingsViewController.swift"; sourceTree = "<group>"; };
 		E9F0050A2EDA000000000006 /* AppKit+TableSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+TableSelectionViewController.swift"; sourceTree = "<group>"; };
 		E9F0050A2EDA000000000007 /* AppKit+AnimationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+AnimationsViewController.swift"; sourceTree = "<group>"; };
+		E9F0050A2EDA000000000008 /* AppKit+StaticNavigationStackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+StaticNavigationStackController.swift"; sourceTree = "<group>"; };
+		E9F0050A2EDA000000000009 /* AppKit+ErasedNavigationStackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppKit+ErasedNavigationStackController.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -368,6 +372,8 @@
 				E9F0050A2EDA000000000005 /* AppKit+OptionBindingsViewController.swift */,
 				E9F0050A2EDA000000000006 /* AppKit+TableSelectionViewController.swift */,
 				E9F0050A2EDA000000000007 /* AppKit+AnimationsViewController.swift */,
+				E9F0050A2EDA000000000008 /* AppKit+StaticNavigationStackController.swift */,
+				E9F0050A2EDA000000000009 /* AppKit+ErasedNavigationStackController.swift */,
 			);
 			path = AppKit;
 			sourceTree = "<group>";
@@ -542,6 +548,7 @@
 			);
 			mainGroup = CA47378B272F08EF0012CAC3;
 			packageReferences = (
+				E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */,
 				CA6453982968A06E00802931 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				CA48F3002C49650100BE2C3C /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
 				CA48F3032C49650F00BE2C3C /* XCRemoteSwiftPackageReference "swift-tagged" */,
@@ -621,6 +628,8 @@
 				E9F0050A2EDA000000000015 /* AppKit+OptionBindingsViewController.swift in Sources */,
 				E9F0050A2EDA000000000016 /* AppKit+TableSelectionViewController.swift in Sources */,
 				E9F0050A2EDA000000000017 /* AppKit+AnimationsViewController.swift in Sources */,
+				E9F0050A2EDA000000000018 /* AppKit+StaticNavigationStackController.swift in Sources */,
+				E9F0050A2EDA000000000019 /* AppKit+ErasedNavigationStackController.swift in Sources */,
 				DC6A8411291F227400B3F6C9 /* SynchronizedBindings.swift in Sources */,
 				E99B05992C70CE6E003D3AFF /* UIKit+WiFiSettingsViewController.swift in Sources */,
 				E99B05A42C70DC50003D3AFF /* AppKit+ConnectToNetworkViewController.swift in Sources */,
@@ -1118,6 +1127,20 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+			traits = (
+				AppKitPlus,
+				CasePaths,
+				CustomDump,
+				IssueReporting,
+				Perception,
+			);
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		CA48F3002C49650100BE2C3C /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1161,14 +1184,17 @@
 		};
 		CA4737F3272F09780012CAC3 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */;
 			productName = SwiftUINavigation;
 		};
 		CA48F2F92C49645100BE2C3C /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */;
 			productName = SwiftUINavigation;
 		};
 		CA48F2FB2C49645100BE2C3C /* UIKitNavigation */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */;
 			productName = UIKitNavigation;
 		};
 		CA48F3012C49650100BE2C3C /* IdentifiedCollections */ = {
@@ -1188,18 +1214,22 @@
 		};
 		E9836D932C6CA07300FC6EFD /* AppKitNavigation */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */;
 			productName = AppKitNavigation;
 		};
 		CAAFA9D22C8B422800BB2BA1 /* UIKitNavigation */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */;
 			productName = UIKitNavigation;
 		};
 		CAAFA9D82C8B468000BB2BA1 /* SwiftNavigation */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */;
 			productName = SwiftNavigation;
 		};
 		CAAFA9DA2C8B468000BB2BA1 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E9F0050A2EDA000000000021 /* XCLocalSwiftPackageReference ".." */;
 			productName = SwiftUINavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
