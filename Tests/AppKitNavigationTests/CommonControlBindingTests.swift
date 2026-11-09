@@ -120,11 +120,14 @@
       #expect(popUpButton?.indexOfSelectedItem == -1)
     }
 
-    @Test("choosing an item that is not one of the options is reported and changes nothing")
+    /// Items the binding made itself are told apart from the app's own; see
+    /// `OptionItemBindingTests`. A menu the app built has only positions to go by.
+    @Test("choosing an item past the options of a menu the app built is reported and changes nothing")
     func choosingAnItemOutsideTheOptionsIsReported() {
       @UIBinding var weight = Weight.regular
-      let popUpButton = NSPopUpButton(selection: $weight, options: Weight.allCases, title: \.title)
-      popUpButton.menu?.addItem(withTitle: "Custom…", action: nil, keyEquivalent: "")
+      let popUpButton = NSPopUpButton(frame: .zero, pullsDown: false)
+      popUpButton.addItems(withTitles: ["Light", "Regular", "Bold", "Custom…"])
+      popUpButton.bind(selection: $weight, options: Weight.allCases)
 
       popUpButton.selectItem(at: 3)
       withKnownIssue {

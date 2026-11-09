@@ -94,8 +94,8 @@ extension TargetActionProtocol {
 ///   - actionProxy: The proxy that runs the object's target-action pair, or `nil` if it has none.
 ///   - observesKeyPath: Whether changes that key-value observation of the property reports are
 ///     written back too.
-///   - valueAfterAction: The value to write back when the object sends its action. Defaults to
-///     the property's value.
+///   - valueAfterAction: The value to write back when the object sends its action, or `nil` to
+///     leave the binding alone. Defaults to the property's value.
 ///   - set: Applies a new value of the binding to the object.
 @MainActor
 func establishBinding<Owner: NSObject, Value>(
@@ -104,13 +104,18 @@ func establishBinding<Owner: NSObject, Value>(
   of owner: Owner,
   through actionProxy: TargetActionProxy?,
   observesKeyPath: Bool = true,
-  valueAfterAction: ((_ owner: Owner) -> Value)? = nil,
+  valueAfterAction: ((_ owner: Owner) -> Value?)? = nil,
   set: @escaping (_ owner: Owner, _ newValue: Value, _ transaction: UITransaction) -> Void
 ) -> ObserveToken {
   owner.removeBinding(to: keyPath)
   let actionID = actionProxy?.addBindingAction { [weak owner] _ in
     guard let owner else { return }
-    binding.wrappedValue = valueAfterAction?(owner) ?? owner[keyPath: keyPath]
+    if let valueAfterAction {
+      guard let value = valueAfterAction(owner) else { return }
+      binding.wrappedValue = value
+    } else {
+      binding.wrappedValue = owner[keyPath: keyPath]
+    }
   }
 
   let isSetting = LockIsolated(false)

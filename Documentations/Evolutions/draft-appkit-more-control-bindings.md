@@ -44,13 +44,13 @@ collectionView.bind(selection: $model.selectedSymbolIDs, dataSource: dataSource)
 collectionView.bind(selection: $model.focusedSymbolID, dataSource: dataSource)    // Symbol.ID?
 ```
 
-1. **按选项生成项**：`NSPopUpButton` 和 `NSSegmentedControl` 加 `bind(selection:options:title:image:)`，`image:` 可以不传。
+1. **按选项生成项**（已完成）：`NSPopUpButton` 和 `NSSegmentedControl` 加 `bind(selection:options:title:image:)`，`image:` 可以不传。
    - 绑定时按选项生成菜单项或分段，再建立与现有 `bind(selection:options:)` 相同的双向绑定。
    - `options` 传数组时，项只生成一次。传闭包时，闭包与 `title:`、`image:` 在同一次 `observe` 里读取；读到的模型属性一变，就重新生成项并恢复选中。
    - 绑定只管理它生成的项。弹出按钮里 App 另加的项（比如「新建标签…」）留在后面；用户选中这些项时不写回，选中回到绑定的值。
    - 分段控件只管段数、标题和图标；宽度等仍由调用方设置。
    - 现有的便捷构造器 `init(selection:options:title:)` 改为调用新绑定，行为不变。
-2. **文本视图**：`NSTextView.bind(text:)`。
+2. **文本视图**（已完成）：`NSTextView.bind(text:)`。
    - 用户每次编辑都写回，与 `NSTextField.bind(text:)` 一致。输入法还在组字（有 marked text）时不写回，组完再写。
    - 模型变化时，只在内容不同时替换文本，选区尽量保留。
    - 不占用 delegate，靠 `NSText.didChangeNotification` 得知编辑。
@@ -75,3 +75,7 @@ collectionView.bind(selection: $model.focusedSymbolID, dataSource: dataSource)  
 |------|------|------|
 | 2026-11-09 | Created as Draft | 调查依赖这个 fork 的 App 后，用户选定补上随模型变化的选项、文本视图和集合视图多选三种绑定 |
 | 2026-11-09 | 用户批准，开始实现 | 照提案做，表格和大纲的多选不在这一批；与另两份提案在同一条分支上实现，做完在本地合进 `main`、不推送 |
+| 2026-11-09 | 便捷构造器也改由新绑定生成项；用户选中 App 自己加的项时，不再报问题，而是不写回、选中回到绑定的值 | 两条路径生成的项由同一套代码管理，行为应当一致。自己搭好菜单再调用 `bind(selection:options:)` 的写法仍按位置对应，选中选项之外的项照旧报问题，测试改为覆盖这种写法 |
+| 2026-11-09 | 两个便捷构造器各加一个可省的 `image:` 参数 | 与新绑定的参数一致；不传时与原来相同 |
+| 2026-11-09 | 带自身动作的菜单项（如「新建标签…」）靠菜单的 `didSendActionNotification` 得知被选中 | 这类项发送自己的动作，不发弹出按钮的动作，绑定的 target/action 收不到 |
+| 2026-11-09 | `NSTextView` 另加 `unbindText()` | 与 `unbindIsCollapsed()`、`unbindSelection()` 一致；文本视图不是控件，用不了 `unbind(_:)` |

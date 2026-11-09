@@ -12,6 +12,21 @@ extension UIBinding where Value: Equatable {
     line: UInt,
     column: UInt
   ) -> UIBinding<Int> {
+    optionIndex(among: { options }, fileID: fileID, filePath: filePath, line: line, column: column)
+  }
+
+  /// A binding to the position of this binding's value among options that are read again each
+  /// time.
+  ///
+  /// Reading the position reads the options, so an observation that reads the position also
+  /// tracks whatever the options read.
+  func optionIndex(
+    among options: @escaping () -> [Value],
+    fileID: StaticString,
+    filePath: StaticString,
+    line: UInt,
+    column: UInt
+  ) -> UIBinding<Int> {
     self[
       indexAmong: KeyPathArgument(options),
       fileID: HashableStaticString(rawValue: fileID),
@@ -24,20 +39,21 @@ extension UIBinding where Value: Equatable {
 
 extension Equatable {
   fileprivate subscript(
-    indexAmong options: KeyPathArgument<[Self]>,
+    indexAmong options: KeyPathArgument<() -> [Self]>,
     fileID fileID: HashableStaticString,
     filePath filePath: HashableStaticString,
     line line: UInt,
     column column: UInt
   ) -> Int {
-    get { options.value.firstIndex(of: self) ?? -1 }
+    get { options.value().firstIndex(of: self) ?? -1 }
     set {
-      guard options.value.indices.contains(newValue)
+      let currentOptions = options.value()
+      guard currentOptions.indices.contains(newValue)
       else {
         reportIssue(
           """
           A selection binding was given position \(newValue), which matches none of its \
-          \(options.value.count) options.
+          \(currentOptions.count) options.
           """,
           fileID: fileID.rawValue,
           filePath: filePath.rawValue,
@@ -46,7 +62,7 @@ extension Equatable {
         )
         return
       }
-      self = options.value[newValue]
+      self = currentOptions[newValue]
     }
   }
 }
