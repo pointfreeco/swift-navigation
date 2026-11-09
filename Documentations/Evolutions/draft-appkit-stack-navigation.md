@@ -1,6 +1,6 @@
 # Draft - 可选集成 AppKitPlus：把 UIKit 的栈式导航搬到 AppKit
 
-- **状态**: Draft
+- **状态**: Accepted
 - **作者**: JH
 - **创建日期**: 2026-11-09
 - **最后更新**: 2026-11-09
@@ -280,3 +280,4 @@ extension NSOutlineView {
 | 2026-11-09 | Examples 打开 trait，补两个栈案例 | 用户选定 |
 | 2026-11-09 | AppKitPlus-Release 从 0.21.0 起 | 用户选定，只承诺测过的版本 |
 | 2026-11-09 | 代码放在 AppKitNavigation 里用 `#if AppKitPlus` 包住；类型照 UIKit 版命名；路径支持集合和 `UINavigationPath`；推入动画跟随事务；选中绑定覆盖大纲与可重排表格两种数据源 | 提问时补上的默认做法，用户确认 |
+| 2026-11-09 | Accepted | 用户批准。排在绑定和动画两份提案之后实现，做完在本地合进 `main`、不推送 |

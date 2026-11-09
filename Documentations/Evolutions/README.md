@@ -16,4 +16,4 @@
 | draft | [简化 `observe` 闭包里对 `self` 的捕获](draft-observe-unowned-self.md) | In Progress |
 | draft | [AppKit 控件绑定第二批：随模型变化的选项、文本视图、集合视图的选中](draft-appkit-more-control-bindings.md) | In Progress |
 | draft | [AppKit 动画案例](draft-appkit-animations-case-study.md) | In Progress |
-| draft | [可选集成 AppKitPlus：把 UIKit 的栈式导航搬到 AppKit](draft-appkit-stack-navigation.md) | Draft |
+| draft | [可选集成 AppKitPlus：把 UIKit 的栈式导航搬到 AppKit](draft-appkit-stack-navigation.md) | Accepted |
