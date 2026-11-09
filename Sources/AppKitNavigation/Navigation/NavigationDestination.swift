@@ -1,6 +1,6 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst) && AppKitPlus
   public import AppKit
-  public import AppKitPlus
+  import AppKitPlus
   public import SwiftNavigation
   import AppKitNavigationShim
 

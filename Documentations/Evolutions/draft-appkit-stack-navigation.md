@@ -7,7 +7,7 @@
 - **所属愿景**: 无
 - **关联提案**: [0005](0005-appkit-presentation-redesign.md)（弹出的共用生命周期）、[0004](0004-appkit-table-selection-bindings.md)（表格与大纲的选中绑定）
 - **实现分支 / PR**: `appkit-stack-navigation`
-- **配套文档**: 待定 —— 落地时判断要不要写打开 trait 的使用指南
+- **配套文档**: DocC 文章 [Stack navigation with AppKitPlus](../../Sources/AppKitNavigation/Documentation.docc/Articles/StackNavigationWithAppKitPlus.md)，对外的使用说明
 
 ## 摘要
 
@@ -261,7 +261,7 @@ extension NSOutlineView {
 4. **`dismiss()`**（已完成）：`traitCollection.dismiss` 与 `isPresented`，接进推入和现有五种弹出，各配测试。
 5. **AppKitPlus 数据源的选中绑定**（已完成）：两个 `bind(selection:dataSource:)`，各配双向测试。
 6. **示例**（已完成）：Examples 工程打开 trait，恢复「Stack navigation」一组，补两个案例；CaseStudies 的 macOS 版只编译，不点界面。
-7. **文档与验证**：DocC 首页与 skill；判断要不要写打开 trait 的使用指南。Xcode 27.2 跑 AppKit 的全部测试，trait 关闭、打开各一次；Xcode 26.6 在 trait 打开时编译库和 AppKit 测试。
+7. **文档与验证**（已完成）：DocC 首页与 skill；判断要不要写打开 trait 的使用指南。Xcode 27.2 跑 AppKit 的全部测试，trait 关闭、打开各一次；Xcode 26.6 在 trait 打开时编译库和 AppKit 测试。
 
 **收尾时必须判断两件事**（判断结果写进决策日志，不允许沉默跳过）：
 
@@ -289,3 +289,5 @@ extension NSOutlineView {
 | 2026-11-09 | 按状态推入的内容，以「到过栈上、又离开了导航控制器、视图也离开了窗口」判定已经下屏 | 推入可能落在任意 `NSNavigationController` 里，不能占用它的委托；AppKitPlus 弹出时不发 `didMove(toParent: nil)`。在 run loop 每次等待前检查这三个条件；推入若因过渡进行中而排队，先等它落到栈上，结束时也先等它落到栈上再弹出 |
 | 2026-11-09 | `dismiss` 装在内容的 trait 覆盖里：视图控制器装在自己身上，窗口和存取面板装在窗口上，alert 装在它的窗口上，popover 装在内容视图控制器上 | AppKitPlus 里窗口也是 trait 环境，装在窗口上，窗口里的所有视图都能读到 |
 | 2026-11-09 | Examples 工程加一个指向仓库根目录、带 trait 的本地包引用，fork 的各个产品都改从它取 | Examples 原来经工作区的根包拿到这些产品，而 Xcode 的 trait 设置挂在工程的包引用上。实测 Xcode 27.2 接受这种写法，编译命令里出现 `-DAppKitPlus`；工作区的锁定文件随之多了 AppKitPlus-Release 0.21.0 一条 |
+| 2026-11-09 | `TargetActionProxy.swift` 在 trait 打开时导入 AppKitPlus | AppKitPlus 也声明了 AppKit 的 `addTarget(_:action:for:)` 与 `NSControlEvents`，和 shim 声明的是同一个 AppKit 方法，运行时只有一份实现。macOS 27 以前的 SDK 里编译器选中 AppKitPlus 那份声明，没导入就报错（Xcode 26.6 打开 trait 时实测） |
+| 2026-11-09 | 实现完成，待用户看过后收尾 | Xcode 27.2 上 AppKit 测试全部通过：trait 关闭时 XCTest 66 条、Swift Testing 77 条，与改动前相同；trait 打开时 XCTest 83 条、Swift Testing 80 条（各有 2 条故意触发的已知问题）。Xcode 26.6 在 trait 关闭、打开时都编译通过库和 AppKit 测试。生成文档在两种 trait 设置下都只有与上游共用内容里原有的 3 条警告。CaseStudies 的 macOS 版编译通过，没有打开界面去点。文档判断：打开 trait 的契约（连默认 trait 一起写、Swift 6.2 与 macOS 12 起、`delegate` 读到的是代理）在 API 签名里看不出来，写成 DocC 文章 `StackNavigationWithAppKitPlus` 作为使用说明，登记在头部「配套文档」；`swift-navigation-bindings` skill 补了 §4.1；探针得出的 AppKitPlus 行为写在代码注释和本提案里，不另写实现说明；没有新术语 |
