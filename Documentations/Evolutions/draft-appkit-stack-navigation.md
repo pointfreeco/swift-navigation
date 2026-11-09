@@ -256,7 +256,7 @@ extension NSOutlineView {
 ## 落地步骤
 
 1. **trait 与依赖**（已完成）：两份清单加 trait 和依赖，6.2 那份抬到 macOS 12。trait 关闭、打开各编译一次 AppKitNavigation，确认关闭时不解析 AppKitPlus。
-2. **路径驱动的栈**：`NavigationStackController`、`navigationDestination(for:destination:)`、`push(value:)`、`traitCollection.push`。先写测试：改路径时推入、弹出；用户返回后路径被截短。
+2. **路径驱动的栈**（已完成）：`NavigationStackController`、`navigationDestination(for:destination:)`、`push(value:)`、`traitCollection.push`。先写测试：改路径时推入、弹出；用户返回后路径被截短。
 3. **按状态推入**：推入用的 `PresentationStyle` 和五种 `navigationDestination` 重载。先用测试确认 AppKitPlus 弹出控制器时的回调顺序，再写实现。
 4. **`dismiss()`**：`traitCollection.dismiss` 与 `isPresented`，接进推入和现有五种弹出，各配测试。
 5. **AppKitPlus 数据源的选中绑定**：两个 `bind(selection:dataSource:)`，各配双向测试。
@@ -282,3 +282,7 @@ extension NSOutlineView {
 | 2026-11-09 | 代码放在 AppKitNavigation 里用 `#if AppKitPlus` 包住；类型照 UIKit 版命名；路径支持集合和 `UINavigationPath`；推入动画跟随事务；选中绑定覆盖大纲与可重排表格两种数据源 | 提问时补上的默认做法，用户确认 |
 | 2026-11-09 | Accepted | 用户批准。排在绑定和动画两份提案之后实现，做完在本地合进 `main`、不推送 |
 | 2026-11-09 | trait 关闭时实测不解析 AppKitPlus；打开时要连默认 trait 一起写 | `swift build` 不带 trait 时，`Package.resolved` 里没有 AppKitPlus。`--traits AppKitPlus` 会关掉默认 trait，`Perception` 一关，`observe` 就要求 macOS 14，AppKitNavigation 编不过；使用方在 `Package.swift` 里要写 `traits: [.defaults, "AppKitPlus"]`，写进文档 |
+| 2026-11-09 | `push`、`dismiss` 两个动作装进 `NSObject` 盒子再放进 trait | AppKitPlus 的 trait 存储只认对象：结构体值经 `as? any NSObjectProtocol` 变成 `nil`，写进去等于没写（探针实测） |
+| 2026-11-09 | 栈控制器的 `delegate` 读到的是转发代理，不像 UIKit 版那样返回 App 的委托 | AppKitPlus 内部经 `delegate` 属性取委托，getter 若返回 App 的委托，路径代理就被绕过，用户返回时路径不会截短（探针实测）。App 设的委托排在代理后面，所有消息照转 |
+| 2026-11-09 | 栈控制器重写 `init(nibName:bundle:)` 并标为不可用 | AppKitPlus 的 `init(navigationBarClass:toolbarClass:)` 内部经它初始化，Swift 子类不实现就会在运行时崩溃 |
+| 2026-11-09 | 视图加载时第一次按路径摆放控制器不带动画 | 那时没有可以过渡的画面；测试里这次动画也收不了尾，后面的推入弹出都排在它后面 |
