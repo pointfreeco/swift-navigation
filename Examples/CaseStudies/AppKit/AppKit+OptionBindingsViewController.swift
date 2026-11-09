@@ -11,6 +11,10 @@ class OptionBindingsViewController: XiblessViewController<NSView>, AppKitCaseStu
 
   A segmented control that lets you pick any number of segments binds each segment to a Bool of \
   its own, and a menu item binds its checkmark to a Bool.
+
+  The tag pop-up makes its items from options that change: "New Tag…" adds a tag to the model, \
+  and the pop-up grows an item for it. "New Tag…" is an item of the app's own, which the binding \
+  leaves alone. The text view below it binds its text to a string.
   """
   @UIBindable var model = Model()
   private let tabViewController = NSTabViewController()
@@ -50,6 +54,29 @@ class OptionBindingsViewController: XiblessViewController<NSView>, AppKitCaseStu
     viewOptionsButton.addItem(withTitle: "View options")
     viewOptionsButton.menu?.addItem(NSMenuItem(title: "Show the grid", isOn: $model.showsGrid))
 
+    let tagPopUpButton = NSPopUpButton(frame: .zero, pullsDown: false)
+    tagPopUpButton.bind(
+      selection: $model.tag,
+      options: { [unowned self] in [nil] + model.tags.map(Optional.some) },
+      title: { $0 ?? "No Tag" }
+    )
+    tagPopUpButton.menu?.addItem(.separator())
+    let newTagItem = NSMenuItem(title: "New Tag…", action: #selector(newTag(_:)), keyEquivalent: "")
+    newTagItem.target = self
+    tagPopUpButton.menu?.addItem(newTagItem)
+
+    let noteScrollView = NSTextView.scrollableTextView()
+    noteScrollView.borderType = .bezelBorder
+    noteScrollView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      noteScrollView.widthAnchor.constraint(equalToConstant: 320),
+      noteScrollView.heightAnchor.constraint(equalToConstant: 60),
+    ])
+    if let noteTextView = noteScrollView.documentView as? NSTextView {
+      noteTextView.isRichText = false
+      noteTextView.bind(text: $model.note)
+    }
+
     let statusLabel = NSTextField(wrappingLabelWithString: "")
     statusLabel.textColor = .secondaryLabelColor
 
@@ -63,13 +90,16 @@ class OptionBindingsViewController: XiblessViewController<NSView>, AppKitCaseStu
         styleControl,
         makeSectionLabel("A menu item's checkmark"),
         viewOptionsButton,
+        makeSectionLabel("Options that change"),
+        tagPopUpButton,
+        makeSectionLabel("A text view's text"),
+        noteScrollView,
         statusLabel,
       ],
       to: view
     )
 
-    observe { [weak self] in
-      guard let self else { return }
+    observe { [unowned self] in
       let styles = [
         model.isBold ? "bold" : nil,
         model.isItalic ? "italic" : nil,
@@ -79,8 +109,16 @@ class OptionBindingsViewController: XiblessViewController<NSView>, AppKitCaseStu
         Fruit: \(model.fruit.title)
         Style: \(styles.isEmpty ? "plain" : styles.joined(separator: ", "))
         Grid: \(model.showsGrid ? "shown" : "hidden")
+        Tag: \(model.tag ?? "none")
+        Note: \(model.note.count) characters
         """
     }
+  }
+
+  @objc private func newTag(_ sender: Any?) {
+    let tag = "Tag \(model.tags.count + 1)"
+    model.tags.append(tag)
+    model.tag = tag
   }
 
   @Observable
@@ -90,6 +128,9 @@ class OptionBindingsViewController: XiblessViewController<NSView>, AppKitCaseStu
     var isItalic = false
     var isUnderlined = false
     var showsGrid = false
+    var tags = ["Red", "Green"]
+    var tag: String? = "Red"
+    var note = "Type a note here."
   }
 
   enum Fruit: CaseIterable {

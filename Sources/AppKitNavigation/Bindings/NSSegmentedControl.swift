@@ -72,6 +72,7 @@ extension NSSegmentedControl {
     ///     user selects another one.
     ///   - options: The options, in the order of their segments.
     ///   - title: The label of the segment for an option.
+    ///   - image: The image of the segment for an option, if segments show images.
     ///   - fileID: The source `#fileID` associated with the binding.
     ///   - filePath: The source `#filePath` associated with the binding.
     ///   - line: The source `#line` associated with the binding.
@@ -80,26 +81,133 @@ extension NSSegmentedControl {
         frame: CGRect = .zero,
         selection: UIBinding<Value>,
         options: [Value],
-        title: (Value) -> String,
+        title: @escaping (Value) -> String,
+        image: ((Value) -> NSImage?)? = nil,
         fileID: StaticString = #fileID,
         filePath: StaticString = #filePath,
         line: UInt = #line,
         column: UInt = #column
     ) {
         self.init(frame: frame)
-        segmentCount = options.count
-        for (segment, option) in options.enumerated() {
-            setLabel(title(option), forSegment: segment)
-        }
         trackingMode = .selectOne
         bind(
             selection: selection,
             options: options,
+            title: title,
+            image: image,
             fileID: fileID,
             filePath: filePath,
             line: line,
             column: column
         )
+    }
+
+    /// Makes a segment for each option and establishes a two-way connection between a binding and
+    /// the selected one.
+    ///
+    /// ```swift
+    /// displayModeControl.bind(
+    ///   selection: $model.displayMode,
+    ///   options: DisplayMode.allCases,
+    ///   title: { _ in "" },
+    ///   image: { NSImage(systemSymbolName: $0.iconName, accessibilityDescription: $0.displayName) }
+    /// )
+    /// ```
+    ///
+    /// The binding sets the number of segments and each segment's label and image; anything else
+    /// about the segments, such as their widths, is yours to set. Return an empty title to show
+    /// only the image. A value that is not one of the options selects no segment, and is reported
+    /// as an issue.
+    ///
+    /// - Parameters:
+    ///   - selection: The binding to read from for the selected option, and write to when the
+    ///     user selects another one.
+    ///   - options: The options, in the order of their segments.
+    ///   - title: The label of the segment for an option.
+    ///   - image: The image of the segment for an option, if segments show images.
+    ///   - fileID: The source `#fileID` associated with the binding.
+    ///   - filePath: The source `#filePath` associated with the binding.
+    ///   - line: The source `#line` associated with the binding.
+    ///   - column: The source `#column` associated with the binding.
+    /// - Returns: A cancel token.
+    @discardableResult
+    public func bind<Value: Equatable>(
+        selection: UIBinding<Value>,
+        options: [Value],
+        title: @escaping (Value) -> String,
+        image: ((Value) -> NSImage?)? = nil,
+        fileID: StaticString = #fileID,
+        filePath: StaticString = #filePath,
+        line: UInt = #line,
+        column: UInt = #column
+    ) -> ObserveToken {
+        bind(
+            selection: selection,
+            options: { options },
+            title: title,
+            image: image,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
+    }
+
+    /// Makes a segment for each of the options a closure returns, and keeps the segments and the
+    /// selected option in step as the options change.
+    ///
+    /// The options, labels and images are read in an observation, so the segments follow whatever
+    /// those closures read from an observable model. Everything else works as in the version that
+    /// takes an array of options.
+    ///
+    /// - Parameters:
+    ///   - selection: The binding to read from for the selected option, and write to when the
+    ///     user selects another one.
+    ///   - options: A closure that returns the options, in the order of their segments.
+    ///   - title: The label of the segment for an option.
+    ///   - image: The image of the segment for an option, if segments show images.
+    ///   - fileID: The source `#fileID` associated with the binding.
+    ///   - filePath: The source `#filePath` associated with the binding.
+    ///   - line: The source `#line` associated with the binding.
+    ///   - column: The source `#column` associated with the binding.
+    /// - Returns: A cancel token.
+    @discardableResult
+    public func bind<Value: Equatable>(
+        selection: UIBinding<Value>,
+        options: @escaping () -> [Value],
+        title: @escaping (Value) -> String,
+        image: ((Value) -> NSImage?)? = nil,
+        fileID: StaticString = #fileID,
+        filePath: StaticString = #filePath,
+        line: UInt = #line,
+        column: UInt = #column
+    ) -> ObserveToken {
+        let index = selection.optionIndex(
+            among: options, fileID: fileID, filePath: filePath, line: line, column: column
+        )
+        return bind(index, to: \.selectedSegment) { segmentedControl, index, _ in
+            let currentOptions = options()
+            if segmentedControl.segmentCount != currentOptions.count {
+                segmentedControl.segmentCount = currentOptions.count
+            }
+            for (segment, option) in currentOptions.enumerated() {
+                segmentedControl.setLabel(title(option), forSegment: segment)
+                segmentedControl.setImage(image?(option), forSegment: segment)
+            }
+            if index == -1 {
+                reportIssue(
+                    """
+                    A segmented control's selection ('\(selection.wrappedValue)') is not one of \
+                    its options, so no segment is selected.
+                    """,
+                    fileID: fileID,
+                    filePath: filePath,
+                    line: line,
+                    column: column
+                )
+            }
+            segmentedControl.selectedSegment = index
+        }
     }
 
     /// Establishes a two-way connection between a binding and the selected segment, the segment
@@ -108,7 +216,7 @@ extension NSSegmentedControl {
     /// Unlike ``AppKit/NSSegmentedControl/bind(selectedSegment:fileID:filePath:line:column:)``,
     /// the value need not be raw-representable: any equatable value works. The segments must
     /// match the options one for one, in order, which
-    /// ``AppKit/NSSegmentedControl/init(frame:selection:options:title:fileID:filePath:line:column:)``
+    /// ``AppKit/NSSegmentedControl/init(frame:selection:options:title:image:fileID:filePath:line:column:)``
     /// takes care of. A value that is not one of the options selects no segment, and selecting a
     /// segment past the last option leaves the binding alone; both are reported as issues.
     ///

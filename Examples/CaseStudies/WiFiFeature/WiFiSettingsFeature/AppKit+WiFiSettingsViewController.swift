@@ -88,8 +88,7 @@ class WiFiSettingsViewController: XiblessViewController<NSScrollView>, AppKitCas
             }
         }
 
-        observe { [weak self] in
-            guard let self else { return }
+        observe { [unowned self] in
             dataSource.apply(
                 NSDiffableDataSourceSnapshot(model: model),
                 animatingDifferences: true

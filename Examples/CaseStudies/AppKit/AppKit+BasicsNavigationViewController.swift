@@ -48,9 +48,7 @@ class BasicsNavigationViewController: XiblessViewController<NSView>, AppKitCaseS
       stack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
     ])
 
-    observe { [weak self] in
-      guard let self else { return }
-
+    observe { [unowned self] in
       if let url = model.url {
         showAlertButton.title = "URL is: \(url)"
       } else {

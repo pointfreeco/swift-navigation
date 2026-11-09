@@ -3,7 +3,7 @@ import AppKit
 import AppKitNavigation
 
 class TableSelectionViewController: XiblessViewController<NSView>, AppKitCaseStudy {
-  let caseStudyTitle = "Table and outline selection"
+  let caseStudyTitle = "Table, outline and collection selection"
   let readMe = """
   A table or an outline binds its selected row to the identifier of the selected item, and an \
   outline binds the items it has expanded to a set of identifiers. The model holds identifiers \
@@ -12,12 +12,17 @@ class TableSelectionViewController: XiblessViewController<NSView>, AppKitCaseStu
   The table uses a diffable data source, which the binding asks for rows directly. The outline \
   uses a data source of its own and gives the binding its row lookups. The buttons change the \
   model; clicking in the table or the outline changes it too.
+
+  A collection view binds the items it has selected to a set of identifiers. Click, ⌘-click, \
+  drag across the colors or choose Select All, and the model follows.
   """
   @UIBindable var model = Model()
   private let tableView = NSTableView()
   private let outlineView = NSOutlineView()
   private let outlineDataSource = PantryOutlineDataSource()
   private var tableDataSource: NSTableViewDiffableDataSource<Int, String>?
+  private let collectionView = NSCollectionView()
+  private var collectionDataSource: NSCollectionViewDiffableDataSource<Int, String>?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -67,6 +72,38 @@ class TableSelectionViewController: XiblessViewController<NSView>, AppKitCaseStu
       }
     )
 
+    // MARK: Collection
+
+    let layout = NSCollectionViewFlowLayout()
+    layout.itemSize = NSSize(width: 70, height: 28)
+    layout.minimumInteritemSpacing = 6
+    layout.minimumLineSpacing = 6
+    collectionView.collectionViewLayout = layout
+    collectionView.isSelectable = true
+    collectionView.allowsMultipleSelection = true
+    collectionView.register(ColorItem.self, forItemWithIdentifier: ColorItem.identifier)
+    let collectionDataSource = NSCollectionViewDiffableDataSource<Int, String>(
+      collectionView: collectionView
+    ) { collectionView, indexPath, colorName in
+      let item = collectionView.makeItem(withIdentifier: ColorItem.identifier, for: indexPath)
+      item.textField?.stringValue = colorName
+      return item
+    }
+    var colorSnapshot = NSDiffableDataSourceSnapshot<Int, String>()
+    colorSnapshot.appendSections([0])
+    colorSnapshot.appendItems(ColorItem.colorNames)
+    collectionDataSource.apply(colorSnapshot, animatingDifferences: false)
+    self.collectionDataSource = collectionDataSource
+    collectionView.bind(selection: $model.selectedColors, dataSource: collectionDataSource)
+    let collectionScrollView = NSScrollView()
+    collectionScrollView.documentView = collectionView
+    collectionScrollView.borderType = .bezelBorder
+    collectionScrollView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      collectionScrollView.widthAnchor.constraint(equalToConstant: 260),
+      collectionScrollView.heightAnchor.constraint(equalToConstant: 80),
+    ])
+
     let statusLabel = NSTextField(wrappingLabelWithString: "")
     statusLabel.textColor = .secondaryLabelColor
 
@@ -93,17 +130,25 @@ class TableSelectionViewController: XiblessViewController<NSView>, AppKitCaseStu
         makeButton("Collapse everything") { [weak self] in
           self?.model.expandedPantryGroups = []
         },
+        makeSectionLabel("Collection"),
+        collectionScrollView,
+        makeButton("Select the warm colors") { [weak self] in
+          self?.model.selectedColors = ["Red", "Orange", "Yellow"]
+        },
+        makeButton("Clear the colors' selection") { [weak self] in
+          self?.model.selectedColors = []
+        },
         statusLabel,
       ],
       to: view
     )
 
-    observe { [weak self] in
-      guard let self else { return }
+    observe { [unowned self] in
       statusLabel.stringValue = """
         Table selection: \(model.selectedPlanet ?? "none")
         Outline selection: \(model.selectedPantryItem ?? "none")
         Expanded groups: \(model.expandedPantryGroups.isEmpty ? "none" : model.expandedPantryGroups.sorted().joined(separator: ", "))
+        Selected colors: \(model.selectedColors.isEmpty ? "none" : ColorItem.colorNames.filter(model.selectedColors.contains).joined(separator: ", "))
         """
     }
   }
@@ -127,6 +172,41 @@ class TableSelectionViewController: XiblessViewController<NSView>, AppKitCaseStu
     var selectedPlanet: String?
     var selectedPantryItem: String?
     var expandedPantryGroups: Set<String> = ["Vegetables"]
+    var selectedColors: Set<String> = ["Blue"]
+  }
+}
+
+/// An item in the collection: the name of a color, highlighted while it is selected.
+private final class ColorItem: NSCollectionViewItem {
+  static let identifier = NSUserInterfaceItemIdentifier("ColorItem")
+  static let colorNames = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"]
+
+  override func loadView() {
+    let label = NSTextField(labelWithString: "")
+    label.alignment = .center
+    label.translatesAutoresizingMaskIntoConstraints = false
+    let container = NSView()
+    container.wantsLayer = true
+    container.layer?.cornerRadius = 6
+    container.layer?.borderWidth = 1
+    container.addSubview(label)
+    NSLayoutConstraint.activate([
+      label.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+      label.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+    ])
+    view = container
+    textField = label
+    updateAppearance()
+  }
+
+  override var isSelected: Bool {
+    didSet { updateAppearance() }
+  }
+
+  private func updateAppearance() {
+    view.layer?.backgroundColor = (isSelected ? NSColor.controlAccentColor : NSColor.clear).cgColor
+    view.layer?.borderColor = NSColor.separatorColor.cgColor
+    textField?.textColor = isSelected ? .white : .labelColor
   }
 }
 

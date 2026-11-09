@@ -24,8 +24,7 @@ class NestedModalViewController: XiblessViewController<NSView>, AppKitCaseStudy 
     let statusLabel = NSTextField(wrappingLabelWithString: "")
     addColumn(of: [openButton, statusLabel], to: view)
 
-    observe { [weak self] in
-      guard let self else { return }
+    observe { [unowned self] in
       statusLabel.stringValue = """
         Settings window: \(model.isSettingsPresented ? "open" : "closed")
         Confirmation alert: \(model.resetConfirmation != nil ? "open" : "closed")
