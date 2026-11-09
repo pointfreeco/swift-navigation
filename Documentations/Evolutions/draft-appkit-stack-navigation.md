@@ -259,7 +259,7 @@ extension NSOutlineView {
 2. **路径驱动的栈**（已完成）：`NavigationStackController`、`navigationDestination(for:destination:)`、`push(value:)`、`traitCollection.push`。先写测试：改路径时推入、弹出；用户返回后路径被截短。
 3. **按状态推入**（已完成）：推入用的 `PresentationStyle` 和五种 `navigationDestination` 重载。先用测试确认 AppKitPlus 弹出控制器时的回调顺序，再写实现。
 4. **`dismiss()`**（已完成）：`traitCollection.dismiss` 与 `isPresented`，接进推入和现有五种弹出，各配测试。
-5. **AppKitPlus 数据源的选中绑定**：两个 `bind(selection:dataSource:)`，各配双向测试。
+5. **AppKitPlus 数据源的选中绑定**（已完成）：两个 `bind(selection:dataSource:)`，各配双向测试。
 6. **示例**：Examples 工程打开 trait，恢复「Stack navigation」一组，补两个案例；CaseStudies 的 macOS 版只编译，不点界面。
 7. **文档与验证**：DocC 首页与 skill；判断要不要写打开 trait 的使用指南。Xcode 27.2 跑 AppKit 的全部测试，trait 关闭、打开各一次；Xcode 26.6 在 trait 打开时编译库和 AppKit 测试。
 
