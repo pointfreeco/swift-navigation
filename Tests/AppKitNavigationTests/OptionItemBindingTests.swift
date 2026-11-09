@@ -1,6 +1,11 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
   import AppKit
   import AppKitNavigation
+  #if compiler(<6.4)
+    // NB: Swift 6.2 treats the models' 'Observable' conformances as public, and a public
+    //     conformance needs a public import.
+    public import Observation
+  #endif
   import Testing
 
   /// Pop-up buttons and segmented controls make their items from the options they are bound to,

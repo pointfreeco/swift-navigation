@@ -29,3 +29,4 @@ AppKit 案例列表里的「Animations」一项一直是注释掉的：UIKit 有
 |------|------|------|
 | 2026-11-09 | Created as Draft | AppKit 案例列表里只有动画一项还注释着，用户选定补上 |
 | 2026-11-09 | 用户批准，开始实现 | 与另两份提案在同一条分支上实现，做完在本地合进 `main`、不推送 |
+| 2026-11-09 | 实现完成，待用户看过后收尾 | 新增 `AppKit+AnimationsViewController.swift` 并登记进 `Examples.xcodeproj`，案例列表恢复这一项。CaseStudies 的 macOS 版经 `SwiftNavigation.xcworkspace` 编译通过，新文件没有警告；没有打开界面去点，圆的位移、缩放和换色是否真的有过渡没有实测。文档判断：案例本身就是示例文档，不需要使用指南或实现说明，没有新术语 |

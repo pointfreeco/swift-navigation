@@ -1,5 +1,5 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-  import AppKit
+  public import AppKit
 
   /// Stands in as a collection view's delegate while a selection binding is in place, so that the
   /// binding hears of the user's selection changes, and passes every message on to the delegate

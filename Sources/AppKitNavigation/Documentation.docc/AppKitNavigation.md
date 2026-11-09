@@ -67,8 +67,10 @@ to something that can outlive the object, capture the object `weak` instead.
 - ``AppKit/NSPopUpButton``
 - ``AppKit/NSSegmentedControl``
 - ``AppKit/NSProgressIndicator``
+- ``AppKit/NSTextView``
 - ``AppKit/NSTableView``
 - ``AppKit/NSOutlineView``
+- ``AppKit/NSCollectionView``
 - ``AppKit/NSMenuItem``
 - ``AppKit/NSSplitViewItem``
 - ``AppKit/NSTabViewController``

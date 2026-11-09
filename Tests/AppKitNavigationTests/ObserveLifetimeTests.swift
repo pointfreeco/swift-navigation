@@ -1,6 +1,11 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
   import AppKit
   import AppKitNavigation
+  #if compiler(<6.4)
+    // NB: Swift 6.2 treats the models' 'Observable' conformances as public, and a public
+    //     conformance needs a public import.
+    public import Observation
+  #endif
   import XCTest
 
   /// `observe` called on an object keeps its observation for as long as the object lives, and never
@@ -19,7 +24,7 @@
         _ = model.count
         recorder.record(isOwnerAlive: owner != nil)
       }
-      weak var releasedOwner = owner
+      weak let releasedOwner = owner
 
       owner = nil
       XCTAssertNil(releasedOwner, "The observation should not keep its object alive.")

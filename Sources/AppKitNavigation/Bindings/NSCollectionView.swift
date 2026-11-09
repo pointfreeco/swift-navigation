@@ -85,6 +85,7 @@ extension NSCollectionView {
     ///   - dataSource: The collection view's diffable data source.
     /// - Returns: A cancel token.
     @discardableResult
+    @available(macOS 10.15.1, *)
     public func bind<SectionIdentifier, ItemIdentifier>(
         selection: UIBinding<Set<ItemIdentifier>>,
         dataSource: NSCollectionViewDiffableDataSource<SectionIdentifier, ItemIdentifier>
@@ -107,6 +108,7 @@ extension NSCollectionView {
     ///   - dataSource: The collection view's diffable data source.
     /// - Returns: A cancel token.
     @discardableResult
+    @available(macOS 10.15.1, *)
     public func bind<SectionIdentifier, ItemIdentifier>(
         selection: UIBinding<ItemIdentifier?>,
         dataSource: NSCollectionViewDiffableDataSource<SectionIdentifier, ItemIdentifier>

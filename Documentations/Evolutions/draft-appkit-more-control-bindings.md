@@ -59,8 +59,8 @@ collectionView.bind(selection: $model.focusedSymbolID, dataSource: dataSource)  
    - 用户的点选、⌘ 或 ⇧ 点选、拖选、方向键、全选，以及 App 直接设置 `selectionIndexPaths`，都写回；模型改变选中时，库自己防止回写。
    - 集合视图只把用户的选中变化告诉 delegate，所以绑定在 App 的 delegate 前面放一个转发代理：所有消息原样转给 App 的 delegate，只顺带听选中变化；App 之后另设 delegate 时重新放到前面，解除绑定时把 App 的 delegate 放回去。读 `delegate` 拿到的是代理。
    - 数据源更新删掉选中项、重新加载清掉被重载项的选中时，集合视图什么都不报，这些标识留在绑定里；项出现在屏幕上时，绑定里还有它的标识就重新选上，并补上选中外观（PrivateSymbols 现在手工修的就是这个）。
-4. **示例**：在现有的「选项绑定」和「表格选中」案例里各加上新绑定的演示。
-5. **文档与验证**：每种绑定先写双向测试再实现。DocC 首页「绑定」一组登记 `NSTextView` 和 `NSCollectionView`；`swift-navigation-bindings` skill 的绑定清单补上。Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译库和测试，CaseStudies 的 macOS 版只编译、不点界面。
+4. **示例**（已完成）：在现有的「选项绑定」和「表格选中」案例里各加上新绑定的演示：标签弹出按钮的选项随模型增加，带一个 App 自己的「New Tag…」项；一个绑定到字符串的文本视图；一个多选的集合视图。
+5. **文档与验证**（已完成）：每种绑定先写双向测试再实现。DocC 首页「绑定」一组登记 `NSTextView` 和 `NSCollectionView`；`swift-navigation-bindings` skill 的绑定清单补上。Xcode 27.2 跑 AppKit 的全部测试，Xcode 26.6 编译库和测试，CaseStudies 的 macOS 版只编译、不点界面。
 
 没有询问就采用的假设：
 
@@ -81,3 +81,5 @@ collectionView.bind(selection: $model.focusedSymbolID, dataSource: dataSource)  
 | 2026-11-09 | `NSTextView` 另加 `unbindText()` | 与 `unbindIsCollapsed()`、`unbindSelection()` 一致；文本视图不是控件，用不了 `unbind(_:)` |
 | 2026-11-09 | 集合视图改用转发代理得知用户的选中变化，不再「不占用 delegate」 | 探针实测：全选、取消全选只回调 delegate，不发 KVO；方向键会发 KVO；删掉选中项、重新加载被重载项都既不发 KVO 也不回调 delegate。用户在三种做法（转发代理、只从模型到界面、先不做）里选了转发代理 |
 | 2026-11-09 | 数据源更新拿走或重载掉的选中项，标识留在绑定里；项上屏时按绑定重新选上 | 集合视图对这两种变化什么都不报，绑定无从写回；绑定是选中的来源，项回到屏幕上时以它为准 |
+| 2026-11-09 | 数据源版本的集合视图绑定标 `@available(macOS 10.15.1, *)`；代理类所在文件改为 `public import AppKit`；两份新测试文件在 Swift 6.4 以前的编译器下 `public import Observation` | Xcode 26.6 用 6.2 那份清单，最低系统是 macOS 10.15，而 `NSCollectionViewDiffableDataSource` 从 10.15.1 起才有；Swift 6.2 把这些遵循当成公开的，公开遵循需要公开导入 |
+| 2026-11-09 | 实现完成，待用户看过后收尾 | Xcode 27.2 上 AppKit 测试全部通过：XCTest 66 条，Swift Testing 77 条（其中 2 条是故意触发的已知问题）；Xcode 26.6 编译库和 AppKit 测试通过；生成文档只有与上游共用内容里原有的 3 条链接警告；CaseStudies 的 macOS 版经 `SwiftNavigation.xcworkspace` 编译通过，没有点界面。文档判断：用法和契约（集合视图的转发代理、App 自加的菜单项）写在文档注释和 `swift-navigation-bindings` skill 里，DocC 首页登记了 `NSTextView` 和 `NSCollectionView`；探针得出的 AppKit 行为记在代码注释和本提案里，不另写实现说明；没有新术语 |

@@ -36,7 +36,7 @@ observe { [unowned self] in
    - 对象释放后再改模型、转几圈 run loop，闭包一次也没被调用。
    - 令牌被对象以外的东西留住时，对象释放后闭包仍会被调用。这正是推荐写法的前提，文档要写明。
 2. **文档**（已完成）：AppKitNavigation 的 DocC 首页加一段，说明在 `NSObject.observe` 里推荐写 `[unowned self]` 及其前提；`swift-navigation-bindings` skill 的写法和常见错误同步改。
-3. **示例**：AppKit 案例里的 12 处 `observe { [weak self] in … }` 改成新写法。
+3. **示例**（已完成）：AppKit 案例里的 12 处 `observe { [weak self] in … }` 改成新写法。
 
 没有询问就采用的假设：
 
@@ -54,3 +54,4 @@ observe { [unowned self] in
 | 2026-11-09 | Created as Draft | 下游 4 个 App 的 55 个 `observe` 闭包都写了 `[weak self]`，其中 43 个还要再写一行 `guard let self`；用户选定简化这个写法 |
 | 2026-11-09 | 用户选定推荐 `[unowned self]`，不加把对象传进闭包的新重载 | 新重载要在每次访问成员时写 `owner.`，下游多行闭包反而更啰嗦；`[unowned self]` 保留隐式 `self`，闭包体不用改 |
 | 2026-11-09 | 用户批准，开始实现 | 与另两份提案在同一条分支 `appkit-more-control-bindings` 上实现，做完在本地合进 `main`、不推送 |
+| 2026-11-09 | 实现完成，待用户看过后收尾 | 两条回归测试通过；DocC 首页加了一节「Observing from a view or view controller」，`swift-navigation-bindings` skill 的示例、说明和常见错误同步改成 `[unowned self]`；AppKit 案例 12 处改完，CaseStudies 的 macOS 版编译通过。文档判断：推荐写法和前提都写进了 DocC 和 skill，不需要另写使用指南或实现说明，没有新术语 |

@@ -7,7 +7,7 @@ struct AppKitCaseStudiesView: View {
         List {
             CaseStudyGroupView("Observation") {
                 MinimalObservationViewController()
-//        AnimationsViewController()
+                AnimationsViewController()
             }
             CaseStudyGroupView("Bindings") {
                 NSControlBindingsViewController()
