@@ -1,9 +1,9 @@
-# Draft - 简化 `observe` 闭包里对 `self` 的捕获
+# 0008 - 简化 `observe` 闭包里对 `self` 的捕获
 
-- **状态**: In Progress
+- **状态**: Implemented
 - **创建日期**: 2026-11-09
-- **最后更新**: 2026-11-09
-- **实现分支**: `appkit-more-control-bindings`
+- **最后更新**: 2026-11-10
+- **实现分支**: `appkit-more-control-bindings`，已合进 `main`
 
 ## 摘要
 
@@ -55,3 +55,4 @@ observe { [unowned self] in
 | 2026-11-09 | 用户选定推荐 `[unowned self]`，不加把对象传进闭包的新重载 | 新重载要在每次访问成员时写 `owner.`，下游多行闭包反而更啰嗦；`[unowned self]` 保留隐式 `self`，闭包体不用改 |
 | 2026-11-09 | 用户批准，开始实现 | 与另两份提案在同一条分支 `appkit-more-control-bindings` 上实现，做完在本地合进 `main`、不推送 |
 | 2026-11-09 | 实现完成，待用户看过后收尾 | 两条回归测试通过；DocC 首页加了一节「Observing from a view or view controller」，`swift-navigation-bindings` skill 的示例、说明和常见错误同步改成 `[unowned self]`；AppKit 案例 12 处改完，CaseStudies 的 macOS 版编译通过。文档判断：推荐写法和前提都写进了 DocC 和 skill，不需要另写使用指南或实现说明，没有新术语 |
+| 2026-11-10 | Implemented，编号 0008，落地到 `main` | 用户看过后要求收尾。验证沿用实现完成时那一轮：两条回归测试与 AppKit 全部测试通过，CaseStudies 的 macOS 版编译通过；合进 `main` 的代码与测过的功能分支相同。下游 App 改用新写法不在这一批。文档判断同上一行：不需要使用指南或实现说明，没有新术语 |

@@ -12,10 +12,10 @@
 - [0005-appkit-presentation-redesign.md](Evolutions/0005-appkit-presentation-redesign.md)：AppKit 弹出 API 重做——生命周期收进一层，重载合并。
 - [0006-appkit-window-backed-content.md](Evolutions/0006-appkit-window-backed-content.md)：把公开协议 `ModalContent` 改名为 `WindowBackedContent`。
 - [0007-appkit-case-studies.md](Evolutions/0007-appkit-case-studies.md)：给 AppKit 案例补上弹出与新控件绑定的演示。
-- [draft-observe-unowned-self.md](Evolutions/draft-observe-unowned-self.md)：简化 `observe` 闭包里对 `self` 的捕获（In Progress）。
-- [draft-appkit-more-control-bindings.md](Evolutions/draft-appkit-more-control-bindings.md)：AppKit 控件绑定第二批——随模型变化的选项、文本视图、集合视图的选中（In Progress）。
-- [draft-appkit-animations-case-study.md](Evolutions/draft-appkit-animations-case-study.md)：AppKit 动画案例（In Progress）。
-- [draft-appkit-stack-navigation.md](Evolutions/draft-appkit-stack-navigation.md)：可选集成 AppKitPlus，把 UIKit 的栈式导航搬到 AppKit（In Progress）。
+- [0008-observe-unowned-self.md](Evolutions/0008-observe-unowned-self.md)：简化 `observe` 闭包里对 `self` 的捕获。
+- [0009-appkit-more-control-bindings.md](Evolutions/0009-appkit-more-control-bindings.md)：AppKit 控件绑定第二批——随模型变化的选项、文本视图、集合视图的选中。
+- [0010-appkit-animations-case-study.md](Evolutions/0010-appkit-animations-case-study.md)：AppKit 动画案例。
+- [0011-appkit-stack-navigation.md](Evolutions/0011-appkit-stack-navigation.md)：可选集成 AppKitPlus，把 UIKit 的栈式导航搬到 AppKit。
 
 ## Internal
 

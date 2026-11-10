@@ -1,12 +1,12 @@
-# Draft - 可选集成 AppKitPlus：把 UIKit 的栈式导航搬到 AppKit
+# 0011 - 可选集成 AppKitPlus：把 UIKit 的栈式导航搬到 AppKit
 
-- **状态**: In Progress
+- **状态**: Implemented
 - **作者**: JH
 - **创建日期**: 2026-11-09
-- **最后更新**: 2026-11-09
+- **最后更新**: 2026-11-10
 - **所属愿景**: 无
 - **关联提案**: [0005](0005-appkit-presentation-redesign.md)（弹出的共用生命周期）、[0004](0004-appkit-table-selection-bindings.md)（表格与大纲的选中绑定）
-- **实现分支 / PR**: `appkit-stack-navigation`
+- **实现分支 / PR**: `appkit-stack-navigation`，已合进 `main`
 - **配套文档**: DocC 文章 [Stack navigation with AppKitPlus](../../Sources/AppKitNavigation/Documentation.docc/Articles/StackNavigationWithAppKitPlus.md)，对外的使用说明
 
 ## 摘要
@@ -291,3 +291,5 @@ extension NSOutlineView {
 | 2026-11-09 | Examples 工程加一个指向仓库根目录、带 trait 的本地包引用，fork 的各个产品都改从它取 | Examples 原来经工作区的根包拿到这些产品，而 Xcode 的 trait 设置挂在工程的包引用上。实测 Xcode 27.2 接受这种写法，编译命令里出现 `-DAppKitPlus`；工作区的锁定文件随之多了 AppKitPlus-Release 0.21.0 一条 |
 | 2026-11-09 | `TargetActionProxy.swift` 在 trait 打开时导入 AppKitPlus | AppKitPlus 也声明了 AppKit 的 `addTarget(_:action:for:)` 与 `NSControlEvents`，和 shim 声明的是同一个 AppKit 方法，运行时只有一份实现。macOS 27 以前的 SDK 里编译器选中 AppKitPlus 那份声明，没导入就报错（Xcode 26.6 打开 trait 时实测） |
 | 2026-11-09 | 实现完成，待用户看过后收尾 | Xcode 27.2 上 AppKit 测试全部通过：trait 关闭时 XCTest 66 条、Swift Testing 77 条，与改动前相同；trait 打开时 XCTest 83 条、Swift Testing 80 条（各有 2 条故意触发的已知问题）。Xcode 26.6 在 trait 关闭、打开时都编译通过库和 AppKit 测试。生成文档在两种 trait 设置下都只有与上游共用内容里原有的 3 条警告。CaseStudies 的 macOS 版编译通过，没有打开界面去点。文档判断：打开 trait 的契约（连默认 trait 一起写、Swift 6.2 与 macOS 12 起、`delegate` 读到的是代理）在 API 签名里看不出来，写成 DocC 文章 `StackNavigationWithAppKitPlus` 作为使用说明，登记在头部「配套文档」；`swift-navigation-bindings` skill 补了 §4.1；探针得出的 AppKitPlus 行为写在代码注释和本提案里，不另写实现说明；没有新术语 |
+| 2026-11-10 | Implemented，编号 0011，落地到 `main` | 用户看过后要求收尾。验证沿用实现完成时那一轮：trait 关闭的两次运行早于最后一处代码改动（`TargetActionProxy.swift` 的条件导入），那处改动只在 trait 打开时参与编译，trait 打开的几次运行都在它之后；合进 `main` 的代码与测过的功能分支相同。界面没有点过。文档判断同上一行：DocC 文章 `StackNavigationWithAppKitPlus` 作为使用说明，不另写实现说明，没有新术语 |
+| 2026-11-10 | 后续项：CaseStudies 的 macOS 版补上 `@executable_path/../Frameworks` 这条框架搜索路径 | 收尾时检查构建产物发现：AppKitPlus.framework 已拷进 App 的 `Contents/Frameworks`，但工程的 `LD_RUNPATH_SEARCH_PATHS` 只有 iOS 用的 `@executable_path/Frameworks`，App 离开 Xcode 打开时找不到这个框架。从 Xcode 运行时，Xcode 把构建目录加进 `DYLD_FRAMEWORK_PATH`，按理能找到。两种启动方式都没有实测 |

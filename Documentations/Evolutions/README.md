@@ -13,7 +13,7 @@
 | 0005 | [AppKit 弹出 API 重做：生命周期收进一层，重载合并](0005-appkit-presentation-redesign.md) | Implemented |
 | 0006 | [把 `ModalContent` 改名为 `WindowBackedContent`](0006-appkit-window-backed-content.md) | Implemented |
 | 0007 | [给 AppKit 案例补上弹出与新控件绑定的演示](0007-appkit-case-studies.md) | Implemented |
-| draft | [简化 `observe` 闭包里对 `self` 的捕获](draft-observe-unowned-self.md) | In Progress |
-| draft | [AppKit 控件绑定第二批：随模型变化的选项、文本视图、集合视图的选中](draft-appkit-more-control-bindings.md) | In Progress |
-| draft | [AppKit 动画案例](draft-appkit-animations-case-study.md) | In Progress |
-| draft | [可选集成 AppKitPlus：把 UIKit 的栈式导航搬到 AppKit](draft-appkit-stack-navigation.md) | In Progress |
+| 0008 | [简化 `observe` 闭包里对 `self` 的捕获](0008-observe-unowned-self.md) | Implemented |
+| 0009 | [AppKit 控件绑定第二批：随模型变化的选项、文本视图、集合视图的选中](0009-appkit-more-control-bindings.md) | Implemented |
+| 0010 | [AppKit 动画案例](0010-appkit-animations-case-study.md) | Implemented |
+| 0011 | [可选集成 AppKitPlus：把 UIKit 的栈式导航搬到 AppKit](0011-appkit-stack-navigation.md) | Implemented |

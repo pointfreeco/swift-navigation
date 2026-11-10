@@ -1,9 +1,9 @@
-# Draft - AppKit 控件绑定第二批：随模型变化的选项、文本视图、集合视图的选中
+# 0009 - AppKit 控件绑定第二批：随模型变化的选项、文本视图、集合视图的选中
 
-- **状态**: In Progress
+- **状态**: Implemented
 - **创建日期**: 2026-11-09
-- **最后更新**: 2026-11-09
-- **实现分支**: `appkit-more-control-bindings`
+- **最后更新**: 2026-11-10
+- **实现分支**: `appkit-more-control-bindings`，已合进 `main`
 
 ## 摘要
 
@@ -83,3 +83,4 @@ collectionView.bind(selection: $model.focusedSymbolID, dataSource: dataSource)  
 | 2026-11-09 | 数据源更新拿走或重载掉的选中项，标识留在绑定里；项上屏时按绑定重新选上 | 集合视图对这两种变化什么都不报，绑定无从写回；绑定是选中的来源，项回到屏幕上时以它为准 |
 | 2026-11-09 | 数据源版本的集合视图绑定标 `@available(macOS 10.15.1, *)`；代理类所在文件改为 `public import AppKit`；两份新测试文件在 Swift 6.4 以前的编译器下 `public import Observation` | Xcode 26.6 用 6.2 那份清单，最低系统是 macOS 10.15，而 `NSCollectionViewDiffableDataSource` 从 10.15.1 起才有；Swift 6.2 把这些遵循当成公开的，公开遵循需要公开导入 |
 | 2026-11-09 | 实现完成，待用户看过后收尾 | Xcode 27.2 上 AppKit 测试全部通过：XCTest 66 条，Swift Testing 77 条（其中 2 条是故意触发的已知问题）；Xcode 26.6 编译库和 AppKit 测试通过；生成文档只有与上游共用内容里原有的 3 条链接警告；CaseStudies 的 macOS 版经 `SwiftNavigation.xcworkspace` 编译通过，没有点界面。文档判断：用法和契约（集合视图的转发代理、App 自加的菜单项）写在文档注释和 `swift-navigation-bindings` skill 里，DocC 首页登记了 `NSTextView` 和 `NSCollectionView`；探针得出的 AppKit 行为记在代码注释和本提案里，不另写实现说明；没有新术语 |
+| 2026-11-10 | Implemented，编号 0009，落地到 `main` | 用户看过后要求收尾。验证沿用实现完成时那一轮：AppKit 测试全部通过，Xcode 26.6 编译通过，CaseStudies 的 macOS 版编译通过，界面没有点过；合进 `main` 的代码与测过的功能分支相同。后续项：表格与大纲的多选，照集合视图的 `Set` 版本补。文档判断同上一行：不需要使用指南或实现说明，没有新术语 |
