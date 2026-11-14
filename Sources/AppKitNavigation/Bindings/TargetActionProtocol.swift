@@ -108,8 +108,12 @@ func establishBinding<Owner: NSObject, Value>(
   set: @escaping (_ owner: Owner, _ newValue: Value, _ transaction: UITransaction) -> Void
 ) -> ObserveToken {
   owner.removeBinding(to: keyPath)
+  let isSetting = LockIsolated(false)
   let actionID = actionProxy?.addBindingAction { [weak owner] _ in
-    guard let owner else { return }
+    // NB: Setting a color panel's color sends the panel's action, unlike setting a control's
+    //     value. An action sent while the binding sets the value is its own echo, not the user's
+    //     doing, and writing it back would replace the bound value with the owner's reading of it.
+    guard let owner, isSetting.withLock({ !$0 }) else { return }
     if let valueAfterAction {
       guard let value = valueAfterAction(owner) else { return }
       binding.wrappedValue = value
@@ -118,7 +122,6 @@ func establishBinding<Owner: NSObject, Value>(
     }
   }
 
-  let isSetting = LockIsolated(false)
   let token = owner.observe { [weak owner] transaction in
     guard let owner else { return }
     isSetting.withLock { $0 = true }

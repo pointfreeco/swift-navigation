@@ -47,6 +47,26 @@
       #expect(swatch.color == Self.green)
     }
 
+    /// Setting the panel's color sends its action, unlike setting a control's value. The binding
+    /// sets the color itself whenever the bound value changes, so that action is its own echo: taken
+    /// for the user's pick, it wrote the panel's color back over the bound value, and a dynamic color
+    /// such as `labelColor` came back as whatever the panel had made of it.
+    @Test("setting the panel's color from the binding writes nothing back")
+    func settingTheColorWritesNothingBack() async {
+      @UIBinding var swatch = Swatch(color: Self.red)
+      let colorPanel = NSColorPanel.shared
+      colorPanel.bind(color: $swatch.color)
+      defer { colorPanel.unbind(\.color) }
+      #expect(swatch.writeCount == 0)
+
+      swatch.color = NSColor.labelColor
+      for _ in 0..<5 { await Task.yield() }
+
+      #expect(colorPanel.color == NSColor.labelColor)
+      #expect(swatch.writeCount == 1)
+      #expect(swatch.color === NSColor.labelColor)
+    }
+
     private final class ColorRecipient: NSObject {
       @objc func takeColor(_ sender: Any?) {}
     }
@@ -54,7 +74,15 @@
     /// Holds the color in a value, the way a model would, rather than binding a class instance
     /// directly.
     private struct Swatch {
-      var color: NSColor
+      var color: NSColor {
+        didSet { writeCount += 1 }
+      }
+      /// How many times the color was written after the swatch was made.
+      var writeCount = 0
+
+      init(color: NSColor) {
+        self.color = color
+      }
     }
 
     private static let red = NSColor(srgbRed: 1, green: 0, blue: 0, alpha: 1)
