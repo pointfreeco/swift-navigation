@@ -114,7 +114,18 @@ let package = Package(
     .target(
       name: "AppKitNavigation",
       dependencies: [
-        "SwiftNavigation"
+        "SwiftNavigation",
+        "AppKitNavigationShim",
+      ]
+    ),
+    .target(
+      name: "AppKitNavigationShim"
+    ),
+    .testTarget(
+      name: "AppKitNavigationTests",
+      dependencies: [
+        "AppKitNavigation",
+        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
       ]
     ),
   ],

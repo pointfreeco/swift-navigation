@@ -1,0 +1,47 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+import SwiftUI
+import SwiftUINavigation
+
+struct AppKitCaseStudiesView: View {
+    var body: some View {
+        List {
+            CaseStudyGroupView("Observation") {
+                MinimalObservationViewController()
+                AnimationsViewController()
+            }
+            CaseStudyGroupView("Bindings") {
+                NSControlBindingsViewController()
+                EnumControlsViewController()
+                FocusViewController()
+                OptionBindingsViewController()
+                TableSelectionViewController()
+            }
+            CaseStudyGroupView("Optional navigation") {
+                BasicsNavigationViewController()
+                ConciseEnumNavigationViewController()
+            }
+            CaseStudyGroupView("Presentation") {
+                PresentationGalleryViewController()
+                NestedModalViewController()
+                DismissalViewController()
+            }
+            CaseStudyGroupView("Stack navigation") {
+                StaticNavigationStackController(model: StaticNavigationStackController.Model())
+                ErasedNavigationStackController(model: ErasedNavigationStackController.Model())
+                // TODO: state restoration
+            }
+            CaseStudyGroupView("Advanced") {
+                // TODO: Deep link
+                WiFiSettingsViewController(model: WiFiSettingsModel(foundNetworks: .mocks))
+            }
+        }
+        .navigationTitle("AppKit")
+    }
+}
+
+#Preview {
+    NavigationStack {
+        AppKitCaseStudiesView()
+    }
+}
+#endif

@@ -645,3 +645,4 @@ private struct User: Hashable, Codable {
   static let mangledTypeName =
     "21UIKitCaseStudiesTests014NavigationPathD0C10$10685e7e0yXZ10$10685e7ecyXZ4UserV"
 }
+#endif

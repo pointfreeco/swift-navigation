@@ -13,7 +13,7 @@ let package = Package(
   name: "swift-navigation",
   platforms: [
     .iOS(.v13),
-    .macOS(.v10_15),
+    .macOS(.v12),
     .tvOS(.v13),
     .watchOS(.v6),
   ],
@@ -56,8 +56,14 @@ let package = Package(
       name: "Sharing",
       description: "Derive bindings from '@Shared' state"
     ),
+    .trait(
+      name: "AppKitPlus",
+      description:
+        "Stack navigation, dismiss actions and AppKitPlus data source bindings in AppKitNavigation, built on AppKitPlus"
+    ),
   ],
   dependencies: [
+    .package(url: "https://github.com/AppKitSupportProgram/AppKitPlus-Release", from: "0.21.0"),
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.10.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.0"),
@@ -193,7 +199,28 @@ let package = Package(
     .target(
       name: "AppKitNavigation",
       dependencies: [
-        "SwiftNavigation"
+        "SwiftNavigation",
+        "AppKitNavigationShim",
+        .product(
+          name: "AppKitPlus",
+          package: "AppKitPlus-Release",
+          condition: .when(platforms: [.macOS], traits: ["AppKitPlus"])
+        ),
+      ]
+    ),
+    .target(
+      name: "AppKitNavigationShim"
+    ),
+    .testTarget(
+      name: "AppKitNavigationTests",
+      dependencies: [
+        "AppKitNavigation",
+        .product(
+          name: "AppKitPlus",
+          package: "AppKitPlus-Release",
+          condition: .when(platforms: [.macOS], traits: ["AppKitPlus"])
+        ),
+        .product(name: "IssueReportingTestSupport", package: "xctest-dynamic-overlay"),
       ]
     ),
   ],

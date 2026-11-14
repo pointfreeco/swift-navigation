@@ -56,8 +56,14 @@ let package = Package(
       name: "Sharing",
       description: "Derive bindings from '@Shared' state"
     ),
+    .trait(
+      name: "AppKitPlus",
+      description:
+        "Stack navigation, dismiss actions and AppKitPlus data source bindings in AppKitNavigation, built on AppKitPlus"
+    ),
   ],
   dependencies: [
+    .package(url: "https://github.com/AppKitSupportProgram/AppKitPlus-Release", from: "0.21.0"),
     .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.10.0"),
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-issue-reporting", from: "2.1.0"),
@@ -183,6 +189,21 @@ let package = Package(
     .target(
       name: "UIKitNavigationShim"
     ),
+    .target(
+      name: "AppKitNavigation",
+      dependencies: [
+        "SwiftNavigation",
+        "AppKitNavigationShim",
+        .product(
+          name: "AppKitPlus",
+          package: "AppKitPlus-Release",
+          condition: .when(platforms: [.macOS], traits: ["AppKitPlus"])
+        ),
+      ]
+    ),
+    .target(
+      name: "AppKitNavigationShim"
+    ),
     .testTarget(
       name: "UIKitNavigationTests",
       dependencies: [
@@ -190,10 +211,16 @@ let package = Package(
         .product(name: "IssueReportingTestSupport", package: "swift-issue-reporting"),
       ]
     ),
-    .target(
-      name: "AppKitNavigation",
+    .testTarget(
+      name: "AppKitNavigationTests",
       dependencies: [
-        "SwiftNavigation"
+        "AppKitNavigation",
+        .product(
+          name: "AppKitPlus",
+          package: "AppKitPlus-Release",
+          condition: .when(platforms: [.macOS], traits: ["AppKitPlus"])
+        ),
+        .product(name: "IssueReportingTestSupport", package: "swift-issue-reporting"),
       ]
     ),
   ],
